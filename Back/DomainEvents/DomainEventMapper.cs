@@ -1,0 +1,22 @@
+using System.Collections.Concurrent;
+
+namespace Estud.Back.DomainEvents;
+
+public static class DomainEventMapper
+{
+    private static readonly ConcurrentDictionary<string, DomainEventAttribute> _attributes = new();
+
+    public static string ToDomainEventDescription(this string value)
+    {
+        if (value.IsEmpty()) return value;
+
+        return _attributes.GetOrAdd(value, GetDomainEventAttribute(value)).Description;
+    }
+
+    private static DomainEventAttribute GetDomainEventAttribute(this string value)
+    {
+        var type = typeof(IDomainEvent).Assembly.GetType(value)!;
+        var customAttributes = (DomainEventAttribute[])type.GetCustomAttributes(typeof(DomainEventAttribute), true);
+        return customAttributes[0];
+    }
+}

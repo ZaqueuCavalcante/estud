@@ -1,0 +1,37 @@
+namespace Estud.Back.Configs;
+
+public static class AuthorizationConfigs
+{
+    public static void AddAuthorizationConfigs(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddAuthorizationBuilder()
+            .AddAdminPolicies()
+            .AddCrossPolicies()
+            .AddUsersPolicies()
+            .AddCampiPolicies()
+            .AddCoursesPolicies()
+            .AddClassesPolicies()
+            .AddParentsPolicies()
+            .AddCalendarPolicies()
+            .AddIdentityPolicies()
+            .AddTeachersPolicies()
+            .AddStudentsPolicies()
+            .AddWebhooksPolicies()
+            .AddClassroomsPolicies()
+            .AddDisciplinesPolicies()
+            .AddInstitutionsPolicies()
+            .AddNotificationsPolicies()
+            .AddAcademicPeriodsPolicies()
+            .AddCourseOfferingsPolicies()
+            .AddCourseCurriculumsPolicies();
+
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Events.OnRedirectToLogin = context =>
+            {
+                context.Response.StatusCode = 401;
+                return Task.CompletedTask;
+            };
+        });
+    }
+}

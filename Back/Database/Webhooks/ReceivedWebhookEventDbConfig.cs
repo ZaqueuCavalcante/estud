@@ -1,0 +1,22 @@
+using Estud.Back.Domain.Commands;
+using Estud.Back.Domain.Webhooks;
+
+namespace Estud.Back.Database.Webhooks;
+
+public class ReceivedWebhookEventDbConfig : IEntityTypeConfiguration<ReceivedWebhookEvent>
+{
+    public void Configure(EntityTypeBuilder<ReceivedWebhookEvent> entity)
+    {
+        entity.ToTable("received_webhook_events", DbSchemas.Estud);
+
+        entity.HasKey(e => e.Id);
+
+        entity.HasOne(e => e.Command)
+            .WithOne()
+            .HasPrincipalKey<Command>(c => c.Id)
+            .HasForeignKey<ReceivedWebhookEvent>(e => e.CommandId);
+
+        entity.HasIndex(e => new { e.ExternalId, e.Source })
+            .IsUnique();
+    }
+}

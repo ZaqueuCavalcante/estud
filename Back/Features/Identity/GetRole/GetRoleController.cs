@@ -1,0 +1,23 @@
+namespace Estud.Back.Features.Identity.GetRole;
+
+[ApiController, Authorize(Policies.GetRole)]
+public class GetRoleController(GetRoleService service) : ControllerBase
+{
+    /// <summary>
+    /// Perfil de acesso
+    /// </summary>
+    /// <remarks>
+    /// Retorna os dados de um perfil de acesso da instituição do usuário logado.
+    /// </remarks>
+    [HttpGet("identity/roles/{roleId}")]
+    [SwaggerResponseExample(200, typeof(ResponseExamples))]
+    [SwaggerResponseExample(400, typeof(ErrorsExamples))]
+    public async Task<IActionResult> Get([FromRoute] int roleId)
+    {
+        var result = await service.Get(roleId);
+        return result.Match<IActionResult>(Ok, BadRequest);
+    }
+}
+
+internal class ResponseExamples : ExamplesProvider<GetRoleOut>;
+internal class ErrorsExamples : ErrorExamplesProvider<RoleNotFound>;

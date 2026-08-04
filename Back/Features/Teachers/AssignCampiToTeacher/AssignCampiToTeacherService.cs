@@ -1,0 +1,20 @@
+namespace Estud.Back.Features.Teachers.AssignCampiToTeacher;
+
+public class AssignCampiToTeacherService(EstudDbContext ctx) : IEstudService
+{
+    public async Task<OneOf<EstudSuccess, EstudError>> Assign(int teacherId, AssignCampiToTeacherIn data)
+    {
+        var institutionId = ctx.RequestUser.InstitutionId;
+
+        var teacher = await ctx.Teachers.Include(t => t.Campi).FirstOrDefaultAsync(t => t.InstitutionId == institutionId && t.Id == teacherId);
+        if (teacher == null) return TeacherNotFound.I;
+
+        var campi = await ctx.Campi.Where(c => c.InstitutionId == institutionId && data.Campi.Contains(c.Id)).ToListAsync();
+        if (campi.Count != data.Campi.Count) return InvalidCampusList.I;
+
+        teacher.Campi = campi;
+        await ctx.SaveChangesAsync();
+
+        return EstudSuccess.I;
+    }
+}

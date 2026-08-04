@@ -1,0 +1,48 @@
+using Estud.Back.Domain.CourseCurriculums;
+
+namespace Estud.Back.Features.CourseCurriculums.UpdateCourseCurriculum;
+
+public class UpdateCourseCurriculumService(EstudDbContext ctx) : IEstudService
+{
+    private class Validator : AbstractValidator<UpdateCourseCurriculumIn>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.Name).NotEmpty().WithError(InvalidCourseCurriculumName.I);
+            RuleFor(x => x.Name).MaximumLength(50).WithError(InvalidCourseCurriculumName.I);
+        }
+    }
+    private static readonly Validator V = new();
+
+    public async Task<OneOf<EstudSuccess, EstudError>> Update(int courseCurriculumId, UpdateCourseCurriculumIn data)
+    {
+        if (V.Run(data, out var error)) return error;
+
+        var institutionId = ctx.RequestUser.InstitutionId;
+
+        var curriculum = await ctx.CourseCurriculums.Include(c => c.Links)
+            .FirstOrDefaultAsync(c => c.InstitutionId == institutionId && c.Id == courseCurriculumId);
+        if (curriculum == null) return CourseCurriculumNotFound.I;
+
+        var hasCourseOffering = await ctx.CourseOfferings.AnyAsync(c => c.CourseCurriculumId == curriculum.Id);
+        if (hasCourseOffering) return CourseCurriculumWithCourseOffering.I;
+
+        var courseDisciplines = await ctx.CoursesDisciplines.AsNoTracking()
+            .Where(x => x.CourseId == curriculum.CourseId)
+            .Select(x => x.DisciplineId)
+            .ToListAsync();
+
+        if (!data.Disciplines.ConvertAll(d => d.Id).IsSubsetOf(courseDisciplines))
+            return new InvalidDisciplinesList();
+
+        curriculum.Name = data.Name;
+        ctx.RemoveRange(curriculum.Links.ToList());
+        curriculum.Links.Clear();
+        var newLinks = data.Disciplines.ConvertAll(d => new CourseCurriculumDiscipline(d.Id, d.Period, d.Credits, d.Workload));
+        curriculum.AddDisciplines(newLinks);
+
+        await ctx.SaveChangesAsync();
+
+        return EstudSuccess.I;
+    }
+}

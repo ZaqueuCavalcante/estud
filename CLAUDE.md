@@ -8,7 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Checagem de strings — usar `HasValue()` / `IsEmpty()`
 
-Em `if`s que checam strings, **sempre** usar as extensions `HasValue()` e `IsEmpty()` (definidas em `Back/Shared/Extensions/StringExtensions.cs`). **Nunca** usar `string.IsNullOrEmpty`, `string.IsNullOrWhiteSpace` nem suas negações.
+Em `if`s que checam strings, **sempre** usar as extensions `HasValue()` e `IsEmpty()` (definidas em `Back/Shared/Extensions/StringExtensions.cs`).
+**Nunca** usar `string.IsNullOrEmpty`, `string.IsNullOrWhiteSpace` nem suas negações.
 
 **Correto:**
 ```csharp
@@ -122,7 +123,7 @@ Botão com `UTooltip` que abre um modal/slideover ao clicar mantém o foco depoi
 
 ## Tech Stack
 
-- **Backend**: ASP.NET Core (C#), PostgreSQL, EF Core + Dapper, Quartz.NET, SignalR, HybridCache, OpenTelemetry, Serilog, Scalar (API docs)
+- **Backend**: ASP.NET Core (C#), PostgreSQL, EF Core + Dapper, Quartz.NET, HybridCache, OpenTelemetry, Serilog, Scalar (API docs)
 - **Frontend**: Nuxt.js (Vue 3 / TypeScript) with Nuxt UI — located in `Web/`
 - **Tests**: NUnit + FluentAssertions, `WebApplicationFactory`-based integration tests against a real local PostgreSQL DB
 - **Infra**: Docker, Railway, GitHub Actions CI/CD
