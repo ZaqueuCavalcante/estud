@@ -2,13 +2,19 @@ namespace Estud.Back.Extensions;
 
 public static class DateTimeExtensions
 {
-    public static string Format(this DateTime dateTime)
+    extension(DateTime dateTime)
     {
-        return dateTime.ToString("dd/MM/yyy HH:mm");
+        public string Format()
+        {
+            return dateTime.ToString("dd/MM/yyy HH:mm");
+        }
     }
 
-    public static DateTime ToDateTime(this DateOnly date)
+    extension(DateOnly date)
     {
-        return date.ToDateTime(TimeOnly.MinValue);
+        public DateTime ToDateTime()
+        {
+            return date.ToDateTime(TimeOnly.MinValue);
+        }
     }
 }

@@ -13,149 +13,213 @@ namespace Estud.Back.Extensions;
 
 public static class StringExtensions
 {
-    public static bool IsEmpty(this string? text)
-    {
-        return string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text);
-    }
-
-    public static bool HasValue(this string? text)
-    {
-        return !string.IsNullOrEmpty(text);
-    }
-
-    public static bool IsIn(this string? text, params string[] others)
-    {
-        if (text.IsEmpty())
-            return true;
-
-        foreach (var other in others)
-        {
-            if (other.Contains(text!, StringComparison.OrdinalIgnoreCase))
-                return true;
-        }
-
-        return false;
-    }
-
-    public static bool HasValue(this StringValues text)
-    {
-        return !string.IsNullOrEmpty(text);
-    }
-
-    public static string OnlyNumbers(this string text)
-    {
-        if (text.HasValue())
-        {
-            return new string(text.Where(char.IsDigit).ToArray());
-        }
-
-        return "";
-    }
-
-    public static string ToSnakeCase(this string input)
-    {
-        if (input.IsEmpty()) { return ""; }
-
-        var startUnderscores = Regex.Match(input, @"^_+");
-        return startUnderscores + Regex.Replace(input, @"([a-z0-9])([A-Z])", "$1_$2").ToLower();
-    }
-
-    public static string ToBase64(this string value)
-    {
-        var bytes = Encoding.UTF8.GetBytes(value);
-        return Convert.ToBase64String(bytes);
-    }
-
-    public static string Format(this decimal value)
-    {
-        return value.ToString("0.00", CultureInfo.InvariantCulture);
-    }
-
-    public static string Format(this int value)
-    {
-        return value.ToString("N0", CultureInfo.CreateSpecificCulture("pt-BR"));
-    }
-
-    public static bool IsValidEmail(this string email)
-    {
-        if (email.IsEmpty()) return false;
-        return Regex.IsMatch(email, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
-    }
-
-    public static bool IsValidPhoneNumber(this string? phoneNumber)
-    {
-        if (phoneNumber.IsEmpty()) return false;
-        return Regex.IsMatch(phoneNumber!, @"^\d{10,11}$");
-    }
-
     private static JsonSerializerSettings _settings = new()
     {
         Converters = [new StringEnumConverter()],
     };
 
-    public static string Serialize(this object obj)
+    extension(string? text)
     {
-        return JsonConvert.SerializeObject(obj, _settings);
+        public bool IsEmpty()
+        {
+            return string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text);
+        }
+
+        public bool HasValue()
+        {
+            return !string.IsNullOrEmpty(text);
+        }
+
+        public bool IsIn(params string[] others)
+        {
+            if (text.IsEmpty())
+                return true;
+
+            foreach (var other in others)
+            {
+                if (other.Contains(text!, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public bool IsValidPhoneNumber()
+        {
+            if (text.IsEmpty()) return false;
+            return Regex.IsMatch(text!, @"^\d{10,11}$");
+        }
     }
 
-    public static string GenerateQrCodeBase64(this string key, string email)
+    extension(StringValues text)
     {
-        const string provider = "Estud";
-
-        using var qrGenerator = new QRCodeGenerator();
-        using var qrCodeData = qrGenerator.CreateQrCode(
-            $"otpauth://totp/{provider}:{email}?secret={key}&issuer={provider}",
-            QRCodeGenerator.ECCLevel.Q
-        );
-
-        var qrCode = new PngByteQRCode(qrCodeData);
-
-        var bytes = qrCode.GetGraphic(20);
-
-        return string.Format("data:image/png;base64,{0}", Convert.ToBase64String(bytes));
+        public bool HasValue()
+        {
+            return !string.IsNullOrEmpty(text);
+        }
     }
 
-    public static string MinutesToString(this int value)
+    extension(string value)
     {
-        var hours = value / 60;
-        var minutes = value % 60;
+        public string OnlyNumbers()
+        {
+            if (value.HasValue())
+            {
+                return new string(value.Where(char.IsDigit).ToArray());
+            }
 
-        if (hours == 0 && minutes == 0) return "0";
-        if (hours == 0) return $"{minutes}min";
-        if (minutes == 0) return $"{hours}h";
+            return "";
+        }
 
-        return $"{hours}h e {minutes}min";
+        public string ToSnakeCase()
+        {
+            if (value.IsEmpty()) { return ""; }
+
+            var startUnderscores = Regex.Match(value, @"^_+");
+            return startUnderscores + Regex.Replace(value, @"([a-z0-9])([A-Z])", "$1_$2").ToLower();
+        }
+
+        public string ToBase64()
+        {
+            var bytes = Encoding.UTF8.GetBytes(value);
+            return Convert.ToBase64String(bytes);
+        }
+
+        public bool IsValidEmail()
+        {
+            if (value.IsEmpty()) return false;
+            return Regex.IsMatch(value, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
+        }
+
+        public string GenerateQrCodeBase64(string email)
+        {
+            const string provider = "Estud";
+
+            using var qrGenerator = new QRCodeGenerator();
+            using var qrCodeData = qrGenerator.CreateQrCode(
+                $"otpauth://totp/{provider}:{email}?secret={value}&issuer={provider}",
+                QRCodeGenerator.ECCLevel.Q
+            );
+
+            var qrCode = new PngByteQRCode(qrCodeData);
+
+            var bytes = qrCode.GetGraphic(20);
+
+            return string.Format("data:image/png;base64,{0}", Convert.ToBase64String(bytes));
+        }
+
+        public string AddQueryString(object obj)
+        {
+            return QueryHelpers.AddQueryString(value, ConvertObjectToDictionary(obj));
+        }
+
+        public string ParseJsonString()
+        {
+            if (value.IsEmpty()) return "";
+
+            try
+            {
+                return JToken
+                    .Parse(value)
+                    .ToString(Formatting.Indented);
+            }
+            catch
+            {
+                return value;
+            }
+        }
+
+        public string GetSqlSpanName()
+        {
+            var comparer = StringComparison.InvariantCultureIgnoreCase;
+            var insert = value.Contains("INSERT", comparer);
+            var update = value.Contains("UPDATE", comparer);
+            var delete = value.Contains("DELETE", comparer);
+            var select = value.Contains("SELECT", comparer);
+
+            var builder = new StringBuilder();
+
+            if (insert) builder.Append("INSERT ");
+            if (update) builder.Append("UPDATE ");
+            if (delete) builder.Append("DELETE");
+
+            if (!insert && !update && !delete && select) builder.Append("SELECT");
+
+            return builder.ToString().Trim();
+        }
+
+        public int ToInt()
+        {
+            return int.TryParse(value, out int integer) ? integer : 0;
+        }
     }
 
-    public static string ToThousandSeparated(this int value)
+    extension(decimal value)
     {
-        return value.ToString("N0", CultureInfo.CreateSpecificCulture("pt-BR"));
+        public string Format()
+        {
+            return value.ToString("0.00", CultureInfo.InvariantCulture);
+        }
     }
 
-    public static string ToTwo(this int value)
+    extension(int value)
     {
-        return value < 10 ? $"0{value}" : value.ToString();
+        public string Format()
+        {
+            return value.ToString("N0", CultureInfo.CreateSpecificCulture("pt-BR"));
+        }
+
+        public string MinutesToString()
+        {
+            var hours = value / 60;
+            var minutes = value % 60;
+
+            if (hours == 0 && minutes == 0) return "0";
+            if (hours == 0) return $"{minutes}min";
+            if (minutes == 0) return $"{hours}h";
+
+            return $"{hours}h e {minutes}min";
+        }
+
+        public string ToThousandSeparated()
+        {
+            return value.ToString("N0", CultureInfo.CreateSpecificCulture("pt-BR"));
+        }
+
+        public string ToTwo()
+        {
+            return value < 10 ? $"0{value}" : value.ToString();
+        }
     }
 
-    public static string ToMinuteString(this DateTime date)
+    extension(object obj)
     {
-        if (date == DateTime.MinValue)
-            return "-";
-
-        return date.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
+        public string Serialize()
+        {
+            return JsonConvert.SerializeObject(obj, _settings);
+        }
     }
 
-    public static string ToMinuteString(this DateTime? date)
+    extension(DateTime date)
     {
-        if (date == null)
-            return "-";
+        public string ToMinuteString()
+        {
+            if (date == DateTime.MinValue)
+                return "-";
 
-        return date.Value.ToMinuteString();
+            return date.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
+        }
     }
 
-    public static string AddQueryString(this string path, object obj)
+    extension(DateTime? date)
     {
-        return QueryHelpers.AddQueryString(path, ConvertObjectToDictionary(obj));
+        public string ToMinuteString()
+        {
+            if (date == null)
+                return "-";
+
+            return date.Value.ToMinuteString();
+        }
     }
 
     private static Dictionary<string, string?> ConvertObjectToDictionary(object obj)
@@ -185,45 +249,5 @@ public static class StringExtensions
         }
 
         return dictionary;
-    }
-
-    public static string ParseJsonString(this string input)
-    {
-        if (input.IsEmpty()) return "";
-
-        try
-        {
-            return JToken
-                .Parse(input)
-                .ToString(Formatting.Indented);
-        }
-        catch
-        {
-            return input;
-        }
-    }
-
-    public static string GetSqlSpanName(this string sql)
-    {
-        var comparer = StringComparison.InvariantCultureIgnoreCase;
-        var insert = sql.Contains("INSERT", comparer);
-        var update = sql.Contains("UPDATE", comparer);
-        var delete = sql.Contains("DELETE", comparer);
-        var select = sql.Contains("SELECT", comparer);
-
-        var builder = new StringBuilder();
-
-        if (insert) builder.Append("INSERT ");
-        if (update) builder.Append("UPDATE ");
-        if (delete) builder.Append("DELETE");
-
-        if (!insert && !update && !delete && select) builder.Append("SELECT");
-
-        return builder.ToString().Trim();
-    }
-
-    public static int ToInt(this string value)
-    {
-        return int.TryParse(value, out int integer) ? integer : 0;
     }
 }

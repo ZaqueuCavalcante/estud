@@ -2,9 +2,12 @@ namespace Estud.Back.Extensions;
 
 public static class GuidExtensions
 {
-    public static int ToHashCode(this Guid guid)
+    extension(Guid guid)
     {
-        var justNumbers = guid.ToString().OnlyNumbers();
-        return int.Parse(justNumbers[^8..]);
+        public int ToHashCode()
+        {
+            var justNumbers = guid.ToString().OnlyNumbers();
+            return int.Parse(justNumbers[^8..]);
+        }
     }
 }

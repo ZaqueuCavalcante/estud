@@ -12,77 +12,92 @@ public static class ListExtensions
         }
     }
 
-    public static bool IsSubsetOf(this List<Guid> selfs, List<Guid> others)
+    extension(List<Guid> selfs)
     {
-        HashSet<Guid> set = [];
-        foreach (var self in selfs)
+        public bool IsSubsetOf(List<Guid> others)
         {
-            if (!set.Add(self)) return false;
+            HashSet<Guid> set = [];
+            foreach (var self in selfs)
+            {
+                if (!set.Add(self)) return false;
 
-            if (!others.Contains(self)) return false;
+                if (!others.Contains(self)) return false;
+            }
+
+            return true;
         }
 
-        return true;
+        public bool IsEquivalentTo(List<Guid> others)
+        {
+            if (selfs.Count != others.Count) return false;
+
+            return selfs.IsSubsetOf(others);
+        }
     }
 
-    public static bool IsSubsetOf(this List<int> selfs, List<int> others)
+    extension(List<int> selfs)
     {
-        HashSet<int> set = [];
-        foreach (var self in selfs)
+        public bool IsSubsetOf(List<int> others)
         {
-            if (!set.Add(self)) return false;
+            HashSet<int> set = [];
+            foreach (var self in selfs)
+            {
+                if (!set.Add(self)) return false;
 
-            if (!others.Contains(self)) return false;
+                if (!others.Contains(self)) return false;
+            }
+
+            return true;
+        }
+    }
+
+    extension(IEnumerable<int> list)
+    {
+        public bool IsAllDistinct()
+        {
+            if (list is null) return true;
+
+            var set = new HashSet<int>();
+            foreach (var x in list)
+            {
+                if (!set.Add(x)) return false;
+            }
+
+            return true;
+        }
+    }
+
+    extension(IEnumerable<string> list)
+    {
+        public bool IsAllDistinct()
+        {
+            if (list is null) return true;
+
+            var set = new HashSet<string>();
+            foreach (var x in list)
+            {
+                if (!set.Add(x)) return false;
+            }
+
+            return true;
+        }
+    }
+
+    extension<T>(IEnumerable<T> source)
+    {
+        public T PickRandom()
+        {
+            return source.PickRandom(1).Single();
         }
 
-        return true;
-    }
-
-    public static bool IsEquivalentTo(this List<Guid> selfs, List<Guid> others)
-    {
-        if (selfs.Count != others.Count) return false;
-
-        return selfs.IsSubsetOf(others);
-    }
-
-    public static bool IsAllDistinct(this IEnumerable<int> list)
-    {
-        if (list is null) return true;
-
-        var set = new HashSet<int>();
-        foreach (var x in list)
+        public IEnumerable<T> PickRandom(int count)
         {
-            if (!set.Add(x)) return false;
+            return source.Shuffle().Take(count);
         }
 
-        return true;
-    }
-
-    public static bool IsAllDistinct(this IEnumerable<string> list)
-    {
-        if (list is null) return true;
-
-        var set = new HashSet<string>();
-        foreach (var x in list)
+        public IEnumerable<T> Shuffle()
         {
-            if (!set.Add(x)) return false;
+            return source.OrderBy(x => Guid.CreateVersion7());
         }
-
-        return true;
-    }
-
-    public static T PickRandom<T>(this IEnumerable<T> source)
-    {
-        return source.PickRandom(1).Single();
-    }
-
-    public static IEnumerable<T> PickRandom<T>(this IEnumerable<T> source, int count)
-    {
-        return source.Shuffle().Take(count);
-    }
-
-    public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
-    {
-        return source.OrderBy(x => Guid.CreateVersion7());
     }
 }
