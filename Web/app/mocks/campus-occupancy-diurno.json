@@ -1,0 +1,405 @@
+{
+  "campusId": 1,
+  "campus": "Campus Diurno",
+  "totalClassrooms": 2,
+  "overallRate": 55,
+  "openCells": 5,
+  "cells": [
+    {
+      "day": "Monday",
+      "shift": "Morning",
+      "open": true,
+      "availableMinutes": 600,
+      "usedMinutes": 480,
+      "rate": 80,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 300,
+          "rate": 100
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 180,
+          "rate": 60
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "shift": "Afternoon",
+      "open": false,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 0,
+          "rate": 0
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Monday",
+      "shift": "Evening",
+      "open": false,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 0,
+          "rate": 0
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "shift": "Morning",
+      "open": true,
+      "availableMinutes": 600,
+      "usedMinutes": 240,
+      "rate": 40,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 240,
+          "rate": 80
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "shift": "Afternoon",
+      "open": false,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 0,
+          "rate": 0
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "shift": "Evening",
+      "open": false,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 0,
+          "rate": 0
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "shift": "Morning",
+      "open": true,
+      "availableMinutes": 600,
+      "usedMinutes": 570,
+      "rate": 95,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 300,
+          "rate": 100
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 270,
+          "rate": 90
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "shift": "Afternoon",
+      "open": false,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 0,
+          "rate": 0
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "shift": "Evening",
+      "open": false,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 0,
+          "rate": 0
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "shift": "Morning",
+      "open": true,
+      "availableMinutes": 600,
+      "usedMinutes": 180,
+      "rate": 30,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 120,
+          "rate": 40
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 60,
+          "rate": 20
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "shift": "Afternoon",
+      "open": false,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 0,
+          "rate": 0
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "shift": "Evening",
+      "open": false,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 0,
+          "rate": 0
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "shift": "Morning",
+      "open": true,
+      "availableMinutes": 600,
+      "usedMinutes": 180,
+      "rate": 30,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 180,
+          "rate": 60
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "shift": "Afternoon",
+      "open": false,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 0,
+          "rate": 0
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "shift": "Evening",
+      "open": false,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 0,
+          "rate": 0
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Saturday",
+      "shift": "Morning",
+      "open": false,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 0,
+          "rate": 0
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Saturday",
+      "shift": "Afternoon",
+      "open": false,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 0,
+          "rate": 0
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    },
+    {
+      "day": "Saturday",
+      "shift": "Evening",
+      "open": false,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": [
+        {
+          "id": 1,
+          "name": "Sala 01",
+          "usedMinutes": 0,
+          "rate": 0
+        },
+        {
+          "id": 2,
+          "name": "Sala 02",
+          "usedMinutes": 0,
+          "rate": 0
+        }
+      ]
+    }
+  ]
+}

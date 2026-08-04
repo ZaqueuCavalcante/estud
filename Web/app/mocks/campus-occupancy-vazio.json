@@ -1,0 +1,171 @@
+{
+  "campusId": 1,
+  "campus": "Campus Agreste",
+  "totalClassrooms": 0,
+  "overallRate": 0,
+  "openCells": 18,
+  "cells": [
+    {
+      "day": "Monday",
+      "shift": "Morning",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Monday",
+      "shift": "Afternoon",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Monday",
+      "shift": "Evening",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Tuesday",
+      "shift": "Morning",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Tuesday",
+      "shift": "Afternoon",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Tuesday",
+      "shift": "Evening",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Wednesday",
+      "shift": "Morning",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Wednesday",
+      "shift": "Afternoon",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Wednesday",
+      "shift": "Evening",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Thursday",
+      "shift": "Morning",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Thursday",
+      "shift": "Afternoon",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Thursday",
+      "shift": "Evening",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Friday",
+      "shift": "Morning",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Friday",
+      "shift": "Afternoon",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Friday",
+      "shift": "Evening",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Saturday",
+      "shift": "Morning",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Saturday",
+      "shift": "Afternoon",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    },
+    {
+      "day": "Saturday",
+      "shift": "Evening",
+      "open": true,
+      "availableMinutes": 0,
+      "usedMinutes": 0,
+      "rate": 0,
+      "classrooms": []
+    }
+  ]
+}
