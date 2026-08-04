@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(grep *)",
+      "Bash(xargs ls)",
+      "Bash(xargs cat)",
+      "Bash(node -e ' *)",
+      "Bash(pnpm nuxt *)",
+      "Bash(xargs ls -la)",
+      "Bash(grep -E '\\\\.cs$')",
+      "Bash(grep -E '\\\\.\\(cs|json\\)$')",
+      "Bash(grep -E '\\\\.\\(cs|ts|tsx\\)$')"
+    ]
+  }
+}

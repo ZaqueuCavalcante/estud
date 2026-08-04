@@ -1,0 +1,111 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.200
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Install native deps for PDF rendering
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig1
+
+      - name: Unit Tests
+        run: |
+          dotnet test --filter "FullyQualifiedName~UnitTests" \
+          --no-restore \
+          --no-build \
+          --configuration Release \
+          --verbosity normal \
+          --logger "trx;LogFileName=tests_results.trx" \
+          --collect:"XPlat Code Coverage" \
+          --results-directory ./TestResults
+
+      - name: Integration Tests
+        run: |
+          dotnet test --filter "FullyQualifiedName!~UnitTests" \
+          --configuration Release \
+          --no-restore \
+          --no-build \
+          --verbosity normal \
+          --logger "trx;LogFileName=tests_results.trx" \
+          --collect:"XPlat Code Coverage" \
+          --results-directory ./TestResults
+
+      - name: Generate coverage HTML report
+        uses: danielpalme/ReportGenerator-GitHub-Action@v5.4.10
+        with:
+          reports: "**/*.cobertura.xml"
+          targetdir: "coverage"
+          reporttypes: "HtmlInline_AzurePipelines;Cobertura;Badges"
+          title: "Estud"
+          toolpath: "reportgeneratortool"
+
+      - name: Generate coverage badges
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: "coverage/Cobertura.xml"
+          badge: true
+          format: markdown
+          output: both
+          hide_branch_rate: false
+          hide_complexity: true
+          indicators: true
+          thresholds: "95 99"
+
+      - name: Move badges into coverage site
+        shell: bash
+        run: |
+          mkdir -p coverage
+          shopt -s nullglob
+          for f in line-coverage.svg branch-coverage.svg coverage-badge-line.svg coverage-badge-branches.svg; do
+            if [ -f "$f" ]; then mv "$f" coverage/; fi
+          done
+          svgs=( *.svg )
+          if [ ${#svgs[@]} -gt 0 ]; then mv "${svgs[@]}" coverage/; fi
+
+      - name: List coverage site contents
+        run: ls -lah coverage
+
+      - name: Publish Coverage to https://zaqueucavalcante.github.io/estud
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: coverage
+          keep_files: true
