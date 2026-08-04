@@ -1,0 +1,28 @@
+{
+    servers {
+        # The container is only reachable through Railway's edge proxy, so trust it and
+        # preserve inbound X-Forwarded-* (notably X-Forwarded-Proto: https) instead of
+        # overwriting them with the internal http hop. Railway's edge uses the CGNAT range
+        # (100.64.0.0/10), which is not covered by Caddy's default private_ranges.
+        trusted_proxies static 0.0.0.0/0 ::/0
+    }
+}
+
+:{$PORT:80} {
+    handle /api/_* {
+        reverse_proxy web.railway.internal:80
+    }
+
+    handle /api/* {
+        reverse_proxy back.railway.internal:5000 {
+            # Last hop before the backend: pin the public host deterministically so the
+            # OAuth redirect_uri is built with estud.com.br, regardless of any upstream
+            # (Cloudflare worker / Railway edge) rewriting the host to the railway domain.
+            header_up X-Forwarded-Host {$PUBLIC_HOST:estud.com.br}
+        }
+    }
+
+    handle {
+        reverse_proxy web.railway.internal:80
+    }
+}
