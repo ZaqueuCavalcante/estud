@@ -1,0 +1,12 @@
+{
+    "stryker-config":
+    {
+        "solution": "../Estud.slnx",
+        "project": "Back.csproj",
+        "mutation-level": "Complete",
+        "reporters": [ "html" ],
+        "ignore-methods": [
+            "*GetExamples*"
+        ]
+    }
+}

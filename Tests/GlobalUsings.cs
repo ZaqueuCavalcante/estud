@@ -1,0 +1,13 @@
+global using OneOf;
+global using System.Net;
+global using NUnit.Framework;
+global using Estud.Tests.Base;
+global using FluentAssertions;
+global using Estud.Back.Errors;
+global using Estud.Back.Commands;
+global using Estud.Back.Database;
+global using Estud.Back.Extensions;
+global using Estud.Back.Domain.Enums;
+global using Estud.Back.Auth.Permissions;
+global using Estud.Tests.Integration.Base;
+global using Microsoft.EntityFrameworkCore;

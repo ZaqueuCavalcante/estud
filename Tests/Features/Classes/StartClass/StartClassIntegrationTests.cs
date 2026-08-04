@@ -1,0 +1,148 @@
+namespace Estud.Tests.Integration;
+
+public partial class IntegrationTests
+{
+    #region Authentication
+
+    [Test]
+    public async Task Classes_StartClass_Should_not_start_class_when_not_authenticated()
+    {
+        // Arrange
+        var client = _back.GetTestsClient();
+
+        // Act
+        var result = await client.StartClass(1);
+
+        // Assert
+        result.ShouldBeError(HttpStatusCode.Unauthorized);
+    }
+
+    #endregion
+
+    #region Authorization
+
+    [Test]
+    public async Task Classes_StartClass_Should_not_start_class_when_user_has_no_permission()
+    {
+        // Arrange
+        var client = await _back.LoggedAsTeacher();
+
+        // Act
+        var result = await client.StartClass(1);
+
+        // Assert
+        result.ShouldBeError(HttpStatusCode.Forbidden);
+    }
+
+    #endregion
+
+    #region Validation errors
+
+    [Test]
+    public async Task Classes_StartClass_Should_not_start_class_when_class_not_found()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        // Act
+        var result = await client.StartClass(999999);
+
+        // Assert
+        result.ShouldBeError(ClassNotFound.I);
+    }
+
+    [Test]
+    public async Task Classes_StartClass_Should_not_start_class_when_class_is_not_on_enrollment()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
+
+        // Act
+        var result = await client.StartClass(@class.Id);
+
+        // Assert
+        result.ShouldBeError(ClassMustBeOnEnrollment.I);
+    }
+
+    [Test]
+    public async Task Classes_StartClass_Should_not_start_class_when_class_has_no_teachers()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
+        await client.ReleaseClassForEnrollment(@class.Id);
+
+        // Act
+        var result = await client.StartClass(@class.Id);
+
+        // Assert
+        result.ShouldBeError(ClassWithoutTeachers.I);
+    }
+
+    [Test]
+    public async Task Classes_StartClass_Should_not_start_class_when_class_has_no_schedules()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+
+        var teacher = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
+        await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
+        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
+        await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
+        await client.ReleaseClassForEnrollment(@class.Id);
+
+        // Act
+        var result = await client.StartClass(@class.Id);
+
+        // Assert
+        result.ShouldBeError(ClassWithoutSchedules.I);
+    }
+
+    #endregion
+
+    #region Happy path
+
+    [Test]
+    public async Task Classes_StartClass_Should_start_class_and_generate_lessons()
+    {
+        // Arrange — período 2024.1 (01/02 a 01/07), turma com professor e horário na segunda.
+        var client = await _back.LoggedAsDirector();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+
+        var teacher = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
+        await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
+        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
+        await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+
+        await client.ReleaseClassForEnrollment(@class.Id);
+
+        // Act
+        var result = await client.StartClass(@class.Id);
+
+        // Assert
+        result.ShouldBeSuccess();
+
+        await using var ctx = _back.GetDbContext();
+        var started = await ctx.Classes.FirstAsync(c => c.Id == @class.Id);
+        started.Status.Should().Be(ClassStatus.Started);
+        started.Workload.Should().BeGreaterThan(0);
+
+        var lessons = await ctx.ClassLessons.Where(l => l.ClassId == @class.Id).ToListAsync();
+        lessons.Should().NotBeEmpty();
+        lessons.Should().OnlyContain(l => l.Date.DayOfWeek == DayOfWeek.Monday);
+        lessons.Should().OnlyContain(l => l.Status == ClassLessonStatus.Pending);
+    }
+
+    #endregion
+}
