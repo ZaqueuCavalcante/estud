@@ -1,4 +1,4 @@
-namespace Estud.Back.Shared;
+namespace Estud.Back.Markers;
 
 public interface IApiDto<TSelf> where TSelf : IApiDto<TSelf>
 {

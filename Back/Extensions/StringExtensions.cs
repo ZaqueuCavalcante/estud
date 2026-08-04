@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.Primitives;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Estud.Back.Shared;
+namespace Estud.Back.Extensions;
 
 public static class StringExtensions
 {

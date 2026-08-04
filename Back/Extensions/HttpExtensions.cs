@@ -1,3 +1,5 @@
+using System.Net;
+using Newtonsoft.Json;
 using Estud.Back.Auth.Claims;
 using System.Security.Claims;
 using Estud.Back.Auth.Schemes;
@@ -93,6 +95,35 @@ public static partial class HttpExtensions
             };
             var identity = new ClaimsIdentity(claims, TwoFactorSetupScheme.Name);
             await context!.SignInAsync(TwoFactorSetupScheme.Name, new ClaimsPrincipal(identity));
+        }
+    }
+
+    extension(HttpResponseMessage httpResponse)
+    {
+        public async Task<ErrorOut> ToError()
+        {
+            var responseAsString = await httpResponse.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<ErrorOut>(responseAsString)!;
+        }
+
+        public async Task<T> DeserializeTo<T>()
+        {
+            var responseAsString = await httpResponse.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<T>(responseAsString)!;
+        }
+
+        public async Task<OneOf<T, ErrorOut>> Resolve<T>()
+        {
+            if (httpResponse.IsSuccessStatusCode)
+                return await httpResponse.DeserializeTo<T>();
+
+            if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
+                return UnauthorizedErrorOut.I;
+
+            if (httpResponse.StatusCode == HttpStatusCode.Forbidden)
+                return ForbiddenErrorOut.I;
+
+            return await httpResponse.ToError();
         }
     }
 }

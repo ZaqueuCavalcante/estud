@@ -1,4 +1,4 @@
-namespace Estud.Back.Shared;
+namespace Estud.Back.Domain.Enums;
 
 /// <summary>
 /// Status de frequência do Aluno em um dia do calendário

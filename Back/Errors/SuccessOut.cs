@@ -1,4 +1,4 @@
-namespace Estud.Back.Shared;
+namespace Estud.Back.Errors;
 
 public class SuccessOut : IApiDto<SuccessOut>
 {

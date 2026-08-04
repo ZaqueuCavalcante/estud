@@ -1,4 +1,4 @@
-namespace Estud.Back.Shared;
+namespace Estud.Back.Domain.Enums;
 
 /// <summary>
 /// Tipo do Curso

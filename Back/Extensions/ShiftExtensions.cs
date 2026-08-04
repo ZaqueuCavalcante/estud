@@ -1,4 +1,4 @@
-namespace Estud.Back.Shared;
+namespace Estud.Back.Extensions;
 
 public static class ShiftExtensions
 {

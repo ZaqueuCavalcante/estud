@@ -1,7 +1,6 @@
 global using OneOf;
 global using Serilog;
 global using FluentValidation;
-global using Estud.Back.Shared;
 global using Estud.Back.Errors;
 global using Estud.Back.Filters;
 global using Estud.Back.Configs;
