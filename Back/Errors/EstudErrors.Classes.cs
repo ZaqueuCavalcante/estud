@@ -28,6 +28,13 @@ public class ClassAlreadyStarted : EstudError
     public override string Message { get; set; } = "A turma já foi iniciada.";
 }
 
+public class ClassAlreadyFinalized : EstudError
+{
+    public static readonly ClassAlreadyFinalized I = new();
+    public override string Code { get; set; } = nameof(ClassAlreadyFinalized);
+    public override string Message { get; set; } = "A turma já foi finalizada.";
+}
+
 public class ClassWithoutTeachers : EstudError
 {
     public static readonly ClassWithoutTeachers I = new();

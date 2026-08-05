@@ -12,3 +12,8 @@ Com esses dados já é possível montar o mapa de ocupação do campus.
 
 
 Faz sentido definir horario E sala ao mesmo tempo ou mantemos em endpoints separados?
+
+
+
+
+

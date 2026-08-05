@@ -66,23 +66,6 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Students_AssignStudentToClass_Should_not_assign_when_class_is_not_on_enrollment()
-    {
-        // Arrange
-        var client = await _back.LoggedAsDirector();
-        var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
-        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
-
-        // Act
-        var result = await client.AssignStudentToClass(student.Id, @class.Id);
-
-        // Assert
-        result.ShouldBeError(ClassMustBeOnEnrollment.I);
-    }
-
-    [Test]
     public async Task Students_AssignStudentToClass_Should_not_assign_when_student_already_enrolled()
     {
         // Arrange
