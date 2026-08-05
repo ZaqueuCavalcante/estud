@@ -56,6 +56,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
+        await client.CreateCampus();
 
         var otherClient = await _back.LoggedAsDirector();
         var otherCampus = await otherClient.CreateCampus().Success();
