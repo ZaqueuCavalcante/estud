@@ -373,5 +373,382 @@ public partial class IntegrationTests
             .Open.Should().BeFalse();
     }
 
+    // Uma sala costuma receber várias turmas ao longo do turno, e a célula precisa
+    // somar todas — não é "a turma daquele horário", é quanto da sala foi usado.
+    [Test]
+    public async Task Campi_GetCampusOccupancy_Should_sum_the_schedules_of_different_classes_in_the_same_classroom()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var sala01 = await client.CreateClassroom(campus.Id, name: "Sala 01").Success();
+
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+
+        var classA = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H09_00, null)]);
+        await client.UpdateClassClassrooms(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H09_00, sala01.Id)]);
+
+        var classB = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+        await client.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H10_00, Hour.H12_00, null)]);
+        await client.UpdateClassClassrooms(classB.Id, [(Day.Monday, Hour.H10_00, Hour.H12_00, sala01.Id)]);
+
+        // Act
+        var result = await client.GetCampusOccupancy(campus.Id);
+
+        // Assert
+        var occupancy = result.Success;
+
+        // 120min de cada turma na mesma sala e na mesma célula.
+        var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
+        morning.UsedMinutes.Should().Be(240);
+        morning.AvailableMinutes.Should().Be(300);
+        morning.Rate.Should().Be(80M);
+        morning.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(240);
+        morning.Classrooms.First(c => c.Id == sala01.Id).Rate.Should().Be(80M);
+
+        // 240min de 4500min (1 sala x 900min/dia x 5 dias abertos).
+        occupancy.OverallRate.Should().Be(5.33M);
+    }
+
+    // Turma iniciada é turma acontecendo: sai do mapa só quando finaliza.
+    [Test]
+    public async Task Campi_GetCampusOccupancy_Should_count_the_schedules_of_a_started_class()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var sala01 = await client.CreateClassroom(campus.Id, name: "Sala 01").Success();
+
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+
+        var teacher = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
+        await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+        await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+
+        // A sala precisa entrar antes do início: turma iniciada não aceita mais alocação.
+        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+
+        await client.ReleaseClassForEnrollment(@class.Id);
+        await client.StartClass(@class.Id);
+
+        // Act
+        var result = await client.GetCampusOccupancy(campus.Id);
+
+        // Assert
+        var occupancy = result.Success;
+
+        var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
+        morning.UsedMinutes.Should().Be(180);
+        morning.AvailableMinutes.Should().Be(300);
+        morning.Rate.Should().Be(60M);
+    }
+
+    // Turma finalizada é histórico: a sala dela está livre para o próximo período,
+    // então continuar ocupando o mapa seria mentir sobre a capacidade do campus.
+    [Test]
+    public async Task Campi_GetCampusOccupancy_Should_not_count_the_schedules_of_a_finalized_class()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var sala01 = await client.CreateClassroom(campus.Id, name: "Sala 01").Success();
+
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+
+        // Não existe endpoint de finalizar turma, então o status vai direto no banco.
+        await using (var ctx = _back.GetDbContext())
+        {
+            var entity = await ctx.Classes.FirstAsync(c => c.Id == @class.Id);
+            entity.Status = ClassStatus.Finalized;
+            await ctx.SaveChangesAsync();
+        }
+
+        // Act
+        var result = await client.GetCampusOccupancy(campus.Id);
+
+        // Assert
+        var occupancy = result.Success;
+        occupancy.TotalClassrooms.Should().Be(1);
+        occupancy.Cells.Should().OnlyContain(c => c.UsedMinutes == 0);
+        occupancy.OverallRate.Should().Be(0);
+    }
+
+    // Turma online tem horário mas não tem sala: existe na agenda, não no mapa.
+    [Test]
+    public async Task Campi_GetCampusOccupancy_Should_not_count_schedules_without_classroom()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        await client.CreateClassroom(campus.Id, name: "Sala 01");
+
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        // Só o horário: sem o passo de alocar sala, o ClassroomId fica nulo.
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+
+        // Act
+        var result = await client.GetCampusOccupancy(campus.Id);
+
+        // Assert
+        var occupancy = result.Success;
+        occupancy.TotalClassrooms.Should().Be(1);
+        occupancy.Cells.Should().OnlyContain(c => c.UsedMinutes == 0);
+        occupancy.OverallRate.Should().Be(0);
+    }
+
+    // Campus que fecha para o almoço tem duas janelas no mesmo dia, e o turno inteiro
+    // que cai no intervalo entre elas fica fechado — mesmo cercado por turnos abertos.
+    [Test]
+    public async Task Campi_GetCampusOccupancy_Should_sum_the_opening_hours_windows_of_the_same_day()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var sala01 = await client.CreateClassroom(campus.Id, name: "Sala 01").Success();
+
+        await client.UpdateCampusOpeningHours(campus.Id,
+        [
+            (Day.Monday, [(Hour.H07_00, Hour.H12_00), (Hour.H18_00, Hour.H22_00)]),
+        ]);
+
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        // 11h–19h atravessa as duas janelas e o buraco entre elas.
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H11_00, Hour.H19_00, null)]);
+        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H11_00, Hour.H19_00, sala01.Id)]);
+
+        // Act
+        var result = await client.GetCampusOccupancy(campus.Id);
+
+        // Assert
+        var occupancy = result.Success;
+
+        // Manhã e noite abrem; a tarde inteira cai no intervalo fechado.
+        occupancy.OpenCells.Should().Be(2);
+
+        var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
+        morning.Open.Should().BeTrue();
+        morning.AvailableMinutes.Should().Be(300);
+        morning.UsedMinutes.Should().Be(60);  // 11h–12h
+        morning.Rate.Should().Be(20M);
+
+        var afternoon = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Afternoon);
+        afternoon.Open.Should().BeFalse();
+        afternoon.AvailableMinutes.Should().Be(0);
+        afternoon.UsedMinutes.Should().Be(0);
+
+        var evening = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Evening);
+        evening.Open.Should().BeTrue();
+        evening.AvailableMinutes.Should().Be(240);
+        evening.UsedMinutes.Should().Be(60);  // 18h–19h
+        evening.Rate.Should().Be(25M);
+
+        // 120min de 540min: as duas janelas do dia, e só elas.
+        occupancy.OverallRate.Should().Be(22.22M);
+    }
+
+    [Test]
+    public async Task Campi_GetCampusOccupancy_Should_get_campus_occupancy_of_a_campus_closed_all_week()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var sala01 = await client.CreateClassroom(campus.Id, name: "Sala 01").Success();
+
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+
+        // Campus fechado depois da turma já alocada.
+        await client.UpdateCampusOpeningHours(campus.Id, []);
+
+        // Act
+        var result = await client.GetCampusOccupancy(campus.Id);
+
+        // Assert
+        var occupancy = result.Success;
+
+        // A sala continua existindo; o que sumiu foi o horário em que ela poderia ser usada.
+        occupancy.TotalClassrooms.Should().Be(1);
+        occupancy.OpenCells.Should().Be(0);
+        occupancy.Cells.Should().HaveCount(18);
+        occupancy.Cells.Should().OnlyContain(c => !c.Open && c.AvailableMinutes == 0 && c.UsedMinutes == 0);
+        occupancy.OverallRate.Should().Be(0);
+    }
+
+    [Test]
+    public async Task Campi_GetCampusOccupancy_Should_get_a_fully_occupied_cell()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var sala01 = await client.CreateClassroom(campus.Id, name: "Sala 01").Success();
+
+        await client.UpdateCampusOpeningHours(campus.Id,
+        [
+            (Day.Monday, [(Hour.H07_00, Hour.H12_00)]),
+        ]);
+
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        // A aula cobre exatamente a única janela do campus.
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, null)]);
+        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, sala01.Id)]);
+
+        // Act
+        var result = await client.GetCampusOccupancy(campus.Id);
+
+        // Assert
+        var occupancy = result.Success;
+
+        var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
+        morning.UsedMinutes.Should().Be(300);
+        morning.AvailableMinutes.Should().Be(300);
+        morning.Rate.Should().Be(100M);
+        morning.Classrooms.First(c => c.Id == sala01.Id).Rate.Should().Be(100M);
+
+        occupancy.OpenCells.Should().Be(1);
+        occupancy.OverallRate.Should().Be(100M);
+    }
+
+    [Test]
+    public async Task Campi_GetCampusOccupancy_Should_count_the_schedules_of_saturday()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var sala01 = await client.CreateClassroom(campus.Id, name: "Sala 01").Success();
+
+        await client.UpdateCampusOpeningHours(campus.Id,
+        [
+            (Day.Saturday, [(Hour.H08_00, Hour.H12_00)]),
+        ]);
+
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        await client.UpdateClassSchedules(@class.Id, [(Day.Saturday, Hour.H08_00, Hour.H10_00, null)]);
+        await client.UpdateClassClassrooms(@class.Id, [(Day.Saturday, Hour.H08_00, Hour.H10_00, sala01.Id)]);
+
+        // Act
+        var result = await client.GetCampusOccupancy(campus.Id);
+
+        // Assert
+        var occupancy = result.Success;
+
+        // Sábado é fechado por padrão, mas quando o campus abre ele conta como qualquer outro dia.
+        var morning = occupancy.Cells.First(c => c.Day == Day.Saturday && c.Shift == Shift.Morning);
+        morning.Open.Should().BeTrue();
+        morning.AvailableMinutes.Should().Be(240);
+        morning.UsedMinutes.Should().Be(120);
+        morning.Rate.Should().Be(50M);
+
+        occupancy.OpenCells.Should().Be(1);
+        occupancy.OverallRate.Should().Be(50M);
+    }
+
+    // Horário que encosta na fronteira do turno pertence a um turno só: 12h–14h é
+    // tarde inteira, e 07h–12h é manhã inteira. Nenhum dos dois vaza para o vizinho.
+    [Test]
+    public async Task Campi_GetCampusOccupancy_Should_not_count_a_schedule_that_ends_where_the_shift_starts()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var sala01 = await client.CreateClassroom(campus.Id, name: "Sala 01").Success();
+
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        await client.UpdateClassSchedules(@class.Id,
+        [
+            (Day.Monday, Hour.H12_00, Hour.H14_00, null),
+            (Day.Tuesday, Hour.H07_00, Hour.H12_00, null),
+        ]);
+        await client.UpdateClassClassrooms(@class.Id,
+        [
+            (Day.Monday, Hour.H12_00, Hour.H14_00, sala01.Id),
+            (Day.Tuesday, Hour.H07_00, Hour.H12_00, sala01.Id),
+        ]);
+
+        // Act
+        var result = await client.GetCampusOccupancy(campus.Id);
+
+        // Assert
+        var occupancy = result.Success;
+
+        // Começa às 12h em ponto: nada na manhã.
+        occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning)
+            .UsedMinutes.Should().Be(0);
+        occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Afternoon)
+            .UsedMinutes.Should().Be(120);
+
+        // Termina às 12h em ponto: nada na tarde.
+        occupancy.Cells.First(c => c.Day == Day.Tuesday && c.Shift == Shift.Morning)
+            .UsedMinutes.Should().Be(300);
+        occupancy.Cells.First(c => c.Day == Day.Tuesday && c.Shift == Shift.Afternoon)
+            .UsedMinutes.Should().Be(0);
+    }
+
+    // A noite do mapa vai das 18h à meia-noite, e não até as 22h do padrão: campus
+    // que fecha mais tarde tem mais denominador, não uma célula estourada.
+    [Test]
+    public async Task Campi_GetCampusOccupancy_Should_get_the_evening_of_a_campus_open_after_22h()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var sala01 = await client.CreateClassroom(campus.Id, name: "Sala 01").Success();
+
+        await client.UpdateCampusOpeningHours(campus.Id,
+        [
+            (Day.Monday, [(Hour.H18_00, Hour.H23_45)]),
+        ]);
+
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H22_00, Hour.H23_45, null)]);
+        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H22_00, Hour.H23_45, sala01.Id)]);
+
+        // Act
+        var result = await client.GetCampusOccupancy(campus.Id);
+
+        // Assert
+        var occupancy = result.Success;
+
+        var evening = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Evening);
+        evening.Open.Should().BeTrue();
+        evening.AvailableMinutes.Should().Be(345);  // 18h–23h45, e não os 240 do padrão
+        evening.UsedMinutes.Should().Be(105);
+        evening.Rate.Should().Be(30.43M);
+
+        occupancy.OpenCells.Should().Be(1);
+    }
+
     #endregion
 }
