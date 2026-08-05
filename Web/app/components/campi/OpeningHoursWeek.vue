@@ -102,7 +102,6 @@ function formatDuration(interval: OpeningHoursWindow) {
             <span class="md:hidden">{{ day.short }}</span>
             <span class="hidden md:inline">{{ day.label }}</span>
           </span>
-          <span v-if="isClosed(day.key)" class="text-[11px] text-dimmed">Fechado</span>
         </div>
       </div>
 
@@ -159,7 +158,7 @@ function formatDuration(interval: OpeningHoursWindow) {
             <div
               v-for="(interval, idx) in windowsOf(day.key)"
               :key="`${interval.start}-${interval.end}-${idx}`"
-              class="absolute inset-x-1 overflow-hidden rounded-md bg-primary/15 px-2 py-1 shadow-sm"
+              class="absolute inset-x-1 overflow-hidden rounded-md bg-primary/15 px-2 pb-1 pt-2 text-center shadow-sm"
               :style="blockStyle(interval)"
             >
               <div class="text-[11px] font-semibold leading-tight tabular-nums text-highlighted">

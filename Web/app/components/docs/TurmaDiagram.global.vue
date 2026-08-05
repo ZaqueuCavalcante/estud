@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<{
     { label: 'Aulas', icon: 'i-lucide-notebook-pen' },
     { label: 'Horários', icon: 'i-lucide-clock' },
     { label: 'Atividades', icon: 'i-lucide-clipboard-list' },
-    { label: 'Salas', icon: 'i-lucide-school', optional: true }
+    { label: 'Salas', icon: 'i-lucide-door-open', optional: true }
   ]
 })
 </script>
@@ -32,7 +32,7 @@ const props = withDefaults(defineProps<{
     >
       <div class="flex items-center gap-3">
         <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-          <UIcon name="i-lucide-door-open" class="size-5 text-primary" />
+          <UIcon name="i-lucide-presentation" class="size-5 text-primary" />
         </span>
         <div class="flex flex-col">
           <span class="text-sm font-medium text-highlighted">Turma</span>

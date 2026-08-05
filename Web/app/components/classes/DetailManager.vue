@@ -9,7 +9,7 @@ const UBadge = resolveComponent('UBadge')
 const props = defineProps<{ classId: string }>()
 
 const breadcrumb = [
-  { label: 'Turmas', to: '/classes', icon: 'i-lucide-door-open' },
+  { label: 'Turmas', to: '/classes', icon: 'i-lucide-presentation' },
   { label: 'Detalhes' },
 ]
 

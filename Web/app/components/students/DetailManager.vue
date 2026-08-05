@@ -241,7 +241,7 @@ const classColumns: TableColumn<StudentClassItem>[] = [
           <DataTable :data="data.classes" :columns="classColumns">
             <template #empty>
               <div class="flex items-center justify-center gap-2 py-6 text-sm text-muted">
-                <UIcon name="i-lucide-door-open" class="size-4" />
+                <UIcon name="i-lucide-presentation" class="size-4" />
                 Aluno não está matriculado em nenhuma turma
               </div>
             </template>

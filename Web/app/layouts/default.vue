@@ -79,7 +79,7 @@ const links = computed<NavigationMenuItem[]>(() => {
       ? [{
           value: TEACHER_CLASSES_GROUP_ID,
           label: 'Turmas',
-          icon: 'i-lucide-door-open',
+          icon: 'i-lucide-presentation',
           children: teacherClassesLinks.value,
         }]
       : []),
@@ -113,7 +113,7 @@ const groups = computed(() => [
     ? [{
         id: 'turmas',
         label: 'Turmas',
-        items: teacherClassesLinks.value.map(item => ({ ...item, icon: 'i-lucide-door-open' })),
+        items: teacherClassesLinks.value.map(item => ({ ...item, icon: 'i-lucide-presentation' })),
       }]
     : []),
 ])

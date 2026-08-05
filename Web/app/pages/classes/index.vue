@@ -122,7 +122,7 @@ const columns: TableColumn<ClassItem>[] = [
         <template #empty>
           <TableEmptyState
             :loading="status === 'pending'"
-            icon="i-lucide-door-open"
+            icon="i-lucide-presentation"
             message="Nenhuma turma cadastrada"
             button-label="Turma"
             @create="createModalOpen = true"

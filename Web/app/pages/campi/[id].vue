@@ -59,7 +59,7 @@ const activeTab = ref('occupancy')
 const tabs = computed(() => [[
   { label: 'Ocupação', icon: 'i-lucide-layout-grid', active: activeTab.value === 'occupancy', onSelect: () => { activeTab.value = 'occupancy' } },
   { label: 'Horários', icon: 'i-lucide-clock', active: activeTab.value === 'opening-hours', onSelect: () => { activeTab.value = 'opening-hours' } },
-  { label: 'Salas', icon: 'i-lucide-school', active: activeTab.value === 'rooms', onSelect: () => { activeTab.value = 'rooms' } },
+  { label: 'Salas', icon: 'i-lucide-door-open', active: activeTab.value === 'rooms', onSelect: () => { activeTab.value = 'rooms' } },
 ]] satisfies NavigationMenuItem[][])
 
 function openEdit(classroom: ClassroomItem) {
@@ -656,7 +656,7 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
             <template #empty>
               <TableEmptyState
                 :loading="false"
-                icon="i-lucide-school"
+                icon="i-lucide-door-open"
                 message="Nenhuma sala neste campus"
                 button-label="Sala"
                 @create="() => { createModalOpen = true }"

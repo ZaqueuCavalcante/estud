@@ -16,4 +16,14 @@ public partial class TestsHttpClient
     {
         return await http.GetAsync("version");
     }
+
+    public async Task<HttpResponseMessage> GetSwaggerDocs()
+    {
+        return await http.GetAsync("swagger/v1/swagger.json");
+    }
+
+    public async Task<HttpResponseMessage> GetOpenApiDocs()
+    {
+        return await http.GetAsync("openapi/v1.json");
+    }
 }

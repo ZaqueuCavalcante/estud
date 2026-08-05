@@ -8,7 +8,7 @@ const config = useRuntimeConfig()
 // "Turmas" não é link: pro professor as turmas vivem no grupo da sidebar, não
 // numa página de listagem.
 const breadcrumb = computed(() => [
-  { label: 'Turmas', icon: 'i-lucide-door-open' },
+  { label: 'Turmas', icon: 'i-lucide-presentation' },
   { label: 'Detalhes', to: `/classes/${props.classId}` },
   { label: 'Atividade' },
 ])
