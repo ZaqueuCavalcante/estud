@@ -44,8 +44,14 @@ const { data: classroomsData, status: classroomsStatus, refresh: refreshClassroo
 const campus = computed(() => campiData.value?.items?.find(c => c.id === campusId) ?? null)
 const classrooms = computed(() => (classroomsData.value ?? []).filter(c => c.campusId === campusId))
 
+// Só a primeira carga tem direito ao spinner de página inteira: o refresh da
+// aba Salas mantém os dados antigos em `data`, e apagar a tela toda por causa
+// dele seria pior do que a espera.
 const status = computed(() =>
-  campiStatus.value === 'pending' || classroomsStatus.value === 'pending' ? 'pending' : 'success',
+  (campiStatus.value === 'pending' && campiData.value === null)
+  || (classroomsStatus.value === 'pending' && classroomsData.value === null)
+    ? 'pending'
+    : 'success',
 )
 
 const createModalOpen = ref(false)
@@ -53,14 +59,6 @@ const editModalOpen = ref(false)
 const campusEditModalOpen = ref(false)
 const openingHoursModalOpen = ref(false)
 const selectedClassroom = ref<ClassroomItem | null>(null)
-
-const activeTab = ref('occupancy')
-
-const tabs = computed(() => [[
-  { label: 'Ocupação', icon: 'i-lucide-layout-grid', active: activeTab.value === 'occupancy', onSelect: () => { activeTab.value = 'occupancy' } },
-  { label: 'Horários', icon: 'i-lucide-clock', active: activeTab.value === 'opening-hours', onSelect: () => { activeTab.value = 'opening-hours' } },
-  { label: 'Salas', icon: 'i-lucide-door-open', active: activeTab.value === 'rooms', onSelect: () => { activeTab.value = 'rooms' } },
-]] satisfies NavigationMenuItem[][])
 
 function openEdit(classroom: ClassroomItem) {
   selectedClassroom.value = classroom
@@ -279,6 +277,29 @@ async function onOpeningHoursSaved() {
   await Promise.all([refreshOpeningHours(), refreshOccupancy()])
 }
 
+// ── Abas ──────────────────────────────────────────────────────────────────────
+// Cada aba busca seus dados de novo ao ser selecionada: o mapa de ocupação e as
+// salas mudam por fora desta tela (turmas alocadas, salas criadas em outro
+// campus), então voltar pra uma aba nunca pode mostrar número velho.
+const activeTab = ref('occupancy')
+
+const tabRefreshers: Record<string, () => Promise<unknown>> = {
+  'occupancy': () => refreshOccupancy(),
+  'opening-hours': () => refreshOpeningHours(),
+  'rooms': () => refreshClassrooms(),
+}
+
+function selectTab(tab: string) {
+  activeTab.value = tab
+  tabRefreshers[tab]?.()
+}
+
+const tabs = computed(() => [[
+  { label: 'Ocupação', icon: 'i-lucide-layout-grid', active: activeTab.value === 'occupancy', onSelect: () => { selectTab('occupancy') } },
+  { label: 'Horários', icon: 'i-lucide-clock', active: activeTab.value === 'opening-hours', onSelect: () => { selectTab('opening-hours') } },
+  { label: 'Salas', icon: 'i-lucide-door-open', active: activeTab.value === 'rooms', onSelect: () => { selectTab('rooms') } },
+]] satisfies NavigationMenuItem[][])
+
 const breadcrumb = [
   { label: 'Campi', to: '/campi', icon: 'i-lucide-map-pin' },
   { label: 'Detalhes' },
@@ -383,7 +404,7 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
                   Cadastre as salas na aba <button
                     type="button"
                     class="font-medium text-primary underline underline-offset-2 hover:text-primary/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    @click="() => { activeTab = 'rooms' }"
+                    @click="() => { selectTab('rooms') }"
                   >Salas</button> e defina
                 </template>
                 <template v-else>
@@ -546,21 +567,6 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
                 </template>
               </div>
             </div>
-
-            <!-- Mapa encolhido por configuração, não por falta de dado. Sem esta
-                 nota o gestor lê as colunas ausentes como bug. -->
-            <p v-if="hasClosedCells" class="flex flex-wrap items-center gap-1 text-xs text-muted">
-              <span>
-                O mapa cobre só os {{ data.openCells }} turnos em que este campus abre.
-              </span>
-              <button
-                type="button"
-                class="font-medium text-primary underline underline-offset-2 hover:text-primary/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                @click="() => { activeTab = 'opening-hours' }"
-              >
-                Ajustar horários
-              </button>
-            </p>
           </section>
 
           <!-- Drilldown inline (micro) — sem sala não há o que detalhar -->

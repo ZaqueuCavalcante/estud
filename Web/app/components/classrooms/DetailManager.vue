@@ -207,10 +207,11 @@ const classColumns: TableColumn<ClassroomScheduleItem>[] = [
 
           <DataTable :data="allocatedClasses" :columns="classColumns">
             <template #empty>
-              <div class="flex items-center justify-center gap-2 py-6 text-sm text-muted">
-                <UIcon name="i-lucide-presentation" class="size-4" />
-                Nenhuma turma alocada nesta sala
-              </div>
+              <TableEmptyState
+                :loading="false"
+                icon="i-lucide-presentation"
+                message="Nenhuma turma alocada nesta sala"
+              />
             </template>
           </DataTable>
         </section>

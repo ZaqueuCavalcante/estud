@@ -26,8 +26,11 @@ export function useCampusOccupancy(campusId: number) {
   )
 
   // `server: false` deixa o status em 'idle' até o onMounted disparar a busca,
-  // então o carregando cobre os dois estados.
-  const loading = computed(() => status.value === 'idle' || status.value === 'pending')
+  // então o carregando cobre os dois estados. Já com dado em tela o refresh é
+  // silencioso — trocar o mapa por um spinner a cada volta na aba só pisca.
+  const loading = computed(() =>
+    (status.value === 'idle' || status.value === 'pending') && data.value === null,
+  )
 
   return { occupancy: data, status, loading, error, refresh, mock, mockNames }
 }
