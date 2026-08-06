@@ -78,7 +78,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var campus = await client.CreateCampus().Success();
-        var sala = await client.CreateClassroom(campus.Id, name: "Sala 01", capacity: 6).Success();
+        var classroom = await client.CreateClassroom(campus.Id, name: "Sala 01", capacity: 6).Success();
 
         await client.UpdateCampusOpeningHours(campus.Id, [(Day.Monday, [(Hour.H07_00, Hour.H22_00)])]);
 
@@ -87,21 +87,33 @@ public partial class IntegrationTests
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
         await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, null)]);
+        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, classroom.Id)]);
 
         var studentA = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var studentB = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var studentC = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        await client.AssignStudentToClass(studentA.Id, @class.Id);
-        await client.AssignStudentToClass(studentB.Id, @class.Id);
-        await client.AssignStudentToClass(studentC.Id, @class.Id);
+        await client.AssignStudentToClass(studentA.Id, @class.Id).Success();
+        await client.AssignStudentToClass(studentB.Id, @class.Id).Success();
+        await client.AssignStudentToClass(studentC.Id, @class.Id).Success();
 
         // Act
         var result = await client.GetCampusOccupancy(campus.Id);
 
         // Assert
         var occupancy = result.Success;
-        occupancy.OverallRate.Should().Be(1/6M);
+        occupancy.OverallRate.Should().Be(16.67M);
     }
+
+
+
+
+
+
+
+
+
+
+
 
     [Test]
     public async Task Campi_GetCampusOccupancy_Should_get_campus_occupancy_without_allocated_classes()

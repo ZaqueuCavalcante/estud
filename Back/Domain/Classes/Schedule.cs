@@ -4,16 +4,16 @@ namespace Estud.Back.Domain.Classes;
 
 /// <summary>
 /// Representa um horário genérico. <br/>
-/// Pode ser o horário das aulas de uma turma presencial (com apenas <see cref="TeacherId"/> nulo). <br/>
-/// Pode ser o horário das aulas de uma turma online (com <see cref="ClassroomId"/> e <see cref="TeacherId"/> nulos). <br/>
+/// Pode ser o horário das aulas de uma turma presencial. <br/>
+/// Pode ser o horário das aulas de uma turma online (com <see cref="ClassroomId"/> nulo). <br/>
 /// Pode ser o horário preferencial de um professor antes do início das aulas (com <see cref="ClassId"/> e <see cref="ClassroomId"/> nulos). <br/>
 /// </summary>
 public class Schedule
 {
     public int Id { get; set; }
     public int? ClassId { get; set; }
-    public int? ClassroomId { get; set; }
     public int? TeacherId { get; set; }
+    public int? ClassroomId { get; set; }
     public Day Day { get; set; }
     public Hour Start { get; set; }
     public Hour End { get; set; }
@@ -23,20 +23,26 @@ public class Schedule
 
     private Schedule() {}
 
-    public Schedule(
+    private Schedule(
         Day day,
         Hour startAt,
-        Hour endAt
+        Hour endAt,
+        int? teacherId = null,
+        int? classroomId = null
     ) {
         Day = day;
         Start = startAt;
         End = endAt;
+        TeacherId = teacherId;
+        ClassroomId = classroomId;
     }
 
     public static OneOf<Schedule, EstudError> New(
         Day day,
         Hour startAt,
-        Hour endAt
+        Hour endAt,
+        int? teacherId = null,
+        int? classroomId = null
     ) {
         if (!day.IsValid()) return new InvalidDay();
         if (!startAt.IsValid()) return new InvalidHour();
@@ -45,7 +51,7 @@ public class Schedule
         if (startAt == endAt || endAt < startAt)
             return new InvalidSchedule();
 
-        return new Schedule(day, startAt, endAt);
+        return new Schedule(day, startAt, endAt, teacherId, classroomId);
     }
 
     public int GetDiff()

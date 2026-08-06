@@ -182,29 +182,6 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Classes_UpdateClassSchedules_Should_not_update_schedules_when_a_slot_has_no_teacher_and_the_class_has_two_teachers()
-    {
-        // Arrange
-        var client = await _back.LoggedAsDirector();
-        var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
-
-        var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
-        var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(chico.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
-
-        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
-        await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
-
-        // Act
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
-
-        // Assert
-        result.ShouldBeError(ScheduleTeacherRequired.I);
-    }
-
-    [Test]
     public async Task Classes_UpdateClassSchedules_Should_not_update_schedules_when_a_slot_teacher_is_not_in_the_class()
     {
         // Arrange

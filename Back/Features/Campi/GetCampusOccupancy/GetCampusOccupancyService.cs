@@ -23,6 +23,14 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
         var classes = await ctx.Classes.AsNoTracking().Include(x => x.Schedules)
             .Where(x => x.InstitutionId == institutionId && x.Status != ClassStatus.Finalized).ToListAsync();
 
+        // A ocupação geral é por assento, então cada horário vale quantos alunos a turma tem.
+        var classIds = classes.ConvertAll(x => x.Id);
+        var studentsByClass = await ctx.ClassStudents.AsNoTracking()
+            .Where(x => classIds.Contains(x.ClassId))
+            .GroupBy(x => x.ClassId)
+            .Select(g => new { ClassId = g.Key, Students = g.Count() })
+            .ToDictionaryAsync(x => x.ClassId, x => x.Students);
+
         // Turma online tem ClassroomId nulo, então já cai fora aqui.
         var classroomIds = classrooms.Select(c => c.Id).ToHashSet();
         var schedules = classes.SelectMany(x => x.Schedules)
@@ -33,9 +41,10 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
             .GroupBy(s => (ClassroomId: s.ClassroomId!.Value, s.Day))
             .ToDictionary(g => g.Key, g => g.ToList());
 
-        var totalUsed = 0;
         var openCells = 0;
-        var totalAvailable = 0;
+        var usedSeatMinutes = 0;
+        var availableSeatMinutes = 0;
+        var totalCapacity = classrooms.Sum(c => c.Capacity);
         var openingHours = new WeeklyOpeningHours(campus.OpeningHours);
         var cells = new List<CampusOccupancyCellOut>(Days.Length * Shifts.Length);
 
@@ -48,26 +57,39 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                 var open = openMinutes > 0;
                 if (open) openCells++;
 
-                var cellClassrooms = classrooms.ConvertAll(classroom =>
-                {
-                    var classroomUsed = schedulesByClassroomDay.TryGetValue((classroom.Id, day), out var daySchedules)
-                        ? daySchedules.Sum(s => UsedInMinutes(s, shift, day, openingHours))
-                        : 0;
+                var cellClassrooms = new List<CampusOccupancyClassroomOut>(classrooms.Count);
 
-                    return new CampusOccupancyClassroomOut
+                foreach (var classroom in classrooms)
+                {
+                    var classroomUsed = 0;
+
+                    if (schedulesByClassroomDay.TryGetValue((classroom.Id, day), out var daySchedules))
+                    {
+                        foreach (var schedule in daySchedules)
+                        {
+                            var minutes = UsedInMinutes(schedule, shift, day, openingHours);
+                            classroomUsed += minutes;
+
+                            // Sala alocada não é sala cheia: na ocupação geral o que conta é o
+                            // assento ocupado. Uma sala de 6 lugares com uma turma de 3 alunos
+                            // está pela metade, mesmo com o horário inteiro tomado.
+                            usedSeatMinutes += minutes * StudentsIn(schedule);
+                        }
+                    }
+
+                    cellClassrooms.Add(new CampusOccupancyClassroomOut
                     {
                         Id = classroom.Id,
                         Name = classroom.Name,
                         UsedMinutes = classroomUsed,
                         Rate = ToRate(classroomUsed, openMinutes),
-                    };
-                });
+                    });
+                }
 
                 var available = classrooms.Count * openMinutes;
                 var used = cellClassrooms.Sum(c => c.UsedMinutes);
 
-                totalUsed += used;
-                totalAvailable += available;
+                availableSeatMinutes += totalCapacity * openMinutes;
 
                 cells.Add(new CampusOccupancyCellOut
                 {
@@ -89,8 +111,13 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
             Campus = campus.Name,
             OpenCells = openCells,
             TotalClassrooms = classrooms.Count,
-            OverallRate = ToRate(totalUsed, totalAvailable),
+            OverallRate = ToRate(usedSeatMinutes, availableSeatMinutes),
         };
+
+        int StudentsIn(Schedule schedule) =>
+            schedule.ClassId != null && studentsByClass.TryGetValue(schedule.ClassId.Value, out var students)
+                ? students
+                : 0;
     }
 
     // Quanto do horário cai dentro da janela do turno e, ao mesmo tempo, dentro do

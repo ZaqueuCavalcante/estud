@@ -30,4 +30,10 @@ public class UpdateClassScheduleIn
     /// Ignorado quando a turma não tem professores.
     /// </summary>
     public int? TeacherId { get; set; }
+
+    /// <summary>
+    /// Sala que comporta a turma neste horário.
+    /// Ignorado quando a turma é online.
+    /// </summary>
+    public int? ClassroomId { get; set; }
 }

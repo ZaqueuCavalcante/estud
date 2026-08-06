@@ -30,7 +30,6 @@ internal class ErrorsExamples : ErrorExamplesProvider<
     InvalidHour,
     InvalidSchedule,
     ConflictingSchedules,
-    ScheduleTeacherRequired,
     InvalidScheduleTeacher,
     TeacherScheduleConflict
 >;

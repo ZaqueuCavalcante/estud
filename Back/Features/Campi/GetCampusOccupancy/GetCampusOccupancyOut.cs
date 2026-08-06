@@ -15,7 +15,9 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
     public int TotalClassrooms { get; set; }
 
     /// <summary>
-    /// Ocupação geral do campus, em porcentagem (0 a 100)
+    /// Ocupação geral do campus, em porcentagem (0 a 100).
+    /// Conta assento, e não sala: é o total de assentos-minuto ocupados pelas turmas
+    /// sobre os assentos-minuto que as salas oferecem no horário de funcionamento do campus.
     /// </summary>
     public decimal OverallRate { get; set; }
 

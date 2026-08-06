@@ -16,57 +16,64 @@ public class UpdateClassSchedulesService(EstudDbContext ctx) : IEstudService
 
         if (@class.Status is ClassStatus.Started or ClassStatus.Finalized) return ClassAlreadyStarted.I;
 
-        var schedulesResult = data.Schedules.ConvertAll(x => (x.Day, x.Start, x.End)).ToSchedules();
+        var schedulesResult = data.Schedules.ConvertAll(x => (x.Day, x.Start, x.End, x.TeacherId, x.ClassroomId)).ToSchedules();
         if (schedulesResult.IsError) return schedulesResult.Error;
-        var newSchedules = schedulesResult.Success;
+        var schedules = schedulesResult.Success;
 
         var teacherIds = @class.Teachers.Select(t => t.Id).ToList();
+        var targetTeacherIds = schedules.Where(s => s.TeacherId != null).Distinct().Select(s => s.TeacherId!.Value).ToList();
+        if (!targetTeacherIds.IsSubsetOf(teacherIds)) return InvalidScheduleTeacher.I;
 
-        // Resolve o professor de cada horário (invariante: TeacherId ∈ Class.Teachers).
-        // - 0 professores: fica nulo.
-        // - 1 professor: preenche automaticamente.
-        // - 2 professores: obrigatório.
-        for (var i = 0; i < newSchedules.Count; i++)
-        {
-            var teacherId = data.Schedules[i].TeacherId;
-            if (teacherIds.Count == 0)
-            {
-                newSchedules[i].TeacherId = null;
-            }
-            else if (teacherIds.Count == 1)
-            {
-                newSchedules[i].TeacherId = teacherIds[0];
-            }
-            else
-            {
-                if (teacherId == null) return ScheduleTeacherRequired.I;
-                if (!teacherIds.Contains(teacherId.Value)) return InvalidScheduleTeacher.I;
-                newSchedules[i].TeacherId = teacherId;
-            }
-        }
-
-        // Conflito de agenda por professor: cada professor da turma não pode cobrir, em outra
-        // turma não finalizada, um horário que choque com os que ele cobre nesta turma.
-        foreach (var teacherId in teacherIds)
-        {
-            var slotsForTeacher = newSchedules.Where(s => s.TeacherId == teacherId).ToList();
-            if (slotsForTeacher.Count == 0) continue;
-
-            var otherSchedules = await ctx.Schedules.AsNoTracking()
-                .Where(s => s.ClassId != null && s.ClassId != classId
-                    && s.Class!.InstitutionId == institutionId
-                    && s.Class.Status != ClassStatus.Finalized
-                    && (s.TeacherId == teacherId
-                        || (s.TeacherId == null && s.Class.Teachers.Any(t => t.Id == teacherId))))
-                .ToListAsync();
-
-            if (slotsForTeacher.Any(ns => otherSchedules.Any(ns.Conflict)))
-                return TeacherScheduleConflict.I;
-        }
+        var teacherSchedulesResult = await ValidateTeacherSchedules(institutionId, classId, teacherIds, schedules);
+        if (teacherSchedulesResult.IsError) return teacherSchedulesResult.Error;
 
         ctx.Schedules.RemoveRange(@class.Schedules);
-        @class.Schedules = newSchedules;
+        @class.Schedules = schedules;
         await ctx.SaveChangesAsync();
+
+        return EstudSuccess.I;
+    }
+
+    private async Task<OneOf<EstudSuccess, EstudError>> ValidateTeacherSchedules(
+        int institutionId,
+        int classId,
+        List<int> teacherIds,
+        List<Schedule> schedules)
+    {
+        const string sql = @"
+            SELECT
+                s.*
+            FROM
+                estud.classes c
+            INNER JOIN
+                estud.classes__teachers ct ON ct.class_id = c.id
+            INNER JOIN
+                estud.schedules s ON s.class_id = c.id
+            WHERE
+                c.institution_id = {0}
+                    AND
+                c.id <> {1}
+                    AND
+                c.status <> {2}
+                    AND
+                ct.teacher_id = ANY({3})
+            GROUP BY
+                s.id
+        ";
+        var teacherSchedules = await ctx.Schedules
+            .FromSqlRaw(sql, institutionId, classId, ClassStatus.Finalized.ToInt(), teacherIds.ToArray())
+            .AsNoTracking().ToListAsync();
+
+        // Conflito de agenda por professor
+        foreach (var teacherId in teacherIds)
+        {
+            var slotsForTeacher = schedules.Where(s => s.TeacherId == teacherId).ToList();
+            if (slotsForTeacher.Count == 0) continue;
+
+            var otherSchedules = teacherSchedules.Where(x => x.TeacherId == teacherId).ToList();
+
+            if (slotsForTeacher.Any(x => otherSchedules.Any(x.Conflict))) return TeacherScheduleConflict.I;
+        }
 
         return EstudSuccess.I;
     }
