@@ -76,8 +76,7 @@ public partial class IntegrationTests
         await directorClient.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
         await directorClient.AssignCampiToTeacher(teacher.Id, [campus.Id]);
         await directorClient.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await directorClient.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
-        await directorClient.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+        await directorClient.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
 
         await directorClient.ReleaseClassForEnrollment(@class.Id);
 
@@ -169,15 +168,13 @@ public partial class IntegrationTests
 
         var classA = await directorClient.CreateClass(disciplineA.Id, period.Id, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(classA.Id, [teacherA.Id]);
-        await directorClient.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
-        await directorClient.UpdateClassClassrooms(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+        await directorClient.UpdateClassSchedulesWithClassrooms(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
         await directorClient.ReleaseClassForEnrollment(classA.Id);
 
         // Mesma sala, mesmo dia, outro turno.
         var classB = await directorClient.CreateClass(disciplineB.Id, period.Id, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(classB.Id, [teacherB.Id]);
-        await directorClient.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H19_00, Hour.H22_00, null)]);
-        await directorClient.UpdateClassClassrooms(classB.Id, [(Day.Monday, Hour.H19_00, Hour.H22_00, sala01.Id)]);
+        await directorClient.UpdateClassSchedulesWithClassrooms(classB.Id, [(Day.Monday, Hour.H19_00, Hour.H22_00, null, sala01.Id)]);
         await directorClient.ReleaseClassForEnrollment(classB.Id);
 
         var studentA = await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -306,8 +303,7 @@ public partial class IntegrationTests
         {
             var @class = await directorClient.CreateClass(disciplineId, period.Id, campusId: campus.Id).Success();
             await directorClient.UpdateClassTeachers(@class.Id, [teacherId]);
-            await directorClient.UpdateClassSchedules(@class.Id, [(day, Hour.H07_00, Hour.H10_00, null)]);
-            await directorClient.UpdateClassClassrooms(@class.Id, [(day, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+            await directorClient.UpdateClassSchedulesWithClassrooms(@class.Id, [(day, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
             await directorClient.ReleaseClassForEnrollment(@class.Id);
             await directorClient.AssignStudentToClass(student.Id, @class.Id);
             await directorClient.StartClass(@class.Id);
@@ -417,8 +413,7 @@ public partial class IntegrationTests
         {
             var @class = await directorClient.CreateClass(disciplineId, period.Id, campusId: campus.Id).Success();
             await directorClient.UpdateClassTeachers(@class.Id, [teacherId]);
-            await directorClient.UpdateClassSchedules(@class.Id, [(day, Hour.H07_00, Hour.H10_00, null)]);
-            await directorClient.UpdateClassClassrooms(@class.Id, [(day, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+            await directorClient.UpdateClassSchedulesWithClassrooms(@class.Id, [(day, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
             await directorClient.ReleaseClassForEnrollment(@class.Id);
             await directorClient.AssignStudentToClass(studentA.Id, @class.Id);
             await directorClient.StartClass(@class.Id);
@@ -428,15 +423,10 @@ public partial class IntegrationTests
         // à tarde — terça na Sala 02 e quinta na Sala 01.
         var secondClass = await directorClient.CreateClass(algoritmos.Id, period.Id, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(secondClass.Id, [teacherB.Id]);
-        await directorClient.UpdateClassSchedules(secondClass.Id,
+        await directorClient.UpdateClassSchedulesWithClassrooms(secondClass.Id,
         [
-            (Day.Tuesday, Hour.H13_00, Hour.H16_00, null),
-            (Day.Thursday, Hour.H13_00, Hour.H16_00, null),
-        ]);
-        await directorClient.UpdateClassClassrooms(secondClass.Id,
-        [
-            (Day.Tuesday, Hour.H13_00, Hour.H16_00, sala02.Id),
-            (Day.Thursday, Hour.H13_00, Hour.H16_00, sala01.Id),
+            (Day.Tuesday, Hour.H13_00, Hour.H16_00, null, sala02.Id),
+            (Day.Thursday, Hour.H13_00, Hour.H16_00, null, sala01.Id),
         ]);
         await directorClient.ReleaseClassForEnrollment(secondClass.Id);
 
@@ -586,27 +576,23 @@ public partial class IntegrationTests
         // Campus 1: Geometria segunda de manhã na Sala 01, Algoritmos terça de manhã na Sala 02.
         var geometriaClass = await directorClient.CreateClass(geometria.Id, period.Id, campusId: campusA.Id).Success();
         await directorClient.UpdateClassTeachers(geometriaClass.Id, [teacherA.Id]);
-        await directorClient.UpdateClassSchedules(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
-        await directorClient.UpdateClassClassrooms(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+        await directorClient.UpdateClassSchedulesWithClassrooms(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
         await directorClient.ReleaseClassForEnrollment(geometriaClass.Id);
 
         var algoritmosClass = await directorClient.CreateClass(algoritmos.Id, period.Id, campusId: campusA.Id).Success();
         await directorClient.UpdateClassTeachers(algoritmosClass.Id, [teacherB.Id]);
-        await directorClient.UpdateClassSchedules(algoritmosClass.Id, [(Day.Tuesday, Hour.H07_00, Hour.H10_00, null)]);
-        await directorClient.UpdateClassClassrooms(algoritmosClass.Id, [(Day.Tuesday, Hour.H07_00, Hour.H10_00, sala02.Id)]);
+        await directorClient.UpdateClassSchedulesWithClassrooms(algoritmosClass.Id, [(Day.Tuesday, Hour.H07_00, Hour.H10_00, null, sala02.Id)]);
         await directorClient.ReleaseClassForEnrollment(algoritmosClass.Id);
 
         // Campus 2: Didática segunda de manhã na Sala 03, Psicologia sexta à tarde na Sala 04.
         var didaticaClass = await directorClient.CreateClass(didatica.Id, period.Id, campusId: campusB.Id).Success();
         await directorClient.UpdateClassTeachers(didaticaClass.Id, [teacherC.Id]);
-        await directorClient.UpdateClassSchedules(didaticaClass.Id, [(Day.Monday, Hour.H08_00, Hour.H11_00, null)]);
-        await directorClient.UpdateClassClassrooms(didaticaClass.Id, [(Day.Monday, Hour.H08_00, Hour.H11_00, sala03.Id)]);
+        await directorClient.UpdateClassSchedulesWithClassrooms(didaticaClass.Id, [(Day.Monday, Hour.H08_00, Hour.H11_00, null, sala03.Id)]);
         await directorClient.ReleaseClassForEnrollment(didaticaClass.Id);
 
         var psicologiaClass = await directorClient.CreateClass(psicologia.Id, period.Id, campusId: campusB.Id).Success();
         await directorClient.UpdateClassTeachers(psicologiaClass.Id, [teacherB.Id]);
-        await directorClient.UpdateClassSchedules(psicologiaClass.Id, [(Day.Friday, Hour.H14_00, Hour.H16_00, null)]);
-        await directorClient.UpdateClassClassrooms(psicologiaClass.Id, [(Day.Friday, Hour.H14_00, Hour.H16_00, sala04.Id)]);
+        await directorClient.UpdateClassSchedulesWithClassrooms(psicologiaClass.Id, [(Day.Friday, Hour.H14_00, Hour.H16_00, null, sala04.Id)]);
         await directorClient.ReleaseClassForEnrollment(psicologiaClass.Id);
 
         var studentA = await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -712,8 +698,7 @@ public partial class IntegrationTests
 
         var @class = await directorClient.CreateClass(discipline.Id, firstPeriod.Id, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await directorClient.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
-        await directorClient.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+        await directorClient.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
         await directorClient.ReleaseClassForEnrollment(@class.Id);
 
         var student = await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -823,14 +808,12 @@ public partial class IntegrationTests
 
         var geometriaClass = await directorClient.CreateClass(geometria.Id, period.Id, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(geometriaClass.Id, [teacherA.Id]);
-        await directorClient.UpdateClassSchedules(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
-        await directorClient.UpdateClassClassrooms(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+        await directorClient.UpdateClassSchedulesWithClassrooms(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
         await directorClient.ReleaseClassForEnrollment(geometriaClass.Id);
 
         var algoritmosClass = await directorClient.CreateClass(algoritmos.Id, period.Id, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(algoritmosClass.Id, [teacherB.Id]);
-        await directorClient.UpdateClassSchedules(algoritmosClass.Id, [(Day.Wednesday, Hour.H19_00, Hour.H22_00, null)]);
-        await directorClient.UpdateClassClassrooms(algoritmosClass.Id, [(Day.Wednesday, Hour.H19_00, Hour.H22_00, sala02.Id)]);
+        await directorClient.UpdateClassSchedulesWithClassrooms(algoritmosClass.Id, [(Day.Wednesday, Hour.H19_00, Hour.H22_00, null, sala02.Id)]);
         await directorClient.ReleaseClassForEnrollment(algoritmosClass.Id);
 
         // Aluno com um responsável só.
@@ -955,14 +938,12 @@ public partial class IntegrationTests
         // Turma cheia: 40 vagas, 3 matriculados.
         var fullClass = await directorClient.CreateClass(geometria.Id, period.Id, vacancies: 40, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(fullClass.Id, [teacherA.Id]);
-        await directorClient.UpdateClassSchedules(fullClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
-        await directorClient.UpdateClassClassrooms(fullClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+        await directorClient.UpdateClassSchedulesWithClassrooms(fullClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
 
         // Turma vazia: mesmas 40 vagas, 1 matriculado — candidata a cancelamento.
         var emptyClass = await directorClient.CreateClass(algoritmos.Id, period.Id, vacancies: 40, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(emptyClass.Id, [teacherB.Id]);
-        await directorClient.UpdateClassSchedules(emptyClass.Id, [(Day.Tuesday, Hour.H19_00, Hour.H22_00, null)]);
-        await directorClient.UpdateClassClassrooms(emptyClass.Id, [(Day.Tuesday, Hour.H19_00, Hour.H22_00, sala02.Id)]);
+        await directorClient.UpdateClassSchedulesWithClassrooms(emptyClass.Id, [(Day.Tuesday, Hour.H19_00, Hour.H22_00, null, sala02.Id)]);
 
         // Antes de liberar, nenhum aluno entra.
         var studentBeforeRelease = await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -1091,8 +1072,7 @@ public partial class IntegrationTests
         {
             var @class = await directorClient.CreateClass(disciplineId, period.Id, campusId: campus.Id).Success();
             await directorClient.UpdateClassTeachers(@class.Id, [busyTeacher.Id]);
-            await directorClient.UpdateClassSchedules(@class.Id, [(day, Hour.H07_00, Hour.H11_00, null)]);
-            await directorClient.UpdateClassClassrooms(@class.Id, [(day, Hour.H07_00, Hour.H11_00, sala01.Id)]);
+            await directorClient.UpdateClassSchedulesWithClassrooms(@class.Id, [(day, Hour.H07_00, Hour.H11_00, null, sala01.Id)]);
             await directorClient.ReleaseClassForEnrollment(@class.Id);
             await directorClient.AssignStudentToClass(student.Id, @class.Id);
             await directorClient.StartClass(@class.Id);
@@ -1100,8 +1080,7 @@ public partial class IntegrationTests
 
         var lightClass = await directorClient.CreateClass(disciplines[5], period.Id, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(lightClass.Id, [lightTeacher.Id]);
-        await directorClient.UpdateClassSchedules(lightClass.Id, [(Day.Monday, Hour.H19_00, Hour.H21_00, null)]);
-        await directorClient.UpdateClassClassrooms(lightClass.Id, [(Day.Monday, Hour.H19_00, Hour.H21_00, sala01.Id)]);
+        await directorClient.UpdateClassSchedulesWithClassrooms(lightClass.Id, [(Day.Monday, Hour.H19_00, Hour.H21_00, null, sala01.Id)]);
         await directorClient.ReleaseClassForEnrollment(lightClass.Id);
         await directorClient.AssignStudentToClass(student.Id, lightClass.Id);
         await directorClient.StartClass(lightClass.Id);
@@ -1313,8 +1292,7 @@ public partial class IntegrationTests
         {
             var @class = await directorClient.CreateClass(item.DisciplineId, firstPeriod.Id, vacancies: 100, campusId: item.CampusId).Success();
             await directorClient.UpdateClassTeachers(@class.Id, [item.TeacherId]);
-            await directorClient.UpdateClassSchedules(@class.Id, [(item.Day, item.Start, item.End, null)]);
-            await directorClient.UpdateClassClassrooms(@class.Id, [(item.Day, item.Start, item.End, item.ClassroomId)]);
+            await directorClient.UpdateClassSchedulesWithClassrooms(@class.Id, [(item.Day, item.Start, item.End, null, item.ClassroomId)]);
             await directorClient.ReleaseClassForEnrollment(@class.Id);
             classIds.Add(@class.Id);
         }

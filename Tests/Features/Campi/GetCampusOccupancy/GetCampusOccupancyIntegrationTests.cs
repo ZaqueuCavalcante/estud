@@ -86,8 +86,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, null)]);
-        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, classroom.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, null, classroom.Id)]);
 
         var studentA = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var studentB = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -169,15 +168,10 @@ public partial class IntegrationTests
 
         // O segundo horário cruza a fronteira manhã/tarde de propósito: 10h–14h
         // são 120min de manhã (até 12h) e 120min à tarde.
-        await client.UpdateClassSchedules(@class.Id,
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, null),
-            (Day.Monday, Hour.H10_00, Hour.H14_00, null),
-        ]);
-        await client.UpdateClassClassrooms(@class.Id,
-        [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id),
-            (Day.Monday, Hour.H10_00, Hour.H14_00, sala02.Id),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id),
+            (Day.Monday, Hour.H10_00, Hour.H14_00, null, sala02.Id),
         ]);
 
         // Act
@@ -231,8 +225,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: otherCampus.Id).Success();
 
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
-        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, otherClassroom.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, otherClassroom.Id)]);
 
         // Act
         var result = await client.GetCampusOccupancy(campus.Id);
@@ -290,8 +283,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H14_00, null)]);
-        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H14_00, sala01.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H14_00, null, sala01.Id)]);
 
         // Act
         var result = await client.GetCampusOccupancy(campus.Id);
@@ -336,8 +328,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
-        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
 
         // Act
         var result = await client.GetCampusOccupancy(campus.Id);
@@ -368,8 +359,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H21_00, Hour.H23_00, null)]);
-        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H21_00, Hour.H23_00, sala01.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Monday, Hour.H21_00, Hour.H23_00, null, sala01.Id)]);
 
         // Act
         var result = await client.GetCampusOccupancy(campus.Id);
@@ -430,12 +420,10 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
 
         var classA = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
-        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H09_00, null)]);
-        await client.UpdateClassClassrooms(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H09_00, sala01.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H09_00, null, sala01.Id)]);
 
         var classB = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
-        await client.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H10_00, Hour.H12_00, null)]);
-        await client.UpdateClassClassrooms(classB.Id, [(Day.Monday, Hour.H10_00, Hour.H12_00, sala01.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(classB.Id, [(Day.Monday, Hour.H10_00, Hour.H12_00, null, sala01.Id)]);
 
         // Act
         var result = await client.GetCampusOccupancy(campus.Id);
@@ -472,10 +460,7 @@ public partial class IntegrationTests
 
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
         await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
-
-        // A sala precisa entrar antes do início: turma iniciada não aceita mais alocação.
-        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
 
         await client.ReleaseClassForEnrollment(@class.Id);
         await client.StartClass(@class.Id);
@@ -506,8 +491,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
-        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
 
         // Não existe endpoint de finalizar turma, então o status vai direto no banco.
         await using (var ctx = _back.GetDbContext())
@@ -573,8 +557,7 @@ public partial class IntegrationTests
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
         // 11h–19h atravessa as duas janelas e o buraco entre elas.
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H11_00, Hour.H19_00, null)]);
-        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H11_00, Hour.H19_00, sala01.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Monday, Hour.H11_00, Hour.H19_00, null, sala01.Id)]);
 
         // Act
         var result = await client.GetCampusOccupancy(campus.Id);
@@ -618,8 +601,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
-        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, sala01.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
 
         // Campus fechado depois da turma já alocada.
         await client.UpdateCampusOpeningHours(campus.Id, []);
@@ -656,8 +638,7 @@ public partial class IntegrationTests
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
         // A aula cobre exatamente a única janela do campus.
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, null)]);
-        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, sala01.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, null, sala01.Id)]);
 
         // Act
         var result = await client.GetCampusOccupancy(campus.Id);
@@ -692,8 +673,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
-        await client.UpdateClassSchedules(@class.Id, [(Day.Saturday, Hour.H08_00, Hour.H10_00, null)]);
-        await client.UpdateClassClassrooms(@class.Id, [(Day.Saturday, Hour.H08_00, Hour.H10_00, sala01.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Saturday, Hour.H08_00, Hour.H10_00, null, sala01.Id)]);
 
         // Act
         var result = await client.GetCampusOccupancy(campus.Id);
@@ -726,15 +706,10 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
-        await client.UpdateClassSchedules(@class.Id,
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id,
         [
-            (Day.Monday, Hour.H12_00, Hour.H14_00, null),
-            (Day.Tuesday, Hour.H07_00, Hour.H12_00, null),
-        ]);
-        await client.UpdateClassClassrooms(@class.Id,
-        [
-            (Day.Monday, Hour.H12_00, Hour.H14_00, sala01.Id),
-            (Day.Tuesday, Hour.H07_00, Hour.H12_00, sala01.Id),
+            (Day.Monday, Hour.H12_00, Hour.H14_00, null, sala01.Id),
+            (Day.Tuesday, Hour.H07_00, Hour.H12_00, null, sala01.Id),
         ]);
 
         // Act
@@ -775,8 +750,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H22_00, Hour.H23_45, null)]);
-        await client.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H22_00, Hour.H23_45, sala01.Id)]);
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id, [(Day.Monday, Hour.H22_00, Hour.H23_45, null, sala01.Id)]);
 
         // Act
         var result = await client.GetCampusOccupancy(campus.Id);

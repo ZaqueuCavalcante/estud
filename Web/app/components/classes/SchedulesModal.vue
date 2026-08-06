@@ -1,9 +1,19 @@
 <script setup lang="ts">
 import type { ClassSchedule, ClassTeacherItem } from '~/types/classes'
 
+interface ClassroomOption {
+  id: number
+  name: string
+  campusId: number
+  campus: string
+  capacity: number
+}
+
 const open = defineModel<boolean>('open', { default: false })
 const props = defineProps<{
   classId: number
+  campusId: number | null
+  vacancies: number
   schedules: ClassSchedule[]
   teachers: ClassTeacherItem[]
 }>()
@@ -14,9 +24,51 @@ const config = useRuntimeConfig()
 const toast = useToast()
 const saving = ref(false)
 
-// Só faz sentido escolher o professor do horário quando a turma tem mais de um.
-// Com 0 ou 1 professor, o backend resolve sozinho (nulo ou o único professor).
-const pickTeacher = computed(() => props.teachers.length >= 2)
+// Turma sem professores não tem o que escolher; com qualquer professor definido,
+// o horário sempre mostra a quem ele pertence.
+const pickTeacher = computed(() => props.teachers.length >= 1)
+
+// O professor só é obrigatório quando a turma tem mais de um — com um só, o backend
+// resolve sozinho. O campo fica vazio até o vínculo vir da API.
+const requireTeacher = computed(() => props.teachers.length >= 2)
+
+// 0 = "Sem sala" — sentinela para o horário sem sala alocada.
+const NO_CLASSROOM = 0
+
+const classrooms = ref<ClassroomOption[]>([])
+const loadingClassrooms = ref(false)
+
+// Só as salas do campus da turma podem sediar seus horários.
+const campusClassrooms = computed(() =>
+  props.campusId == null ? [] : classrooms.value.filter(c => c.campusId === props.campusId),
+)
+
+// Turma sem campus (online) não usa sala.
+const pickClassroom = computed(() => props.campusId != null && campusClassrooms.value.length > 0)
+
+const classroomOptions = computed(() => [
+  { label: 'Sem sala', value: NO_CLASSROOM },
+  ...campusClassrooms.value.map(c => ({
+    label: `${c.name} · ${c.capacity} lugares`,
+    value: c.id,
+  })),
+])
+
+async function fetchClassrooms() {
+  if (props.campusId == null) return
+  loadingClassrooms.value = true
+  try {
+    classrooms.value = await $fetch<ClassroomOption[]>(
+      `${config.public.backendUrl}/classrooms`,
+      { credentials: 'include' },
+    )
+  } catch {
+    classrooms.value = []
+    toast.add({ title: 'Erro', description: 'Erro ao carregar as salas.', color: 'error' })
+  } finally {
+    loadingClassrooms.value = false
+  }
+}
 
 const dayOptions = [
   { label: 'Segunda', value: 'Monday' },
@@ -50,13 +102,21 @@ interface Row {
   start: string | undefined
   end: string | undefined
   teacherId: number | undefined
+  classroomId: number
 }
 
 let nextKey = 0
 const rows = ref<Row[]>([])
 
 function addRow() {
-  rows.value = [...rows.value, { key: nextKey++, day: undefined, start: undefined, end: undefined, teacherId: undefined }]
+  rows.value = [...rows.value, {
+    key: nextKey++,
+    day: undefined,
+    start: undefined,
+    end: undefined,
+    teacherId: undefined,
+    classroomId: NO_CLASSROOM,
+  }]
 }
 
 function removeRow(key: number) {
@@ -68,14 +128,21 @@ function hourValue(h: string) {
 }
 
 function rowIncomplete(r: Row) {
-  return !r.day || !r.start || !r.end || (pickTeacher.value && !r.teacherId)
+  return !r.day || !r.start || !r.end || (requireTeacher.value && !r.teacherId)
 }
 
 function rowBadRange(r: Row) {
   return !!r.start && !!r.end && hourValue(r.start) >= hourValue(r.end)
 }
 
-const hasErrors = computed(() => rows.value.some(r => rowIncomplete(r) || rowBadRange(r)))
+function rowClassroomTooSmall(r: Row) {
+  const classroom = campusClassrooms.value.find(c => c.id === r.classroomId)
+  return !!classroom && classroom.capacity < props.vacancies
+}
+
+const hasErrors = computed(() =>
+  rows.value.some(r => rowIncomplete(r) || rowBadRange(r) || rowClassroomTooSmall(r)),
+)
 
 async function save() {
   if (hasErrors.value) return
@@ -88,7 +155,8 @@ async function save() {
           day: r.day,
           start: r.start,
           end: r.end,
-          teacherId: pickTeacher.value ? r.teacherId : null,
+          teacherId: r.teacherId ?? null,
+          classroomId: r.classroomId === NO_CLASSROOM ? null : r.classroomId,
         })),
       },
       credentials: 'include',
@@ -112,9 +180,12 @@ watch(open, (val) => {
       start: s.startAt,
       end: s.endAt,
       teacherId: s.teacherId ?? undefined,
+      classroomId: s.classroomId ?? NO_CLASSROOM,
     }))
+    fetchClassrooms()
   } else {
     rows.value = []
+    classrooms.value = []
   }
 })
 </script>
@@ -124,7 +195,7 @@ watch(open, (val) => {
     v-model:open="open"
     title="Horários da turma"
     :fullscreen="isMobile"
-    description="Defina os horários semanais da turma."
+    description="Defina os horários semanais da turma e a sala de cada um."
   >
     <template #body>
       <div class="space-y-4">
@@ -140,7 +211,7 @@ watch(open, (val) => {
             <div class="flex items-center gap-2">
               <div
                 class="flex flex-1 flex-col gap-2"
-                :class="pickTeacher ? 'rounded-lg border border-default p-3' : ''"
+                :class="pickTeacher || pickClassroom ? 'rounded-lg border border-default p-3' : ''"
               >
                 <USelect
                   v-if="pickTeacher"
@@ -148,7 +219,7 @@ watch(open, (val) => {
                   :items="teacherOptions"
                   value-key="value"
                   class="w-full"
-                  placeholder="Professor"
+                  placeholder="Sem professor"
                   icon="i-lucide-user"
                 />
                 <div class="flex gap-2">
@@ -174,6 +245,15 @@ watch(open, (val) => {
                     placeholder="Fim"
                   />
                 </div>
+                <USelect
+                  v-if="pickClassroom"
+                  v-model="row.classroomId"
+                  :items="classroomOptions"
+                  value-key="value"
+                  class="w-full"
+                  placeholder="Sala"
+                  icon="i-lucide-door-open"
+                />
               </div>
               <UButton
                 icon="i-lucide-trash-2"
@@ -184,6 +264,9 @@ watch(open, (val) => {
             </div>
             <p v-if="rowBadRange(row)" class="text-xs text-error">
               O horário de início deve ser menor que o de fim.
+            </p>
+            <p v-if="rowClassroomTooSmall(row)" class="text-xs text-error">
+              A capacidade da sala é menor que o número de vagas da turma.
             </p>
           </div>
         </div>
@@ -199,7 +282,7 @@ watch(open, (val) => {
 
         <div class="flex justify-end gap-2 pt-2">
           <UButton label="Cancelar" color="neutral" variant="subtle" :disabled="saving" @click="() => { open = false }" />
-          <UButton label="Salvar" :loading="saving" :disabled="hasErrors" @click="() => { save() }" />
+          <UButton label="Salvar" :loading="saving" :disabled="saving || loadingClassrooms || hasErrors" @click="() => { save() }" />
         </div>
       </div>
     </template>

@@ -215,12 +215,11 @@ public partial class IntegrationTests
 
         var @class = await director.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id,
+        await director.UpdateClassSchedulesWithClassrooms(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, null),
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, null),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, null, null),
         ]);
-        await director.UpdateClassClassrooms(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, classroom.Id)]);
         await director.ReleaseClassForEnrollment(@class.Id);
         await director.StartClass(@class.Id);
 
