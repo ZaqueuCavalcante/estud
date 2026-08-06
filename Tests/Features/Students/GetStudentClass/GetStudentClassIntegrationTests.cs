@@ -133,7 +133,7 @@ public partial class IntegrationTests
         var period = await director.CreateAcademicPeriod().Success();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var enrollment = await director.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2)).Success();

@@ -45,7 +45,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.UpdateClassSchedules(999999, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        var result = await client.UpdateClassSchedules(999999, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Assert
         result.ShouldBeError(ClassNotFound.I);
@@ -68,7 +68,7 @@ public partial class IntegrationTests
         }
 
         // Act
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Assert
         result.ShouldBeError(ClassAlreadyStarted.I);
@@ -91,7 +91,7 @@ public partial class IntegrationTests
         }
 
         // Act
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Assert
         result.ShouldBeError(ClassAlreadyStarted.I);
@@ -107,7 +107,7 @@ public partial class IntegrationTests
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         // Act
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H10_00, Hour.H07_00, null)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H10_00, Hour.H07_00, null, null)]);
 
         // Assert
         result.ShouldBeError(InvalidSchedule.I);
@@ -123,7 +123,7 @@ public partial class IntegrationTests
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         // Act
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H07_00, null)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H07_00, null, null)]);
 
         // Assert
         result.ShouldBeError(InvalidSchedule.I);
@@ -141,8 +141,8 @@ public partial class IntegrationTests
         // Act
         var result = await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, null),
-            (Day.Monday, Hour.H08_00, Hour.H09_00, null),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, null),
+            (Day.Monday, Hour.H08_00, Hour.H09_00, null, null),
         ]);
 
         // Assert
@@ -159,7 +159,7 @@ public partial class IntegrationTests
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         // Act
-        var result = await client.UpdateClassSchedules(@class.Id, [((Day)99, Hour.H07_00, Hour.H10_00, null)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [((Day)99, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Assert
         result.ShouldBeError(InvalidDay.I);
@@ -175,7 +175,7 @@ public partial class IntegrationTests
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         // Act
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, (Hour)9999, Hour.H10_00, null)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, (Hour)9999, Hour.H10_00, null, null)]);
 
         // Assert
         result.ShouldBeError(InvalidHour.I);
@@ -199,7 +199,7 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
 
         // Act
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, outsider.Id)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, outsider.Id, null)]);
 
         // Assert
         result.ShouldBeError(InvalidScheduleTeacher.I);
@@ -218,13 +218,13 @@ public partial class IntegrationTests
 
         var classA = await client.CreateClass(discipline.Id, period.Id).Success();
         await client.UpdateClassTeachers(classA.Id, [teacher.Id]);
-        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         var classB = await client.CreateClass(discipline.Id, period.Id).Success();
         await client.UpdateClassTeachers(classB.Id, [teacher.Id]);
 
         // Act
-        var result = await client.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H08_00, Hour.H09_00, null)]);
+        var result = await client.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H08_00, Hour.H09_00, null, null)]);
 
         // Assert
         result.ShouldBeError(TeacherScheduleConflict.I);
@@ -241,7 +241,7 @@ public partial class IntegrationTests
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
         // Act
-        var result = await client.UpdateClassSchedulesWithClassrooms(@class.Id,
+        var result = await client.UpdateClassSchedules(@class.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, TeacherId: null, ClassroomId: 999999),
         ]);
@@ -261,7 +261,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
 
         var classA = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
-        await client.UpdateClassSchedulesWithClassrooms(classA.Id,
+        await client.UpdateClassSchedules(classA.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
         ]);
@@ -269,7 +269,7 @@ public partial class IntegrationTests
         var classB = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
         // Act — mesma sala, horário sobreposto
-        var result = await client.UpdateClassSchedulesWithClassrooms(classB.Id,
+        var result = await client.UpdateClassSchedules(classB.Id,
         [
             (Day.Monday, Hour.H08_00, Hour.H09_00, null, classroom.Id),
         ]);
@@ -294,8 +294,8 @@ public partial class IntegrationTests
         // Act
         var result = await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, null),
-            (Day.Monday, Hour.H07_00, Hour.H10_00, null),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, null, null),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, null),
         ]);
 
         // Assert
@@ -322,7 +322,7 @@ public partial class IntegrationTests
         }
 
         // Act
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Assert
         result.ShouldBeSuccess();
@@ -341,7 +341,7 @@ public partial class IntegrationTests
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         // Act
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Assert
         result.ShouldBeSuccess();
@@ -363,7 +363,7 @@ public partial class IntegrationTests
         var teacher = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
 
         // Act — professor informado, mas a turma não tem professores
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
 
         // Assert
         result.ShouldBeSuccess();
@@ -388,7 +388,7 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
         // Act — sem informar professor no slot
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Assert
         result.ShouldBeSuccess();
@@ -415,7 +415,7 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
         // Act — informa um professor que nem é da turma; deve ser ignorado
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, outsider.Id)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, outsider.Id, null)]);
 
         // Assert
         result.ShouldBeSuccess();
@@ -440,7 +440,7 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
         // Act
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
 
         // Assert
         result.ShouldBeSuccess();
@@ -467,7 +467,7 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
 
         // Act
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null)]);
 
         // Assert
         result.ShouldBeSuccess();
@@ -496,8 +496,8 @@ public partial class IntegrationTests
         // Act
         var result = await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id),
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id, null),
         ]);
 
         // Assert
@@ -522,13 +522,13 @@ public partial class IntegrationTests
 
         var classA = await client.CreateClass(discipline.Id, period.Id).Success();
         await client.UpdateClassTeachers(classA.Id, [teacher.Id]);
-        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         var classB = await client.CreateClass(discipline.Id, period.Id).Success();
         await client.UpdateClassTeachers(classB.Id, [teacher.Id]);
 
         // Act — mesmo professor, mas na quarta (livre)
-        var result = await client.UpdateClassSchedules(classB.Id, [(Day.Wednesday, Hour.H07_00, Hour.H10_00, null)]);
+        var result = await client.UpdateClassSchedules(classB.Id, [(Day.Wednesday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Assert
         result.ShouldBeSuccess();
@@ -551,8 +551,8 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(classA.Id, [chico.Id, ana.Id]);
         await client.UpdateClassSchedules(classA.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id),
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id, null),
         ]);
 
         // Outra turma só com o Chico, no mesmo horário da QUARTA (dia da Ana em classA).
@@ -560,7 +560,7 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(classB.Id, [chico.Id]);
 
         // Act — Chico está livre na quarta, então não deve haver conflito.
-        var result = await client.UpdateClassSchedules(classB.Id, [(Day.Wednesday, Hour.H07_00, Hour.H10_00, null)]);
+        var result = await client.UpdateClassSchedules(classB.Id, [(Day.Wednesday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Assert
         result.ShouldBeSuccess();
@@ -579,7 +579,7 @@ public partial class IntegrationTests
 
         var classA = await client.CreateClass(discipline.Id, period.Id).Success();
         await client.UpdateClassTeachers(classA.Id, [teacher.Id]);
-        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         await using (var ctx = _back.GetDbContext())
         {
@@ -592,7 +592,7 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(classB.Id, [teacher.Id]);
 
         // Act — mesmo horário da turma finalizada
-        var result = await client.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        var result = await client.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Assert
         result.ShouldBeSuccess();
@@ -613,13 +613,13 @@ public partial class IntegrationTests
 
         var classA = await client.CreateClass(discipline.Id, period.Id).Success();
         await client.UpdateClassTeachers(classA.Id, [chico.Id]);
-        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         var classB = await client.CreateClass(discipline.Id, period.Id).Success();
         await client.UpdateClassTeachers(classB.Id, [ana.Id]);
 
         // Act
-        var result = await client.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        var result = await client.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Assert
         result.ShouldBeSuccess();
@@ -637,7 +637,7 @@ public partial class IntegrationTests
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
         // Act
-        var result = await client.UpdateClassSchedulesWithClassrooms(@class.Id,
+        var result = await client.UpdateClassSchedules(@class.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
             (Day.Wednesday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
@@ -662,7 +662,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
 
         var classA = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
-        await client.UpdateClassSchedulesWithClassrooms(classA.Id,
+        await client.UpdateClassSchedules(classA.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
         ]);
@@ -670,7 +670,7 @@ public partial class IntegrationTests
         var classB = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
         // Act — mesma sala, mas na quarta (livre)
-        var result = await client.UpdateClassSchedulesWithClassrooms(classB.Id,
+        var result = await client.UpdateClassSchedules(classB.Id,
         [
             (Day.Wednesday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
         ]);
@@ -690,7 +690,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
 
         var classA = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
-        await client.UpdateClassSchedulesWithClassrooms(classA.Id,
+        await client.UpdateClassSchedules(classA.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
         ]);
@@ -705,7 +705,7 @@ public partial class IntegrationTests
         var classB = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
         // Act — mesma sala e mesmo horário da turma finalizada
-        var result = await client.UpdateClassSchedulesWithClassrooms(classB.Id,
+        var result = await client.UpdateClassSchedules(classB.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
         ]);
@@ -726,7 +726,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod().Success();
 
         var classA = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
-        await client.UpdateClassSchedulesWithClassrooms(classA.Id,
+        await client.UpdateClassSchedules(classA.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroomA.Id),
         ]);
@@ -734,7 +734,7 @@ public partial class IntegrationTests
         var classB = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
         // Act
-        var result = await client.UpdateClassSchedulesWithClassrooms(classB.Id,
+        var result = await client.UpdateClassSchedules(classB.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroomB.Id),
         ]);
@@ -753,13 +753,13 @@ public partial class IntegrationTests
         var discipline = await client.CreateDiscipline().Success();
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
-        await client.UpdateClassSchedulesWithClassrooms(@class.Id,
+        await client.UpdateClassSchedules(@class.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
         ]);
 
         // Act — mesma turma, mesma sala e mesmo horário
-        var result = await client.UpdateClassSchedulesWithClassrooms(@class.Id,
+        var result = await client.UpdateClassSchedules(@class.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
         ]);
@@ -780,10 +780,10 @@ public partial class IntegrationTests
         var discipline = await client.CreateDiscipline().Success();
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Act
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Tuesday, Hour.H19_00, Hour.H22_00, null)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Tuesday, Hour.H19_00, Hour.H22_00, null, null)]);
 
         // Assert
         result.ShouldBeSuccess();
@@ -803,7 +803,7 @@ public partial class IntegrationTests
         var discipline = await client.CreateDiscipline().Success();
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Act
         var result = await client.UpdateClassSchedules(@class.Id, []);
@@ -823,10 +823,10 @@ public partial class IntegrationTests
         var discipline = await client.CreateDiscipline().Success();
         var period = await client.CreateAcademicPeriod().Success();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Act — mesma lista de novo
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Assert
         result.ShouldBeSuccess();

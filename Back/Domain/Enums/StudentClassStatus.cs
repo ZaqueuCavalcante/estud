@@ -6,20 +6,20 @@ namespace Estud.Back.Domain.Enums;
 public enum StudentClassStatus
 {
     [Description("Pendente")]
-    Pendente,
+    Pendente = 0,
 
     [Description("Matriculado")]
-    Matriculado,
+    Matriculado = 1,
 
     [Description("Aprovado")]
-    Aprovado,
+    Aprovado = 2,
 
     [Description("Dispensado")]
-    Dispensado,
+    Dispensado = 3,
 
     [Description("Reprovado por nota")]
-    ReprovadoPorNota,
+    ReprovadoPorNota = 4,
 
     [Description("Reprovado por falta")]
-    ReprovadoPorFalta,
+    ReprovadoPorFalta = 5,
 }

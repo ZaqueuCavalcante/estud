@@ -66,7 +66,7 @@ public partial class IntegrationTests
         var period = await director.CreateAcademicPeriod().Success();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
         await director.ReleaseClassForEnrollment(@class.Id);
         await director.StartClass(@class.Id);
         var lessonId = await _back.GetFirstLessonId(@class.Id);
@@ -97,7 +97,7 @@ public partial class IntegrationTests
         var period = await director.CreateAcademicPeriod().Success();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
         await director.ReleaseClassForEnrollment(@class.Id);
         await director.StartClass(@class.Id);
         var lessonId = await _back.GetFirstLessonId(@class.Id);
@@ -127,7 +127,7 @@ public partial class IntegrationTests
         var period = await director.CreateAcademicPeriod().Success();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
         await director.ReleaseClassForEnrollment(@class.Id);
         await director.StartClass(@class.Id);
         var lessonId = await _back.GetFirstLessonId(@class.Id);
@@ -157,7 +157,7 @@ public partial class IntegrationTests
         var period = await director.CreateAcademicPeriod().Success();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         var students = await EnrollStudentsInClass(director, @class.Id, 1);
         await director.StartClass(@class.Id);
@@ -192,7 +192,7 @@ public partial class IntegrationTests
         var period = await director.CreateAcademicPeriod().Success();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         var students = await EnrollStudentsInClass(director, @class.Id, 2);
         await director.StartClass(@class.Id);
@@ -233,7 +233,7 @@ public partial class IntegrationTests
         var period = await director.CreateAcademicPeriod().Success();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
         await director.ReleaseClassForEnrollment(@class.Id);
         await director.StartClass(@class.Id);
         var lessonId = await _back.GetFirstLessonId(@class.Id);
@@ -270,7 +270,7 @@ public partial class IntegrationTests
         var period = await director.CreateAcademicPeriod().Success();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         var students = await EnrollStudentsInClass(director, @class.Id, 2);
         await director.StartClass(@class.Id);

@@ -1,9 +1,6 @@
 namespace Estud.Back.Domain.Campi;
 
-/// <summary>
-/// A semana de funcionamento de um campus, já em memória.
-/// Puro: quem consulta o banco é o slice, que passa as linhas para cá.
-/// </summary>
+// TODO: colocar isso dentro do campus e testar com unit tests.
 public class WeeklyOpeningHours(List<OpeningHour> hours)
 {
     // Campus sem nenhuma linha fica fechado a semana inteira — é a leitura
@@ -20,8 +17,6 @@ public class WeeklyOpeningHours(List<OpeningHour> hours)
     /// </summary>
     public int MinutesOpenIn(Day day, Shift shift)
         => ClipToOpen(day, shift.StartInMinutes, shift.EndInMinutes);
-
-    public bool IsOpen(Day day, Shift shift) => MinutesOpenIn(day, shift) > 0;
 
     /// <summary>
     /// Recorta um intervalo ao que o campus está aberto naquele dia, devolvendo

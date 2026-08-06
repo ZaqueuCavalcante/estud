@@ -37,18 +37,6 @@ public partial class TestsHttpClient
 
     public async Task<OneOf<SuccessOut, ErrorOut>> UpdateClassSchedules(
         int classId,
-        List<(Day Day, Hour Start, Hour End, int? TeacherId)> schedules
-    ) {
-        var data = new UpdateClassSchedulesIn
-        {
-            Schedules = schedules.ConvertAll(x => new UpdateClassScheduleIn { Day = x.Day, Start = x.Start, End = x.End, TeacherId = x.TeacherId }),
-        };
-        var response = await http.PutAsJsonAsync($"/classes/{classId}/schedules", data);
-        return await response.Resolve<SuccessOut>();
-    }
-
-    public async Task<OneOf<SuccessOut, ErrorOut>> UpdateClassSchedulesWithClassrooms(
-        int classId,
         List<(Day Day, Hour Start, Hour End, int? TeacherId, int? ClassroomId)> schedules
     ) {
         var data = new UpdateClassSchedulesIn

@@ -9,11 +9,3 @@
 Com esses dados já é possível montar o mapa de ocupação do campus.
 É possível criar qualquer variação de dados pra testar o mapa? Apenas responda n altere nada ainda.
 
-
-
-Faz sentido definir horario E sala ao mesmo tempo ou mantemos em endpoints separados?
-
-
-
-
-

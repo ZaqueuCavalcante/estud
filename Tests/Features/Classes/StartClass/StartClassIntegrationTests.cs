@@ -123,7 +123,7 @@ public partial class IntegrationTests
 
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
         await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         await client.ReleaseClassForEnrollment(@class.Id);
 

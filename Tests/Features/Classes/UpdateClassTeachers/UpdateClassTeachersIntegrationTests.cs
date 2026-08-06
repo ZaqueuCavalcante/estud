@@ -143,12 +143,12 @@ public partial class IntegrationTests
         // C1: professor Chico cobre segunda 07–10
         var classA = await client.CreateClass(discipline.Id, period.Id).Success();
         await client.UpdateClassTeachers(classA.Id, [chico.Id]);
-        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // C2: professora Ana já cobre segunda 08–09 (choca com o horário de C1)
         var classB = await client.CreateClass(discipline.Id, period.Id).Success();
         await client.UpdateClassTeachers(classB.Id, [ana.Id]);
-        await client.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H08_00, Hour.H09_00, null)]);
+        await client.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H08_00, Hour.H09_00, null, null)]);
 
         // Act — troca Chico por Ana em C1, que herdaria o horário chocando com C2
         var result = await client.UpdateClassTeachers(classA.Id, [ana.Id]);
@@ -201,8 +201,8 @@ public partial class IntegrationTests
         // horários definidos com a turma ainda sem professor (TeacherId nulo)
         await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, null),
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, null),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, null),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, null, null),
         ]);
 
         var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
@@ -263,8 +263,8 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(@class.Id, [chico.Id]);
         await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, null),
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, null),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, null),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, null, null),
         ]);
 
         // Act
@@ -292,7 +292,7 @@ public partial class IntegrationTests
         await client.AssignDisciplinesToTeacher(chico.Id, [discipline.Id]);
 
         await client.UpdateClassTeachers(@class.Id, [chico.Id]);
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Act
         var result = await client.UpdateClassTeachers(@class.Id, []);
@@ -321,7 +321,7 @@ public partial class IntegrationTests
         await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
 
         await client.UpdateClassTeachers(@class.Id, [chico.Id]);
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         // Act
         var result = await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
@@ -376,8 +376,8 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
         await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id),
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id, null),
         ]);
 
         // Act
@@ -411,8 +411,8 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
         await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id),
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id, null),
         ]);
 
         // Act — Ana sai, João entra
@@ -448,8 +448,8 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
         await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id),
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id, null),
         ]);
 
         // Act
@@ -481,8 +481,8 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
         await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id),
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id, null),
         ]);
 
         // Act
@@ -514,8 +514,8 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
         await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id),
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id, null),
         ]);
 
         // Act — mesma dupla, ordem trocada
@@ -549,8 +549,8 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
         await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id),
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id, null),
         ]);
         // troca Ana por João → o horário da quarta fica órfão (S2→∅)
         await client.UpdateClassTeachers(@class.Id, [chico.Id, joao.Id]);

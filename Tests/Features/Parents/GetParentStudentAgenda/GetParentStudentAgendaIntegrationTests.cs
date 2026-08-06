@@ -163,7 +163,7 @@ public partial class IntegrationTests
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
         await director.ReleaseClassForEnrollment(@class.Id);
 
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -205,7 +205,7 @@ public partial class IntegrationTests
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedulesWithClassrooms(@class.Id,
+        await director.UpdateClassSchedules(@class.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
             (Day.Wednesday, Hour.H07_00, Hour.H10_00, null, null),

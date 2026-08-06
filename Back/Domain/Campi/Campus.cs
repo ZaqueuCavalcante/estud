@@ -1,3 +1,5 @@
+using Estud.Back.Domain.Classrooms;
+
 namespace Estud.Back.Domain.Campi;
 
 public class Campus
@@ -8,6 +10,7 @@ public class Campus
     public BrazilState State { get; set; }
     public string City { get; set; }
 
+    public List<Classroom> Classrooms { get; set; } = [];
     public List<OpeningHour> OpeningHours { get; set; } = [];
 
     private Campus() { }

@@ -12,31 +12,15 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
     {
         var institutionId = ctx.RequestUser.InstitutionId;
 
-        var campus = await ctx.Campi.Include(x => x.OpeningHours).AsNoTracking()
+        var campus = await ctx.Campi.AsNoTracking()
+            .Include(x => x.Classrooms).Include(x => x.OpeningHours)
             .FirstOrDefaultAsync(c => c.Id == campusId && c.InstitutionId == institutionId);
         if (campus == null) return CampusNotFound.I;
 
-        var classrooms = await ctx.Classrooms.AsNoTracking()
-            .Where(c => c.CampusId == campusId && c.InstitutionId == institutionId)
-            .OrderBy(c => c.Name).ToListAsync();
+        var classes = await GetClasses(institutionId);
+        var schedules = await GetSchedules(institutionId, campusId);
 
-        var classes = await ctx.Classes.AsNoTracking().Include(x => x.Schedules)
-            .Where(x => x.InstitutionId == institutionId && x.Status != ClassStatus.Finalized).ToListAsync();
-
-        // A ocupação geral é por assento, então cada horário vale quantos alunos a turma tem.
-        var classIds = classes.ConvertAll(x => x.Id);
-        var studentsByClass = await ctx.ClassStudents.AsNoTracking()
-            .Where(x => classIds.Contains(x.ClassId))
-            .GroupBy(x => x.ClassId)
-            .Select(g => new { ClassId = g.Key, Students = g.Count() })
-            .ToDictionaryAsync(x => x.ClassId, x => x.Students);
-
-        // Turma online tem ClassroomId nulo, então já cai fora aqui.
-        var classroomIds = classrooms.Select(c => c.Id).ToHashSet();
-        var schedules = classes.SelectMany(x => x.Schedules)
-            .Where(x => x.ClassroomId != null && classroomIds.Contains(x.ClassroomId.Value)).ToList();
-
-        // O mapa é varrido por sala x dia, então o índice segue esse par.
+        // Classroom + Day -> Schedules
         var schedulesByClassroomDay = schedules
             .GroupBy(s => (ClassroomId: s.ClassroomId!.Value, s.Day))
             .ToDictionary(g => g.Key, g => g.ToList());
@@ -44,7 +28,7 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
         var openCells = 0;
         var usedSeatMinutes = 0;
         var availableSeatMinutes = 0;
-        var totalCapacity = classrooms.Sum(c => c.Capacity);
+        var totalCapacity = campus.Classrooms.Sum(c => c.Capacity);
         var openingHours = new WeeklyOpeningHours(campus.OpeningHours);
         var cells = new List<CampusOccupancyCellOut>(Days.Length * Shifts.Length);
 
@@ -54,12 +38,11 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
             {
                 // O teto da célula é quanto o campus abre dentro do turno, e não a duração do turno.
                 var openMinutes = openingHours.MinutesOpenIn(day, shift);
-                var open = openMinutes > 0;
-                if (open) openCells++;
+                if (openMinutes > 0) openCells++;
 
-                var cellClassrooms = new List<CampusOccupancyClassroomOut>(classrooms.Count);
+                var cellClassrooms = new List<CampusOccupancyClassroomOut>(campus.Classrooms.Count);
 
-                foreach (var classroom in classrooms)
+                foreach (var classroom in campus.Classrooms)
                 {
                     var classroomUsed = 0;
 
@@ -73,7 +56,8 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                             // Sala alocada não é sala cheia: na ocupação geral o que conta é o
                             // assento ocupado. Uma sala de 6 lugares com uma turma de 3 alunos
                             // está pela metade, mesmo com o horário inteiro tomado.
-                            usedSeatMinutes += minutes * StudentsIn(schedule);
+                            var studentsInSchedule = classes.FirstOrDefault(c => c.Id == schedule.ClassId)?.Students ?? 0;
+                            usedSeatMinutes += minutes * studentsInSchedule;
                         }
                     }
 
@@ -86,7 +70,7 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                     });
                 }
 
-                var available = classrooms.Count * openMinutes;
+                var available = campus.Classrooms.Count * openMinutes;
                 var used = cellClassrooms.Sum(c => c.UsedMinutes);
 
                 availableSeatMinutes += totalCapacity * openMinutes;
@@ -94,9 +78,9 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                 cells.Add(new CampusOccupancyCellOut
                 {
                     Day = day,
-                    Open = open,
                     Shift = shift,
                     UsedMinutes = used,
+                    Open = openMinutes > 0,
                     Classrooms = cellClassrooms,
                     AvailableMinutes = available,
                     Rate = ToRate(used, available),
@@ -110,14 +94,59 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
             CampusId = campus.Id,
             Campus = campus.Name,
             OpenCells = openCells,
-            TotalClassrooms = classrooms.Count,
+            TotalClassrooms = campus.Classrooms.Count,
             OverallRate = ToRate(usedSeatMinutes, availableSeatMinutes),
         };
+    }
 
-        int StudentsIn(Schedule schedule) =>
-            schedule.ClassId != null && studentsByClass.TryGetValue(schedule.ClassId.Value, out var students)
-                ? students
-                : 0;
+    private async Task<List<Schedule>> GetSchedules(int institutionId, int campusId)
+    {
+        const string sql = @"
+            SELECT
+                s.*
+            FROM
+                estud.classrooms cr
+            INNER JOIN
+                estud.schedules s ON s.classroom_id = cr.id
+            INNER JOIN
+                estud.classes c ON c.id = s.class_id
+            WHERE
+                cr.institution_id = {0}
+                    AND
+                cr.campus_id = {1}
+                    AND
+                c.status <> {2}
+            GROUP BY
+                s.id
+        ";
+
+        return await ctx.Schedules
+            .FromSqlRaw(sql, institutionId, campusId, ClassStatus.Finalized.ToInt())
+            .AsNoTracking().ToListAsync();
+    }
+
+    private async Task<List<GetClassDto>> GetClasses(int institutionId)
+    {
+        const string sql = @"
+            SELECT
+                c.id, count(s.student_id) AS students
+            FROM
+                estud.classes c
+            INNER JOIN
+                estud.classes__students s ON s.class_id = c.id
+            WHERE
+                c.institution_id = {0}
+                    AND
+                c.status <> {1}
+                    AND
+                s.status = {2}
+            GROUP BY
+                c.id
+        ";
+
+        return await ctx.Database
+            .SqlQueryRaw<GetClassDto>(sql, institutionId, ClassStatus.Finalized.ToInt(), StudentClassStatus.Matriculado.ToInt())
+            .AsNoTracking().ToListAsync();
     }
 
     // Quanto do horário cai dentro da janela do turno e, ao mesmo tempo, dentro do

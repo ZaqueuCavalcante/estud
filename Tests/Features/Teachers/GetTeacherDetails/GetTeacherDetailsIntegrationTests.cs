@@ -112,7 +112,7 @@ public partial class IntegrationTests
 
         await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null),
         ]);
 
         // Act

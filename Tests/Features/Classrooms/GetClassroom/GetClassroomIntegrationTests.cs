@@ -109,8 +109,8 @@ public partial class IntegrationTests
 
         await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, null),
-            (Day.Wednesday, Hour.H07_00, Hour.H09_00, null),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, null),
+            (Day.Wednesday, Hour.H07_00, Hour.H09_00, null, null),
         ]);
 
         // Não há endpoint que aloque uma sala a um horário ainda, então o vínculo
@@ -152,7 +152,7 @@ public partial class IntegrationTests
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         await client.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2));

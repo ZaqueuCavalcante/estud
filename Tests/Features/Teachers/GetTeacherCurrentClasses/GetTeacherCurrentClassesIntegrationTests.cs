@@ -57,8 +57,8 @@ public partial class IntegrationTests
 
         await director.UpdateClassTeachers(geometriaClass.Id, [teacher.Id]);
         await director.UpdateClassTeachers(algebraClass.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
-        await director.UpdateClassSchedules(algebraClass.Id, [(Day.Tuesday, Hour.H07_00, Hour.H10_00, null)]);
+        await director.UpdateClassSchedules(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
+        await director.UpdateClassSchedules(algebraClass.Id, [(Day.Tuesday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var enrollment = await director.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2)).Success();
@@ -123,7 +123,7 @@ public partial class IntegrationTests
         var period = await director.CreateAcademicPeriod().Success();
         var otherClass = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(otherClass.Id, [otherTeacher.Id]);
-        await director.UpdateClassSchedules(otherClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null)]);
+        await director.UpdateClassSchedules(otherClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var enrollment = await director.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2)).Success();
