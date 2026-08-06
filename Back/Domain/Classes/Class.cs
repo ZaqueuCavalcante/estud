@@ -56,6 +56,24 @@ public class Class
         Schedules = [];
     }
 
+    public void UpdateTeachers(List<EstudTeacher> teachers)
+    {
+        foreach (var teacher in teachers)
+        {
+            if (Teachers.Any(x => x.Id == teacher.Id)) continue;
+            Teachers.Add(teacher);
+        }
+
+        var idsToRemove = Teachers.Where(x => !teachers.Any(y => y.Id == x.Id)).Select(x => x.Id).ToList();
+        foreach (var id in idsToRemove)
+        {
+            var schedules = Schedules.Where(x => x.TeacherId == id).ToList();
+            schedules.ForEach(x => x.TeacherId = null);
+        }
+
+        Teachers.RemoveAll(x => idsToRemove.Contains(x.Id));
+    }
+
     public void CreateLessons()
     {
         var schedules = Schedules.OrderBy(x => x.Day).ThenBy(x => x.Start).ToList();

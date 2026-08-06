@@ -230,6 +230,54 @@ public partial class IntegrationTests
         result.ShouldBeError(TeacherScheduleConflict.I);
     }
 
+    [Test]
+    public async Task Classes_UpdateClassSchedules_Should_not_update_schedules_when_the_slot_classroom_does_not_exist()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        // Act
+        var result = await client.UpdateClassSchedulesWithClassrooms(@class.Id,
+        [
+            (Day.Monday, Hour.H07_00, Hour.H10_00, TeacherId: null, ClassroomId: 999999),
+        ]);
+
+        // Assert
+        result.ShouldBeError(ClassroomNotFound.I);
+    }
+
+    [Test]
+    public async Task Classes_UpdateClassSchedules_Should_not_update_schedules_when_they_conflict_with_another_class_in_the_same_classroom()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var classroom = await client.CreateClassroom(campus.Id).Success();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+
+        var classA = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+        await client.UpdateClassSchedulesWithClassrooms(classA.Id,
+        [
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
+        ]);
+
+        var classB = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        // Act — mesma sala, horário sobreposto
+        var result = await client.UpdateClassSchedulesWithClassrooms(classB.Id,
+        [
+            (Day.Monday, Hour.H08_00, Hour.H09_00, null, classroom.Id),
+        ]);
+
+        // Assert
+        result.ShouldBeError(ClassroomScheduleConflict.I);
+    }
+
     #endregion
 
     #region Happy path
@@ -575,6 +623,153 @@ public partial class IntegrationTests
 
         // Assert
         result.ShouldBeSuccess();
+    }
+
+    [Test]
+    public async Task Classes_UpdateClassSchedules_Should_set_the_classroom_of_each_slot()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var classroom = await client.CreateClassroom(campus.Id).Success();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        // Act
+        var result = await client.UpdateClassSchedulesWithClassrooms(@class.Id,
+        [
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
+        ]);
+
+        // Assert
+        result.ShouldBeSuccess();
+
+        var updated = await client.GetClass(@class.Id).Success();
+        updated.Schedules.Should().HaveCount(2);
+        updated.Schedules.Should().OnlyContain(s => s.ClassroomId == classroom.Id);
+    }
+
+    [Test]
+    public async Task Classes_UpdateClassSchedules_Should_not_conflict_when_the_classroom_is_free_on_another_day()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var classroom = await client.CreateClassroom(campus.Id).Success();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+
+        var classA = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+        await client.UpdateClassSchedulesWithClassrooms(classA.Id,
+        [
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
+        ]);
+
+        var classB = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        // Act — mesma sala, mas na quarta (livre)
+        var result = await client.UpdateClassSchedulesWithClassrooms(classB.Id,
+        [
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
+        ]);
+
+        // Assert
+        result.ShouldBeSuccess();
+    }
+
+    [Test]
+    public async Task Classes_UpdateClassSchedules_Should_not_conflict_with_a_finalized_class_in_the_same_classroom()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var classroom = await client.CreateClassroom(campus.Id).Success();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+
+        var classA = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+        await client.UpdateClassSchedulesWithClassrooms(classA.Id,
+        [
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
+        ]);
+
+        await using (var ctx = _back.GetDbContext())
+        {
+            var entity = await ctx.Classes.FirstAsync(c => c.Id == classA.Id);
+            entity.Status = ClassStatus.Finalized;
+            await ctx.SaveChangesAsync();
+        }
+
+        var classB = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        // Act — mesma sala e mesmo horário da turma finalizada
+        var result = await client.UpdateClassSchedulesWithClassrooms(classB.Id,
+        [
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
+        ]);
+
+        // Assert
+        result.ShouldBeSuccess();
+    }
+
+    [Test]
+    public async Task Classes_UpdateClassSchedules_Should_allow_the_same_schedule_in_two_different_classrooms()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var classroomA = await client.CreateClassroom(campus.Id, "Sala 01").Success();
+        var classroomB = await client.CreateClassroom(campus.Id, "Sala 02").Success();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+
+        var classA = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+        await client.UpdateClassSchedulesWithClassrooms(classA.Id,
+        [
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroomA.Id),
+        ]);
+
+        var classB = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        // Act
+        var result = await client.UpdateClassSchedulesWithClassrooms(classB.Id,
+        [
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroomB.Id),
+        ]);
+
+        // Assert
+        result.ShouldBeSuccess();
+    }
+
+    [Test]
+    public async Task Classes_UpdateClassSchedules_Should_not_conflict_with_the_current_schedules_of_the_class_in_the_same_classroom()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var classroom = await client.CreateClassroom(campus.Id).Success();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+        await client.UpdateClassSchedulesWithClassrooms(@class.Id,
+        [
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
+        ]);
+
+        // Act — mesma turma, mesma sala e mesmo horário
+        var result = await client.UpdateClassSchedulesWithClassrooms(@class.Id,
+        [
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
+        ]);
+
+        // Assert
+        result.ShouldBeSuccess();
+
+        var updated = await client.GetClass(@class.Id).Success();
+        updated.Schedules.Should().ContainSingle();
+        updated.Schedules[0].ClassroomId.Should().Be(classroom.Id);
     }
 
     [Test]
