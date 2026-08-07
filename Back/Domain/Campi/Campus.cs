@@ -39,4 +39,23 @@ public class Campus
         State = state;
         City = city;
     }
+
+    /// <summary>
+    /// Minutos abertos na interseção do dia com a janela do turno. <br/>
+    /// Dia sem nenhuma janela fica fechado — é a leitura literal de "ausência de linha
+    /// significa fechado". As janelas de um mesmo dia nunca se sobrepõem (garantido no
+    /// update das janelas), então somá-las não conta minuto em dobro.
+    /// </summary>
+    public int MinutesOpenIn(Day day, Shift shift)
+    {
+        var shiftStart = shift.StartInMinutes;
+        var shiftEnd = shift.EndInMinutes;
+
+        // Minutos de interseção entre [janela) e [turno), ambos em minutos a partir
+        // da meia-noite. Janela e turno disjuntos dão 0.
+        return OpeningHours
+            .Where(h => h.Day == day)
+            .Sum(h => Math.Max(
+                Math.Min(h.End.ToMinutes(), shiftEnd) - Math.Max(h.Start.ToMinutes(), shiftStart), 0));
+    }
 }

@@ -54,7 +54,7 @@ public class Schedule
         return new Schedule(day, startAt, endAt, teacherId, classroomId);
     }
 
-    public int GetDiff()
+    public int GetDiffInMinutes()
     {
         return Start.DiffInMinutes(End);
     }

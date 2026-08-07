@@ -87,7 +87,7 @@ public class Class
                 if (current.DayOfWeek.Is(schedule.Day))
                 {
                     Lessons.Add(new(this, number, current, schedule.Start, schedule.End));
-                    Workload += schedule.GetDiff();
+                    Workload += schedule.GetDiffInMinutes();
                     number++;
                 }
             }

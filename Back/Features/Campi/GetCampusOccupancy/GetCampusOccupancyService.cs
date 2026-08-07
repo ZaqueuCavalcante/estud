@@ -1,4 +1,3 @@
-using Estud.Back.Domain.Campi;
 using Estud.Back.Domain.Classes;
 
 namespace Estud.Back.Features.Campi.GetCampusOccupancy;
@@ -13,80 +12,70 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
         var institutionId = ctx.RequestUser.InstitutionId;
 
         var campus = await ctx.Campi.AsNoTracking()
-            .Include(x => x.Classrooms).Include(x => x.OpeningHours)
+            .Include(x => x.OpeningHours).Include(x => x.Classrooms)
             .FirstOrDefaultAsync(c => c.Id == campusId && c.InstitutionId == institutionId);
         if (campus == null) return CampusNotFound.I;
 
         var classes = await GetClasses(institutionId);
         var schedules = await GetSchedules(institutionId, campusId);
 
-        // Classroom + Day -> Schedules
-        var schedulesByClassroomDay = schedules
-            .GroupBy(s => (ClassroomId: s.ClassroomId!.Value, s.Day))
-            .ToDictionary(g => g.Key, g => g.ToList());
-
         var openCells = 0;
-        var usedSeatMinutes = 0;
-        var availableSeatMinutes = 0;
-        var totalCapacity = campus.Classrooms.Sum(c => c.Capacity);
-        var openingHours = new WeeklyOpeningHours(campus.OpeningHours);
         var cells = new List<CampusOccupancyCellOut>(Days.Length * Shifts.Length);
 
         foreach (var day in Days)
         {
             foreach (var shift in Shifts)
             {
-                // O teto da célula é quanto o campus abre dentro do turno, e não a duração do turno.
-                var openMinutes = openingHours.MinutesOpenIn(day, shift);
-                if (openMinutes > 0) openCells++;
+                var campusOpenMinutes = campus.MinutesOpenIn(day, shift);
+                if (campusOpenMinutes > 0) openCells++;
 
                 var cellClassrooms = new List<CampusOccupancyClassroomOut>(campus.Classrooms.Count);
 
                 foreach (var classroom in campus.Classrooms)
                 {
-                    var classroomUsed = 0;
+                    var classroomUsedMinutes = 0;
+                    var classroomAvailableMinutes = 0;
 
-                    if (schedulesByClassroomDay.TryGetValue((classroom.Id, day), out var daySchedules))
+                    var classroomSchedules = schedules.Where(x => x.ClassroomId == classroom.Id && x.Day == day &&
+                        x.Start >= shift.StartAtHour && x.End <= shift.EndAtHour).ToList();
+
+                    foreach (var schedule in classroomSchedules)
                     {
-                        foreach (var schedule in daySchedules)
-                        {
-                            var minutes = UsedInMinutes(schedule, shift, day, openingHours);
-                            classroomUsed += minutes;
+                        var currentClass = classes.FirstOrDefault(c => c.Id == schedule.ClassId);
+                        if (currentClass == null) continue;
 
-                            // Sala alocada não é sala cheia: na ocupação geral o que conta é o
-                            // assento ocupado. Uma sala de 6 lugares com uma turma de 3 alunos
-                            // está pela metade, mesmo com o horário inteiro tomado.
-                            var studentsInSchedule = classes.FirstOrDefault(c => c.Id == schedule.ClassId)?.Students ?? 0;
-                            usedSeatMinutes += minutes * studentsInSchedule;
-                        }
+                        classroomUsedMinutes += schedule.GetDiffInMinutes() * currentClass.Students;
+                        classroomAvailableMinutes += campusOpenMinutes * classroom.Capacity;
                     }
 
                     cellClassrooms.Add(new CampusOccupancyClassroomOut
                     {
                         Id = classroom.Id,
                         Name = classroom.Name,
-                        UsedMinutes = classroomUsed,
-                        Rate = ToRate(classroomUsed, openMinutes),
+                        UsedMinutes = classroomUsedMinutes,
+                        AvailableMinutes = classroomAvailableMinutes,
+                        Rate = ToRate(classroomUsedMinutes, classroomAvailableMinutes),
                     });
                 }
 
-                var available = campus.Classrooms.Count * openMinutes;
                 var used = cellClassrooms.Sum(c => c.UsedMinutes);
-
-                availableSeatMinutes += totalCapacity * openMinutes;
+                var available = cellClassrooms.Sum(c => c.AvailableMinutes);
 
                 cells.Add(new CampusOccupancyCellOut
                 {
                     Day = day,
                     Shift = shift,
                     UsedMinutes = used,
-                    Open = openMinutes > 0,
                     Classrooms = cellClassrooms,
                     AvailableMinutes = available,
+                    Open = campusOpenMinutes > 0,
                     Rate = ToRate(used, available),
                 });
             }
         }
+
+        var usedSeatMinutes = cells.Sum(c => c.UsedMinutes);
+        var availableSeatMinutes = cells.Sum(c => c.AvailableMinutes);
 
         return new GetCampusOccupancyOut
         {
@@ -147,19 +136,6 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
         return await ctx.Database
             .SqlQueryRaw<GetClassDto>(sql, institutionId, ClassStatus.Finalized.ToInt(), StudentClassStatus.Matriculado.ToInt())
             .AsNoTracking().ToListAsync();
-    }
-
-    // Quanto do horário cai dentro da janela do turno e, ao mesmo tempo, dentro do
-    // funcionamento do campus. Um horário 10h–14h conta 120min na manhã e 120min na
-    // tarde; um 06h–07h não conta em lugar nenhum; e um 06h–08h num campus que abre
-    // às 07h conta 60min — o resto é aula num horário que o campus não tem.
-    private static int UsedInMinutes(Schedule schedule, Shift shift, Day day, WeeklyOpeningHours openingHours)
-    {
-        var start = Math.Max(schedule.Start.ToMinutes(), shift.StartInMinutes);
-        var end = Math.Min(schedule.End.ToMinutes(), shift.EndInMinutes);
-        if (end <= start) return 0;
-
-        return openingHours.ClipToOpen(day, start, end);
     }
 
     private static decimal ToRate(int used, int available)

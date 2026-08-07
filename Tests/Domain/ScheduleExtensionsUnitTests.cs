@@ -38,7 +38,7 @@ public class ScheduleExtensionsUnitTests
         schedule.Day.Should().Be(Day.Monday);
         schedule.Start.Should().Be(Hour.H19_00);
         schedule.End.Should().Be(Hour.H22_00);
-        schedule.GetDiff().Should().Be(180);
+        schedule.GetDiffInMinutes().Should().Be(180);
     }
 
     [Test]
@@ -58,7 +58,7 @@ public class ScheduleExtensionsUnitTests
         // Assert
         result.ShouldBeSuccess();
         result.Success.Should().HaveCount(3);
-        result.Success.Should().OnlyContain(x => x.GetDiff() == 180);
+        result.Success.Should().OnlyContain(x => x.GetDiffInMinutes() == 180);
         result.Success.Select(x => (x.Day, x.Start, x.End, x.TeacherId, x.ClassroomId)).Should().Equal(items);
     }
 
@@ -98,7 +98,7 @@ public class ScheduleExtensionsUnitTests
         // Assert
         result.ShouldBeSuccess();
         result.Success.Should().HaveCount(3);
-        result.Success.Select(x => x.GetDiff()).Should().Equal(120, 120, 60);
+        result.Success.Select(x => x.GetDiffInMinutes()).Should().Equal(120, 120, 60);
     }
 
     [Test]
@@ -190,7 +190,7 @@ public class ScheduleExtensionsUnitTests
 
         // Assert
         result.ShouldBeSuccess();
-        result.Success.Should().ContainSingle().Which.GetDiff().Should().Be(expectedDiff);
+        result.Success.Should().ContainSingle().Which.GetDiffInMinutes().Should().Be(expectedDiff);
     }
 
     [Test]

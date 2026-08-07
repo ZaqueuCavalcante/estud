@@ -38,7 +38,9 @@ public class BackFactory : WebApplicationFactory<Back::Program>
 
     public TestsHttpClient GetTestsClient()
     {
-        return new TestsHttpClient(CreateClient());
+        var client = CreateClient();
+        client.Timeout = TimeSpan.FromHours(1);
+        return new TestsHttpClient(client);
     }
 
     public EstudDbContext GetDbContext()

@@ -2,24 +2,34 @@ namespace Estud.Back.Extensions;
 
 public static class ShiftExtensions
 {
-    // As janelas ficam em minutos a partir da meia-noite (e não em Hour) porque
-    // a noite termina às 24h, que não existe no enum Hour.
     extension(Shift shift)
     {
+        public Hour StartAtHour => shift switch
+        {
+            Shift.Morning => Hour.H07_00,
+            Shift.Afternoon => Hour.H12_00,
+            _ => Hour.H18_00,
+        };
+
+        public Hour EndAtHour => shift switch
+        {
+            Shift.Morning => Hour.H12_00,
+            Shift.Afternoon => Hour.H18_00,
+            _ => Hour.H23_00,
+        };
+
         public int StartInMinutes => shift switch
         {
-            Shift.Morning => 07 * 60,
-            Shift.Afternoon => 12 * 60,
-            _ => 18 * 60,
+            Shift.Morning => shift.StartAtHour.ToMinutes(),
+            Shift.Afternoon => shift.StartAtHour.ToMinutes(),
+            _ => shift.StartAtHour.ToMinutes(),
         };
 
         public int EndInMinutes => shift switch
         {
-            Shift.Morning => 12 * 60,
-            Shift.Afternoon => 18 * 60,
-            _ => 24 * 60,
+            Shift.Morning => shift.EndAtHour.ToMinutes(),
+            Shift.Afternoon => shift.EndAtHour.ToMinutes(),
+            _ => shift.EndAtHour.ToMinutes(),
         };
-
-        public int DurationInMinutes => shift.EndInMinutes - shift.StartInMinutes;
     }
 }

@@ -112,6 +112,11 @@ public class CampusOccupancyClassroomOut
     public string Name { get; set; }
 
     /// <summary>
+    /// Minutos disponíveis
+    /// </summary>
+    public int AvailableMinutes { get; set; }
+
+    /// <summary>
     /// Minutos ocupados na sala dentro da janela do turno
     /// </summary>
     public int UsedMinutes { get; set; }
