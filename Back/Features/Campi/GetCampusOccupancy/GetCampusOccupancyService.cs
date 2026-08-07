@@ -34,7 +34,7 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                 foreach (var classroom in campus.Classrooms)
                 {
                     var classroomUsedMinutes = 0;
-                    var classroomAvailableMinutes = 0;
+                    var classroomAvailableMinutes = campusOpenMinutes * classroom.Capacity;
 
                     var classroomSchedules = schedules.Where(x => x.ClassroomId == classroom.Id && x.Day == day &&
                         x.Start >= shift.StartAtHour && x.End <= shift.EndAtHour).ToList();
@@ -45,7 +45,6 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                         if (currentClass == null) continue;
 
                         classroomUsedMinutes += schedule.GetDiffInMinutes() * currentClass.Students;
-                        classroomAvailableMinutes += campusOpenMinutes * classroom.Capacity;
                     }
 
                     cellClassrooms.Add(new CampusOccupancyClassroomOut
