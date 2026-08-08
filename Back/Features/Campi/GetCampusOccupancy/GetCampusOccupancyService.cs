@@ -36,8 +36,9 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                     var classroomUsedMinutes = 0;
                     var classroomAvailableMinutes = campusOpenMinutes * classroom.Capacity;
 
+                    // Sobreposição com o turno, não contenção
                     var classroomSchedules = schedules.Where(x => x.ClassroomId == classroom.Id && x.Day == day &&
-                        x.Start >= shift.StartAtHour && x.End <= shift.EndAtHour).ToList();
+                        x.Start < shift.EndAtHour && x.End > shift.StartAtHour).ToList();
 
                     foreach (var schedule in classroomSchedules)
                     {
