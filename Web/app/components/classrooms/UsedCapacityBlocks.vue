@@ -4,10 +4,11 @@ const props = defineProps<{
   percent: number
 }>()
 
-// Cada sala vira 10 quadrados; cada quadrado é uma fatia de 10% dos assentos.
-// 45% → 4 cheios. O resto da fatia (os 5% que sobram) aparece como um quadrado
-// esmaecido: sem ele, 9% e 0% desenhariam a mesma coisa — dez quadrados vazios.
-const STEPS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+// Cada sala vira 4 quadrados; cada quadrado é uma fatia de 25% dos assentos.
+// 45% → 1 cheio. O resto da fatia (os 20% que sobram) aparece como um quadrado
+// esmaecido: sem ele, 24% e 0% desenhariam a mesma coisa — quatro quadrados vazios.
+const STEPS = [0, 1, 2, 3]
+const SLICE = 100 / STEPS.length
 
 // Os quadrados entram apagados na primeira pintura, do mesmo jeito que o anel
 // do mostrador entra do zero — as duas leituras da sala se enchem juntas.
@@ -31,18 +32,18 @@ watch(target, (_, old) => { previous.value = old })
 // ponta que se mexe, em vez de varrer sempre pro mesmo lado.
 const shrinking = computed(() => target.value < previous.value)
 
-// Cada quadrado espera 30ms a mais que o vizinho pra virar de cor: o último
+// Cada quadrado espera 90ms a mais que o vizinho pra virar de cor: o último
 // fecha em 470ms, junto com os 500ms do anel. É o atraso que desenha o
-// preenchimento — sem ele os dez trocariam de estado no mesmo instante.
+// preenchimento — sem ele os quatro trocariam de estado no mesmo instante.
 function delay(index: number): string {
   const position = shrinking.value ? STEPS.length - 1 - index : index
-  return `${position * 30}ms`
+  return `${position * 90}ms`
 }
 
 function state(index: number): 'full' | 'partial' | 'empty' {
-  const full = Math.floor(target.value / 10)
+  const full = Math.floor(target.value / SLICE)
   if (index < full) return 'full'
-  if (index === full && target.value % 10 > 0) return 'partial'
+  if (index === full && target.value % SLICE > 0) return 'partial'
   return 'empty'
 }
 
@@ -54,11 +55,16 @@ const stateClass: Record<string, string> = {
 </script>
 
 <template>
-  <div class="grid grid-cols-10 gap-1">
+  <!-- 2×2 de quadrados: o bloco vira um ícone ao lado do texto, em vez de uma
+       barra que ocupa a largura do card. O size-14 é o mesmo do mostrador em
+       UsedMinutesRingStat — as duas leituras da sala empilham no mesmo eixo, e
+       os textos ao lado começam na mesma coluna. A ordem de preenchimento é a
+       de leitura — cima-esquerda → baixo-direita. -->
+  <div class="grid size-14 shrink-0 grid-cols-2 grid-rows-2 gap-1">
     <div
       v-for="i in STEPS"
       :key="i"
-      class="aspect-square rounded-[3px] transition-[background-color,box-shadow] duration-200 ease-out motion-reduce:transition-none"
+      class="rounded-md transition-[background-color,box-shadow] duration-200 ease-out motion-reduce:transition-none"
       :class="stateClass[state(i)]"
       :style="{ transitionDelay: delay(i) }"
     />

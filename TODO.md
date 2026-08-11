@@ -31,18 +31,3 @@ Noite 18h–24h
     - exibir agenda completa da sala, com todos os horarios e ocupacoes de assentos
 
 
-
-agora altere o frontend, a tela de detalhes de um campus, tab ocupacao
-quando um celula (dia+turno) for selecionada, deve mostrar os cards com as salas
-em cada card de sala deve mostrar duas informacoes:
-    - porcentagem de tempo (UsedMinutesRate) que a sala esta ocupada no turno selecionado
-    - porcentagem de assentos ocupados (UsedCapacityRate) da sala no turno selecionado
-
-o UsedMinutesRate deve ser mostrado num componente novo, parecido com o ClassesRingStat, vai ser o ClassroomUsedMinutesRingStat
-no meio dele vai ter dois ponteiros, um grande de minutos e um menor de horas
-a ideia eh que o de minutos sempre fique na vertical pra cima
-e o de horas fique no ponto do valor do UsedMinutesRate (se UsedMinutesRate=25% o ponteiro fica apontando pra direita, por exemplo)
-
-abaixo do ClassroomUsedMinutesRingStat vai ter a representacao do valor UsedCapacityRate
-pra ele, siga a ideia que ja existe hoje, use os 10 quadradinhos onde cada um representa 10%
-

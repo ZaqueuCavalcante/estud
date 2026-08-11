@@ -251,8 +251,10 @@ watch(() => data.value.cells, (cells) => {
 }, { immediate: true })
 
 const selectedCell = computed(() => cellFor(selected.value.day, selected.value.shift))
+// Ordem alfabética fixa: reordenar por ocupação faz a lista pular de lugar a
+// cada célula selecionada, e a sala fica difícil de achar.
 const selectedClassrooms = computed(() =>
-  [...(selectedCell.value?.classrooms ?? [])].sort((a, b) => b.usedMinutesRate - a.usedMinutesRate),
+  [...(selectedCell.value?.classrooms ?? [])].sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')),
 )
 
 // ── Horários: GET /campi/{id}/opening-hours ───────────────────────────────────
@@ -579,9 +581,9 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
 
             <!-- Uma sala por card, com as duas leituras do turno: quanto do
                  horário aberto a sala passa reservada (o mostrador) e quanto
-                 dos assentos as turmas ocupam (os dez quadrados). Sala cheia de
+                 dos assentos as turmas ocupam (os quatro quadrados). Sala cheia de
                  horário e vazia de gente é o caso que só aparece com as duas. -->
-            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               <div
                 v-for="room in selectedClassrooms"
                 :key="room.id"
@@ -596,10 +598,10 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
                   :color-class="room.usedMinutesRate > 0 ? 'text-primary' : 'text-dimmed'"
                 />
 
-                <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-3">
                   <ClassroomsUsedCapacityBlocks :percent="room.usedCapacityRate" />
 
-                  <span class="text-xs text-muted tabular-nums">
+                  <span class="text-sm font-medium text-highlighted tabular-nums">
                     {{ formatRate(room.usedCapacityRate) }} dos assentos
                   </span>
                 </div>
