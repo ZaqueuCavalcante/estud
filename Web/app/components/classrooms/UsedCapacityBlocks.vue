@@ -1,0 +1,66 @@
+<script setup lang="ts">
+const props = defineProps<{
+  // Assentos ocupados da sala no turno, de 0 a 100
+  percent: number
+}>()
+
+// Cada sala vira 10 quadrados; cada quadrado é uma fatia de 10% dos assentos.
+// 45% → 4 cheios. O resto da fatia (os 5% que sobram) aparece como um quadrado
+// esmaecido: sem ele, 9% e 0% desenhariam a mesma coisa — dez quadrados vazios.
+const STEPS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+// Os quadrados entram apagados na primeira pintura, do mesmo jeito que o anel
+// do mostrador entra do zero — as duas leituras da sala se enchem juntas.
+const entered = ref(false)
+onMounted(() => {
+  requestAnimationFrame(() => requestAnimationFrame(() => { entered.value = true }))
+})
+
+const target = computed(() =>
+  entered.value ? Math.min(Math.max(props.percent, 0), 100) : 0,
+)
+
+// O valor que estava em tela antes desta mudança. O watch é 'pre', então grava
+// o anterior antes do DOM ser atualizado — é o que deixa o render saber pra que
+// lado a barra está indo.
+const previous = ref(0)
+watch(target, (_, old) => { previous.value = old })
+
+// Encher é da esquerda pra direita; esvaziar é da direita pra esquerda, com o
+// último quadrado apagando primeiro. Nos dois casos a animação acompanha a
+// ponta que se mexe, em vez de varrer sempre pro mesmo lado.
+const shrinking = computed(() => target.value < previous.value)
+
+// Cada quadrado espera 30ms a mais que o vizinho pra virar de cor: o último
+// fecha em 470ms, junto com os 500ms do anel. É o atraso que desenha o
+// preenchimento — sem ele os dez trocariam de estado no mesmo instante.
+function delay(index: number): string {
+  const position = shrinking.value ? STEPS.length - 1 - index : index
+  return `${position * 30}ms`
+}
+
+function state(index: number): 'full' | 'partial' | 'empty' {
+  const full = Math.floor(target.value / 10)
+  if (index < full) return 'full'
+  if (index === full && target.value % 10 > 0) return 'partial'
+  return 'empty'
+}
+
+const stateClass: Record<string, string> = {
+  full: 'bg-primary',
+  partial: 'bg-primary/35',
+  empty: 'bg-elevated ring-1 ring-inset ring-default/60',
+}
+</script>
+
+<template>
+  <div class="grid grid-cols-10 gap-1">
+    <div
+      v-for="i in STEPS"
+      :key="i"
+      class="aspect-square rounded-[3px] transition-[background-color,box-shadow] duration-200 ease-out motion-reduce:transition-none"
+      :class="stateClass[state(i)]"
+      :style="{ transitionDelay: delay(i) }"
+    />
+  </div>
+</template>

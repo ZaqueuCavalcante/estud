@@ -141,7 +141,7 @@ const emptyOccupancy: GetCampusOccupancyOut = {
   campusId,
   campus: '',
   totalClassrooms: 0,
-  overallRate: 0,
+  overallUsedMinutesRate: 0,
   openCells: 0,
   cells: [],
 }
@@ -195,16 +195,16 @@ const shiftRate = computed<Record<string, number>>(() => {
 // ── Insights derivados (stats) ────────────────────────────────────────────────
 const peakCell = computed<CampusOccupancyCell | null>(() =>
   data.value.cells.filter(c => c.open)
-    .reduce<CampusOccupancyCell | null>((a, b) => (a === null || b.rate > a.rate ? b : a), null),
+    .reduce<CampusOccupancyCell | null>((a, b) => (a === null || b.usedMinutesRate > a.usedMinutesRate ? b : a), null),
 )
 // Turno fechado não é turno livre: é horário que o campus não tem.
-const freeSlots = computed(() => data.value.cells.filter(c => c.open && c.rate === 0).length)
+const freeSlots = computed(() => data.value.cells.filter(c => c.open && c.usedMinutesRate === 0).length)
 const totalSlots = computed(() => data.value.openCells)
 
 // Sem sala cadastrada não há o que plotar. O mapa continua na tela, todo
 // zerado, com um aviso explicando o que falta pra ele ganhar dados — some um
 // grid vazio é menos informativo do que o grid mostrando "nada alocado ainda".
-const hasOccupancyData = computed(() => data.value.overallRate > 0)
+const hasOccupancyData = computed(() => data.value.overallUsedMinutesRate > 0)
 
 // ── Formatação ────────────────────────────────────────────────────────────────
 function formatMinutes(minutes: number): string {
@@ -252,33 +252,8 @@ watch(() => data.value.cells, (cells) => {
 
 const selectedCell = computed(() => cellFor(selected.value.day, selected.value.shift))
 const selectedClassrooms = computed(() =>
-  [...(selectedCell.value?.classrooms ?? [])].sort((a, b) => b.rate - a.rate),
+  [...(selectedCell.value?.classrooms ?? [])].sort((a, b) => b.usedMinutesRate - a.usedMinutesRate),
 )
-
-// ── Blocos de 10% por sala ────────────────────────────────────────────────────
-// Cada sala vira 10 quadrados; cada quadrado é uma fatia de 10% do turno.
-// 45% → 4 cheios. O resto da fatia (os 5% que sobram) aparece como um quadrado
-// esmaecido: sem ele, 9% e 0% desenhariam a mesma coisa — dez quadrados vazios.
-const blockSteps = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-function blockState(rate: number, index: number): 'full' | 'partial' | 'empty' {
-  const full = Math.floor(rate / 10)
-  if (index < full) return 'full'
-  if (index === full && rate % 10 > 0) return 'partial'
-  return 'empty'
-}
-
-const blockClass: Record<string, string> = {
-  full: 'bg-primary',
-  partial: 'bg-primary/35',
-  empty: 'bg-elevated ring-1 ring-inset ring-default/60',
-}
-
-// ── Animação de preenchimento no load (salas "enchendo") ──────────────────────
-const filled = ref(false)
-onMounted(() => {
-  requestAnimationFrame(() => { filled.value = true })
-})
 
 // ── Horários: GET /campi/{id}/opening-hours ───────────────────────────────────
 const {
@@ -438,7 +413,7 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
           <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <div class="flex items-center gap-4 rounded-xl border border-primary/25 bg-primary/[0.04] px-4 py-4">
               <div class="flex flex-col leading-none">
-                <span class="text-4xl font-bold tabular-nums tracking-tight text-primary">{{ formatRate(data.overallRate) }}</span>
+                <span class="text-4xl font-bold tabular-nums tracking-tight text-primary">{{ formatRate(data.overallUsedMinutesRate) }}</span>
                 <span class="mt-2 text-xs font-medium text-muted">Ocupação geral</span>
               </div>
             </div>
@@ -455,7 +430,7 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
               <span
                 class="mt-0.5 text-xl font-bold tabular-nums leading-none"
                 :class="hasOccupancyData && peakCell ? 'text-primary' : 'text-dimmed'"
-              >{{ formatRate(peakCell?.rate ?? 0) }}</span>
+              >{{ formatRate(peakCell?.usedMinutesRate ?? 0) }}</span>
               <span class="mt-2 text-xs text-muted">Horário de pico</span>
             </div>
 
@@ -527,12 +502,12 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
                       type="button"
                       class="flex h-14 items-center justify-center rounded-lg text-sm font-semibold tabular-nums transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                       :class="[
-                        cellClass(cellFor(day.key, shift.key)?.rate ?? 0),
+                        cellClass(cellFor(day.key, shift.key)?.usedMinutesRate ?? 0),
                         isSelected(day.key, shift.key) ? 'ring-2 ring-primary' : '',
                       ]"
                       @click="() => { selectCell(day.key, shift.key) }"
                     >
-                      {{ formatRate(cellFor(day.key, shift.key)?.rate ?? 0) }}
+                      {{ formatRate(cellFor(day.key, shift.key)?.usedMinutesRate ?? 0) }}
                     </button>
                   </template>
                 </template>
@@ -575,12 +550,12 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
                       type="button"
                       class="flex h-16 items-center justify-center rounded-lg text-sm font-semibold tabular-nums transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                       :class="[
-                        cellClass(cellFor(day.key, shift.key)?.rate ?? 0),
+                        cellClass(cellFor(day.key, shift.key)?.usedMinutesRate ?? 0),
                         isSelected(day.key, shift.key) ? 'ring-2 ring-primary' : '',
                       ]"
                       @click="() => { selectCell(day.key, shift.key) }"
                     >
-                      {{ formatRate(cellFor(day.key, shift.key)?.rate ?? 0) }}
+                      {{ formatRate(cellFor(day.key, shift.key)?.usedMinutesRate ?? 0) }}
                     </button>
                   </template>
                 </template>
@@ -599,43 +574,35 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
                   {{ formatMinutes(selectedCell.usedMinutes) }} reservados de {{ formatMinutes(selectedCell.availableMinutes) }}
                 </span>
               </div>
-              <span class="text-2xl font-bold tabular-nums text-primary">{{ formatRate(selectedCell.rate) }}</span>
+              <span class="text-2xl font-bold tabular-nums text-primary">{{ formatRate(selectedCell.usedMinutesRate) }}</span>
             </div>
 
-            <!-- Uma sala por card, com dez quadrados de 10% cada. Ler "quantos
-                 quadrados acenderam" é mais rápido do que comparar barras. -->
+            <!-- Uma sala por card, com as duas leituras do turno: quanto do
+                 horário aberto a sala passa reservada (o mostrador) e quanto
+                 dos assentos as turmas ocupam (os dez quadrados). Sala cheia de
+                 horário e vazia de gente é o caso que só aparece com as duas. -->
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               <div
                 v-for="room in selectedClassrooms"
                 :key="room.id"
-                class="flex flex-col gap-3 rounded-lg border border-default bg-default/60 p-4"
+                class="flex flex-col gap-4 rounded-lg border border-default bg-default/60 p-4"
               >
-                <div class="flex items-baseline justify-between gap-2">
-                  <span class="truncate text-sm font-medium text-highlighted">{{ room.name }}</span>
-                  <span
-                    class="shrink-0 text-lg font-bold tabular-nums leading-none"
-                    :class="room.rate > 0 ? 'text-primary' : 'text-dimmed'"
-                  >{{ formatRate(room.rate) }}</span>
-                </div>
+                <span class="truncate text-sm font-medium text-highlighted">{{ room.name }}</span>
 
-                <!-- Os quadrados acendem em cascata da esquerda pra direita: a
-                     animação desenha o preenchimento, não só o estado final. -->
-                <div class="grid grid-cols-10 gap-1">
-                  <div
-                    v-for="i in blockSteps"
-                    :key="i"
-                    class="aspect-square rounded-[3px] transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none"
-                    :class="[
-                      blockClass[blockState(room.rate, i)],
-                      filled ? 'opacity-100 scale-100' : 'opacity-0 scale-75',
-                    ]"
-                    :style="{ transitionDelay: `${i * 35}ms` }"
-                  />
-                </div>
+                <ClassroomsUsedMinutesRingStat
+                  :percent="room.usedMinutesRate"
+                  :title="`${formatRate(room.usedMinutesRate)} do horário`"
+                  :subtitle="`${formatMinutes(room.usedMinutes)} de ${formatMinutes(room.availableMinutes)}`"
+                  :color-class="room.usedMinutesRate > 0 ? 'text-primary' : 'text-dimmed'"
+                />
 
-                <span class="text-xs text-muted tabular-nums">
-                  {{ formatMinutes(room.usedMinutes) }} reservados
-                </span>
+                <div class="flex flex-col gap-2">
+                  <ClassroomsUsedCapacityBlocks :percent="room.usedCapacityRate" />
+
+                  <span class="text-xs text-muted tabular-nums">
+                    {{ formatRate(room.usedCapacityRate) }} dos assentos
+                  </span>
+                </div>
               </div>
             </div>
           </section>

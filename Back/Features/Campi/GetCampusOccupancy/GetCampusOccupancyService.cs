@@ -45,7 +45,7 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                     foreach (var schedule in classroomSchedules)
                     {
                         var currentClass = classes.FirstOrDefault(c => c.Id == schedule.ClassId);
-                        if (currentClass == null) continue;
+                        var currentClassStudents = currentClass?.Students ?? 0;
 
                         // Só conta o pedaço do horário que cai dentro de janela aberta do turno
                         var usedMinutes = openSchedules
@@ -54,7 +54,7 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                             .Sum(s => s.GetDiffInMinutes());
 
                         classroomUsedMinutes += usedMinutes;
-                        classroomUsedCapacity += usedMinutes * currentClass.Students;
+                        classroomUsedCapacity += usedMinutes * currentClassStudents;
                     }
 
                     cellClassrooms.Add(new CampusOccupancyClassroomOut
@@ -79,13 +79,13 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                     Classrooms = cellClassrooms,
                     AvailableMinutes = available,
                     Open = campusOpenMinutes > 0,
-                    Rate = ToRate(used, available),
+                    UsedMinutesRate = ToRate(used, available),
                 });
             }
         }
 
-        var usedSeatMinutes = cells.Sum(c => c.UsedMinutes);
-        var availableSeatMinutes = cells.Sum(c => c.AvailableMinutes);
+        var campusUsedMinutes = cells.Sum(c => c.UsedMinutes);
+        var campusAvailableMinutes = cells.Sum(c => c.AvailableMinutes);
 
         return new GetCampusOccupancyOut
         {
@@ -94,7 +94,7 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
             Campus = campus.Name,
             OpenCells = openCells,
             TotalClassrooms = campus.Classrooms.Count,
-            OverallRate = ToRate(usedSeatMinutes, availableSeatMinutes),
+            OverallUsedMinutesRate = ToRate(campusUsedMinutes, campusAvailableMinutes),
         };
     }
 

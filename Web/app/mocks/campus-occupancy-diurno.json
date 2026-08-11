@@ -2,7 +2,7 @@
   "campusId": 1,
   "campus": "Campus Diurno",
   "totalClassrooms": 2,
-  "overallRate": 55,
+  "overallUsedMinutesRate": 55,
   "openCells": 5,
   "cells": [
     {
@@ -11,19 +11,23 @@
       "open": true,
       "availableMinutes": 600,
       "usedMinutes": 480,
-      "rate": 80,
+      "usedMinutesRate": 80,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 300,
           "usedMinutes": 300,
-          "rate": 100
+          "usedMinutesRate": 100,
+          "usedCapacityRate": 85
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 300,
           "usedMinutes": 180,
-          "rate": 60
+          "usedMinutesRate": 60,
+          "usedCapacityRate": 42
         }
       ]
     },
@@ -33,19 +37,23 @@
       "open": false,
       "availableMinutes": 0,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -55,19 +63,23 @@
       "open": false,
       "availableMinutes": 0,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -77,19 +89,23 @@
       "open": true,
       "availableMinutes": 600,
       "usedMinutes": 240,
-      "rate": 40,
+      "usedMinutesRate": 40,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 300,
           "usedMinutes": 240,
-          "rate": 80
+          "usedMinutesRate": 80,
+          "usedCapacityRate": 68
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 300,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -99,19 +115,23 @@
       "open": false,
       "availableMinutes": 0,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -121,19 +141,23 @@
       "open": false,
       "availableMinutes": 0,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -143,19 +167,23 @@
       "open": true,
       "availableMinutes": 600,
       "usedMinutes": 570,
-      "rate": 95,
+      "usedMinutesRate": 95,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 300,
           "usedMinutes": 300,
-          "rate": 100
+          "usedMinutesRate": 100,
+          "usedCapacityRate": 85
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 300,
           "usedMinutes": 270,
-          "rate": 90
+          "usedMinutesRate": 90,
+          "usedCapacityRate": 63
         }
       ]
     },
@@ -165,19 +193,23 @@
       "open": false,
       "availableMinutes": 0,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -187,19 +219,23 @@
       "open": false,
       "availableMinutes": 0,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -209,19 +245,23 @@
       "open": true,
       "availableMinutes": 600,
       "usedMinutes": 180,
-      "rate": 30,
+      "usedMinutesRate": 30,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 300,
           "usedMinutes": 120,
-          "rate": 40
+          "usedMinutesRate": 40,
+          "usedCapacityRate": 34
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 300,
           "usedMinutes": 60,
-          "rate": 20
+          "usedMinutesRate": 20,
+          "usedCapacityRate": 14
         }
       ]
     },
@@ -231,19 +271,23 @@
       "open": false,
       "availableMinutes": 0,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -253,19 +297,23 @@
       "open": false,
       "availableMinutes": 0,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -275,19 +323,23 @@
       "open": true,
       "availableMinutes": 600,
       "usedMinutes": 180,
-      "rate": 30,
+      "usedMinutesRate": 30,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 300,
           "usedMinutes": 180,
-          "rate": 60
+          "usedMinutesRate": 60,
+          "usedCapacityRate": 51
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 300,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -297,19 +349,23 @@
       "open": false,
       "availableMinutes": 0,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -319,19 +375,23 @@
       "open": false,
       "availableMinutes": 0,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -341,19 +401,23 @@
       "open": false,
       "availableMinutes": 0,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -363,19 +427,23 @@
       "open": false,
       "availableMinutes": 0,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -385,19 +453,23 @@
       "open": false,
       "availableMinutes": 0,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 0,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     }

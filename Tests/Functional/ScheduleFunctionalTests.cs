@@ -102,18 +102,18 @@ public partial class IntegrationTests
         monday.Open.Should().BeTrue();
         monday.UsedMinutes.Should().Be(180);
         monday.AvailableMinutes.Should().Be(300); // 1 sala x 07h–12h
-        monday.Rate.Should().Be(60M);
+        monday.UsedMinutesRate.Should().Be(60M);
         monday.Classrooms.Should().ContainSingle().Which.UsedMinutes.Should().Be(180);
 
         // Espaço ocioso: a mesma sala aparece livre em todas as outras células abertas.
         var otherOpenCells = occupancy.Cells
             .Where(c => c.Open && !(c.Day == Day.Monday && c.Shift == Shift.Morning)).ToList();
         otherOpenCells.Should().HaveCount(14);
-        otherOpenCells.Should().OnlyContain(c => c.UsedMinutes == 0 && c.Rate == 0);
+        otherOpenCells.Should().OnlyContain(c => c.UsedMinutes == 0 && c.UsedMinutesRate == 0);
         otherOpenCells.Should().OnlyContain(c => c.Classrooms.Count == 1);
 
         // 180min de 4500min (1 sala x 900min/dia x 5 dias abertos).
-        occupancy.OverallRate.Should().Be(4M);
+        occupancy.OverallUsedMinutesRate.Should().Be(4M);
 
         // Assert — teacher e student: 1 dia, 1 disciplina, agora com o nome da sala.
         var teacherDay = teacherAgenda.Days.Should().ContainSingle().Which;
@@ -207,13 +207,13 @@ public partial class IntegrationTests
         var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
         morning.UsedMinutes.Should().Be(180);
         morning.AvailableMinutes.Should().Be(300); // 07h–12h
-        morning.Rate.Should().Be(60M);
+        morning.UsedMinutesRate.Should().Be(60M);
 
         // A noite tem só 240min abertos (18h–22h), então os mesmos 180min pesam mais.
         var evening = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Evening);
         evening.UsedMinutes.Should().Be(180);
         evening.AvailableMinutes.Should().Be(240); // 18h–22h
-        evening.Rate.Should().Be(75M);
+        evening.UsedMinutesRate.Should().Be(75M);
 
         // Turno cheio x turno vazio no mesmo dia.
         var afternoon = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Afternoon);
@@ -224,7 +224,7 @@ public partial class IntegrationTests
         occupancy.Cells.Where(c => c.Day != Day.Monday).Should().OnlyContain(c => c.UsedMinutes == 0);
 
         // 360min de 4500min.
-        occupancy.OverallRate.Should().Be(8M);
+        occupancy.OverallUsedMinutesRate.Should().Be(8M);
 
         // Assert — cada professor vê só a sua aula.
         var teacherADay = teacherAAgenda.Days.Should().ContainSingle().Which;
@@ -326,12 +326,12 @@ public partial class IntegrationTests
         var usedCells = occupancy.Cells.Where(c => c.UsedMinutes > 0).ToList();
         usedCells.Should().HaveCount(4);
         usedCells.Should().OnlyContain(c => c.Shift == Shift.Morning);
-        usedCells.Should().OnlyContain(c => c.UsedMinutes == 180 && c.Rate == 60M);
+        usedCells.Should().OnlyContain(c => c.UsedMinutes == 180 && c.UsedMinutesRate == 60M);
         usedCells.Select(c => c.Day).Should().BeEquivalentTo(
             new[] { Day.Monday, Day.Tuesday, Day.Wednesday, Day.Thursday });
 
         // 720min de 4500min — de 4% no caso 1 para 16%.
-        occupancy.OverallRate.Should().Be(16M);
+        occupancy.OverallUsedMinutesRate.Should().Be(16M);
 
         // Assert — carga horária: professor B com 2 dias, os outros com 1.
         teacherAAgenda.Days.Should().ContainSingle().Which.Day.Should().Be(Day.Monday);
@@ -457,7 +457,7 @@ public partial class IntegrationTests
         var tuesdayAfternoon = occupancy.Cells.First(c => c.Day == Day.Tuesday && c.Shift == Shift.Afternoon);
         tuesdayAfternoon.UsedMinutes.Should().Be(180);
         tuesdayAfternoon.AvailableMinutes.Should().Be(720); // 2 salas x 12h–18h
-        tuesdayAfternoon.Rate.Should().Be(25M);
+        tuesdayAfternoon.UsedMinutesRate.Should().Be(25M);
         tuesdayAfternoon.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(0);
         tuesdayAfternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutes.Should().Be(180);
         tuesdayAfternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutesRate.Should().Be(50M);
@@ -484,7 +484,7 @@ public partial class IntegrationTests
         openMinutes.Should().Be(9000);
         usedMinutes.Should().Be(1080);
         (openMinutes - usedMinutes).Should().Be(7920);
-        occupancy.OverallRate.Should().Be(12M);
+        occupancy.OverallUsedMinutesRate.Should().Be(12M);
 
         // Assert — o professor das duas turmas vê 2 blocos na terça, em salas diferentes.
         teacherBAgenda.Days.Select(d => d.Day).Should().Equal(
@@ -637,22 +637,22 @@ public partial class IntegrationTests
         // Campus 1: 360min de 9000min (2 salas x 900min x 5 dias).
         occupancyA.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning).UsedMinutes.Should().Be(180);
         occupancyA.Cells.First(c => c.Day == Day.Tuesday && c.Shift == Shift.Morning).UsedMinutes.Should().Be(180);
-        occupancyA.OverallRate.Should().Be(4M);
+        occupancyA.OverallUsedMinutesRate.Should().Be(4M);
 
         // Campus 2: 300min de 6600min (2 salas x 660min x 5 dias). O denominador menor
         // é o que permite ranquear campi sem penalizar quem abre menos.
         var mondayMorningB = occupancyB.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
         mondayMorningB.UsedMinutes.Should().Be(180);
         mondayMorningB.AvailableMinutes.Should().Be(600); // 2 salas x 07h–12h
-        mondayMorningB.Rate.Should().Be(30M);
+        mondayMorningB.UsedMinutesRate.Should().Be(30M);
 
         var fridayAfternoonB = occupancyB.Cells.First(c => c.Day == Day.Friday && c.Shift == Shift.Afternoon);
         fridayAfternoonB.UsedMinutes.Should().Be(120);
         fridayAfternoonB.AvailableMinutes.Should().Be(720); // 2 salas x 12h–18h
-        fridayAfternoonB.Rate.Should().Be(16.67M);
+        fridayAfternoonB.UsedMinutesRate.Should().Be(16.67M);
 
         occupancyB.Cells.Sum(c => c.AvailableMinutes).Should().Be(6600);
-        occupancyB.OverallRate.Should().Be(4.55M);
+        occupancyB.OverallUsedMinutesRate.Should().Be(4.55M);
 
         // Assert — professor de um só campus vê agenda só daquele campus.
         var teacherADay = teacherAAgenda.Days.Should().ContainSingle().Which;
@@ -861,7 +861,7 @@ public partial class IntegrationTests
         var secondSiblingAgenda = await siblingsParentClient.GetParentStudentAgenda(secondSibling.Id).Success();
 
         // Assert — manager: o Parent não muda nenhum indicador.
-        occupancy.OverallRate.Should().Be(occupancyBeforeParents.OverallRate);
+        occupancy.OverallUsedMinutesRate.Should().Be(occupancyBeforeParents.OverallUsedMinutesRate);
         occupancy.Cells.Sum(c => c.UsedMinutes).Should().Be(360);
 
         // Assert — parent: lista de filhos vinculados.
@@ -1384,13 +1384,13 @@ public partial class IntegrationTests
             var morning = agresteOccupancy.Cells.First(c => c.Day == day && c.Shift == Shift.Morning);
             morning.UsedMinutes.Should().Be(180);
             morning.AvailableMinutes.Should().Be(1800); // 6 salas x 07h–12h
-            morning.Rate.Should().Be(10M);
+            morning.UsedMinutesRate.Should().Be(10M);
 
             // A noite tem menos minutos abertos, então o mesmo bloco pesa mais.
             var evening = agresteOccupancy.Cells.First(c => c.Day == day && c.Shift == Shift.Evening);
             evening.UsedMinutes.Should().Be(180);
             evening.AvailableMinutes.Should().Be(1440); // 6 salas x 18h–22h
-            evening.Rate.Should().Be(12.5M);
+            evening.UsedMinutesRate.Should().Be(12.5M);
 
             agresteOccupancy.Cells.First(c => c.Day == day && c.Shift == Shift.Afternoon)
                 .UsedMinutes.Should().Be(0);
@@ -1404,7 +1404,7 @@ public partial class IntegrationTests
         // 1800min usados de 27000min abertos (6 salas x 900min x 5 dias).
         agresteOccupancy.Cells.Sum(c => c.AvailableMinutes).Should().Be(27000);
         agresteOccupancy.Cells.Sum(c => c.UsedMinutes).Should().Be(1800);
-        agresteOccupancy.OverallRate.Should().Be(6.67M);
+        agresteOccupancy.OverallUsedMinutesRate.Should().Be(6.67M);
 
         suassunaOccupancy.TotalClassrooms.Should().Be(4);
         suassunaOccupancy.OpenCells.Should().Be(10);
@@ -1416,13 +1416,13 @@ public partial class IntegrationTests
             var afternoon = suassunaOccupancy.Cells.First(c => c.Day == day && c.Shift == Shift.Afternoon);
             afternoon.UsedMinutes.Should().Be(240);
             afternoon.AvailableMinutes.Should().Be(1440); // 4 salas x 12h–18h
-            afternoon.Rate.Should().Be(16.67M);
+            afternoon.UsedMinutesRate.Should().Be(16.67M);
         }
 
         // 1200min de 13200min (4 salas x 660min x 5 dias). Sem o recorte por
         // OpeningHours o denominador seria quase o dobro.
         suassunaOccupancy.Cells.Sum(c => c.AvailableMinutes).Should().Be(13200);
-        suassunaOccupancy.OverallRate.Should().Be(9.09M);
+        suassunaOccupancy.OverallUsedMinutesRate.Should().Be(9.09M);
 
         // Assert — manager: distribuição de carga horária dos 10 professores.
         // 10 turmas de 180min no Agreste + 5 de 240min no Suassuna.

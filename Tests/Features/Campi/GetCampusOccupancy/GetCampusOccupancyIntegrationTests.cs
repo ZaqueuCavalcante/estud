@@ -103,7 +103,16 @@ public partial class IntegrationTests
 
         // Assert
         var occupancy = result.Success;
-        occupancy.OverallRate.Should().Be(16.67M);
+
+        // 300min usados de 900min abertos: só a segunda abre, e nos três turnos.
+        occupancy.OverallUsedMinutesRate.Should().Be(33.33M);
+
+        // A sala enche de horário na manhã, mas só com metade dos assentos:
+        // 3 alunos numa sala de 6 lugares.
+        var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
+        var sala = morning.Classrooms.First(c => c.Id == classroom.Id);
+        sala.UsedMinutesRate.Should().Be(100M);
+        sala.UsedCapacityRate.Should().Be(50M);
     }
 
 
@@ -143,7 +152,7 @@ public partial class IntegrationTests
         occupancy.CampusId.Should().Be(campus.Id);
         occupancy.Campus.Should().Be("Campus Agreste");
         occupancy.TotalClassrooms.Should().Be(2);
-        occupancy.OverallRate.Should().Be(0);
+        occupancy.OverallUsedMinutesRate.Should().Be(0);
 
         // 6 dias x 3 turnos, cada célula detalhada pelas 2 salas do campus
         occupancy.Cells.Should().HaveCount(18);
@@ -195,7 +204,7 @@ public partial class IntegrationTests
         var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
         morning.UsedMinutes.Should().Be(300);      // 180 na Sala 01 + 120 na Sala 02
         morning.AvailableMinutes.Should().Be(600); // 2 salas x 300min
-        morning.Rate.Should().Be(50M);
+        morning.UsedMinutesRate.Should().Be(50M);
         morning.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(180);
         morning.Classrooms.First(c => c.Id == sala01.Id).UsedMinutesRate.Should().Be(60M);
         morning.Classrooms.First(c => c.Id == sala02.Id).UsedMinutes.Should().Be(120);
@@ -205,7 +214,7 @@ public partial class IntegrationTests
         var afternoon = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Afternoon);
         afternoon.UsedMinutes.Should().Be(120);
         afternoon.AvailableMinutes.Should().Be(720);
-        afternoon.Rate.Should().Be(16.67M);
+        afternoon.UsedMinutesRate.Should().Be(16.67M);
         afternoon.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(0);
         afternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutes.Should().Be(120);
         afternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutesRate.Should().Be(33.33M);
@@ -218,7 +227,7 @@ public partial class IntegrationTests
 
         // 420min de 9000min na semana: 2 salas x 900min/dia (07h–22h) x 5 dias abertos.
         // O sábado não entra — o campus não abre, e horário que não existe não é folga.
-        occupancy.OverallRate.Should().Be(4.67M);
+        occupancy.OverallUsedMinutesRate.Should().Be(4.67M);
         occupancy.OpenCells.Should().Be(15);
     }
 
@@ -245,7 +254,7 @@ public partial class IntegrationTests
         // Assert
         var occupancy = result.Success;
         occupancy.TotalClassrooms.Should().Be(1);
-        occupancy.OverallRate.Should().Be(0);
+        occupancy.OverallUsedMinutesRate.Should().Be(0);
         occupancy.Cells.Should().OnlyContain(c => c.UsedMinutes == 0);
     }
 
@@ -262,7 +271,7 @@ public partial class IntegrationTests
         // Assert
         var occupancy = result.Success;
         occupancy.TotalClassrooms.Should().Be(0);
-        occupancy.OverallRate.Should().Be(0);
+        occupancy.OverallUsedMinutesRate.Should().Be(0);
         occupancy.Cells.Should().HaveCount(18);
         occupancy.Cells.Should().OnlyContain(c => c.AvailableMinutes == 0 && c.Classrooms.Count == 0);
 
@@ -312,7 +321,7 @@ public partial class IntegrationTests
         morning.Open.Should().BeTrue();
         morning.UsedMinutes.Should().Be(300);
         morning.AvailableMinutes.Should().Be(600); // 2 salas x 300min abertos
-        morning.Rate.Should().Be(50M);
+        morning.UsedMinutesRate.Should().Be(50M);
 
         var afternoon = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Afternoon);
         afternoon.Open.Should().BeFalse();
@@ -320,7 +329,7 @@ public partial class IntegrationTests
 
         // 300min de 3000min (2 salas x 300min x 5 dias). Com o denominador de um
         // campus seg–sáb nos três turnos inteiros (12240min) o mesmo uso daria 2,45%.
-        occupancy.OverallRate.Should().Be(10M);
+        occupancy.OverallUsedMinutesRate.Should().Be(10M);
     }
 
     [Test]
@@ -350,7 +359,7 @@ public partial class IntegrationTests
 
         // Aula cadastrada num horário que o campus não tem não é ocupação de nada.
         occupancy.Cells.Should().OnlyContain(c => c.UsedMinutes == 0);
-        occupancy.OverallRate.Should().Be(0);
+        occupancy.OverallUsedMinutesRate.Should().Be(0);
         occupancy.OpenCells.Should().Be(1);
     }
 
@@ -384,7 +393,7 @@ public partial class IntegrationTests
         evening.Open.Should().BeTrue();
         evening.UsedMinutes.Should().Be(60);
         evening.AvailableMinutes.Should().Be(240); // 1 sala x 18h–22h
-        evening.Rate.Should().Be(25M);
+        evening.UsedMinutesRate.Should().Be(25M);
     }
 
     [Test]
@@ -447,12 +456,12 @@ public partial class IntegrationTests
         var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
         morning.UsedMinutes.Should().Be(240);
         morning.AvailableMinutes.Should().Be(300);
-        morning.Rate.Should().Be(80M);
+        morning.UsedMinutesRate.Should().Be(80M);
         morning.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(240);
         morning.Classrooms.First(c => c.Id == sala01.Id).UsedMinutesRate.Should().Be(80M);
 
         // 240min de 4500min (1 sala x 900min/dia x 5 dias abertos).
-        occupancy.OverallRate.Should().Be(5.33M);
+        occupancy.OverallUsedMinutesRate.Should().Be(5.33M);
     }
 
     // Turma iniciada é turma acontecendo: sai do mapa só quando finaliza.
@@ -486,7 +495,7 @@ public partial class IntegrationTests
         var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
         morning.UsedMinutes.Should().Be(180);
         morning.AvailableMinutes.Should().Be(300);
-        morning.Rate.Should().Be(60M);
+        morning.UsedMinutesRate.Should().Be(60M);
     }
 
     // Turma finalizada é histórico: a sala dela está livre para o próximo período,
@@ -520,7 +529,7 @@ public partial class IntegrationTests
         var occupancy = result.Success;
         occupancy.TotalClassrooms.Should().Be(1);
         occupancy.Cells.Should().OnlyContain(c => c.UsedMinutes == 0);
-        occupancy.OverallRate.Should().Be(0);
+        occupancy.OverallUsedMinutesRate.Should().Be(0);
     }
 
     // Turma online tem horário mas não tem sala: existe na agenda, não no mapa.
@@ -546,7 +555,7 @@ public partial class IntegrationTests
         var occupancy = result.Success;
         occupancy.TotalClassrooms.Should().Be(1);
         occupancy.Cells.Should().OnlyContain(c => c.UsedMinutes == 0);
-        occupancy.OverallRate.Should().Be(0);
+        occupancy.OverallUsedMinutesRate.Should().Be(0);
     }
 
     // Campus que fecha para o almoço tem duas janelas no mesmo dia, e o turno inteiro
@@ -584,7 +593,7 @@ public partial class IntegrationTests
         morning.Open.Should().BeTrue();
         morning.AvailableMinutes.Should().Be(300);
         morning.UsedMinutes.Should().Be(60);  // 11h–12h
-        morning.Rate.Should().Be(20M);
+        morning.UsedMinutesRate.Should().Be(20M);
 
         var afternoon = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Afternoon);
         afternoon.Open.Should().BeFalse();
@@ -595,10 +604,10 @@ public partial class IntegrationTests
         evening.Open.Should().BeTrue();
         evening.AvailableMinutes.Should().Be(240);
         evening.UsedMinutes.Should().Be(60);  // 18h–19h
-        evening.Rate.Should().Be(25M);
+        evening.UsedMinutesRate.Should().Be(25M);
 
         // 120min de 540min: as duas janelas do dia, e só elas.
-        occupancy.OverallRate.Should().Be(22.22M);
+        occupancy.OverallUsedMinutesRate.Should().Be(22.22M);
     }
 
     [Test]
@@ -629,7 +638,7 @@ public partial class IntegrationTests
         occupancy.OpenCells.Should().Be(0);
         occupancy.Cells.Should().HaveCount(18);
         occupancy.Cells.Should().OnlyContain(c => !c.Open && c.AvailableMinutes == 0 && c.UsedMinutes == 0);
-        occupancy.OverallRate.Should().Be(0);
+        occupancy.OverallUsedMinutesRate.Should().Be(0);
     }
 
     [Test]
@@ -661,11 +670,11 @@ public partial class IntegrationTests
         var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
         morning.UsedMinutes.Should().Be(300);
         morning.AvailableMinutes.Should().Be(300);
-        morning.Rate.Should().Be(100M);
+        morning.UsedMinutesRate.Should().Be(100M);
         morning.Classrooms.First(c => c.Id == sala01.Id).UsedMinutesRate.Should().Be(100M);
 
         occupancy.OpenCells.Should().Be(1);
-        occupancy.OverallRate.Should().Be(100M);
+        occupancy.OverallUsedMinutesRate.Should().Be(100M);
     }
 
     [Test]
@@ -698,10 +707,10 @@ public partial class IntegrationTests
         morning.Open.Should().BeTrue();
         morning.AvailableMinutes.Should().Be(240);
         morning.UsedMinutes.Should().Be(120);
-        morning.Rate.Should().Be(50M);
+        morning.UsedMinutesRate.Should().Be(50M);
 
         occupancy.OpenCells.Should().Be(1);
-        occupancy.OverallRate.Should().Be(50M);
+        occupancy.OverallUsedMinutesRate.Should().Be(50M);
     }
 
     // Horário que encosta na fronteira do turno pertence a um turno só: 12h–14h é
@@ -774,7 +783,7 @@ public partial class IntegrationTests
         evening.Open.Should().BeTrue();
         evening.AvailableMinutes.Should().Be(345);  // 18h–23h45, e não os 240 do padrão
         evening.UsedMinutes.Should().Be(105);
-        evening.Rate.Should().Be(30.43M);
+        evening.UsedMinutesRate.Should().Be(30.43M);
 
         occupancy.OpenCells.Should().Be(1);
     }

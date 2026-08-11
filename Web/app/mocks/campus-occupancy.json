@@ -2,7 +2,7 @@
   "campusId": 1,
   "campus": "Campus Agreste",
   "totalClassrooms": 6,
-  "overallRate": 42.73,
+  "overallUsedMinutesRate": 42.73,
   "openCells": 18,
   "cells": [
     {
@@ -11,43 +11,55 @@
       "open": true,
       "availableMinutes": 1800,
       "usedMinutes": 840,
-      "rate": 46.67,
+      "usedMinutesRate": 46.67,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 300,
           "usedMinutes": 270,
-          "rate": 90
+          "usedMinutesRate": 90,
+          "usedCapacityRate": 76.5
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 300,
           "usedMinutes": 120,
-          "rate": 40
+          "usedMinutesRate": 40,
+          "usedCapacityRate": 28
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 300,
           "usedMinutes": 60,
-          "rate": 20
+          "usedMinutesRate": 20,
+          "usedCapacityRate": 12
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 300,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 300,
           "usedMinutes": 270,
-          "rate": 90
+          "usedMinutesRate": 90,
+          "usedCapacityRate": 67.5
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 300,
           "usedMinutes": 120,
-          "rate": 40
+          "usedMinutesRate": 40,
+          "usedCapacityRate": 22
         }
       ]
     },
@@ -57,43 +69,55 @@
       "open": true,
       "availableMinutes": 2160,
       "usedMinutes": 1368,
-      "rate": 63.33,
+      "usedMinutesRate": 63.33,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 360,
           "usedMinutes": 288,
-          "rate": 80
+          "usedMinutesRate": 80,
+          "usedCapacityRate": 68
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 360,
           "usedMinutes": 180,
-          "rate": 50
+          "usedMinutesRate": 50,
+          "usedCapacityRate": 35
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 360,
           "usedMinutes": 324,
-          "rate": 90
+          "usedMinutesRate": 90,
+          "usedCapacityRate": 54
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 360,
           "usedMinutes": 108,
-          "rate": 30
+          "usedMinutesRate": 30,
+          "usedCapacityRate": 27
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 360,
           "usedMinutes": 288,
-          "rate": 80
+          "usedMinutesRate": 80,
+          "usedCapacityRate": 60
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 360,
           "usedMinutes": 180,
-          "rate": 50
+          "usedMinutesRate": 50,
+          "usedCapacityRate": 27.5
         }
       ]
     },
@@ -103,43 +127,55 @@
       "open": true,
       "availableMinutes": 2160,
       "usedMinutes": 1116,
-      "rate": 51.67,
+      "usedMinutesRate": 51.67,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 360,
           "usedMinutes": 108,
-          "rate": 30
+          "usedMinutesRate": 30,
+          "usedCapacityRate": 25.5
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 360,
           "usedMinutes": 306,
-          "rate": 85
+          "usedMinutesRate": 85,
+          "usedCapacityRate": 59.5
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 360,
           "usedMinutes": 216,
-          "rate": 60
+          "usedMinutesRate": 60,
+          "usedCapacityRate": 36
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 360,
           "usedMinutes": 72,
-          "rate": 20
+          "usedMinutesRate": 20,
+          "usedCapacityRate": 18
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 360,
           "usedMinutes": 108,
-          "rate": 30
+          "usedMinutesRate": 30,
+          "usedCapacityRate": 22.5
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 360,
           "usedMinutes": 306,
-          "rate": 85
+          "usedMinutesRate": 85,
+          "usedCapacityRate": 46.75
         }
       ]
     },
@@ -149,43 +185,55 @@
       "open": true,
       "availableMinutes": 1800,
       "usedMinutes": 720,
-      "rate": 40,
+      "usedMinutesRate": 40,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 300,
           "usedMinutes": 255,
-          "rate": 85
+          "usedMinutesRate": 85,
+          "usedCapacityRate": 72.25
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 300,
           "usedMinutes": 90,
-          "rate": 30
+          "usedMinutesRate": 30,
+          "usedCapacityRate": 21
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 300,
           "usedMinutes": 30,
-          "rate": 10
+          "usedMinutesRate": 10,
+          "usedCapacityRate": 6
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 300,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 300,
           "usedMinutes": 255,
-          "rate": 85
+          "usedMinutesRate": 85,
+          "usedCapacityRate": 63.75
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 300,
           "usedMinutes": 90,
-          "rate": 30
+          "usedMinutesRate": 30,
+          "usedCapacityRate": 16.5
         }
       ]
     },
@@ -195,43 +243,55 @@
       "open": true,
       "availableMinutes": 2160,
       "usedMinutes": 1242,
-      "rate": 57.5,
+      "usedMinutesRate": 57.5,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 360,
           "usedMinutes": 252,
-          "rate": 70
+          "usedMinutesRate": 70,
+          "usedCapacityRate": 59.5
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 360,
           "usedMinutes": 216,
-          "rate": 60
+          "usedMinutesRate": 60,
+          "usedCapacityRate": 42
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 360,
           "usedMinutes": 306,
-          "rate": 85
+          "usedMinutesRate": 85,
+          "usedCapacityRate": 51
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 360,
           "usedMinutes": 252,
-          "rate": 70
+          "usedMinutesRate": 70,
+          "usedCapacityRate": 52.5
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 360,
           "usedMinutes": 216,
-          "rate": 60
+          "usedMinutesRate": 60,
+          "usedCapacityRate": 33
         }
       ]
     },
@@ -241,43 +301,55 @@
       "open": true,
       "availableMinutes": 2160,
       "usedMinutes": 1314,
-      "rate": 60.83,
+      "usedMinutesRate": 60.83,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 360,
           "usedMinutes": 144,
-          "rate": 40
+          "usedMinutesRate": 40,
+          "usedCapacityRate": 34
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 360,
           "usedMinutes": 324,
-          "rate": 90
+          "usedMinutesRate": 90,
+          "usedCapacityRate": 63
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 360,
           "usedMinutes": 198,
-          "rate": 55
+          "usedMinutesRate": 55,
+          "usedCapacityRate": 33
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 360,
           "usedMinutes": 180,
-          "rate": 50
+          "usedMinutesRate": 50,
+          "usedCapacityRate": 45
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 360,
           "usedMinutes": 144,
-          "rate": 40
+          "usedMinutesRate": 40,
+          "usedCapacityRate": 30
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 360,
           "usedMinutes": 324,
-          "rate": 90
+          "usedMinutesRate": 90,
+          "usedCapacityRate": 49.5
         }
       ]
     },
@@ -287,43 +359,55 @@
       "open": true,
       "availableMinutes": 1800,
       "usedMinutes": 870,
-      "rate": 48.33,
+      "usedMinutesRate": 48.33,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 300,
           "usedMinutes": 270,
-          "rate": 90
+          "usedMinutesRate": 90,
+          "usedCapacityRate": 76.5
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 300,
           "usedMinutes": 150,
-          "rate": 50
+          "usedMinutesRate": 50,
+          "usedCapacityRate": 35
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 300,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 300,
           "usedMinutes": 30,
-          "rate": 10
+          "usedMinutesRate": 10,
+          "usedCapacityRate": 9
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 300,
           "usedMinutes": 270,
-          "rate": 90
+          "usedMinutesRate": 90,
+          "usedCapacityRate": 67.5
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 300,
           "usedMinutes": 150,
-          "rate": 50
+          "usedMinutesRate": 50,
+          "usedCapacityRate": 27.5
         }
       ]
     },
@@ -333,43 +417,55 @@
       "open": true,
       "availableMinutes": 2160,
       "usedMinutes": 1260,
-      "rate": 58.33,
+      "usedMinutesRate": 58.33,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 360,
           "usedMinutes": 270,
-          "rate": 75
+          "usedMinutesRate": 75,
+          "usedCapacityRate": 63.75
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 360,
           "usedMinutes": 198,
-          "rate": 55
+          "usedMinutesRate": 55,
+          "usedCapacityRate": 38.5
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 360,
           "usedMinutes": 252,
-          "rate": 70
+          "usedMinutesRate": 70,
+          "usedCapacityRate": 42
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 360,
           "usedMinutes": 72,
-          "rate": 20
+          "usedMinutesRate": 20,
+          "usedCapacityRate": 18
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 360,
           "usedMinutes": 270,
-          "rate": 75
+          "usedMinutesRate": 75,
+          "usedCapacityRate": 56.25
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 360,
           "usedMinutes": 198,
-          "rate": 55
+          "usedMinutesRate": 55,
+          "usedCapacityRate": 30.25
         }
       ]
     },
@@ -379,43 +475,55 @@
       "open": true,
       "availableMinutes": 2160,
       "usedMinutes": 864,
-      "rate": 40,
+      "usedMinutesRate": 40,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 360,
           "usedMinutes": 72,
-          "rate": 20
+          "usedMinutesRate": 20,
+          "usedCapacityRate": 17
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 360,
           "usedMinutes": 288,
-          "rate": 80
+          "usedMinutesRate": 80,
+          "usedCapacityRate": 56
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 360,
           "usedMinutes": 144,
-          "rate": 40
+          "usedMinutesRate": 40,
+          "usedCapacityRate": 24
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 360,
           "usedMinutes": 72,
-          "rate": 20
+          "usedMinutesRate": 20,
+          "usedCapacityRate": 15
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 360,
           "usedMinutes": 288,
-          "rate": 80
+          "usedMinutesRate": 80,
+          "usedCapacityRate": 44
         }
       ]
     },
@@ -425,43 +533,55 @@
       "open": true,
       "availableMinutes": 1800,
       "usedMinutes": 735,
-      "rate": 40.83,
+      "usedMinutesRate": 40.83,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 300,
           "usedMinutes": 240,
-          "rate": 80
+          "usedMinutesRate": 80,
+          "usedCapacityRate": 68
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 300,
           "usedMinutes": 105,
-          "rate": 35
+          "usedMinutesRate": 35,
+          "usedCapacityRate": 24.5
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 300,
           "usedMinutes": 45,
-          "rate": 15
+          "usedMinutesRate": 15,
+          "usedCapacityRate": 9
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 300,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 300,
           "usedMinutes": 240,
-          "rate": 80
+          "usedMinutesRate": 80,
+          "usedCapacityRate": 60
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 300,
           "usedMinutes": 105,
-          "rate": 35
+          "usedMinutesRate": 35,
+          "usedCapacityRate": 19.25
         }
       ]
     },
@@ -471,43 +591,55 @@
       "open": true,
       "availableMinutes": 2160,
       "usedMinutes": 1260,
-      "rate": 58.33,
+      "usedMinutesRate": 58.33,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 360,
           "usedMinutes": 234,
-          "rate": 65
+          "usedMinutesRate": 65,
+          "usedCapacityRate": 55.25
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 360,
           "usedMinutes": 180,
-          "rate": 50
+          "usedMinutesRate": 50,
+          "usedCapacityRate": 35
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 360,
           "usedMinutes": 288,
-          "rate": 80
+          "usedMinutesRate": 80,
+          "usedCapacityRate": 48
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 360,
           "usedMinutes": 144,
-          "rate": 40
+          "usedMinutesRate": 40,
+          "usedCapacityRate": 36
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 360,
           "usedMinutes": 234,
-          "rate": 65
+          "usedMinutesRate": 65,
+          "usedCapacityRate": 48.75
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 360,
           "usedMinutes": 180,
-          "rate": 50
+          "usedMinutesRate": 50,
+          "usedCapacityRate": 27.5
         }
       ]
     },
@@ -517,43 +649,55 @@
       "open": true,
       "availableMinutes": 2160,
       "usedMinutes": 1368,
-      "rate": 63.33,
+      "usedMinutesRate": 63.33,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 360,
           "usedMinutes": 180,
-          "rate": 50
+          "usedMinutesRate": 50,
+          "usedCapacityRate": 42.5
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 360,
           "usedMinutes": 342,
-          "rate": 95
+          "usedMinutesRate": 95,
+          "usedCapacityRate": 66.5
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 360,
           "usedMinutes": 216,
-          "rate": 60
+          "usedMinutesRate": 60,
+          "usedCapacityRate": 36
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 360,
           "usedMinutes": 108,
-          "rate": 30
+          "usedMinutesRate": 30,
+          "usedCapacityRate": 27
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 360,
           "usedMinutes": 180,
-          "rate": 50
+          "usedMinutesRate": 50,
+          "usedCapacityRate": 37.5
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 360,
           "usedMinutes": 342,
-          "rate": 95
+          "usedMinutesRate": 95,
+          "usedCapacityRate": 52.25
         }
       ]
     },
@@ -563,43 +707,55 @@
       "open": true,
       "availableMinutes": 1800,
       "usedMinutes": 675,
-      "rate": 37.5,
+      "usedMinutesRate": 37.5,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 300,
           "usedMinutes": 210,
-          "rate": 70
+          "usedMinutesRate": 70,
+          "usedCapacityRate": 59.5
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 300,
           "usedMinutes": 120,
-          "rate": 40
+          "usedMinutesRate": 40,
+          "usedCapacityRate": 28
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 300,
           "usedMinutes": 15,
-          "rate": 5
+          "usedMinutesRate": 5,
+          "usedCapacityRate": 3
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 300,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 300,
           "usedMinutes": 210,
-          "rate": 70
+          "usedMinutesRate": 70,
+          "usedCapacityRate": 52.5
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 300,
           "usedMinutes": 120,
-          "rate": 40
+          "usedMinutesRate": 40,
+          "usedCapacityRate": 22
         }
       ]
     },
@@ -609,43 +765,55 @@
       "open": true,
       "availableMinutes": 2160,
       "usedMinutes": 972,
-      "rate": 45,
+      "usedMinutesRate": 45,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 360,
           "usedMinutes": 216,
-          "rate": 60
+          "usedMinutesRate": 60,
+          "usedCapacityRate": 51
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 360,
           "usedMinutes": 162,
-          "rate": 45
+          "usedMinutesRate": 45,
+          "usedCapacityRate": 31.5
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 360,
           "usedMinutes": 216,
-          "rate": 60
+          "usedMinutesRate": 60,
+          "usedCapacityRate": 36
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 360,
           "usedMinutes": 216,
-          "rate": 60
+          "usedMinutesRate": 60,
+          "usedCapacityRate": 45
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 360,
           "usedMinutes": 162,
-          "rate": 45
+          "usedMinutesRate": 45,
+          "usedCapacityRate": 24.75
         }
       ]
     },
@@ -655,43 +823,55 @@
       "open": true,
       "availableMinutes": 2160,
       "usedMinutes": 864,
-      "rate": 40,
+      "usedMinutesRate": 40,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 360,
           "usedMinutes": 108,
-          "rate": 30
+          "usedMinutesRate": 30,
+          "usedCapacityRate": 25.5
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 360,
           "usedMinutes": 252,
-          "rate": 70
+          "usedMinutesRate": 70,
+          "usedCapacityRate": 49
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 360,
           "usedMinutes": 108,
-          "rate": 30
+          "usedMinutesRate": 30,
+          "usedCapacityRate": 18
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 360,
           "usedMinutes": 36,
-          "rate": 10
+          "usedMinutesRate": 10,
+          "usedCapacityRate": 9
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 360,
           "usedMinutes": 108,
-          "rate": 30
+          "usedMinutesRate": 30,
+          "usedCapacityRate": 22.5
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 360,
           "usedMinutes": 252,
-          "rate": 70
+          "usedMinutesRate": 70,
+          "usedCapacityRate": 38.5
         }
       ]
     },
@@ -701,43 +881,55 @@
       "open": true,
       "availableMinutes": 1800,
       "usedMinutes": 150,
-      "rate": 8.33,
+      "usedMinutesRate": 8.33,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 300,
           "usedMinutes": 60,
-          "rate": 20
+          "usedMinutesRate": 20,
+          "usedCapacityRate": 17
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 300,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 300,
           "usedMinutes": 30,
-          "rate": 10
+          "usedMinutesRate": 10,
+          "usedCapacityRate": 6
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 300,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 300,
           "usedMinutes": 60,
-          "rate": 20
+          "usedMinutesRate": 20,
+          "usedCapacityRate": 15
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 300,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -747,43 +939,55 @@
       "open": true,
       "availableMinutes": 2160,
       "usedMinutes": 72,
-      "rate": 3.33,
+      "usedMinutesRate": 3.33,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 360,
           "usedMinutes": 72,
-          "rate": 20
+          "usedMinutesRate": 20,
+          "usedCapacityRate": 12
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     },
@@ -793,43 +997,55 @@
       "open": true,
       "availableMinutes": 2160,
       "usedMinutes": 0,
-      "rate": 0,
+      "usedMinutesRate": 0,
       "classrooms": [
         {
           "id": 1,
           "name": "Sala 01",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 2,
           "name": "Sala 02",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 3,
           "name": "Sala 03",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 4,
           "name": "Sala 04",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 5,
           "name": "Laboratório A",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         },
         {
           "id": 6,
           "name": "Auditório",
+          "availableMinutes": 360,
           "usedMinutes": 0,
-          "rate": 0
+          "usedMinutesRate": 0,
+          "usedCapacityRate": 0
         }
       ]
     }

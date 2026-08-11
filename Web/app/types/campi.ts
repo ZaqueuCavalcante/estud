@@ -1,8 +1,12 @@
 export interface CampusOccupancyClassroom {
   id: number
   name: string
+  availableMinutes: number
   usedMinutes: number
-  rate: number
+  /** Quanto do horário aberto do turno a sala passa reservada. */
+  usedMinutesRate: number
+  /** Quanto dos assentos-minuto da sala as turmas ocupam. */
+  usedCapacityRate: number
 }
 
 export interface CampusOccupancyCell {
@@ -12,7 +16,7 @@ export interface CampusOccupancyCell {
   open: boolean
   availableMinutes: number
   usedMinutes: number
-  rate: number
+  usedMinutesRate: number
   classrooms: CampusOccupancyClassroom[]
 }
 
@@ -20,7 +24,8 @@ export interface GetCampusOccupancyOut {
   campusId: number
   campus: string
   totalClassrooms: number
-  overallRate: number
+  /** Ocupação de minutos do campus: sala-minuto usado sobre sala-minuto aberto. */
+  overallUsedMinutesRate: number
   /** Quantas células o campus abre — é o denominador de "turnos livres". */
   openCells: number
   cells: CampusOccupancyCell[]

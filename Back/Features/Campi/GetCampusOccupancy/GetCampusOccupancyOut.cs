@@ -15,11 +15,11 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
     public int TotalClassrooms { get; set; }
 
     /// <summary>
-    /// Ocupação geral do campus, em porcentagem (0 a 100).
-    /// Conta assento, e não sala: é o total de assentos-minuto ocupados pelas turmas
-    /// sobre os assentos-minuto que as salas oferecem no horário de funcionamento do campus.
+    /// Ocupação de minutos geral do campus, em porcentagem (0 a 100).
+    /// Conta sala, e não assento: é o sala-minuto ocupado pelas turmas sobre o
+    /// sala-minuto que as salas oferecem no horário de funcionamento do campus.
     /// </summary>
-    public decimal OverallRate { get; set; }
+    public decimal OverallUsedMinutesRate { get; set; }
 
     /// <summary>
     /// Quantidade de células em que o campus abre. É o denominador dos indicadores
@@ -39,7 +39,7 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
             CampusId = 1,
             Campus = "Campus Agreste",
             TotalClassrooms = 2,
-            OverallRate = 27.5M,
+            OverallUsedMinutesRate = 27.5M,
             OpenCells = 15,
             Cells =
             [
@@ -50,26 +50,26 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
                     Open = true,
                     AvailableMinutes = 600,
                     UsedMinutes = 480,
-                    Rate = 80M,
+                    UsedMinutesRate = 80M,
                     Classrooms =
                     [
                         new CampusOccupancyClassroomOut
                         {
                             Id = 1,
                             Name = "Sala 05",
-                            UsedMinutes = 150,
+                            UsedMinutes = 300,
                             AvailableMinutes = 300,
-                            UsedMinutesRate = 50M,
+                            UsedMinutesRate = 100M,
                             UsedCapacityRate = 80M,
                         },
                         new CampusOccupancyClassroomOut
                         {
                             Id = 2,
                             Name = "Sala 06",
-                            UsedMinutes = 150,
+                            UsedMinutes = 180,
                             AvailableMinutes = 300,
-                            UsedMinutesRate = 50M,
-                            UsedCapacityRate = 80M,
+                            UsedMinutesRate = 60M,
+                            UsedCapacityRate = 45M,
                         },
                     ],
                 },
@@ -84,8 +84,7 @@ public class CampusOccupancyCellOut
     public Shift Shift { get; set; }
 
     /// <summary>
-    /// Se o campus abre neste dia e turno. Célula fechada tem AvailableMinutes = 0
-    /// e não entra no cálculo da ocupação geral.
+    /// Se o campus abre neste dia e turno
     /// </summary>
     public bool Open { get; set; }
 
@@ -102,7 +101,7 @@ public class CampusOccupancyCellOut
     /// <summary>
     /// Ocupação da célula, em porcentagem (0 a 100)
     /// </summary>
-    public decimal Rate { get; set; }
+    public decimal UsedMinutesRate { get; set; }
 
     /// <summary>
     /// Detalhamento da célula por sala
