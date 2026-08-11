@@ -37,20 +37,32 @@ public class UpdateCampusOpeningHoursService(EstudDbContext ctx) : IEstudService
         var institutionId = ctx.RequestUser.InstitutionId;
 
         var campus = await ctx.Campi
-            .Include(c => c.OpeningHours)
-            .FirstOrDefaultAsync(c => c.Id == campusId && c.InstitutionId == institutionId);
+            .Include(x => x.OpeningHours)
+            .FirstOrDefaultAsync(x => x.Id == campusId && x.InstitutionId == institutionId);
         if (campus == null) return CampusNotFound.I;
 
         var newHours = new List<OpeningHour>();
         foreach (var day in data.Days)
         {
+            var shifts = new HashSet<Shift>();
+
             foreach (var window in day.Windows)
             {
-                var hour = new OpeningHour(day.Day, window.Start, window.End);
+                var hourResult = OpeningHour.New(day.Day, window.Start, window.End);
+                if (hourResult.IsError) return hourResult.Error;
+                var hour = hourResult.Success;
 
                 // Duas janelas do mesmo dia se sobrepondo tornariam a soma de
                 // minutos abertos maior que o dia — o cálculo soma as janelas.
                 if (newHours.Any(hour.Overlaps)) return OverlappingOpeningHours.I;
+
+                // A grade é lida por turno, então cada janela precisa caber
+                // inteira dentro de um deles — nada de atravessar a fronteira.
+                var shift = ShiftOf(hour);
+                if (shift == null) return OpeningHourOutsideShift.I;
+
+                // E cada turno do dia comporta no máximo uma janela.
+                if (!shifts.Add(shift.Value)) return MultipleOpeningHoursInShift.I;
 
                 newHours.Add(hour);
             }
@@ -62,5 +74,19 @@ public class UpdateCampusOpeningHoursService(EstudDbContext ctx) : IEstudService
         await ctx.SaveChangesAsync();
 
         return EstudSuccess.I;
+    }
+
+    /// <summary>
+    /// O turno que contém a janela inteira, ou null se ela não cabe em nenhum —
+    /// seja por cruzar a fronteira entre dois turnos, seja por cair fora de todos.
+    /// </summary>
+    private static Shift? ShiftOf(OpeningHour hour)
+    {
+        foreach (var shift in Enum.GetValues<Shift>())
+        {
+            if (hour.Start >= shift.StartAtHour && hour.End <= shift.EndAtHour) return shift;
+        }
+
+        return null;
     }
 }

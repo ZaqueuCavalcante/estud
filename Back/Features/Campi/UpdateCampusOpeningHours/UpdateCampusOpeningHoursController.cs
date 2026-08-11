@@ -26,5 +26,7 @@ internal class ErrorsExamples : ErrorExamplesProvider<
     CampusNotFound,
     InvalidOpeningHour,
     InvalidOpeningHoursList,
-    OverlappingOpeningHours
+    OverlappingOpeningHours,
+    OpeningHourOutsideShift,
+    MultipleOpeningHoursInShift
 >;

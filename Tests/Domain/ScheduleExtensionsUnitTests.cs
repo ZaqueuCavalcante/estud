@@ -262,11 +262,10 @@ public class ScheduleExtensionsUnitTests
     [TestCase((Hour)705, Hour.H09_00)]    // 07:05 não é múltiplo de 15min
     [TestCase((Hour)701, Hour.H09_00)]
     [TestCase(Hour.H07_00, (Hour)910)]    // 09:10 não existe
-    [TestCase((Hour)2400, Hour.H09_00)]   // 24:00 não existe
     [TestCase(Hour.H07_00, (Hour)2460)]
     [TestCase((Hour)1260, Hour.H14_00)]   // 12:60 não existe
-    [TestCase((Hour)(-700), Hour.H09_00)]
     [TestCase((Hour)9999, Hour.H09_00)]
+    [TestCase((Hour)(-700), Hour.H09_00)]
     public void ScheduleExtensions_ToSchedules_Should_not_convert_when_hour_is_invalid(Hour start, Hour end)
     {
         // Arrange

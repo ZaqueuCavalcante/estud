@@ -255,6 +255,25 @@ const selectedClassrooms = computed(() =>
   [...(selectedCell.value?.classrooms ?? [])].sort((a, b) => b.rate - a.rate),
 )
 
+// ── Blocos de 10% por sala ────────────────────────────────────────────────────
+// Cada sala vira 10 quadrados; cada quadrado é uma fatia de 10% do turno.
+// 45% → 4 cheios. O resto da fatia (os 5% que sobram) aparece como um quadrado
+// esmaecido: sem ele, 9% e 0% desenhariam a mesma coisa — dez quadrados vazios.
+const blockSteps = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+function blockState(rate: number, index: number): 'full' | 'partial' | 'empty' {
+  const full = Math.floor(rate / 10)
+  if (index < full) return 'full'
+  if (index === full && rate % 10 > 0) return 'partial'
+  return 'empty'
+}
+
+const blockClass: Record<string, string> = {
+  full: 'bg-primary',
+  partial: 'bg-primary/35',
+  empty: 'bg-elevated ring-1 ring-inset ring-default/60',
+}
+
 // ── Animação de preenchimento no load (salas "enchendo") ──────────────────────
 const filled = ref(false)
 onMounted(() => {
@@ -583,24 +602,40 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
               <span class="text-2xl font-bold tabular-nums text-primary">{{ formatRate(selectedCell.rate) }}</span>
             </div>
 
-            <div class="flex flex-col gap-3">
+            <!-- Uma sala por card, com dez quadrados de 10% cada. Ler "quantos
+                 quadrados acenderam" é mais rápido do que comparar barras. -->
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               <div
                 v-for="room in selectedClassrooms"
                 :key="room.id"
-                class="flex items-center gap-4"
+                class="flex flex-col gap-3 rounded-lg border border-default bg-default/60 p-4"
               >
-                <span class="w-28 shrink-0 truncate text-sm font-medium text-highlighted">{{ room.name }}</span>
-                <div class="h-2 flex-1 overflow-hidden rounded-full bg-elevated ring-1 ring-inset ring-default/60">
+                <div class="flex items-baseline justify-between gap-2">
+                  <span class="truncate text-sm font-medium text-highlighted">{{ room.name }}</span>
+                  <span
+                    class="shrink-0 text-lg font-bold tabular-nums leading-none"
+                    :class="room.rate > 0 ? 'text-primary' : 'text-dimmed'"
+                  >{{ formatRate(room.rate) }}</span>
+                </div>
+
+                <!-- Os quadrados acendem em cascata da esquerda pra direita: a
+                     animação desenha o preenchimento, não só o estado final. -->
+                <div class="grid grid-cols-10 gap-1">
                   <div
-                    class="h-full rounded-full bg-primary transition-[width] duration-500 ease-out motion-reduce:transition-none"
-                    :style="{ width: filled ? `${room.rate}%` : '0%' }"
+                    v-for="i in blockSteps"
+                    :key="i"
+                    class="aspect-square rounded-[3px] transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none"
+                    :class="[
+                      blockClass[blockState(room.rate, i)],
+                      filled ? 'opacity-100 scale-100' : 'opacity-0 scale-75',
+                    ]"
+                    :style="{ transitionDelay: `${i * 35}ms` }"
                   />
                 </div>
-                <span class="w-16 shrink-0 text-right text-xs text-muted tabular-nums">{{ formatMinutes(room.usedMinutes) }}</span>
-                <span
-                  class="w-11 shrink-0 text-right text-sm font-semibold tabular-nums"
-                  :class="room.rate > 0 ? 'text-highlighted' : 'text-dimmed'"
-                >{{ formatRate(room.rate) }}</span>
+
+                <span class="text-xs text-muted tabular-nums">
+                  {{ formatMinutes(room.usedMinutes) }} reservados
+                </span>
               </div>
             </div>
           </section>

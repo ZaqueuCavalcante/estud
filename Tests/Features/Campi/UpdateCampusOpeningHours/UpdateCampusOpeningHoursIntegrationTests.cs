@@ -168,6 +168,98 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Campi_UpdateCampusOpeningHours_Should_not_update_campus_opening_hours_when_window_crosses_two_shifts()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+
+        // Act
+        var result = await client.UpdateCampusOpeningHours(campus.Id,
+        [
+            (Day.Monday, [(Hour.H11_00, Hour.H14_00)]),
+        ]);
+
+        // Assert
+        result.ShouldBeError(OpeningHourOutsideShift.I);
+    }
+
+    // 07:00–22:00 cobre manhã, tarde e noite: uma janela só não pode varrer o dia
+    // inteiro, precisa ser quebrada em uma por turno.
+    [Test]
+    public async Task Campi_UpdateCampusOpeningHours_Should_not_update_campus_opening_hours_when_window_spans_the_whole_day()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+
+        // Act
+        var result = await client.UpdateCampusOpeningHours(campus.Id,
+        [
+            (Day.Monday, [(Hour.H07_00, Hour.H22_00)]),
+        ]);
+
+        // Assert
+        result.ShouldBeError(OpeningHourOutsideShift.I);
+    }
+
+    // 00:00 fica antes do início da manhã (06:00), então a janela não cai em turno nenhum.
+    [Test]
+    public async Task Campi_UpdateCampusOpeningHours_Should_not_update_campus_opening_hours_when_window_starts_before_the_first_shift()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+
+        // Act
+        var result = await client.UpdateCampusOpeningHours(campus.Id,
+        [
+            (Day.Monday, [(Hour.H00_00, Hour.H10_00)]),
+        ]);
+
+        // Assert
+        result.ShouldBeError(OpeningHourOutsideShift.I);
+    }
+
+    // As duas janelas cabem na manhã e não se sobrepõem, mas o turno só comporta uma.
+    [Test]
+    public async Task Campi_UpdateCampusOpeningHours_Should_not_update_campus_opening_hours_when_a_shift_has_two_windows()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+
+        // Act
+        var result = await client.UpdateCampusOpeningHours(campus.Id,
+        [
+            (Day.Monday, [(Hour.H07_00, Hour.H09_00), (Hour.H10_00, Hour.H12_00)]),
+        ]);
+
+        // Assert
+        result.ShouldBeError(MultipleOpeningHoursInShift.I);
+    }
+
+    // A segunda tem uma janela por turno e a colisão está na terça: um dia válido
+    // não pode mascarar o inválido.
+    [Test]
+    public async Task Campi_UpdateCampusOpeningHours_Should_not_update_campus_opening_hours_when_a_shift_has_two_windows_in_another_day()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+
+        // Act
+        var result = await client.UpdateCampusOpeningHours(campus.Id,
+        [
+            (Day.Monday, [(Hour.H07_00, Hour.H12_00), (Hour.H13_00, Hour.H18_00)]),
+            (Day.Tuesday, [(Hour.H13_00, Hour.H15_00), (Hour.H16_00, Hour.H18_00)]),
+        ]);
+
+        // Assert
+        result.ShouldBeError(MultipleOpeningHoursInShift.I);
+    }
+
+    [Test]
     public async Task Campi_UpdateCampusOpeningHours_Should_not_update_campus_opening_hours_when_day_is_repeated()
     {
         // Arrange
@@ -199,7 +291,7 @@ public partial class IntegrationTests
         // Act
         var result = await client.UpdateCampusOpeningHours(campus.Id,
         [
-            (Day.Monday, [(Hour.H07_00, Hour.H22_00)]),
+            (Day.Monday, [(Hour.H07_00, Hour.H12_00), (Hour.H13_00, Hour.H18_00), (Hour.H19_00, Hour.H22_00)]),
             (Day.Saturday, [(Hour.H08_00, Hour.H12_00)]),
         ]);
 
@@ -228,7 +320,7 @@ public partial class IntegrationTests
         // Act
         var result = await client.UpdateCampusOpeningHours(campus.Id,
         [
-            (Day.Monday, [(Hour.H07_00, Hour.H12_00), (Hour.H14_00, Hour.H22_00)]),
+            (Day.Monday, [(Hour.H07_00, Hour.H12_00), (Hour.H14_00, Hour.H18_00)]),
         ]);
 
         // Assert
@@ -241,7 +333,7 @@ public partial class IntegrationTests
         monday.Windows[0].Start.Should().Be(Hour.H07_00);
         monday.Windows[0].End.Should().Be(Hour.H12_00);
         monday.Windows[1].Start.Should().Be(Hour.H14_00);
-        monday.Windows[1].End.Should().Be(Hour.H22_00);
+        monday.Windows[1].End.Should().Be(Hour.H18_00);
     }
 
     // Duas janelas no mesmo intervalo em dias diferentes não colidem: a checagem
@@ -299,6 +391,36 @@ public partial class IntegrationTests
         monday.Windows.Should().HaveCount(2);
         monday.Windows[0].End.Should().Be(Hour.H12_00);
         monday.Windows[1].Start.Should().Be(Hour.H12_00);
+    }
+
+    // O limite é uma janela por turno, não uma por dia: três janelas cabem no dia
+    // desde que cada uma fique dentro de um turno diferente.
+    [Test]
+    public async Task Campi_UpdateCampusOpeningHours_Should_update_campus_opening_hours_with_one_window_per_shift()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+
+        // Act
+        var result = await client.UpdateCampusOpeningHours(campus.Id,
+        [
+            (Day.Monday, [(Hour.H07_00, Hour.H12_00), (Hour.H13_00, Hour.H18_00), (Hour.H19_00, Hour.H22_00)]),
+        ]);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+
+        var openingHours = await client.GetCampusOpeningHours(campus.Id).Success();
+
+        var monday = openingHours.Days.First(d => d.Day == Day.Monday);
+        monday.Windows.Should().HaveCount(3);
+        monday.Windows[0].Start.Should().Be(Hour.H07_00);
+        monday.Windows[0].End.Should().Be(Hour.H12_00);
+        monday.Windows[1].Start.Should().Be(Hour.H13_00);
+        monday.Windows[1].End.Should().Be(Hour.H18_00);
+        monday.Windows[2].Start.Should().Be(Hour.H19_00);
+        monday.Windows[2].End.Should().Be(Hour.H22_00);
     }
 
     [Test]

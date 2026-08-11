@@ -54,9 +54,32 @@ public class Schedule
         return new Schedule(day, startAt, endAt, teacherId, classroomId);
     }
 
+    /// <summary>
+    /// Cria uma janela de horário sem dono — sem turma, professor nem sala.
+    /// </summary>
+    public static Schedule Window(Day day, Hour start, Hour end)
+    {
+        return new Schedule(day, start, end);
+    }
+
     public int GetDiffInMinutes()
     {
         return Start.DiffInMinutes(End);
+    }
+
+    /// <summary>
+    /// O pedaço deste horário que cai dentro do outro, no mesmo dia.
+    /// </summary>
+    public Schedule? Intersect(Schedule other)
+    {
+        if (Day != other.Day) return null;
+
+        var start = Start > other.Start ? Start : other.Start;
+        var end = End < other.End ? End : other.End;
+
+        if (start >= end) return null;
+
+        return new Schedule(Day, start, end, TeacherId, ClassroomId) { ClassId = ClassId };
     }
 
     public bool Conflict(Schedule other)

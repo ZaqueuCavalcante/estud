@@ -26,6 +26,9 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
         {
             foreach (var shift in Shifts)
             {
+                // O que a célula tem de horário real: as janelas do dia recortadas ao turno.
+                // É contra elas que o uso das salas é medido, e é delas que sai o denominador.
+                var openSchedules = campus.OpenSchedulesIn(day, shift);
                 var campusOpenMinutes = campus.MinutesOpenIn(day, shift);
                 if (campusOpenMinutes > 0) openCells++;
 
@@ -34,18 +37,24 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                 foreach (var classroom in campus.Classrooms)
                 {
                     var classroomUsedMinutes = 0;
-                    var classroomAvailableMinutes = campusOpenMinutes * classroom.Capacity;
+                    var classroomUsedCapacity = 0;
 
-                    // Sobreposição com o turno, não contenção
-                    var classroomSchedules = schedules.Where(x => x.ClassroomId == classroom.Id && x.Day == day &&
-                        x.Start < shift.EndAtHour && x.End > shift.StartAtHour).ToList();
+                    var classroomSchedules = schedules
+                        .Where(x => x.ClassroomId == classroom.Id && x.Day == day).ToList();
 
                     foreach (var schedule in classroomSchedules)
                     {
                         var currentClass = classes.FirstOrDefault(c => c.Id == schedule.ClassId);
                         if (currentClass == null) continue;
 
-                        classroomUsedMinutes += schedule.GetDiffInMinutes() * currentClass.Students;
+                        // Só conta o pedaço do horário que cai dentro de janela aberta do turno
+                        var usedMinutes = openSchedules
+                            .Select(schedule.Intersect)
+                            .OfType<Schedule>()
+                            .Sum(s => s.GetDiffInMinutes());
+
+                        classroomUsedMinutes += usedMinutes;
+                        classroomUsedCapacity += usedMinutes * currentClass.Students;
                     }
 
                     cellClassrooms.Add(new CampusOccupancyClassroomOut
@@ -53,8 +62,9 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                         Id = classroom.Id,
                         Name = classroom.Name,
                         UsedMinutes = classroomUsedMinutes,
-                        AvailableMinutes = classroomAvailableMinutes,
-                        Rate = ToRate(classroomUsedMinutes, classroomAvailableMinutes),
+                        AvailableMinutes = campusOpenMinutes,
+                        UsedMinutesRate = ToRate(classroomUsedMinutes, campusOpenMinutes),
+                        UsedCapacityRate = ToRate(classroomUsedCapacity, campusOpenMinutes * classroom.Capacity),
                     });
                 }
 

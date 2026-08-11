@@ -80,7 +80,10 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var classroom = await client.CreateClassroom(campus.Id, name: "Sala 01", capacity: 6).Success();
 
-        await client.UpdateCampusOpeningHours(campus.Id, [(Day.Monday, [(Hour.H07_00, Hour.H22_00)])]);
+        await client.UpdateCampusOpeningHours(campus.Id,
+        [
+            (Day.Monday, [(Hour.H07_00, Hour.H12_00), (Hour.H12_00, Hour.H18_00), (Hour.H18_00, Hour.H22_00)]),
+        ]);
 
         var discipline = await client.CreateDiscipline().Success();
         var period = await client.CreateAcademicPeriod().Success();
@@ -194,9 +197,9 @@ public partial class IntegrationTests
         morning.AvailableMinutes.Should().Be(600); // 2 salas x 300min
         morning.Rate.Should().Be(50M);
         morning.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(180);
-        morning.Classrooms.First(c => c.Id == sala01.Id).Rate.Should().Be(60M);
+        morning.Classrooms.First(c => c.Id == sala01.Id).UsedMinutesRate.Should().Be(60M);
         morning.Classrooms.First(c => c.Id == sala02.Id).UsedMinutes.Should().Be(120);
-        morning.Classrooms.First(c => c.Id == sala02.Id).Rate.Should().Be(40M);
+        morning.Classrooms.First(c => c.Id == sala02.Id).UsedMinutesRate.Should().Be(40M);
 
         // A tarde fica só com o rabo do horário que cruzou o meio-dia.
         var afternoon = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Afternoon);
@@ -205,7 +208,7 @@ public partial class IntegrationTests
         afternoon.Rate.Should().Be(16.67M);
         afternoon.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(0);
         afternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutes.Should().Be(120);
-        afternoon.Classrooms.First(c => c.Id == sala02.Id).Rate.Should().Be(33.33M);
+        afternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutesRate.Should().Be(33.33M);
 
         var evening = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Evening);
         evening.UsedMinutes.Should().Be(0);
@@ -361,7 +364,7 @@ public partial class IntegrationTests
 
         await client.UpdateCampusOpeningHours(campus.Id,
         [
-            (Day.Monday, [(Hour.H07_00, Hour.H22_00)]),
+            (Day.Monday, [(Hour.H07_00, Hour.H12_00), (Hour.H12_00, Hour.H18_00), (Hour.H18_00, Hour.H22_00)]),
         ]);
 
         var discipline = await client.CreateDiscipline().Success();
@@ -446,7 +449,7 @@ public partial class IntegrationTests
         morning.AvailableMinutes.Should().Be(300);
         morning.Rate.Should().Be(80M);
         morning.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(240);
-        morning.Classrooms.First(c => c.Id == sala01.Id).Rate.Should().Be(80M);
+        morning.Classrooms.First(c => c.Id == sala01.Id).UsedMinutesRate.Should().Be(80M);
 
         // 240min de 4500min (1 sala x 900min/dia x 5 dias abertos).
         occupancy.OverallRate.Should().Be(5.33M);
@@ -659,7 +662,7 @@ public partial class IntegrationTests
         morning.UsedMinutes.Should().Be(300);
         morning.AvailableMinutes.Should().Be(300);
         morning.Rate.Should().Be(100M);
-        morning.Classrooms.First(c => c.Id == sala01.Id).Rate.Should().Be(100M);
+        morning.Classrooms.First(c => c.Id == sala01.Id).UsedMinutesRate.Should().Be(100M);
 
         occupancy.OpenCells.Should().Be(1);
         occupancy.OverallRate.Should().Be(100M);

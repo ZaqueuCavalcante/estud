@@ -1,3 +1,5 @@
+using Estud.Back.Domain.Classes;
+
 namespace Estud.Back.Domain.Campi;
 
 /// <summary>
@@ -21,6 +23,22 @@ public class OpeningHour
         Day = day;
         Start = start;
         End = end;
+    }
+
+    public static OneOf<OpeningHour, EstudError> New(Day day, Hour start, Hour end)
+    {
+        if (!day.IsValid()) return new InvalidDay();
+        if (!start.IsValid()) return new InvalidHour();
+        if (!end.IsValid()) return new InvalidHour();
+
+        if (start == end || end < start) return new InvalidOpeningHour();
+
+        return new OpeningHour(day, start, end);
+    }
+
+    public Schedule ToSchedule()
+    {
+        return Schedule.Window(Day, Start, End);
     }
 
     public bool Overlaps(OpeningHour other)

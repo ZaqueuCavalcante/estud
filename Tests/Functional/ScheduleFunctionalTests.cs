@@ -460,7 +460,7 @@ public partial class IntegrationTests
         tuesdayAfternoon.Rate.Should().Be(25M);
         tuesdayAfternoon.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(0);
         tuesdayAfternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutes.Should().Be(180);
-        tuesdayAfternoon.Classrooms.First(c => c.Id == sala02.Id).Rate.Should().Be(50M);
+        tuesdayAfternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutesRate.Should().Be(50M);
 
         var thursdayAfternoon = occupancy.Cells.First(c => c.Day == Day.Thursday && c.Shift == Shift.Afternoon);
         thursdayAfternoon.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(180);
@@ -523,11 +523,11 @@ public partial class IntegrationTests
         var campusB = await directorClient.CreateCampus(name: "Suassuna", city: "Recife").Success();
         await directorClient.UpdateCampusOpeningHours(campusB.Id,
         [
-            (Day.Monday, [(Hour.H07_00, Hour.H18_00)]),
-            (Day.Tuesday, [(Hour.H07_00, Hour.H18_00)]),
-            (Day.Wednesday, [(Hour.H07_00, Hour.H18_00)]),
-            (Day.Thursday, [(Hour.H07_00, Hour.H18_00)]),
-            (Day.Friday, [(Hour.H07_00, Hour.H18_00)]),
+            (Day.Monday, [(Hour.H07_00, Hour.H12_00), (Hour.H12_00, Hour.H18_00)]),
+            (Day.Tuesday, [(Hour.H07_00, Hour.H12_00), (Hour.H12_00, Hour.H18_00)]),
+            (Day.Wednesday, [(Hour.H07_00, Hour.H12_00), (Hour.H12_00, Hour.H18_00)]),
+            (Day.Thursday, [(Hour.H07_00, Hour.H12_00), (Hour.H12_00, Hour.H18_00)]),
+            (Day.Friday, [(Hour.H07_00, Hour.H12_00), (Hour.H12_00, Hour.H18_00)]),
         ]);
         var sala03 = await directorClient.CreateClassroom(campusB.Id, name: "Sala 03").Success();
         var sala04 = await directorClient.CreateClassroom(campusB.Id, name: "Sala 04").Success();
@@ -1152,11 +1152,11 @@ public partial class IntegrationTests
         var suassuna = await directorClient.CreateCampus(name: "Suassuna", city: "Recife").Success();
         await directorClient.UpdateCampusOpeningHours(suassuna.Id,
         [
-            (Day.Monday, [(Hour.H07_00, Hour.H18_00)]),
-            (Day.Tuesday, [(Hour.H07_00, Hour.H18_00)]),
-            (Day.Wednesday, [(Hour.H07_00, Hour.H18_00)]),
-            (Day.Thursday, [(Hour.H07_00, Hour.H18_00)]),
-            (Day.Friday, [(Hour.H07_00, Hour.H18_00)]),
+            (Day.Monday, [(Hour.H07_00, Hour.H12_00), (Hour.H12_00, Hour.H18_00)]),
+            (Day.Tuesday, [(Hour.H07_00, Hour.H12_00), (Hour.H12_00, Hour.H18_00)]),
+            (Day.Wednesday, [(Hour.H07_00, Hour.H12_00), (Hour.H12_00, Hour.H18_00)]),
+            (Day.Thursday, [(Hour.H07_00, Hour.H12_00), (Hour.H12_00, Hour.H18_00)]),
+            (Day.Friday, [(Hour.H07_00, Hour.H12_00), (Hour.H12_00, Hour.H18_00)]),
         ]);
 
         // 10 salas: 6 no Agreste (a Sala A6 fica ociosa a semana toda) e 4 no Suassuna.

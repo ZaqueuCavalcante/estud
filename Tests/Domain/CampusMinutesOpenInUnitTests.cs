@@ -266,7 +266,7 @@ public class CampusMinutesOpenInUnitTests
     public void Campus_MinutesOpenIn_Should_be_closed_in_every_shift_when_the_window_is_before_the_first_shift()
     {
         // Arrange — campus aberto na madrugada, fora de qualquer turno.
-        var campus = NewCampus(Window(Day.Monday, Hour.H00_00, Hour.H07_00));
+        var campus = NewCampus(Window(Day.Monday, Hour.H00_00, Hour.H06_00));
 
         // Act
         var morning = campus.MinutesOpenIn(Day.Monday, Shift.Morning);
@@ -342,14 +342,14 @@ public class CampusMinutesOpenInUnitTests
     [Test]
     public void Campus_MinutesOpenIn_Should_ignore_the_part_of_the_window_before_the_first_shift()
     {
-        // Arrange — abre à meia-noite, mas a manhã só começa às 07h.
+        // Arrange — abre à meia-noite, mas a manhã só começa às 06h.
         var campus = NewCampus(Window(Day.Monday, Hour.H00_00, Hour.H09_00));
 
         // Act
         var minutes = campus.MinutesOpenIn(Day.Monday, Shift.Morning);
 
         // Assert
-        minutes.Should().Be(120);
+        minutes.Should().Be(180);
     }
 
     #endregion

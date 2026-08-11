@@ -57,15 +57,19 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
                         {
                             Id = 1,
                             Name = "Sala 05",
-                            UsedMinutes = 300,
-                            Rate = 100M,
+                            UsedMinutes = 150,
+                            AvailableMinutes = 300,
+                            UsedMinutesRate = 50M,
+                            UsedCapacityRate = 80M,
                         },
                         new CampusOccupancyClassroomOut
                         {
                             Id = 2,
                             Name = "Sala 06",
-                            UsedMinutes = 180,
-                            Rate = 60M,
+                            UsedMinutes = 150,
+                            AvailableMinutes = 300,
+                            UsedMinutesRate = 50M,
+                            UsedCapacityRate = 80M,
                         },
                     ],
                 },
@@ -122,7 +126,12 @@ public class CampusOccupancyClassroomOut
     public int UsedMinutes { get; set; }
 
     /// <summary>
-    /// Ocupação da sala no turno, em porcentagem (0 a 100)
+    /// Ocupação de minutos da sala no turno, em porcentagem (0 a 100)
     /// </summary>
-    public decimal Rate { get; set; }
+    public decimal UsedMinutesRate { get; set; }
+
+    /// <summary>
+    /// Ocupação de assentos da sala no turno, em porcentagem (0 a 100)
+    /// </summary>
+    public decimal UsedCapacityRate { get; set; }
 }
