@@ -14,9 +14,15 @@ export interface CampusOccupancyCell {
   shift: string // 'Morning' | 'Afternoon' | 'Evening'
   /** Se o campus abre neste dia e turno. Célula fechada não é célula vazia. */
   open: boolean
+  /** Minutos que o campus abre no turno, sem multiplicar pelas salas. */
+  openMinutes: number
   availableMinutes: number
   usedMinutes: number
   usedMinutesRate: number
+  /** Assento-minuto ocupado: alunos x minutos em aula. É o movimento do turno. */
+  usedCapacity: number
+  /** Assentos ocupados no turno, pesados pela capacidade de cada sala. */
+  usedCapacityRate: number
   classrooms: CampusOccupancyClassroom[]
 }
 
@@ -26,6 +32,8 @@ export interface GetCampusOccupancyOut {
   totalClassrooms: number
   /** Ocupação de minutos do campus: sala-minuto usado sobre sala-minuto aberto. */
   overallUsedMinutesRate: number
+  /** Ocupação de assentos do campus: assento-minuto usado sobre assento-minuto ofertado. */
+  overallUsedCapacityRate: number
   /** Quantas células o campus abre — é o denominador de "turnos livres". */
   openCells: number
   cells: CampusOccupancyCell[]

@@ -123,10 +123,6 @@ const dayLabels: Record<string, string> = {
 }
 const dayShort: Record<string, string> = Object.fromEntries(weekDays.map(d => [d.key, d.short]))
 
-function round2(n: number) {
-  return Math.round(n * 100) / 100
-}
-
 // ── Ocupação: GET /campi/{id}/occupancy ───────────────────────────────────────
 // Com `?mock=<arquivo>` na URL os dados saem de app/Mocks/ no lugar da API.
 const {
@@ -142,6 +138,7 @@ const emptyOccupancy: GetCampusOccupancyOut = {
   campus: '',
   totalClassrooms: 0,
   overallUsedMinutesRate: 0,
+  overallUsedCapacityRate: 0,
   openCells: 0,
   cells: [],
 }
@@ -180,27 +177,23 @@ const shiftColumns = computed(() => `auto repeat(${visibleShifts.value.length}, 
 // por quê — senão o gestor lê o vazio como bug.
 const hasClosedCells = computed(() => data.value.cells.length > 0 && data.value.openCells < data.value.cells.length)
 
-// ── Agregado por turno (vai no eixo esquerdo do grid) ─────────────────────────
-const shiftRate = computed<Record<string, number>>(() => {
-  const out: Record<string, number> = {}
-  for (const shift of shifts) {
-    const cells = data.value.cells.filter(c => c.shift === shift.key)
-    const used = cells.reduce((s, c) => s + c.usedMinutes, 0)
-    const available = cells.reduce((s, c) => s + c.availableMinutes, 0)
-    out[shift.key] = available > 0 ? round2((used / available) * 100) : 0
-  }
-  return out
-})
-
 // ── Insights derivados (stats) ────────────────────────────────────────────────
+// O pico é o turno mais movimentado: mais gente por mais tempo. Isso é o
+// assento-minuto (alunos x minutos), e não a taxa de horário — que só diz
+// quantas salas estão reservadas e conta igual a turma de 3 e a de 200.
 const peakCell = computed<CampusOccupancyCell | null>(() =>
   data.value.cells.filter(c => c.open)
-    .reduce<CampusOccupancyCell | null>((a, b) => (a === null || b.usedMinutesRate > a.usedMinutesRate ? b : a), null),
+    .reduce<CampusOccupancyCell | null>((a, b) => (a === null || b.usedCapacity > a.usedCapacity ? b : a), null),
 )
-// Turno fechado não é turno livre: é horário que o campus não tem.
-const freeSlots = computed(() => data.value.cells.filter(c => c.open && c.usedMinutesRate === 0).length)
-const totalSlots = computed(() => data.value.openCells)
 
+// Quantos alunos, em média, estão no campus ao longo do turno de pico: o
+// assento-minuto diluído na janela aberta. Vale mais que a porcentagem aqui —
+// o card ao lado já mostra taxa, e "quanta gente" é uma pergunta diferente.
+const peakStudents = computed(() => {
+  const cell = peakCell.value
+  if (!cell || cell.openMinutes <= 0) return 0
+  return Math.round(cell.usedCapacity / cell.openMinutes)
+})
 // Sem sala cadastrada não há o que plotar. O mapa continua na tela, todo
 // zerado, com um aviso explicando o que falta pra ele ganhar dados — some um
 // grid vazio é menos informativo do que o grid mostrando "nada alocado ainda".
@@ -217,6 +210,14 @@ function formatMinutes(minutes: number): string {
 }
 function formatRate(rate: number): string {
   return `${rate.toFixed(0)}%`
+}
+
+// A célula mostra as duas taxas só em ícone — não cabe texto no espaço dela.
+// Então quem lê por leitor de tela depende deste rótulo pra ter os números.
+function cellLabel(day: string, shift: string): string {
+  const cell = cellFor(day, shift)
+  const label = `${dayLabels[day]} ${shiftLabels[shift]}`
+  return `${label}: ${formatRate(cell?.usedMinutesRate ?? 0)} do horário, ${formatRate(cell?.usedCapacityRate ?? 0)} dos assentos`
 }
 
 // Rampa sequencial de intensidade do primary — ocupação baixa não é "ruim",
@@ -300,9 +301,6 @@ const breadcrumb = [
   { label: 'Campi', to: '/campi', icon: 'i-lucide-map-pin' },
   { label: 'Detalhes' },
 ]
-
-// Degraus da legenda — um por faixa da rampa do cellClass
-const legendSteps = [0, 10, 30, 50, 70, 90]
 </script>
 
 <template>
@@ -411,36 +409,41 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
             </div>
           </div>
 
-          <!-- Stats: insights, não totais crus -->
+          <!-- Stats: insights, não totais crus. As duas taxas de ocupação vêm
+               primeiro e lado a lado, com os mesmos ícones das células do mapa:
+               é a comparação entre elas que conta a história do campus — horário
+               cheio com assento vazio é sala grande demais pra turma. -->
           <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <div class="flex items-center gap-4 rounded-xl border border-primary/25 bg-primary/[0.04] px-4 py-4">
+              <ClassroomsUsedMinutesRing :percent="data.overallUsedMinutesRate" class="size-12 text-primary" />
               <div class="flex flex-col leading-none">
-                <span class="text-4xl font-bold tabular-nums tracking-tight text-primary">{{ formatRate(data.overallUsedMinutesRate) }}</span>
-                <span class="mt-2 text-xs font-medium text-muted">Ocupação geral</span>
+                <span class="text-3xl font-bold tabular-nums tracking-tight text-primary">{{ formatRate(data.overallUsedMinutesRate) }}</span>
+                <span class="mt-2 text-xs font-medium text-muted">do horário</span>
               </div>
+            </div>
+
+            <div class="flex items-center gap-4 rounded-xl border border-primary/25 bg-primary/[0.04] px-4 py-4">
+              <ClassroomsUsedCapacityBlocks :percent="data.overallUsedCapacityRate" class="size-12" />
+              <div class="flex flex-col leading-none">
+                <span class="text-3xl font-bold tabular-nums tracking-tight text-primary">{{ formatRate(data.overallUsedCapacityRate) }}</span>
+                <span class="mt-2 text-xs font-medium text-muted">dos assentos</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4">
+              <span class="text-sm font-semibold" :class="hasOccupancyData && peakStudents ? 'text-highlighted' : 'text-dimmed'">
+                {{ hasOccupancyData && peakCell ? `${dayShort[peakCell.day]} · ${shiftLabels[peakCell.shift]}` : 'Sem alocação' }}
+              </span>
+              <span
+                class="mt-0.5 text-xl font-bold tabular-nums leading-none"
+                :class="hasOccupancyData && peakStudents ? 'text-primary' : 'text-dimmed'"
+              >~{{ peakStudents.toLocaleString('pt-BR') }} <span class="text-base font-medium text-muted">{{ peakStudents === 1 ? 'aluno' : 'alunos' }}</span></span>
+              <span class="mt-2 text-xs text-muted">Horário de pico</span>
             </div>
 
             <div class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4">
               <span class="text-2xl font-bold tabular-nums leading-none text-highlighted">{{ data.totalClassrooms }}</span>
               <span class="mt-2 text-xs text-muted">Salas no campus</span>
-            </div>
-
-            <div class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4">
-              <span class="text-sm font-semibold" :class="hasOccupancyData && peakCell ? 'text-highlighted' : 'text-dimmed'">
-                {{ hasOccupancyData && peakCell ? `${dayShort[peakCell.day]} · ${shiftLabels[peakCell.shift]}` : 'Sem alocação' }}
-              </span>
-              <span
-                class="mt-0.5 text-xl font-bold tabular-nums leading-none"
-                :class="hasOccupancyData && peakCell ? 'text-primary' : 'text-dimmed'"
-              >{{ formatRate(peakCell?.usedMinutesRate ?? 0) }}</span>
-              <span class="mt-2 text-xs text-muted">Horário de pico</span>
-            </div>
-
-            <div class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4">
-              <span class="text-2xl font-bold tabular-nums leading-none text-highlighted">
-                {{ freeSlots }}<span class="text-base font-medium text-muted"> / {{ totalSlots }}</span>
-              </span>
-              <span class="mt-2 text-xs text-muted">Turnos livres</span>
             </div>
           </div>
 
@@ -450,20 +453,6 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
               <h2 class="font-semibold text-highlighted">
                 Mapa de ocupação
               </h2>
-              <!-- Legenda: rampa de intensidade. No mobile ela sai — o mapa já
-                   mostra o número em cada célula. -->
-              <div class="ml-auto hidden items-center gap-2 text-xs text-muted md:flex">
-                <span>0%</span>
-                <div class="flex items-center gap-1">
-                  <div
-                    v-for="step in legendSteps"
-                    :key="step"
-                    class="size-4 rounded-sm"
-                    :class="cellClass(step)"
-                  />
-                </div>
-                <span>100%</span>
-              </div>
             </div>
 
             <!-- Mobile: o mapa é transposto — dias na vertical, turnos na
@@ -480,7 +469,6 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
                 >
                   <span class="text-sm font-semibold text-highlighted">{{ shift.label }}</span>
                   <span class="text-[11px] text-muted tabular-nums">{{ shift.window }}</span>
-                  <span class="mt-0.5 text-xs font-semibold tabular-nums text-primary">{{ formatRate(shiftRate[shift.key] ?? 0) }}</span>
                 </div>
 
                 <!-- Linhas por dia -->
@@ -502,14 +490,16 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
                     <button
                       v-else
                       type="button"
-                      class="flex h-14 items-center justify-center rounded-lg text-sm font-semibold tabular-nums transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      class="flex h-14 items-center justify-center gap-5 rounded-lg transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                       :class="[
                         cellClass(cellFor(day.key, shift.key)?.usedMinutesRate ?? 0),
                         isSelected(day.key, shift.key) ? 'ring-2 ring-primary' : '',
                       ]"
+                      :aria-label="cellLabel(day.key, shift.key)"
                       @click="() => { selectCell(day.key, shift.key) }"
                     >
-                      {{ formatRate(cellFor(day.key, shift.key)?.usedMinutesRate ?? 0) }}
+                      <ClassroomsUsedMinutesRing :percent="cellFor(day.key, shift.key)?.usedMinutesRate ?? 0" class="size-7" />
+                      <ClassroomsUsedCapacityBlocks :percent="cellFor(day.key, shift.key)?.usedCapacityRate ?? 0" tone="current" class="size-7" />
                     </button>
                   </template>
                 </template>
@@ -532,11 +522,10 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
 
                 <!-- Linhas por turno -->
                 <template v-for="shift in visibleShifts" :key="shift.key">
-                  <!-- Eixo esquerdo: rótulo do turno + agregado (dupla função) -->
+                  <!-- Eixo esquerdo: rótulo do turno e a janela dele -->
                   <div class="flex flex-col justify-center pr-3 text-right">
                     <span class="text-sm font-medium text-highlighted">{{ shift.label }}</span>
                     <span class="text-[11px] text-muted tabular-nums">{{ shift.window }}</span>
-                    <span class="mt-0.5 text-xs font-semibold tabular-nums text-primary">{{ formatRate(shiftRate[shift.key] ?? 0) }}</span>
                   </div>
 
                   <!-- Célula do mapa de calor -->
@@ -550,14 +539,16 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
                     <button
                       v-else
                       type="button"
-                      class="flex h-16 items-center justify-center rounded-lg text-sm font-semibold tabular-nums transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      class="flex h-16 items-center justify-center gap-6 rounded-lg transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                       :class="[
                         cellClass(cellFor(day.key, shift.key)?.usedMinutesRate ?? 0),
                         isSelected(day.key, shift.key) ? 'ring-2 ring-primary' : '',
                       ]"
+                      :aria-label="cellLabel(day.key, shift.key)"
                       @click="() => { selectCell(day.key, shift.key) }"
                     >
-                      {{ formatRate(cellFor(day.key, shift.key)?.usedMinutesRate ?? 0) }}
+                      <ClassroomsUsedMinutesRing :percent="cellFor(day.key, shift.key)?.usedMinutesRate ?? 0" class="size-8" />
+                      <ClassroomsUsedCapacityBlocks :percent="cellFor(day.key, shift.key)?.usedCapacityRate ?? 0" tone="current" class="size-8" />
                     </button>
                   </template>
                 </template>
@@ -599,7 +590,10 @@ const legendSteps = [0, 10, 30, 50, 70, 90]
                 />
 
                 <div class="flex items-center gap-3">
-                  <ClassroomsUsedCapacityBlocks :percent="room.usedCapacityRate" />
+                  <!-- size-14: o mesmo do mostrador acima, pra as duas leituras
+                       da sala empilharem no mesmo eixo e os textos ao lado
+                       começarem na mesma coluna. -->
+                  <ClassroomsUsedCapacityBlocks :percent="room.usedCapacityRate" class="size-14" />
 
                   <span class="text-sm font-medium text-highlighted tabular-nums">
                     {{ formatRate(room.usedCapacityRate) }} dos assentos

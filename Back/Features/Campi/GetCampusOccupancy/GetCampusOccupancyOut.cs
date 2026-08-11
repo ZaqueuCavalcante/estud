@@ -22,6 +22,14 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
     public decimal OverallUsedMinutesRate { get; set; }
 
     /// <summary>
+    /// Ocupação de assentos geral do campus, em porcentagem (0 a 100).
+    /// Conta assento, e não sala: é o assento-minuto ocupado pelas turmas sobre o
+    /// assento-minuto que as salas oferecem no horário de funcionamento do campus.
+    /// Sala cheia de horário e vazia de gente derruba esta taxa sem mexer na de minutos.
+    /// </summary>
+    public decimal OverallUsedCapacityRate { get; set; }
+
+    /// <summary>
     /// Quantidade de células em que o campus abre. É o denominador dos indicadores
     /// por turno — as células fechadas não são folga, são horário que não existe.
     /// </summary>
@@ -40,6 +48,7 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
             Campus = "Campus Agreste",
             TotalClassrooms = 2,
             OverallUsedMinutesRate = 27.5M,
+            OverallUsedCapacityRate = 18.4M,
             OpenCells = 15,
             Cells =
             [
@@ -48,9 +57,12 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
                     Day = Day.Monday,
                     Shift = Shift.Morning,
                     Open = true,
+                    OpenMinutes = 300,
                     AvailableMinutes = 600,
                     UsedMinutes = 480,
                     UsedMinutesRate = 80M,
+                    UsedCapacity = 15000,
+                    UsedCapacityRate = 62.5M,
                     Classrooms =
                     [
                         new CampusOccupancyClassroomOut
@@ -89,6 +101,12 @@ public class CampusOccupancyCellOut
     public bool Open { get; set; }
 
     /// <summary>
+    /// Minutos que o campus abre no turno. É a janela do turno recortada pelo
+    /// horário de funcionamento — sem multiplicar pelas salas.
+    /// </summary>
+    public int OpenMinutes { get; set; }
+
+    /// <summary>
     /// Minutos disponíveis na célula: salas do campus x minutos abertos do turno
     /// </summary>
     public int AvailableMinutes { get; set; }
@@ -102,6 +120,21 @@ public class CampusOccupancyCellOut
     /// Ocupação da célula, em porcentagem (0 a 100)
     /// </summary>
     public decimal UsedMinutesRate { get; set; }
+
+    /// <summary>
+    /// Assento-minuto ocupado na célula: cada turma conta alunos x minutos em aula.
+    /// É a medida de movimento do turno — gente pelo tempo que ela fica —, e é o
+    /// numerador do <see cref="UsedCapacityRate"/>.
+    /// </summary>
+    public int UsedCapacity { get; set; }
+
+    /// <summary>
+    /// Ocupação de assentos da célula, em porcentagem (0 a 100).
+    /// É o assento-minuto ocupado pelas turmas sobre o assento-minuto que as salas
+    /// do campus oferecem no turno — conta a capacidade de cada sala, e não a média
+    /// das taxas, pra sala grande pesar mais que sala pequena.
+    /// </summary>
+    public decimal UsedCapacityRate { get; set; }
 
     /// <summary>
     /// Detalhamento da célula por sala

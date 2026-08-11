@@ -107,12 +107,66 @@ public partial class IntegrationTests
         // 300min usados de 900min abertos: só a segunda abre, e nos três turnos.
         occupancy.OverallUsedMinutesRate.Should().Be(33.33M);
 
+        // Em assento-minuto: 900 usados (3 alunos x 300min) de 5400 ofertados
+        // (6 lugares x 900min). A sala lota de horário sem lotar de gente.
+        occupancy.OverallUsedCapacityRate.Should().Be(16.67M);
+
         // A sala enche de horário na manhã, mas só com metade dos assentos:
         // 3 alunos numa sala de 6 lugares.
         var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
         var sala = morning.Classrooms.First(c => c.Id == classroom.Id);
         sala.UsedMinutesRate.Should().Be(100M);
         sala.UsedCapacityRate.Should().Be(50M);
+
+        // Sala única no campus: a taxa de assentos da célula é a da sala.
+        morning.UsedCapacityRate.Should().Be(50M);
+    }
+
+    [Test]
+    public async Task Campi_GetCampusOccupancy_Should_weigh_cell_capacity_by_classroom_size()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var pequena = await client.CreateClassroom(campus.Id, name: "Sala 01", capacity: 10).Success();
+        await client.CreateClassroom(campus.Id, name: "Auditório", capacity: 90);
+
+        await client.UpdateCampusOpeningHours(campus.Id, [(Day.Monday, [(Hour.H07_00, Hour.H12_00)])]);
+
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, null, pequena.Id)]);
+
+        var studentA = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var studentB = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        await client.AssignStudentToClass(studentA.Id, @class.Id).Success();
+        await client.AssignStudentToClass(studentB.Id, @class.Id).Success();
+
+        // Act
+        var result = await client.GetCampusOccupancy(campus.Id);
+
+        // Assert
+        var occupancy = result.Success;
+        var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
+
+        // 2 alunos numa sala de 10 lugares, o dia inteiro do turno; o auditório de
+        // 90 lugares fica vazio.
+        morning.Classrooms.First(c => c.Id == pequena.Id).UsedCapacityRate.Should().Be(20M);
+
+        // Assento-minuto: 600 usados (2 alunos x 300min) de 30000 ofertados
+        // (100 lugares x 300min). A média das taxas das salas daria 10% — o
+        // auditório vazio pesa mais do que a salinha cheia.
+        morning.UsedCapacity.Should().Be(600);
+        morning.UsedCapacityRate.Should().Be(2M);
+
+        // A janela do turno, sem multiplicar pelas salas: 07h–12h.
+        morning.OpenMinutes.Should().Be(300);
+        morning.AvailableMinutes.Should().Be(600);
+
+        // Só a manhã de segunda abre, então o total da semana é o da célula.
+        occupancy.OverallUsedCapacityRate.Should().Be(2M);
     }
 
 

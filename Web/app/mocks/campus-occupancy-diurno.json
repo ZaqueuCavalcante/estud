@@ -3,15 +3,19 @@
   "campus": "Campus Diurno",
   "totalClassrooms": 2,
   "overallUsedMinutesRate": 55,
+  "overallUsedCapacityRate": 44.2,
   "openCells": 5,
   "cells": [
     {
       "day": "Monday",
       "shift": "Morning",
       "open": true,
+      "openMinutes": 300,
       "availableMinutes": 600,
       "usedMinutes": 480,
       "usedMinutesRate": 80,
+      "usedCapacity": 15240,
+      "usedCapacityRate": 63.5,
       "classrooms": [
         {
           "id": 1,
@@ -35,9 +39,12 @@
       "day": "Monday",
       "shift": "Afternoon",
       "open": false,
+      "openMinutes": 0,
       "availableMinutes": 0,
       "usedMinutes": 0,
       "usedMinutesRate": 0,
+      "usedCapacity": 0,
+      "usedCapacityRate": 0,
       "classrooms": [
         {
           "id": 1,
@@ -61,9 +68,12 @@
       "day": "Monday",
       "shift": "Evening",
       "open": false,
+      "openMinutes": 0,
       "availableMinutes": 0,
       "usedMinutes": 0,
       "usedMinutesRate": 0,
+      "usedCapacity": 0,
+      "usedCapacityRate": 0,
       "classrooms": [
         {
           "id": 1,
@@ -87,9 +97,12 @@
       "day": "Tuesday",
       "shift": "Morning",
       "open": true,
+      "openMinutes": 300,
       "availableMinutes": 600,
       "usedMinutes": 240,
       "usedMinutesRate": 40,
+      "usedCapacity": 8160,
+      "usedCapacityRate": 34,
       "classrooms": [
         {
           "id": 1,
@@ -113,9 +126,12 @@
       "day": "Tuesday",
       "shift": "Afternoon",
       "open": false,
+      "openMinutes": 0,
       "availableMinutes": 0,
       "usedMinutes": 0,
       "usedMinutesRate": 0,
+      "usedCapacity": 0,
+      "usedCapacityRate": 0,
       "classrooms": [
         {
           "id": 1,
@@ -139,9 +155,12 @@
       "day": "Tuesday",
       "shift": "Evening",
       "open": false,
+      "openMinutes": 0,
       "availableMinutes": 0,
       "usedMinutes": 0,
       "usedMinutesRate": 0,
+      "usedCapacity": 0,
+      "usedCapacityRate": 0,
       "classrooms": [
         {
           "id": 1,
@@ -165,9 +184,12 @@
       "day": "Wednesday",
       "shift": "Morning",
       "open": true,
+      "openMinutes": 300,
       "availableMinutes": 600,
       "usedMinutes": 570,
       "usedMinutesRate": 95,
+      "usedCapacity": 17760,
+      "usedCapacityRate": 74,
       "classrooms": [
         {
           "id": 1,
@@ -191,9 +213,12 @@
       "day": "Wednesday",
       "shift": "Afternoon",
       "open": false,
+      "openMinutes": 0,
       "availableMinutes": 0,
       "usedMinutes": 0,
       "usedMinutesRate": 0,
+      "usedCapacity": 0,
+      "usedCapacityRate": 0,
       "classrooms": [
         {
           "id": 1,
@@ -217,9 +242,12 @@
       "day": "Wednesday",
       "shift": "Evening",
       "open": false,
+      "openMinutes": 0,
       "availableMinutes": 0,
       "usedMinutes": 0,
       "usedMinutesRate": 0,
+      "usedCapacity": 0,
+      "usedCapacityRate": 0,
       "classrooms": [
         {
           "id": 1,
@@ -243,9 +271,12 @@
       "day": "Thursday",
       "shift": "Morning",
       "open": true,
+      "openMinutes": 300,
       "availableMinutes": 600,
       "usedMinutes": 180,
       "usedMinutesRate": 30,
+      "usedCapacity": 5760,
+      "usedCapacityRate": 24,
       "classrooms": [
         {
           "id": 1,
@@ -269,9 +300,12 @@
       "day": "Thursday",
       "shift": "Afternoon",
       "open": false,
+      "openMinutes": 0,
       "availableMinutes": 0,
       "usedMinutes": 0,
       "usedMinutesRate": 0,
+      "usedCapacity": 0,
+      "usedCapacityRate": 0,
       "classrooms": [
         {
           "id": 1,
@@ -295,9 +329,12 @@
       "day": "Thursday",
       "shift": "Evening",
       "open": false,
+      "openMinutes": 0,
       "availableMinutes": 0,
       "usedMinutes": 0,
       "usedMinutesRate": 0,
+      "usedCapacity": 0,
+      "usedCapacityRate": 0,
       "classrooms": [
         {
           "id": 1,
@@ -321,9 +358,12 @@
       "day": "Friday",
       "shift": "Morning",
       "open": true,
+      "openMinutes": 300,
       "availableMinutes": 600,
       "usedMinutes": 180,
       "usedMinutesRate": 30,
+      "usedCapacity": 6120,
+      "usedCapacityRate": 25.5,
       "classrooms": [
         {
           "id": 1,
@@ -347,9 +387,12 @@
       "day": "Friday",
       "shift": "Afternoon",
       "open": false,
+      "openMinutes": 0,
       "availableMinutes": 0,
       "usedMinutes": 0,
       "usedMinutesRate": 0,
+      "usedCapacity": 0,
+      "usedCapacityRate": 0,
       "classrooms": [
         {
           "id": 1,
@@ -373,9 +416,12 @@
       "day": "Friday",
       "shift": "Evening",
       "open": false,
+      "openMinutes": 0,
       "availableMinutes": 0,
       "usedMinutes": 0,
       "usedMinutesRate": 0,
+      "usedCapacity": 0,
+      "usedCapacityRate": 0,
       "classrooms": [
         {
           "id": 1,
@@ -399,9 +445,12 @@
       "day": "Saturday",
       "shift": "Morning",
       "open": false,
+      "openMinutes": 0,
       "availableMinutes": 0,
       "usedMinutes": 0,
       "usedMinutesRate": 0,
+      "usedCapacity": 0,
+      "usedCapacityRate": 0,
       "classrooms": [
         {
           "id": 1,
@@ -425,9 +474,12 @@
       "day": "Saturday",
       "shift": "Afternoon",
       "open": false,
+      "openMinutes": 0,
       "availableMinutes": 0,
       "usedMinutes": 0,
       "usedMinutesRate": 0,
+      "usedCapacity": 0,
+      "usedCapacityRate": 0,
       "classrooms": [
         {
           "id": 1,
@@ -451,9 +503,12 @@
       "day": "Saturday",
       "shift": "Evening",
       "open": false,
+      "openMinutes": 0,
       "availableMinutes": 0,
       "usedMinutes": 0,
       "usedMinutesRate": 0,
+      "usedCapacity": 0,
+      "usedCapacityRate": 0,
       "classrooms": [
         {
           "id": 1,

@@ -31,3 +31,20 @@ Noite 18h–24h
     - exibir agenda completa da sala, com todos os horarios e ocupacoes de assentos
 
 
+hoje tem 4 cards na tela
+- Ocupação geral
+- Salas no campus
+- Horário de pico
+- Turnos livres
+
+o Ocupação geral vai ter o icone de ring e mostrar 60% do horário (60% eh um exemplo de valor)
+
+apos ele coloca um pra mostrar a ocupacao de assentos com o componente de 4 quadradinhos
+
+apos ele coloca o Horário de pico
+
+e depois o Salas no campus
+
+remove o Turnos livres
+
+

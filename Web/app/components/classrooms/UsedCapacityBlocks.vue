@@ -1,8 +1,12 @@
 <script setup lang="ts">
-const props = defineProps<{
-  // Assentos ocupados da sala no turno, de 0 a 100
+const props = withDefaults(defineProps<{
+  // Assentos ocupados no turno, de 0 a 100
   percent: number
-}>()
+  // 'primary' pinta os quadrados na cor da marca, pra fundo neutro (card da
+  // sala). 'current' herda a cor do texto de quem chama — é o que faz o bloco
+  // continuar legível sobre as células tingidas do mapa de calor.
+  tone?: 'primary' | 'current'
+}>(), { tone: 'primary' })
 
 // Cada sala vira 4 quadrados; cada quadrado é uma fatia de 25% dos assentos.
 // 45% → 1 cheio. O resto da fatia (os 20% que sobram) aparece como um quadrado
@@ -47,24 +51,31 @@ function state(index: number): 'full' | 'partial' | 'empty' {
   return 'empty'
 }
 
-const stateClass: Record<string, string> = {
-  full: 'bg-primary',
-  partial: 'bg-primary/35',
-  empty: 'bg-elevated ring-1 ring-inset ring-default/60',
+const toneClass: Record<'primary' | 'current', Record<string, string>> = {
+  primary: {
+    full: 'bg-primary',
+    partial: 'bg-primary/35',
+    empty: 'bg-elevated ring-1 ring-inset ring-default/60',
+  },
+  current: {
+    full: 'bg-current',
+    partial: 'bg-current opacity-40',
+    empty: 'bg-current opacity-15',
+  },
 }
+const stateClass = computed(() => toneClass[props.tone])
 </script>
 
 <template>
-  <!-- 2×2 de quadrados: o bloco vira um ícone ao lado do texto, em vez de uma
-       barra que ocupa a largura do card. O size-14 é o mesmo do mostrador em
-       UsedMinutesRingStat — as duas leituras da sala empilham no mesmo eixo, e
-       os textos ao lado começam na mesma coluna. A ordem de preenchimento é a
-       de leitura — cima-esquerda → baixo-direita. -->
-  <div class="grid size-14 shrink-0 grid-cols-2 grid-rows-2 gap-1">
+  <!-- 2×2 de quadrados: o bloco vira um ícone, em vez de uma barra que ocupa a
+       largura do card. O tamanho vem de fora (`class="size-14"`), pra bater com
+       o do mostrador ao lado de quem chama. A ordem de preenchimento é a de
+       leitura — cima-esquerda → baixo-direita. -->
+  <div class="grid shrink-0 grid-cols-2 grid-rows-2 gap-1">
     <div
       v-for="i in STEPS"
       :key="i"
-      class="rounded-md transition-[background-color,box-shadow] duration-200 ease-out motion-reduce:transition-none"
+      class="rounded-[22%] transition-[background-color,box-shadow] duration-200 ease-out motion-reduce:transition-none"
       :class="stateClass[state(i)]"
       :style="{ transitionDelay: delay(i) }"
     />

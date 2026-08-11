@@ -22,6 +22,11 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
         var openCells = 0;
         var cells = new List<CampusOccupancyCellOut>(Days.Length * Shifts.Length);
 
+        // Assento-minuto da semana inteira. As células guardam só a taxa já
+        // dividida, e taxa não soma — o total do campus tem que vir do bruto.
+        var campusUsedCapacity = 0;
+        var campusAvailableCapacity = 0;
+
         foreach (var day in Days)
         {
             foreach (var shift in Shifts)
@@ -33,6 +38,11 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                 if (campusOpenMinutes > 0) openCells++;
 
                 var cellClassrooms = new List<CampusOccupancyClassroomOut>(campus.Classrooms.Count);
+
+                // Assento-minuto da célula inteira. Não dá pra tirar da média das
+                // salas: sala grande e sala pequena pesam diferente no campus.
+                var cellUsedCapacity = 0;
+                var cellAvailableCapacity = 0;
 
                 foreach (var classroom in campus.Classrooms)
                 {
@@ -57,6 +67,9 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                         classroomUsedCapacity += usedMinutes * currentClassStudents;
                     }
 
+                    cellUsedCapacity += classroomUsedCapacity;
+                    cellAvailableCapacity += campusOpenMinutes * classroom.Capacity;
+
                     cellClassrooms.Add(new CampusOccupancyClassroomOut
                     {
                         Id = classroom.Id,
@@ -68,6 +81,9 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                     });
                 }
 
+                campusUsedCapacity += cellUsedCapacity;
+                campusAvailableCapacity += cellAvailableCapacity;
+
                 var used = cellClassrooms.Sum(c => c.UsedMinutes);
                 var available = cellClassrooms.Sum(c => c.AvailableMinutes);
 
@@ -78,8 +94,11 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                     UsedMinutes = used,
                     Classrooms = cellClassrooms,
                     AvailableMinutes = available,
+                    OpenMinutes = campusOpenMinutes,
                     Open = campusOpenMinutes > 0,
+                    UsedCapacity = cellUsedCapacity,
                     UsedMinutesRate = ToRate(used, available),
+                    UsedCapacityRate = ToRate(cellUsedCapacity, cellAvailableCapacity),
                 });
             }
         }
@@ -95,6 +114,7 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
             OpenCells = openCells,
             TotalClassrooms = campus.Classrooms.Count,
             OverallUsedMinutesRate = ToRate(campusUsedMinutes, campusAvailableMinutes),
+            OverallUsedCapacityRate = ToRate(campusUsedCapacity, campusAvailableCapacity),
         };
     }
 
