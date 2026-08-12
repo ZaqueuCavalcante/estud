@@ -220,17 +220,6 @@ function cellLabel(day: string, shift: string): string {
   return `${label}: ${formatRate(cell?.usedMinutesRate ?? 0)} do horário, ${formatRate(cell?.usedCapacityRate ?? 0)} dos assentos`
 }
 
-// Rampa sequencial de intensidade do primary — ocupação baixa não é "ruim",
-// então nada de vermelho/verde: só uma escala de saturação.
-function cellClass(rate: number): string {
-  if (rate === 0) return 'bg-elevated text-dimmed ring-1 ring-inset ring-default/60'
-  if (rate < 20) return 'bg-primary/10 text-highlighted'
-  if (rate < 40) return 'bg-primary/25 text-highlighted'
-  if (rate < 60) return 'bg-primary/40 text-highlighted'
-  if (rate < 80) return 'bg-primary/60 text-inverted'
-  return 'bg-primary/85 text-inverted'
-}
-
 // ── Drilldown selecionado ─────────────────────────────────────────────────────
 const selected = ref<{ day: string, shift: string }>({ day: 'Monday', shift: 'Morning' })
 
@@ -327,29 +316,33 @@ const breadcrumb = [
       </div>
 
       <div v-else class="flex flex-col gap-6 py-2">
-        <!-- Cabeçalho -->
-        <div class="flex flex-col gap-1">
-          <div class="flex items-center gap-1.5">
-            <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
-              {{ campus.name }}
-            </h1>
-            <UTooltip text="Editar">
-              <UButton
-                icon="i-lucide-pencil"
-                color="neutral"
-                variant="ghost"
-                size="xs"
-                @click="(e) => { (e.currentTarget as HTMLElement).blur(); campusEditModalOpen = true }"
-              />
-            </UTooltip>
+        <!-- Cabeçalho: as abas sobem pra linha do nome do campus onde há
+             largura pra isso. No mobile elas voltam pra baixo das infos, senão
+             o nome do campus fica espremido num canto. -->
+        <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-1.5">
+              <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
+                {{ campus.name }}
+              </h1>
+              <UTooltip text="Editar">
+                <UButton
+                  icon="i-lucide-pencil"
+                  color="neutral"
+                  variant="ghost"
+                  size="xs"
+                  @click="(e) => { (e.currentTarget as HTMLElement).blur(); campusEditModalOpen = true }"
+                />
+              </UTooltip>
+            </div>
+            <p class="flex items-center gap-1.5 text-sm text-muted">
+              <UIcon name="i-lucide-map-pin" class="size-4 shrink-0" />
+              {{ campus.city }} · {{ campus.state }}
+            </p>
           </div>
-          <p class="flex items-center gap-1.5 text-sm text-muted">
-            <UIcon name="i-lucide-map-pin" class="size-4 shrink-0" />
-            {{ campus.city }} · {{ campus.state }}
-          </p>
-        </div>
 
-        <UNavigationMenu :items="tabs" highlight class="-mx-1" />
+          <UNavigationMenu :items="tabs" highlight class="-mx-1 md:mx-0 md:shrink-0" />
+        </div>
 
         <!-- Ocupação -->
         <div v-if="activeTab === 'occupancy' && occupancyLoading" class="flex justify-center py-12">
@@ -414,7 +407,7 @@ const breadcrumb = [
                primeiro e lado a lado, com os mesmos ícones das células do mapa:
                é a comparação entre elas que conta a história do campus — horário
                cheio com assento vazio é sala grande demais pra turma. -->
-          <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div class="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
             <div class="flex items-center gap-4 rounded-xl border border-primary/25 bg-primary/[0.04] px-4 py-4">
               <ClassroomsUsedMinutesRing :percent="data.overallUsedMinutesRate" class="size-12 text-primary" />
               <div class="flex flex-col leading-none">
@@ -449,12 +442,25 @@ const breadcrumb = [
           </div>
 
           <!-- Mapa de calor: dia × turno -->
-          <section class="flex flex-col gap-4">
+          <section class="mt-4 flex flex-col gap-4">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <h2 class="flex items-center gap-2 font-semibold text-highlighted">
                 <UIcon name="i-lucide-table-2" class="size-5 text-primary" />
                 Mapa de ocupação
               </h2>
+
+              <!-- Chave dos dois ícones da célula: sem ela, a célula é só dois
+                   desenhos sem nome — não sobra espaço lá dentro pra rótulo. -->
+              <div class="flex items-center gap-4 text-xs text-muted">
+                <span class="flex items-center gap-2">
+                  <ClassroomsUsedMinutesRing :percent="75" class="size-5 text-primary" />
+                  horário
+                </span>
+                <span class="flex items-center gap-2">
+                  <ClassroomsUsedCapacityBlocks :percent="75" class="size-5" />
+                  assentos
+                </span>
+              </div>
             </div>
 
             <!-- Mobile: o mapa é transposto — dias na vertical, turnos na
@@ -492,16 +498,13 @@ const breadcrumb = [
                     <button
                       v-else
                       type="button"
-                      class="flex h-14 items-center justify-center gap-5 rounded-lg transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                      :class="[
-                        cellClass(cellFor(day.key, shift.key)?.usedMinutesRate ?? 0),
-                        isSelected(day.key, shift.key) ? 'ring-2 ring-primary' : '',
-                      ]"
+                      class="flex h-14 items-center justify-center gap-5 rounded-lg border border-default bg-elevated/40 transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      :class="isSelected(day.key, shift.key) ? 'ring-2 ring-primary' : ''"
                       :aria-label="cellLabel(day.key, shift.key)"
                       @click="() => { selectCell(day.key, shift.key) }"
                     >
-                      <ClassroomsUsedMinutesRing :percent="cellFor(day.key, shift.key)?.usedMinutesRate ?? 0" class="size-7" />
-                      <ClassroomsUsedCapacityBlocks :percent="cellFor(day.key, shift.key)?.usedCapacityRate ?? 0" tone="current" class="size-7" />
+                      <ClassroomsUsedMinutesRing :percent="cellFor(day.key, shift.key)?.usedMinutesRate ?? 0" class="size-7 text-primary" />
+                      <ClassroomsUsedCapacityBlocks :percent="cellFor(day.key, shift.key)?.usedCapacityRate ?? 0" class="size-7" />
                     </button>
                   </template>
                 </template>
@@ -541,16 +544,13 @@ const breadcrumb = [
                     <button
                       v-else
                       type="button"
-                      class="flex h-16 items-center justify-center gap-6 rounded-lg transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                      :class="[
-                        cellClass(cellFor(day.key, shift.key)?.usedMinutesRate ?? 0),
-                        isSelected(day.key, shift.key) ? 'ring-2 ring-primary' : '',
-                      ]"
+                      class="flex h-16 items-center justify-center gap-6 rounded-lg border border-default bg-elevated/40 transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      :class="isSelected(day.key, shift.key) ? 'ring-2 ring-primary' : ''"
                       :aria-label="cellLabel(day.key, shift.key)"
                       @click="() => { selectCell(day.key, shift.key) }"
                     >
-                      <ClassroomsUsedMinutesRing :percent="cellFor(day.key, shift.key)?.usedMinutesRate ?? 0" class="size-8" />
-                      <ClassroomsUsedCapacityBlocks :percent="cellFor(day.key, shift.key)?.usedCapacityRate ?? 0" tone="current" class="size-8" />
+                      <ClassroomsUsedMinutesRing :percent="cellFor(day.key, shift.key)?.usedMinutesRate ?? 0" class="size-8 text-primary" />
+                      <ClassroomsUsedCapacityBlocks :percent="cellFor(day.key, shift.key)?.usedCapacityRate ?? 0" class="size-8" />
                     </button>
                   </template>
                 </template>
@@ -563,13 +563,18 @@ const breadcrumb = [
             <!-- As duas taxas do turno com os mesmos ícones da célula clicada,
                  logo abaixo do título. No mobile elas ainda empilham entre si:
                  lado a lado, ícone e número ficariam apertados demais. -->
-            <div class="flex flex-col gap-4">
-              <h2 class="flex items-center gap-2 font-semibold text-highlighted">
-                <UIcon name="i-lucide-activity" class="size-5 text-primary" />
-                {{ dayLabels[selectedCell.day] }} · {{ shiftLabels[selectedCell.shift] }}
-              </h2>
+            <div class="flex flex-col items-center gap-4">
+              <!-- Filete dos dois lados do título: é o que amarra o detalhe à
+                   célula clicada agora que a seção não tem mais moldura. -->
+              <div class="flex w-full items-center gap-4">
+                <span class="flex-1 border-t border-dashed border-accented" />
+                <h2 class="font-semibold text-highlighted">
+                  {{ dayLabels[selectedCell.day] }} · {{ shiftLabels[selectedCell.shift] }}
+                </h2>
+                <span class="flex-1 border-t border-dashed border-accented" />
+              </div>
 
-              <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-16">
+              <div class="flex flex-col items-center gap-4 sm:flex-row sm:gap-10">
                 <div class="flex items-center gap-3">
                   <ClassroomsUsedMinutesRing :percent="selectedCell.usedMinutesRate" class="size-12 text-primary" />
                   <div class="flex flex-col leading-none">

@@ -1,12 +1,8 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{
+const props = defineProps<{
   // Assentos ocupados no turno, de 0 a 100
   percent: number
-  // 'primary' pinta os quadrados na cor da marca, pra fundo neutro (card da
-  // sala). 'current' herda a cor do texto de quem chama — é o que faz o bloco
-  // continuar legível sobre as células tingidas do mapa de calor.
-  tone?: 'primary' | 'current'
-}>(), { tone: 'primary' })
+}>()
 
 // Cada sala vira 4 quadrados; cada quadrado é uma fatia de 25% dos assentos.
 // 45% → 1 cheio. O resto da fatia (os 20% que sobram) aparece como um quadrado
@@ -51,19 +47,11 @@ function state(index: number): 'full' | 'partial' | 'empty' {
   return 'empty'
 }
 
-const toneClass: Record<'primary' | 'current', Record<string, string>> = {
-  primary: {
-    full: 'bg-primary',
-    partial: 'bg-primary/35',
-    empty: 'bg-elevated ring-1 ring-inset ring-default/60',
-  },
-  current: {
-    full: 'bg-current',
-    partial: 'bg-current opacity-40',
-    empty: 'bg-current opacity-15',
-  },
+const stateClass: Record<string, string> = {
+  full: 'bg-primary',
+  partial: 'bg-primary/35',
+  empty: 'bg-elevated ring-1 ring-inset ring-default/60',
 }
-const stateClass = computed(() => toneClass[props.tone])
 </script>
 
 <template>
