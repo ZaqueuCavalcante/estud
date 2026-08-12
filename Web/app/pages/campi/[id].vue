@@ -328,24 +328,25 @@ const breadcrumb = [
 
       <div v-else class="flex flex-col gap-6 py-2">
         <!-- Cabeçalho -->
-        <div class="flex flex-wrap items-start justify-between gap-3">
-          <div class="flex flex-col gap-1">
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center gap-1.5">
             <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
               {{ campus.name }}
             </h1>
-            <p class="flex items-center gap-1.5 text-sm text-muted">
-              <UIcon name="i-lucide-map-pin" class="size-4 shrink-0" />
-              {{ campus.city }} · {{ campus.state }}
-            </p>
+            <UTooltip text="Editar">
+              <UButton
+                icon="i-lucide-pencil"
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                @click="(e) => { (e.currentTarget as HTMLElement).blur(); campusEditModalOpen = true }"
+              />
+            </UTooltip>
           </div>
-          <UButton
-            icon="i-lucide-pencil"
-            label="Editar"
-            color="neutral"
-            variant="subtle"
-            class="shrink-0"
-            @click="() => { campusEditModalOpen = true }"
-          />
+          <p class="flex items-center gap-1.5 text-sm text-muted">
+            <UIcon name="i-lucide-map-pin" class="size-4 shrink-0" />
+            {{ campus.city }} · {{ campus.state }}
+          </p>
         </div>
 
         <UNavigationMenu :items="tabs" highlight class="-mx-1" />
@@ -450,7 +451,8 @@ const breadcrumb = [
           <!-- Mapa de calor: dia × turno -->
           <section class="flex flex-col gap-4">
             <div class="flex flex-wrap items-center justify-between gap-3">
-              <h2 class="font-semibold text-highlighted">
+              <h2 class="flex items-center gap-2 font-semibold text-highlighted">
+                <UIcon name="i-lucide-table-2" class="size-5 text-primary" />
                 Mapa de ocupação
               </h2>
             </div>
@@ -557,17 +559,33 @@ const breadcrumb = [
           </section>
 
           <!-- Drilldown inline (micro) — sem sala não há o que detalhar -->
-          <section v-if="selectedCell?.open && selectedCell.classrooms.length" class="flex flex-col gap-4 rounded-xl border border-default bg-elevated/30 p-5">
-            <div class="flex items-center justify-between gap-3">
-              <div class="flex flex-col gap-0.5">
-                <h2 class="font-semibold text-highlighted">
-                  {{ dayLabels[selectedCell.day] }} · {{ shiftLabels[selectedCell.shift] }}
-                </h2>
-                <span class="text-sm text-muted">
-                  {{ formatMinutes(selectedCell.usedMinutes) }} reservados de {{ formatMinutes(selectedCell.availableMinutes) }}
-                </span>
+          <section v-if="selectedCell?.open && selectedCell.classrooms.length" class="flex flex-col gap-4">
+            <!-- As duas taxas do turno com os mesmos ícones da célula clicada,
+                 logo abaixo do título. No mobile elas ainda empilham entre si:
+                 lado a lado, ícone e número ficariam apertados demais. -->
+            <div class="flex flex-col gap-4">
+              <h2 class="flex items-center gap-2 font-semibold text-highlighted">
+                <UIcon name="i-lucide-activity" class="size-5 text-primary" />
+                {{ dayLabels[selectedCell.day] }} · {{ shiftLabels[selectedCell.shift] }}
+              </h2>
+
+              <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-16">
+                <div class="flex items-center gap-3">
+                  <ClassroomsUsedMinutesRing :percent="selectedCell.usedMinutesRate" class="size-12 text-primary" />
+                  <div class="flex flex-col leading-none">
+                    <span class="text-2xl font-bold tabular-nums text-primary">{{ formatRate(selectedCell.usedMinutesRate) }}</span>
+                    <span class="mt-1.5 text-xs text-muted">do horário</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                  <ClassroomsUsedCapacityBlocks :percent="selectedCell.usedCapacityRate" class="size-12" />
+                  <div class="flex flex-col leading-none">
+                    <span class="text-2xl font-bold tabular-nums text-primary">{{ formatRate(selectedCell.usedCapacityRate) }}</span>
+                    <span class="mt-1.5 text-xs text-muted">dos assentos</span>
+                  </div>
+                </div>
               </div>
-              <span class="text-2xl font-bold tabular-nums text-primary">{{ formatRate(selectedCell.usedMinutesRate) }}</span>
             </div>
 
             <!-- Uma sala por card, com as duas leituras do turno: quanto do
