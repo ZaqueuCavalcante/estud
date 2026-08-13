@@ -4,10 +4,12 @@ namespace Estud.Back.Features.Calendar.CreateCalendarDay;
 public class CreateCalendarDayController(CreateCalendarDayService service) : ControllerBase
 {
     /// <summary>
-    /// Customizar dia do calendário
+    /// Customizar dias do calendário
     /// </summary>
     /// <remarks>
-    /// Customiza um dia do calendário acadêmico da instituição, marcando-o como férias, recesso ou feriado.
+    /// Customiza um dia — ou um intervalo, quando há data final — do calendário acadêmico, marcando-o como
+    /// férias, recesso, feriado ou letivo. Sem campus, o override vale para a instituição inteira; com campus,
+    /// vale só naquele campus e entra por cima do override da instituição.
     /// </remarks>
     [HttpPost("calendar/days")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]
@@ -23,7 +25,9 @@ internal class RequestExamples : ExamplesProvider<CreateCalendarDayIn>;
 internal class ResponseExamples : ExamplesProvider<CreateCalendarDayOut>;
 internal class ErrorsExamples : ErrorExamplesProvider<
     InvalidCalendarDayDate,
+    InvalidCalendarDayRange,
     InvalidCalendarDayType,
     InvalidCalendarDayDescription,
+    CampusNotFound,
     CalendarDayAlreadyExists
 >;

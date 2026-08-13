@@ -59,5 +59,23 @@ public partial class IntegrationTests
         item.Campus.Should().Be("Agreste I");
     }
 
+    [Test]
+    public async Task Classrooms_GetClassrooms_Should_get_classrooms_in_alphabetical_order()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        await client.CreateClassroom(campus.Id, name: "Sala 10");
+        await client.CreateClassroom(campus.Id, name: "Auditório");
+        await client.CreateClassroom(campus.Id, name: "Laboratório A");
+
+        // Act
+        var result = await client.GetClassrooms();
+
+        // Assert
+        result.Success.Select(c => c.Name)
+            .Should().ContainInOrder("Auditório", "Laboratório A", "Sala 10");
+    }
+
     #endregion
 }

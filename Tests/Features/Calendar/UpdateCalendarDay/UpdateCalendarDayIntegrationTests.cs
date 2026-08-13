@@ -46,7 +46,21 @@ public partial class IntegrationTests
         var day = await client.CreateCalendarDay(new DateTime(2026, 5, 4)).Success();
 
         // Act
-        var result = await client.UpdateCalendarDay(day.Id, dayType: null);
+        var result = await client.UpdateCalendarDay(day.Ids[0], dayType: null);
+
+        // Assert
+        result.ShouldBeError(InvalidCalendarDayType.I);
+    }
+
+    [Test]
+    public async Task Calendar_UpdateCalendarDay_Should_not_update_day_as_weekend()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var day = await client.CreateCalendarDay(new DateTime(2026, 5, 6)).Success();
+
+        // Act
+        var result = await client.UpdateCalendarDay(day.Ids[0], dayType: DayType.Weekend);
 
         // Assert
         result.ShouldBeError(InvalidCalendarDayType.I);
@@ -75,7 +89,7 @@ public partial class IntegrationTests
         var other = await _back.LoggedAsDirector();
 
         // Act
-        var result = await other.UpdateCalendarDay(day.Id);
+        var result = await other.UpdateCalendarDay(day.Ids[0]);
 
         // Assert
         result.ShouldBeError(CalendarDayNotFound.I);
@@ -93,11 +107,11 @@ public partial class IntegrationTests
         var created = await client.CreateCalendarDay(new DateTime(2026, 6, 24), DayType.Vacation, "Férias").Success();
 
         // Act
-        var result = await client.UpdateCalendarDay(created.Id, DayType.Holiday, "São João");
+        var result = await client.UpdateCalendarDay(created.Ids[0], DayType.Holiday, "São João");
 
         // Assert
         var day = result.Success;
-        day.Id.Should().Be(created.Id);
+        day.Id.Should().Be(created.Ids[0]);
         day.Date.Should().Be(new DateTime(2026, 6, 24));
         day.DayType.Should().Be(DayType.Holiday);
         day.Description.Should().Be("São João");
@@ -111,10 +125,10 @@ public partial class IntegrationTests
         var created = await client.CreateCalendarDay(new DateTime(2026, 7, 20)).Success();
 
         // Act
-        await client.UpdateCalendarDay(created.Id, DayType.Default, null);
+        await client.UpdateCalendarDay(created.Ids[0], DayType.Default, null);
 
         // Assert
-        var calendar = await client.GetInstitutionCalendar(2026).Success();
+        var calendar = await client.GetCalendar(2026).Success();
         var day = calendar.Items.First(x => x.Date == new DateTime(2026, 7, 20));
         day.DayType.Should().Be(DayType.Default);
         day.Description.Should().BeNull();

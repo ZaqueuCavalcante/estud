@@ -5,6 +5,30 @@
   "overallUsedMinutesRate": 55,
   "overallUsedCapacityRate": 44.2,
   "openCells": 5,
+  "classrooms": [
+    {
+      "id": 1,
+      "name": "Sala 01",
+      "capacity": 40,
+      "availableMinutes": 1500,
+      "usedMinutes": 1140,
+      "usedCapacity": 38760,
+      "usedMinutesRate": 76,
+      "usedCapacityRate": 64.6,
+      "averageStudents": 25.84
+    },
+    {
+      "id": 2,
+      "name": "Sala 02",
+      "capacity": 40,
+      "availableMinutes": 1500,
+      "usedMinutes": 510,
+      "usedCapacity": 14280,
+      "usedMinutesRate": 34,
+      "usedCapacityRate": 23.8,
+      "averageStudents": 9.52
+    }
+  ],
   "cells": [
     {
       "day": "Monday",

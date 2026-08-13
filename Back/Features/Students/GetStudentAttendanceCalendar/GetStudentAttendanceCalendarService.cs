@@ -15,12 +15,10 @@ public class GetStudentAttendanceCalendarService(EstudDbContext ctx) : IEstudSer
         var start = new DateOnly(year, 1, 1);
         var end = new DateOnly(year, 12, 31);
 
-        var customDays = await ctx.CalendarDays.AsNoTracking()
-            .Where(d => d.InstitutionId == institutionId)
-            .Where(d => d.Date >= start && d.Date <= end)
-            .ToDictionaryAsync(d => d.Date);
-
-        var holidays = NationalHolidays.OfYear(year);
+        // O aluno pode ter turmas em campi diferentes, então o fundo do calendário
+        // dele é o nível da instituição. O recorte por campus já veio antes: as
+        // aulas só existem nos dias letivos do campus de cada turma.
+        var calendar = await ctx.GetCalendarResolver(campusId: null, start, end);
 
         // Turmas em que o aluno está matriculado
         var classIds = await ctx.ClassStudents.AsNoTracking()
@@ -51,7 +49,7 @@ public class GetStudentAttendanceCalendarService(EstudDbContext ctx) : IEstudSer
             items.Add(new GetStudentAttendanceCalendarItemOut
             {
                 Date = date.ToDateTime(TimeOnly.MinValue),
-                Status = ResolveStatus(date, customDays, holidays, presenceByDate),
+                Status = ResolveStatus(date, calendar, presenceByDate),
             });
         }
 
@@ -65,14 +63,11 @@ public class GetStudentAttendanceCalendarService(EstudDbContext ctx) : IEstudSer
 
     private static StudentDayAttendanceStatus ResolveStatus(
         DateOnly date,
-        Dictionary<DateOnly, CalendarDay> customDays,
-        Dictionary<DateOnly, string> holidays,
+        CalendarResolver calendar,
         Dictionary<DateOnly, List<bool?>> presenceByDate
     ) {
-        var dayType = ResolveDayType(date, customDays, holidays);
-
         // Dia sem aula para a instituição (fim de semana, feriado, férias, recesso)
-        if (dayType != DayType.Default) return StudentDayAttendanceStatus.NoClass;
+        if (!calendar.IsSchoolDay(date)) return StudentDayAttendanceStatus.NoClass;
 
         // Dia letivo em que o aluno não tem nenhuma aula agendada
         if (!presenceByDate.TryGetValue(date, out var presences)) return StudentDayAttendanceStatus.NoClass;
@@ -85,19 +80,5 @@ public class GetStudentAttendanceCalendarService(EstudDbContext ctx) : IEstudSer
         if (recorded.Any(p => p == false)) return StudentDayAttendanceStatus.Absent;
 
         return StudentDayAttendanceStatus.Present;
-    }
-
-    private static DayType ResolveDayType(
-        DateOnly date,
-        Dictionary<DateOnly, CalendarDay> customDays,
-        Dictionary<DateOnly, string> holidays
-    ) {
-        if (customDays.TryGetValue(date, out var customDay)) return customDay.DayType;
-
-        if (holidays.ContainsKey(date)) return DayType.Holiday;
-
-        if (date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday) return DayType.Weekend;
-
-        return DayType.Default;
     }
 }

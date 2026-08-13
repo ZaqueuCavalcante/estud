@@ -726,7 +726,7 @@ public partial class IntegrationTests
         var studentClient = await _back.LoginAs(student.Email);
 
         // Act
-        var calendar = await directorClient.GetInstitutionCalendar(2024).Success();
+        var calendar = await directorClient.GetCalendar(2024).Success();
         var periods = await directorClient.GetAcademicPeriods().Success();
         var teacherAgenda = await teacherClient.GetTeacherAgenda().Success();
         var studentAgenda = await studentClient.GetStudentAgenda().Success();
@@ -769,10 +769,10 @@ public partial class IntegrationTests
         studentAgenda.Days.Should().ContainSingle().Which.Day.Should().Be(Day.Monday);
 
         // A leitura do calendário por teacher e student ainda não existe: a policy
-        // GetInstitutionCalendar é só de Manager, então o insight do doc está pendente
+        // GetCalendar é só de Manager, então o insight do doc está pendente
         // de um endpoint de calendário pra esses dois perfis.
-        (await teacherClient.GetInstitutionCalendar(2024)).ShouldBeError(HttpStatusCode.Forbidden);
-        (await studentClient.GetInstitutionCalendar(2024)).ShouldBeError(HttpStatusCode.Forbidden);
+        (await teacherClient.GetCalendar(2024)).ShouldBeError(HttpStatusCode.Forbidden);
+        (await studentClient.GetCalendar(2024)).ShouldBeError(HttpStatusCode.Forbidden);
     }
 
     [Test]
@@ -893,8 +893,8 @@ public partial class IntegrationTests
         secondSiblingDay.Disciplines[0].ClassroomName.Should().Be("Sala 02");
 
         // O calendário da instituição do filho ainda não é exposto ao Parent — a
-        // policy GetInstitutionCalendar é só de Manager.
-        (await singleParentClient.GetInstitutionCalendar(2024)).ShouldBeError(HttpStatusCode.Forbidden);
+        // policy GetCalendar é só de Manager.
+        (await singleParentClient.GetCalendar(2024)).ShouldBeError(HttpStatusCode.Forbidden);
     }
 
     [Test]
@@ -1344,7 +1344,7 @@ public partial class IntegrationTests
         // Act
         var agresteOccupancy = await directorClient.GetCampusOccupancy(agreste.Id).Success();
         var suassunaOccupancy = await directorClient.GetCampusOccupancy(suassuna.Id).Success();
-        var calendar = await directorClient.GetInstitutionCalendar(2024).Success();
+        var calendar = await directorClient.GetCalendar(2024).Success();
         var teachers = await directorClient.GetTeachers().Success();
         var students = await directorClient.GetStudents().Success();
         var classes = await directorClient.GetClasses(pageSize: 20).Success();

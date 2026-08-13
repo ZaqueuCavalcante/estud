@@ -14,6 +14,13 @@ public class InvalidCalendarDayDate : EstudError
     public override string Message { get; set; } = "Data de dia de calendário inválida.";
 }
 
+public class InvalidCalendarDayRange : EstudError
+{
+    public static readonly InvalidCalendarDayRange I = new();
+    public override string Code { get; set; } = nameof(InvalidCalendarDayRange);
+    public override string Message { get; set; } = "Intervalo de dias de calendário inválido.";
+}
+
 public class InvalidCalendarDayType : EstudError
 {
     public static readonly InvalidCalendarDayType I = new();

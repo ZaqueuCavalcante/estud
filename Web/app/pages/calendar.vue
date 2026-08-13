@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import type { CalendarItem, DayType, GetInstitutionCalendarOut, GetPeriodsOut, PeriodType } from '~/types/calendar'
+import type { CalendarItem, DayType, GetCalendarOut, GetPeriodsOut, PeriodType } from '~/types/calendar'
 
 const { can } = usePolicy()
 const config = useRuntimeConfig()
 
 const year = ref(new Date().getFullYear())
 
-const { data, status, refresh } = await useFetch<GetInstitutionCalendarOut>(`${config.public.backendUrl}/calendar/institution`, {
+// Sem campus na query, o endpoint devolve o calendário da instituição.
+const { data, status, refresh } = await useFetch<GetCalendarOut>(`${config.public.backendUrl}/calendar`, {
   credentials: 'include',
   server: false,
   query: { year },

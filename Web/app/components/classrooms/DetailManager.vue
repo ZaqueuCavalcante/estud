@@ -10,9 +10,15 @@ const props = defineProps<{ classroomId: string }>()
 
 const config = useRuntimeConfig()
 
-const { data, status, error } = await useFetch<GetClassroomOut>(
+const { data, status, error, refresh } = await useFetch<GetClassroomOut>(
   `${config.public.backendUrl}/classrooms/${props.classroomId}`,
   { credentials: 'include', server: false },
+)
+
+// A edição da sala mora aqui: é a tela que tem o nome e a capacidade em foco.
+const editModalOpen = ref(false)
+const editing = computed(() =>
+  data.value ? { id: Number(props.classroomId), name: data.value.name, capacity: data.value.capacity } : null,
 )
 
 // A sala vive dentro de um campus: o caminho de volta passa por ele. Os rótulos
@@ -133,9 +139,20 @@ const classColumns: TableColumn<ClassroomScheduleItem>[] = [
       <div v-else class="flex flex-col gap-10 py-2">
         <div class="flex flex-col gap-5">
           <div class="flex flex-col gap-1">
-            <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
-              {{ data.name }}
-            </h1>
+            <div class="flex items-center gap-1.5">
+              <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
+                {{ data.name }}
+              </h1>
+              <UTooltip text="Editar">
+                <UButton
+                  icon="i-lucide-pencil"
+                  color="neutral"
+                  variant="ghost"
+                  size="xs"
+                  @click="(e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); editModalOpen = true }"
+                />
+              </UTooltip>
+            </div>
             <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-muted">
               <span class="flex items-center gap-1.5">
                 <UIcon name="i-lucide-map-pin" class="size-4" />
@@ -218,4 +235,6 @@ const classColumns: TableColumn<ClassroomScheduleItem>[] = [
       </div>
     </template>
   </UDashboardPanel>
+
+  <ClassroomsEditModal v-model:open="editModalOpen" :classroom="editing" @updated="refresh()" />
 </template>

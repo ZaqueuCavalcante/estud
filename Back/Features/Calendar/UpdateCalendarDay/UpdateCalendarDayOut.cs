@@ -4,6 +4,11 @@ public class UpdateCalendarDayOut : IApiDto<UpdateCalendarDayOut>
 {
     public int Id { get; set; }
 
+    /// <summary>
+    /// Campus do override. Nulo quando o override é da instituição inteira.
+    /// </summary>
+    public int? CampusId { get; set; }
+
     public DateTime Date { get; set; }
 
     public DayType DayType { get; set; }

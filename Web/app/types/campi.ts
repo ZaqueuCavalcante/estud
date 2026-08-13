@@ -26,6 +26,19 @@ export interface CampusOccupancyCell {
   classrooms: CampusOccupancyClassroom[]
 }
 
+/** Ocupação de uma sala na semana inteira (aba Salas). */
+export interface CampusClassroomOccupancy {
+  id: number
+  name: string
+  capacity: number
+  availableMinutes: number
+  usedMinutes: number
+  usedMinutesRate: number
+  usedCapacity: number
+  usedCapacityRate: number
+  averageStudents: number
+}
+
 export interface GetCampusOccupancyOut {
   campusId: number
   campus: string
@@ -37,6 +50,7 @@ export interface GetCampusOccupancyOut {
   /** Quantas células o campus abre — é o denominador de "turnos livres". */
   openCells: number
   cells: CampusOccupancyCell[]
+  classrooms: CampusClassroomOccupancy[]
 }
 
 export interface OpeningHoursWindow {

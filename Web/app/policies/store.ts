@@ -462,8 +462,8 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
       hasPermission(Permissions.ManageCalendar),
     ],
   },
-  GetInstitutionCalendar: {
-    description: "Ver o calendário acadêmico da instituição",
+  GetCalendar: {
+    description: "Ver o calendário acadêmico",
     requirements: [
       hasUserType(UserTypes.Manager),
       hasPermission(Permissions.ManageCalendar),

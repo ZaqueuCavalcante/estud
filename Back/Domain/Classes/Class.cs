@@ -1,5 +1,6 @@
 using Estud.Back.Domain.Campi;
 using Estud.Back.Domain.Periods;
+using Estud.Back.Domain.Calendar;
 using Estud.Back.Domain.Teachers;
 using Estud.Back.Domain.Students;
 using Estud.Back.Domain.Disciplines;
@@ -74,7 +75,10 @@ public class Class
         Teachers.RemoveAll(x => idsToRemove.Contains(x.Id));
     }
 
-    public void CreateLessons()
+    /// <summary>
+    /// Gera as aulas da turma a partir dos horários, ao longo do período letivo.
+    /// </summary>
+    public void CreateLessons(CalendarResolver calendar)
     {
         var schedules = Schedules.OrderBy(x => x.Day).ThenBy(x => x.Start).ToList();
 
@@ -82,6 +86,12 @@ public class Class
         var current = Period.StartAt;
         while (current < Period.EndAt)
         {
+            if (!calendar.IsSchoolDay(current))
+            {
+                current = current.AddDays(1);
+                continue;
+            }
+
             foreach (var schedule in schedules)
             {
                 if (current.DayOfWeek.Is(schedule.Day))

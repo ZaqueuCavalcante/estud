@@ -169,6 +169,66 @@ public partial class IntegrationTests
         occupancy.OverallUsedCapacityRate.Should().Be(2M);
     }
 
+    [Test]
+    public async Task Campi_GetCampusOccupancy_Should_get_week_occupancy_of_each_classroom()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var sala01 = await client.CreateClassroom(campus.Id, name: "Sala 01", capacity: 3).Success();
+        var sala02 = await client.CreateClassroom(campus.Id, name: "Sala 02", capacity: 10).Success();
+
+        // Segunda e terça de manhã: 600min abertos na semana, 300 em cada dia.
+        await client.UpdateCampusOpeningHours(campus.Id,
+        [
+            (Day.Monday, [(Hour.H07_00, Hour.H12_00)]),
+            (Day.Tuesday, [(Hour.H07_00, Hour.H12_00)]),
+        ]);
+
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.CreateAcademicPeriod().Success();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+
+        // A turma só usa a Sala 01, e só na segunda: metade da semana do campus.
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, null, sala01.Id)]);
+
+        var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        await client.AssignStudentToClass(student.Id, @class.Id).Success();
+
+        // Act
+        var result = await client.GetCampusOccupancy(campus.Id);
+
+        // Assert
+        var occupancy = result.Success;
+        occupancy.Classrooms.Should().HaveCount(2);
+
+        // A ordem alfabética sai pronta do banco, tanto no resumo da semana
+        // quanto no detalhe de cada célula — o front não reordena.
+        occupancy.Classrooms.Select(c => c.Name).Should().ContainInOrder("Sala 01", "Sala 02");
+        occupancy.Cells.Should().OnlyContain(cell =>
+            cell.Classrooms.Count == 0
+                || (cell.Classrooms[0].Name == "Sala 01" && cell.Classrooms[1].Name == "Sala 02"));
+
+        var sala01Week = occupancy.Classrooms.First(c => c.Id == sala01.Id);
+        sala01Week.Capacity.Should().Be(3);
+        sala01Week.AvailableMinutes.Should().Be(600);
+        sala01Week.UsedMinutes.Should().Be(300);
+        sala01Week.UsedMinutesRate.Should().Be(50M);
+
+        // 1 aluno x 300min de 3 lugares x 600min abertos. Em lugares: 0,5 assento
+        // ocupado em média — a sala fica vazia metade da semana.
+        sala01Week.UsedCapacity.Should().Be(300);
+        sala01Week.UsedCapacityRate.Should().Be(16.67M);
+        sala01Week.AverageStudents.Should().Be(0.5M);
+
+        // Sala nunca alocada zera as duas taxas, mas continua com denominador.
+        var sala02Week = occupancy.Classrooms.First(c => c.Id == sala02.Id);
+        sala02Week.AvailableMinutes.Should().Be(600);
+        sala02Week.UsedMinutesRate.Should().Be(0M);
+        sala02Week.UsedCapacityRate.Should().Be(0M);
+        sala02Week.AverageStudents.Should().Be(0M);
+    }
+
 
 
 

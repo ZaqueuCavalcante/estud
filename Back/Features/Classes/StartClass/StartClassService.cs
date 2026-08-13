@@ -21,7 +21,11 @@ public class StartClassService(EstudDbContext ctx) : IEstudService
         if (@class.Teachers.Count == 0) return ClassWithoutTeachers.I;
         if (@class.Schedules.Count == 0) return ClassWithoutSchedules.I;
 
-        @class.CreateLessons();
+        // Turma não presencial não tem campus, então só o nível da instituição
+        // (e o global) recorta as aulas dela.
+        var calendar = await ctx.GetCalendarResolver(@class.CampusId, @class.Period.StartAt, @class.Period.EndAt);
+
+        @class.CreateLessons(calendar);
         @class.Status = ClassStatus.Started;
         await ctx.SaveChangesAsync();
 

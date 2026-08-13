@@ -13,16 +13,17 @@ const config = useRuntimeConfig()
 const toast = useToast()
 const loading = ref(false)
 
+// Fim de semana não entra: é derivado da data pelo backend, que rejeita o tipo
+// no create/update.
 const dayTypeOptions: { label: string, value: DayType }[] = [
   { label: 'Dia letivo', value: 'Default' },
-  { label: 'Fim de semana', value: 'Weekend' },
   { label: 'Férias', value: 'Vacation' },
   { label: 'Recesso', value: 'Recess' },
   { label: 'Feriado', value: 'Holiday' },
 ]
 
 const schema = z.object({
-  dayType: z.enum(['Default', 'Weekend', 'Vacation', 'Recess', 'Holiday'], { error: 'Tipo obrigatório' }),
+  dayType: z.enum(['Default', 'Vacation', 'Recess', 'Holiday'], { error: 'Tipo obrigatório' }),
   description: z.string().max(100, 'Máximo 100 caracteres').optional(),
 })
 
@@ -41,7 +42,9 @@ const formattedDate = computed(() => {
 
 watch(open, (val) => {
   if (!val || !props.day) return
-  formState.dayType = props.day.dayType
+  // Um dia de fim de semana não tem tipo selecionável: cai em dia letivo, que é
+  // o que faz sentido gravar num sábado/domingo (reposição de aula).
+  formState.dayType = props.day.dayType === 'Weekend' ? 'Default' : props.day.dayType
   formState.description = props.day.description ?? ''
 })
 

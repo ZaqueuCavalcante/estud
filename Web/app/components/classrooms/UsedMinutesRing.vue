@@ -25,6 +25,11 @@ const clamped = computed(() =>
 const CIRCUMFERENCE = 2 * Math.PI * 15.5
 const dash = computed(() => `${(CIRCUMFERENCE * clamped.value) / 100} ${CIRCUMFERENCE}`)
 
+// Ponta arredondada com arco de comprimento zero ainda desenha a tampa: em 0%
+// aparecia um pontinho no topo do mostrador. A ponta reta some junto com o arco,
+// e o arredondado volta assim que há o que preencher.
+const cap = computed(() => (clamped.value > 0 ? 'round' : 'butt'))
+
 // A volta inteira do mostrador são os 100% do turno: 25% aponta pra direita,
 // 50% pra baixo, 75% pra esquerda. O ponteiro dos minutos fica parado no topo
 // marcando o zero — é a distância até o das horas que vira a leitura.
@@ -54,7 +59,7 @@ const hourAngle = computed(() => clamped.value * 3.6)
         r="15.5"
         fill="none"
         stroke-width="3.5"
-        stroke-linecap="round"
+        :stroke-linecap="cap"
         :stroke-dasharray="dash"
         class="transition-all duration-500"
       />

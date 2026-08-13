@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NavigationMenuItem, TableColumn } from '@nuxt/ui'
+import type { NavigationMenuItem } from '@nuxt/ui'
 import type { CampusOccupancyCell, GetCampusOccupancyOut } from '~/types/campi'
 
 interface CampusItem {
@@ -21,9 +21,6 @@ interface ClassroomItem {
   campus: string
   capacity: number
 }
-
-const UButton = resolveComponent('UButton')
-const UTooltip = resolveComponent('UTooltip')
 
 const route = useRoute()
 const config = useRuntimeConfig()
@@ -55,50 +52,8 @@ const status = computed(() =>
 )
 
 const createModalOpen = ref(false)
-const editModalOpen = ref(false)
 const campusEditModalOpen = ref(false)
 const openingHoursModalOpen = ref(false)
-const selectedClassroom = ref<ClassroomItem | null>(null)
-
-function openEdit(classroom: ClassroomItem) {
-  selectedClassroom.value = classroom
-  editModalOpen.value = true
-}
-
-const classroomColumns: TableColumn<ClassroomItem>[] = [
-  {
-    accessorKey: 'name',
-    header: 'Nome',
-    cell: ({ row }) => h('span', { class: 'font-medium text-highlighted' }, row.original.name),
-  },
-  {
-    accessorKey: 'capacity',
-    header: 'Capacidade',
-    cell: ({ row }) => row.original.capacity.toLocaleString('pt-BR'),
-  },
-  {
-    id: 'actions',
-    header: '',
-    cell: ({ row }) => h('div', { class: 'flex justify-end gap-1' }, [
-      h(UTooltip, { text: 'Editar' }, () => h(UButton, {
-        icon: 'i-lucide-pencil',
-        color: 'neutral',
-        variant: 'ghost',
-        size: 'sm',
-        onClick: (e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); openEdit(row.original) },
-      })),
-      h(UTooltip, { text: 'Ver detalhes' }, () => h(UButton, {
-        icon: 'i-lucide-arrow-right',
-        color: 'neutral',
-        variant: 'ghost',
-        size: 'sm',
-        to: `/classrooms/${row.original.id}`,
-        'aria-label': 'Ver detalhes',
-      })),
-    ]),
-  },
-]
-
 // ── Constantes compartilhadas (serão promovidas pra utils/classes.ts) ─────────
 const weekDays = campusWeekDays
 // A duração de cada janela vem da API (availableMinutes por célula); aqui ficam
@@ -199,6 +154,15 @@ const peakStudents = computed(() => {
 // grid vazio é menos informativo do que o grid mostrando "nada alocado ainda".
 const hasOccupancyData = computed(() => data.value.overallUsedMinutesRate > 0)
 
+// ── Aba Salas: a sala do cadastro + a ocupação da semana ──────────────────────
+// A lista continua vindo de /classrooms (é ela que o create/edit atualiza) e a
+// ocupação entra por id. Sala sem par fica com `occupancy: null` — é o que
+// acontece enquanto o mapa ainda carrega, ou se ele falhar.
+const classroomCards = computed(() => {
+  const week = new Map(data.value.classrooms.map(c => [c.id, c]))
+  return classrooms.value.map(room => ({ room, occupancy: week.get(room.id) ?? null }))
+})
+
 // ── Formatação ────────────────────────────────────────────────────────────────
 function formatMinutes(minutes: number): string {
   if (minutes <= 0) return '0min'
@@ -210,6 +174,20 @@ function formatMinutes(minutes: number): string {
 }
 function formatRate(rate: number): string {
   return `${rate.toFixed(0)}%`
+}
+
+// A média de assentos ocupados é fracionária por natureza (sala usada meio
+// período dá 0,5), mas "1,5 aluno" não é gente que exista — o card arredonda.
+// Fração abaixo de 1 sobe pra 1: sala com aula não pode exibir "0 alunos".
+function formatStudents(students: number): string {
+  const rounded = students > 0 ? Math.max(Math.round(students), 1) : 0
+  return `${rounded.toLocaleString('pt-BR')} ${rounded === 1 ? 'aluno' : 'alunos'} em média`
+}
+
+// Turno sem nenhuma reserva não merece a cor da marca: o mostrador vazio fica
+// apagado, do mesmo jeito que nos cards de sala do drilldown.
+function cellRingClass(day: string, shift: string): string {
+  return (cellFor(day, shift)?.usedMinutesRate ?? 0) > 0 ? 'text-primary' : 'text-dimmed'
 }
 
 // A célula mostra as duas taxas só em ícone — não cabe texto no espaço dela.
@@ -241,11 +219,9 @@ watch(() => data.value.cells, (cells) => {
 }, { immediate: true })
 
 const selectedCell = computed(() => cellFor(selected.value.day, selected.value.shift))
-// Ordem alfabética fixa: reordenar por ocupação faz a lista pular de lugar a
-// cada célula selecionada, e a sala fica difícil de achar.
-const selectedClassrooms = computed(() =>
-  [...(selectedCell.value?.classrooms ?? [])].sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')),
-)
+// A API já devolve as salas em ordem alfabética — reordenar por ocupação aqui
+// faria a lista pular de lugar a cada célula selecionada.
+const selectedClassrooms = computed(() => selectedCell.value?.classrooms ?? [])
 
 // ── Horários: GET /campi/{id}/opening-hours ───────────────────────────────────
 const {
@@ -256,6 +232,12 @@ const {
 } = useCampusOpeningHours(campusId)
 
 const openingHoursDays = computed(() => openingHours.value?.days ?? [])
+
+// Criar ou editar uma sala muda o mapa (mais uma sala no denominador, outra
+// capacidade no cálculo de assentos) e os cards da aba Salas.
+async function onClassroomsChanged() {
+  await Promise.all([refreshClassrooms(), refreshOccupancy()])
+}
 
 // Editar os horários muda o denominador do mapa, então as duas abas
 // precisam voltar juntas do backend.
@@ -503,7 +485,7 @@ const breadcrumb = [
                       :aria-label="cellLabel(day.key, shift.key)"
                       @click="() => { selectCell(day.key, shift.key) }"
                     >
-                      <ClassroomsUsedMinutesRing :percent="cellFor(day.key, shift.key)?.usedMinutesRate ?? 0" class="size-7 text-primary" />
+                      <ClassroomsUsedMinutesRing :percent="cellFor(day.key, shift.key)?.usedMinutesRate ?? 0" class="size-7" :class="cellRingClass(day.key, shift.key)" />
                       <ClassroomsUsedCapacityBlocks :percent="cellFor(day.key, shift.key)?.usedCapacityRate ?? 0" class="size-7" />
                     </button>
                   </template>
@@ -549,7 +531,7 @@ const breadcrumb = [
                       :aria-label="cellLabel(day.key, shift.key)"
                       @click="() => { selectCell(day.key, shift.key) }"
                     >
-                      <ClassroomsUsedMinutesRing :percent="cellFor(day.key, shift.key)?.usedMinutesRate ?? 0" class="size-8 text-primary" />
+                      <ClassroomsUsedMinutesRing :percent="cellFor(day.key, shift.key)?.usedMinutesRate ?? 0" class="size-8" :class="cellRingClass(day.key, shift.key)" />
                       <ClassroomsUsedCapacityBlocks :percent="cellFor(day.key, shift.key)?.usedCapacityRate ?? 0" class="size-8" />
                     </button>
                   </template>
@@ -576,7 +558,11 @@ const breadcrumb = [
 
               <div class="flex flex-col items-center gap-4 sm:flex-row sm:gap-10">
                 <div class="flex items-center gap-3">
-                  <ClassroomsUsedMinutesRing :percent="selectedCell.usedMinutesRate" class="size-12 text-primary" />
+                  <ClassroomsUsedMinutesRing
+                    :percent="selectedCell.usedMinutesRate"
+                    class="size-12"
+                    :class="selectedCell.usedMinutesRate > 0 ? 'text-primary' : 'text-dimmed'"
+                  />
                   <div class="flex flex-col leading-none">
                     <span class="text-2xl font-bold tabular-nums text-primary">{{ formatRate(selectedCell.usedMinutesRate) }}</span>
                     <span class="mt-1.5 text-xs text-muted">do horário</span>
@@ -598,10 +584,11 @@ const breadcrumb = [
                  dos assentos as turmas ocupam (os quatro quadrados). Sala cheia de
                  horário e vazia de gente é o caso que só aparece com as duas. -->
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-              <div
+              <NuxtLink
                 v-for="room in selectedClassrooms"
                 :key="room.id"
-                class="flex flex-col gap-4 rounded-lg border border-default bg-default/60 p-4"
+                :to="`/classrooms/${room.id}`"
+                class="flex flex-col gap-4 rounded-lg border border-default bg-default/60 p-4 transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 <span class="truncate text-sm font-medium text-highlighted">{{ room.name }}</span>
 
@@ -622,7 +609,7 @@ const breadcrumb = [
                     {{ formatRate(room.usedCapacityRate) }} dos assentos
                   </span>
                 </div>
-              </div>
+              </NuxtLink>
             </div>
           </section>
         </template>
@@ -679,22 +666,58 @@ const breadcrumb = [
             />
           </div>
 
-          <DataTable :data="classrooms" :columns="classroomColumns">
-            <template #empty>
-              <TableEmptyState
-                :loading="false"
-                icon="i-lucide-door-open"
-                message="Nenhuma sala neste campus"
-                button-label="Sala"
-                @create="() => { createModalOpen = true }"
-              />
-            </template>
-          </DataTable>
+          <TableEmptyState
+            v-if="!classrooms.length"
+            :loading="false"
+            icon="i-lucide-door-open"
+            message="Nenhuma sala neste campus"
+            button-label="Sala"
+            @create="() => { createModalOpen = true }"
+          />
 
-          <div v-if="classrooms.length" class="flex items-center gap-2">
-            <UBadge color="neutral" variant="subtle" class="h-8 px-3">
-              {{ classrooms.length }} {{ classrooms.length === 1 ? 'sala encontrada' : 'salas encontradas' }}
-            </UBadge>
+          <!-- Mesmo card do drilldown do mapa, só que com a semana inteira no
+               lugar de um turno: as duas leituras da sala e, embaixo da taxa de
+               assentos, quantos lugares isso dá de verdade. -->
+          <div v-else class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            <NuxtLink
+              v-for="{ room, occupancy: week } in classroomCards"
+              :key="room.id"
+              :to="`/classrooms/${room.id}`"
+              class="flex flex-col gap-4 rounded-lg border border-default bg-default/60 p-4 transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              <div class="flex min-w-0 flex-col">
+                <span class="truncate text-sm font-medium text-highlighted">{{ room.name }}</span>
+                <span class="text-xs text-muted tabular-nums">
+                  {{ room.capacity.toLocaleString('pt-BR') }} {{ room.capacity === 1 ? 'lugar' : 'lugares' }}
+                </span>
+              </div>
+
+              <template v-if="week">
+                <ClassroomsUsedMinutesRingStat
+                  :percent="week.usedMinutesRate"
+                  :title="`${formatRate(week.usedMinutesRate)} do horário`"
+                  :subtitle="`${formatMinutes(week.usedMinutes)} de ${formatMinutes(week.availableMinutes)}`"
+                  :color-class="week.usedMinutesRate > 0 ? 'text-primary' : 'text-dimmed'"
+                />
+
+                <div class="flex items-center gap-3">
+                  <ClassroomsUsedCapacityBlocks :percent="week.usedCapacityRate" class="size-14" />
+
+                  <div class="flex min-w-0 flex-col">
+                    <span class="text-sm font-medium text-highlighted tabular-nums">
+                      {{ formatRate(week.usedCapacityRate) }} dos assentos
+                    </span>
+                    <span class="text-xs text-muted tabular-nums">
+                      {{ formatStudents(week.averageStudents) }}
+                    </span>
+                  </div>
+                </div>
+              </template>
+
+              <p v-else class="text-xs text-muted">
+                Ocupação indisponível
+              </p>
+            </NuxtLink>
           </div>
         </section>
       </div>
@@ -709,6 +732,5 @@ const breadcrumb = [
     @saved="onOpeningHoursSaved()"
   />
 
-  <ClassroomsCreateModal v-model:open="createModalOpen" :campus-id="campusId" @created="refreshClassrooms()" />
-  <ClassroomsEditModal v-model:open="editModalOpen" :classroom="selectedClassroom" @updated="refreshClassrooms()" />
+  <ClassroomsCreateModal v-model:open="createModalOpen" :campus-id="campusId" @created="onClassroomsChanged()" />
 </template>

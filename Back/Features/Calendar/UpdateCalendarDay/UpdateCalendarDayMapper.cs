@@ -11,6 +11,7 @@ public static class UpdateCalendarDayMapper
             return new()
             {
                 Id = day.Id,
+                CampusId = day.CampusId,
                 Date = day.Date.ToDateTime(TimeOnly.MinValue),
                 DayType = day.DayType,
                 Description = day.Description,

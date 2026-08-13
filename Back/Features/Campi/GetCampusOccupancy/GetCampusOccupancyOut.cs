@@ -40,6 +40,12 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
     /// </summary>
     public List<CampusOccupancyCellOut> Cells { get; set; } = [];
 
+    /// <summary>
+    /// Uma linha por sala do campus, com a ocupação da semana inteira. É o mesmo
+    /// cálculo das células, só que somado em todos os dias e turnos abertos.
+    /// </summary>
+    public List<CampusClassroomOccupancyOut> Classrooms { get; set; } = [];
+
     public static IEnumerable<(string, GetCampusOccupancyOut)> GetExamples() =>
     [
         ("Exemplo", new GetCampusOccupancyOut
@@ -50,6 +56,21 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
             OverallUsedMinutesRate = 27.5M,
             OverallUsedCapacityRate = 18.4M,
             OpenCells = 15,
+            Classrooms =
+            [
+                new CampusClassroomOccupancyOut
+                {
+                    Id = 1,
+                    Name = "Sala 05",
+                    Capacity = 40,
+                    UsedMinutes = 1500,
+                    AvailableMinutes = 4500,
+                    UsedMinutesRate = 33.33M,
+                    UsedCapacity = 45000,
+                    UsedCapacityRate = 25M,
+                    AverageStudents = 10M,
+                },
+            ],
             Cells =
             [
                 new CampusOccupancyCellOut
@@ -88,6 +109,49 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
             ],
         }),
     ];
+}
+
+public class CampusClassroomOccupancyOut
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+
+    /// <summary>
+    /// Lugares da sala
+    /// </summary>
+    public int Capacity { get; set; }
+
+    /// <summary>
+    /// Minutos que o campus abre na semana. É o denominador da sala: sala parada
+    /// enquanto o campus está aberto é sala ociosa.
+    /// </summary>
+    public int AvailableMinutes { get; set; }
+
+    /// <summary>
+    /// Minutos que a sala passa reservada por turmas na semana
+    /// </summary>
+    public int UsedMinutes { get; set; }
+
+    /// <summary>
+    /// Ocupação de minutos da sala na semana, em porcentagem (0 a 100)
+    /// </summary>
+    public decimal UsedMinutesRate { get; set; }
+
+    /// <summary>
+    /// Assento-minuto ocupado na sala na semana: alunos x minutos em aula
+    /// </summary>
+    public int UsedCapacity { get; set; }
+
+    /// <summary>
+    /// Ocupação de assentos da sala na semana, em porcentagem (0 a 100)
+    /// </summary>
+    public decimal UsedCapacityRate { get; set; }
+
+    /// <summary>
+    /// Assentos ocupados em média enquanto o campus está aberto. É a taxa de
+    /// assentos convertida de volta em lugares: 67% de uma sala de 3 são 2.
+    /// </summary>
+    public decimal AverageStudents { get; set; }
 }
 
 public class CampusOccupancyCellOut

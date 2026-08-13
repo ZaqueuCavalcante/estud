@@ -201,7 +201,7 @@ export type PolicyName
     | 'GetTeacherCurrentClasses'
   // Calendar
     | 'AccessCalendarPage'
-    | 'GetInstitutionCalendar'
+    | 'GetCalendar'
     | 'CreateCalendarDay'
     | 'UpdateCalendarDay'
   // Institutions

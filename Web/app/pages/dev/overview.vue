@@ -199,7 +199,7 @@ const diagrams: Diagram[] = [
       { id: 'bell', label: 'Sino no header', sub: 'NotificationsSlideover', group: 'client', x: 646, y: 435, w: 190 },
       { id: 'inbox', label: '/notifications', sub: 'Caixa de entrada', group: 'client', x: 646, y: 520, w: 190 },
       { id: 'unread', label: 'Contador de não lidas', sub: 'GetUnreadNotificationsCount', group: 'client', x: 856, y: 480, w: 200, note: 'Hoje o front descobre notificação nova por polling: useNotifications chama /notifications/unread-count a cada 60s (e uma vez no boot e no login). O badge também vai para o título da aba.' },
-      { id: 'realtime', label: 'SSE / WebSocket', sub: 'Push em tempo real', group: 'planned', x: 436, y: 560, w: 190, planned: true, note: 'Não existe hoje: nenhuma conexão persistente entre front e API. O caminho natural é um endpoint SSE por usuário (mais simples que WebSocket, e suficiente porque o fluxo é só servidor → cliente) empurrando a notificação assim que o UserNotification é criado, aposentando o polling de 60s. WebSocket só se aparecer fluxo bidirecional de verdade.' },
+      { id: 'realtime', label: 'SSE', sub: 'Push em tempo real', group: 'planned', x: 436, y: 560, w: 190, planned: true, note: 'Não existe hoje: nenhuma conexão persistente entre front e API. O caminho natural é um endpoint SSE por usuário, empurrando a notificação assim que o UserNotification é criado e aposentando o polling de 60s. O fluxo é só servidor → cliente, então Server-Sent Events cobre o caso inteiro.' },
     ],
     edges: [
       { from: 'event', to: 'subs', label: 'casa com os eventos assinados' },
@@ -318,7 +318,7 @@ const gapsDiagram: Diagram = {
     { id: 'cacheL2', label: 'Cache distribuído', sub: 'L2 do HybridCache', group: 'planned', x: 580, y: 500, w: 200, planned: true, note: 'O HybridCache já suporta segundo nível: basta registrar um IDistributedCache. Hoje não há nenhum, então o cache é sempre local e não é invalidado entre instâncias.' },
     { id: 'rlShared', label: 'Rate limit distribuído', sub: 'Contagem compartilhada', group: 'planned', x: 830, y: 500, w: 200, planned: true, note: 'O limiter de janela fixa conta em memória. Com N réplicas o limite efetivo vira N × o configurado.' },
 
-    { id: 'sse', label: 'SSE / WebSocket', sub: 'Conexão persistente', group: 'planned', x: 330, y: 595, w: 200, planned: true, note: 'Server-Sent Events resolve quase tudo aqui: é HTTP puro, passa pelo Caddy e pelo Cloudflare sem configuração extra, reconecta sozinho e o fluxo é só servidor → cliente. WebSocket fica reservado para quando aparecer interação bidirecional de verdade. Atenção: conexão persistente precisa de estado compartilhado entre réplicas (o mesmo Redis do item acima) para saber em qual instância o usuário está pendurado.' },
+    { id: 'sse', label: 'Server-Sent Events', sub: 'Conexão persistente', group: 'planned', x: 330, y: 595, w: 200, planned: true, note: 'SSE é HTTP puro: passa pelo Caddy e pelo Cloudflare sem configuração extra, reconecta sozinho (EventSource) e o fluxo do produto é sempre servidor → cliente. Atenção: conexão persistente precisa de estado compartilhado entre réplicas (o mesmo Redis do item acima) para saber em qual instância o usuário está pendurado.' },
     { id: 'ssePush', label: 'Push de notificações', sub: 'Adeus polling de 60s', group: 'planned', x: 580, y: 595, w: 200, planned: true, note: 'Quando o UserNotification é criado, o evento vai direto para o sino do usuário conectado. O polling vira só fallback de reconexão.' },
     { id: 'sseLive', label: 'Telas ao vivo', sub: 'Agenda · turmas · chamadas', group: 'planned', x: 830, y: 595, w: 200, planned: true, note: 'Mesmo canal serve para atualizar agenda e turmas sem refresh, acompanhar chamadas de webhook em /integrations e mostrar o resultado de comandos assíncronos assim que processam.' },
   ],
@@ -365,7 +365,7 @@ const stack: StackRow[] = [
   { area: 'Backend', item: 'Jobs', tech: 'Quartz.NET', note: 'CommandsProcessor e DomainEventsProcessor, polling a cada 60s.' },
   { area: 'Backend', item: 'PDF', tech: 'QuestPDF', note: 'Relatórios. O CI instala libfontconfig1 por causa disso.' },
   { area: 'Integrações', item: 'Webhooks', tech: 'Inscrições por instituição · retry com backoff', note: 'Saída (WebhookCall + Attempt) e entrada (ReceivedWebhookEvent), com histórico em /integrations.' },
-  { area: 'Integrações', item: 'Notificações internas', tech: 'Notification / UserNotification', note: 'Sino no header, caixa de entrada em /notifications e contador de não lidas por polling de 60s — sem push (SSE/WebSocket) ainda.' },
+  { area: 'Integrações', item: 'Notificações internas', tech: 'Notification / UserNotification', note: 'Sino no header, caixa de entrada em /notifications e contador de não lidas por polling de 60s — sem push (SSE) ainda.' },
   { area: 'Auth', item: 'Sessão', tech: 'JWT em cookie httpOnly', note: 'Data Protection com chaves no banco.' },
   { area: 'Auth', item: 'Métodos', tech: 'Senha · Magic Link · Google One Tap · Google OAuth · SSO OIDC', note: '2FA por TOTP, opcionalmente obrigatório por instituição.' },
   { area: 'Auth', item: 'Autorização', tech: 'Policies + permissões por perfil', note: 'Uma policy por feature, permissões agrupadas, perfis por instituição.' },

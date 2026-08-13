@@ -12,45 +12,36 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
         var institutionId = ctx.RequestUser.InstitutionId;
 
         var campus = await ctx.Campi.AsNoTracking()
-            .Include(x => x.OpeningHours).Include(x => x.Classrooms)
+            .Include(x => x.OpeningHours).Include(x => x.Classrooms.OrderBy(c => c.Name))
             .FirstOrDefaultAsync(c => c.Id == campusId && c.InstitutionId == institutionId);
         if (campus == null) return CampusNotFound.I;
 
         var classes = await GetClasses(institutionId);
         var schedules = await GetSchedules(institutionId, campusId);
 
-        var openCells = 0;
         var cells = new List<CampusOccupancyCellOut>(Days.Length * Shifts.Length);
 
-        // Assento-minuto da semana inteira. As células guardam só a taxa já
-        // dividida, e taxa não soma — o total do campus tem que vir do bruto.
         var campusUsedCapacity = 0;
         var campusAvailableCapacity = 0;
+        var classroomTotals = campus.Classrooms.ToDictionary(c => c.Id, _ => new ClassroomTotals());
 
         foreach (var day in Days)
         {
             foreach (var shift in Shifts)
             {
                 // O que a célula tem de horário real: as janelas do dia recortadas ao turno.
-                // É contra elas que o uso das salas é medido, e é delas que sai o denominador.
                 var openSchedules = campus.OpenSchedulesIn(day, shift);
                 var campusOpenMinutes = campus.MinutesOpenIn(day, shift);
-                if (campusOpenMinutes > 0) openCells++;
 
-                var cellClassrooms = new List<CampusOccupancyClassroomOut>(campus.Classrooms.Count);
-
-                // Assento-minuto da célula inteira. Não dá pra tirar da média das
-                // salas: sala grande e sala pequena pesam diferente no campus.
                 var cellUsedCapacity = 0;
                 var cellAvailableCapacity = 0;
+                var cellClassrooms = new List<CampusOccupancyClassroomOut>(campus.Classrooms.Count);
 
                 foreach (var classroom in campus.Classrooms)
                 {
                     var classroomUsedMinutes = 0;
                     var classroomUsedCapacity = 0;
-
-                    var classroomSchedules = schedules
-                        .Where(x => x.ClassroomId == classroom.Id && x.Day == day).ToList();
+                    var classroomSchedules = schedules.Where(x => x.ClassroomId == classroom.Id && x.Day == day).ToList();
 
                     foreach (var schedule in classroomSchedules)
                     {
@@ -69,6 +60,11 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
 
                     cellUsedCapacity += classroomUsedCapacity;
                     cellAvailableCapacity += campusOpenMinutes * classroom.Capacity;
+
+                    var totals = classroomTotals[classroom.Id];
+                    totals.UsedMinutes += classroomUsedMinutes;
+                    totals.UsedCapacity += classroomUsedCapacity;
+                    totals.AvailableMinutes += campusOpenMinutes;
 
                     cellClassrooms.Add(new CampusOccupancyClassroomOut
                     {
@@ -106,12 +102,32 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
         var campusUsedMinutes = cells.Sum(c => c.UsedMinutes);
         var campusAvailableMinutes = cells.Sum(c => c.AvailableMinutes);
 
+        var classrooms = campus.Classrooms
+            .Select(classroom =>
+            {
+                var totals = classroomTotals[classroom.Id];
+                return new CampusClassroomOccupancyOut
+                {
+                    Id = classroom.Id,
+                    Name = classroom.Name,
+                    Capacity = classroom.Capacity,
+                    UsedMinutes = totals.UsedMinutes,
+                    UsedCapacity = totals.UsedCapacity,
+                    AvailableMinutes = totals.AvailableMinutes,
+                    UsedMinutesRate = ToRate(totals.UsedMinutes, totals.AvailableMinutes),
+                    AverageStudents = ToRate(totals.UsedCapacity, totals.AvailableMinutes),
+                    UsedCapacityRate = ToRate(totals.UsedCapacity, totals.AvailableMinutes * classroom.Capacity),
+                };
+            })
+            .ToList();
+
         return new GetCampusOccupancyOut
         {
             Cells = cells,
             CampusId = campus.Id,
             Campus = campus.Name,
-            OpenCells = openCells,
+            Classrooms = classrooms,
+            OpenCells = cells.Count(x => x.Open),
             TotalClassrooms = campus.Classrooms.Count,
             OverallUsedMinutesRate = ToRate(campusUsedMinutes, campusAvailableMinutes),
             OverallUsedCapacityRate = ToRate(campusUsedCapacity, campusAvailableCapacity),

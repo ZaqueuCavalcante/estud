@@ -5,6 +5,7 @@
   "overallUsedMinutesRate": 0,
   "overallUsedCapacityRate": 0,
   "openCells": 18,
+  "classrooms": [],
   "cells": [
     {
       "day": "Monday",
