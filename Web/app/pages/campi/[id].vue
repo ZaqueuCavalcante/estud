@@ -26,7 +26,7 @@ const route = useRoute()
 const config = useRuntimeConfig()
 const campusId = Number(route.params.id)
 
-// ── Dados reais: campus + suas salas ─────────────────────────────────────────
+// ── Dados reais: campus + suas salas
 const { data: campiData, status: campiStatus, refresh: refreshCampi } = await useFetch<GetCampiOut>(`${config.public.backendUrl}/campi`, {
   credentials: 'include',
   server: false,
@@ -96,6 +96,7 @@ const emptyOccupancy: GetCampusOccupancyOut = {
   overallUsedCapacityRate: 0,
   openCells: 0,
   cells: [],
+  classrooms: [],
 }
 
 const data = computed<GetCampusOccupancyOut>(() => occupancy.value ?? emptyOccupancy)
@@ -172,9 +173,6 @@ function formatMinutes(minutes: number): string {
   if (m === 0) return `${h}h`
   return `${h}h ${m}min`
 }
-function formatRate(rate: number): string {
-  return `${rate.toFixed(0)}%`
-}
 
 // A média de assentos ocupados é fracionária por natureza (sala usada meio
 // período dá 0,5), mas "1,5 aluno" não é gente que exista — o card arredonda.
@@ -195,7 +193,7 @@ function cellRingClass(day: string, shift: string): string {
 function cellLabel(day: string, shift: string): string {
   const cell = cellFor(day, shift)
   const label = `${dayLabels[day]} ${shiftLabels[shift]}`
-  return `${label}: ${formatRate(cell?.usedMinutesRate ?? 0)} do horário, ${formatRate(cell?.usedCapacityRate ?? 0)} dos assentos`
+  return `${label}: ${formatRate(cell?.usedMinutesRate ?? 0)} de tempo usado, ${formatRate(cell?.usedCapacityRate ?? 0)} de espaço alocado`
 }
 
 // ── Drilldown selecionado ─────────────────────────────────────────────────────
@@ -394,7 +392,7 @@ const breadcrumb = [
               <ClassroomsUsedMinutesRing :percent="data.overallUsedMinutesRate" class="size-12 text-primary" />
               <div class="flex flex-col leading-none">
                 <span class="text-3xl font-bold tabular-nums tracking-tight text-primary">{{ formatRate(data.overallUsedMinutesRate) }}</span>
-                <span class="mt-2 text-xs font-medium text-muted">do horário</span>
+                <span class="mt-2 text-xs font-medium text-muted">Tempo usado</span>
               </div>
             </div>
 
@@ -402,7 +400,7 @@ const breadcrumb = [
               <ClassroomsUsedCapacityBlocks :percent="data.overallUsedCapacityRate" class="size-12" />
               <div class="flex flex-col leading-none">
                 <span class="text-3xl font-bold tabular-nums tracking-tight text-primary">{{ formatRate(data.overallUsedCapacityRate) }}</span>
-                <span class="mt-2 text-xs font-medium text-muted">dos assentos</span>
+                <span class="mt-2 text-xs font-medium text-muted">Espaço alocado</span>
               </div>
             </div>
 
@@ -433,14 +431,14 @@ const breadcrumb = [
 
               <!-- Chave dos dois ícones da célula: sem ela, a célula é só dois
                    desenhos sem nome — não sobra espaço lá dentro pra rótulo. -->
-              <div class="flex items-center gap-4 text-xs text-muted">
+              <div class="ml-auto hidden items-center gap-4 text-xs text-muted sm:flex">
                 <span class="flex items-center gap-2">
                   <ClassroomsUsedMinutesRing :percent="75" class="size-5 text-primary" />
-                  horário
+                  tempo
                 </span>
                 <span class="flex items-center gap-2">
                   <ClassroomsUsedCapacityBlocks :percent="75" class="size-5" />
-                  assentos
+                  espaço
                 </span>
               </div>
             </div>
@@ -542,12 +540,7 @@ const breadcrumb = [
 
           <!-- Drilldown inline (micro) — sem sala não há o que detalhar -->
           <section v-if="selectedCell?.open && selectedCell.classrooms.length" class="flex flex-col gap-4">
-            <!-- As duas taxas do turno com os mesmos ícones da célula clicada,
-                 logo abaixo do título. No mobile elas ainda empilham entre si:
-                 lado a lado, ícone e número ficariam apertados demais. -->
             <div class="flex flex-col items-center gap-4">
-              <!-- Filete dos dois lados do título: é o que amarra o detalhe à
-                   célula clicada agora que a seção não tem mais moldura. -->
               <div class="flex w-full items-center gap-4">
                 <span class="flex-1 border-t border-dashed border-accented" />
                 <h2 class="font-semibold text-highlighted">
@@ -556,7 +549,7 @@ const breadcrumb = [
                 <span class="flex-1 border-t border-dashed border-accented" />
               </div>
 
-              <div class="flex flex-col items-center gap-4 sm:flex-row sm:gap-10">
+              <div class="flex items-center gap-8 sm:gap-10">
                 <div class="flex items-center gap-3">
                   <ClassroomsUsedMinutesRing
                     :percent="selectedCell.usedMinutesRate"
@@ -565,7 +558,7 @@ const breadcrumb = [
                   />
                   <div class="flex flex-col leading-none">
                     <span class="text-2xl font-bold tabular-nums text-primary">{{ formatRate(selectedCell.usedMinutesRate) }}</span>
-                    <span class="mt-1.5 text-xs text-muted">do horário</span>
+                    <span class="mt-1.5 text-xs text-muted">Tempo usado</span>
                   </div>
                 </div>
 
@@ -573,16 +566,12 @@ const breadcrumb = [
                   <ClassroomsUsedCapacityBlocks :percent="selectedCell.usedCapacityRate" class="size-12" />
                   <div class="flex flex-col leading-none">
                     <span class="text-2xl font-bold tabular-nums text-primary">{{ formatRate(selectedCell.usedCapacityRate) }}</span>
-                    <span class="mt-1.5 text-xs text-muted">dos assentos</span>
+                    <span class="mt-1.5 text-xs text-muted">Espaço alocado</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Uma sala por card, com as duas leituras do turno: quanto do
-                 horário aberto a sala passa reservada (o mostrador) e quanto
-                 dos assentos as turmas ocupam (os quatro quadrados). Sala cheia de
-                 horário e vazia de gente é o caso que só aparece com as duas. -->
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               <NuxtLink
                 v-for="room in selectedClassrooms"
@@ -594,19 +583,16 @@ const breadcrumb = [
 
                 <ClassroomsUsedMinutesRingStat
                   :percent="room.usedMinutesRate"
-                  :title="`${formatRate(room.usedMinutesRate)} do horário`"
+                  :title="`${formatRate(room.usedMinutesRate)} de tempo usado`"
                   :subtitle="`${formatMinutes(room.usedMinutes)} de ${formatMinutes(room.availableMinutes)}`"
                   :color-class="room.usedMinutesRate > 0 ? 'text-primary' : 'text-dimmed'"
                 />
 
                 <div class="flex items-center gap-3">
-                  <!-- size-14: o mesmo do mostrador acima, pra as duas leituras
-                       da sala empilharem no mesmo eixo e os textos ao lado
-                       começarem na mesma coluna. -->
                   <ClassroomsUsedCapacityBlocks :percent="room.usedCapacityRate" class="size-14" />
 
                   <span class="text-sm font-medium text-highlighted tabular-nums">
-                    {{ formatRate(room.usedCapacityRate) }} dos assentos
+                    {{ formatRate(room.usedCapacityRate) }} de espaço alocado
                   </span>
                 </div>
               </NuxtLink>
@@ -695,7 +681,7 @@ const breadcrumb = [
               <template v-if="week">
                 <ClassroomsUsedMinutesRingStat
                   :percent="week.usedMinutesRate"
-                  :title="`${formatRate(week.usedMinutesRate)} do horário`"
+                  :title="`${formatRate(week.usedMinutesRate)} de tempo usado`"
                   :subtitle="`${formatMinutes(week.usedMinutes)} de ${formatMinutes(week.availableMinutes)}`"
                   :color-class="week.usedMinutesRate > 0 ? 'text-primary' : 'text-dimmed'"
                 />
@@ -705,7 +691,7 @@ const breadcrumb = [
 
                   <div class="flex min-w-0 flex-col">
                     <span class="text-sm font-medium text-highlighted tabular-nums">
-                      {{ formatRate(week.usedCapacityRate) }} dos assentos
+                      {{ formatRate(week.usedCapacityRate) }} de espaço alocado
                     </span>
                     <span class="text-xs text-muted tabular-nums">
                       {{ formatStudents(week.averageStudents) }}

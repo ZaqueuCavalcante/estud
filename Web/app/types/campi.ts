@@ -3,9 +3,7 @@ export interface CampusOccupancyClassroom {
   name: string
   availableMinutes: number
   usedMinutes: number
-  /** Quanto do horário aberto do turno a sala passa reservada. */
   usedMinutesRate: number
-  /** Quanto dos assentos-minuto da sala as turmas ocupam. */
   usedCapacityRate: number
 }
 

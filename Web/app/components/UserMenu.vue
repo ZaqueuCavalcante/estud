@@ -6,7 +6,6 @@ defineProps<{
 }>()
 
 const config = useRuntimeConfig()
-const colorMode = useColorMode()
 const { account } = useUserAccount()
 
 const loggingOut = useState('loggingOut', () => false)
@@ -35,14 +34,6 @@ const items = computed<DropdownMenuItem[][]>(() => ([[
     label: 'Conta',
     icon: 'i-lucide-circle-user',
     to: '/account'
-},
-{
-    label: colorMode.value === 'dark' ? 'Light' : 'Dark',
-    icon: colorMode.value === 'dark' ? 'i-lucide-sun' : 'i-lucide-moon',
-    onSelect(e: Event) {
-        e.preventDefault()
-        colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
-    }
 },
 {
     label: 'Sair',

@@ -6,7 +6,7 @@ public static class GetCampiMapper
 {
     extension(Campus campus)
     {
-        public GetCampiItemOut ToGetCampiItemOut(int students, int teachers)
+        public GetCampiItemOut ToGetCampiItemOut(decimal usedMinutesRate, decimal usedCapacityRate)
         {
             return new()
             {
@@ -14,8 +14,8 @@ public static class GetCampiMapper
                 Name = campus.Name,
                 City = campus.City,
                 State = campus.State,
-                Students = students,
-                Teachers = teachers,
+                UsedMinutesRate = usedMinutesRate,
+                UsedCapacityRate = usedCapacityRate,
             };
         }
     }

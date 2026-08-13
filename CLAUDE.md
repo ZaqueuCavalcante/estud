@@ -4,6 +4,37 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Important constraints
 
+### Não comentar o óbvio
+
+**Não** escrever um comentário em cima de cada mudança explicando o que ela faz ou por que foi feita. O código já diz o que faz, e a justificativa da mudança pertence à resposta do chat ou à mensagem de commit — não ao arquivo. Isso vale para todo tipo de comentário: `//`, `/* */`, `<!-- -->`, JSDoc e XML docs.
+
+Comentário só se justifica quando o código sozinho engana: uma decisão contra-intuitiva que alguém tentaria "consertar", um workaround de bug de terceiro, um invariante que não dá pra ler ali. Nesses casos, uma ou duas linhas, explicando o **porquê** — nunca o quê.
+
+**Errado:**
+```vue
+<!-- Estado e cidade dividem a linha só a partir do `sm` — o mesmo ponto em que
+     o `useIsMobile` para de valer e o modal deixa de ser fullscreen. Abaixo
+     disso o select e o input ficam estreitos demais lado a lado. -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+```
+
+```csharp
+// Busca o curso pelo id
+var course = await ctx.Courses.FirstOrDefaultAsync(x => x.Id == id);
+```
+
+**Correto:**
+```vue
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+```
+
+```csharp
+// O Google devolve `email_verified` como string em alguns fluxos legados.
+var verified = claim.Value is "true" or "True";
+```
+
+Na dúvida, não comentar.
+
 ## Backend conventions
 
 ### Checagem de strings — usar `HasValue()` / `IsEmpty()`

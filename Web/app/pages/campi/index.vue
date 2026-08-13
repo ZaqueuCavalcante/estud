@@ -4,8 +4,8 @@ interface CampusItem {
   name: string
   state: string
   city: string
-  students: number
-  teachers: number
+  usedMinutesRate: number
+  usedCapacityRate: number
 }
 
 interface GetCampiOut {
@@ -59,10 +59,10 @@ const { data, status, refresh } = await useFetch<GetCampiOut>(`${config.public.b
             v-for="campus in data.items"
             :key="campus.id"
             :to="`/campi/${campus.id}`"
-            class="rounded-xl border border-default bg-elevated flex flex-col overflow-hidden hover:shadow-md hover:border-primary/50 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            class="rounded-xl border border-default bg-elevated/40 flex flex-col overflow-hidden hover:shadow-md hover:border-primary/50 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <!-- Header -->
-            <div class="px-4 pt-3 pb-3">
+            <div class="px-4 pt-3 pb-4">
               <p class="font-bold text-base text-highlighted truncate">{{ campus.name }}</p>
               <div class="flex items-center gap-1 mt-0.5">
                 <UIcon name="i-lucide-map-pin" class="size-3.5 text-muted shrink-0" />
@@ -70,18 +70,24 @@ const { data, status, refresh } = await useFetch<GetCampiOut>(`${config.public.b
               </div>
             </div>
 
-            <!-- Divisor -->
-            <div class="border-t border-default mx-4" />
-
-            <!-- Stats -->
-            <div class="grid grid-cols-2 py-3">
-              <div class="flex flex-col px-4 border-r border-default">
-                <span class="text-2xl font-bold text-highlighted leading-none">{{ campus.teachers }}</span>
-                <span class="text-xs text-muted mt-1">Professores</span>
+            <div class="flex justify-around px-4 pb-4">
+              <div class="flex flex-col items-center gap-1.5">
+                <div class="flex items-center gap-2">
+                  <ClassroomsUsedMinutesRing
+                    :percent="campus.usedMinutesRate"
+                    class="size-8"
+                    :class="campus.usedMinutesRate > 0 ? 'text-primary' : 'text-dimmed'"
+                  />
+                  <span class="text-xl font-bold tabular-nums text-highlighted leading-none">{{ formatRate(campus.usedMinutesRate) }}</span>
+                </div>
+                <span class="text-xs text-muted">Tempo usado</span>
               </div>
-              <div class="flex flex-col px-4">
-                <span class="text-2xl font-bold text-highlighted leading-none">{{ campus.students }}</span>
-                <span class="text-xs text-muted mt-1">Alunos</span>
+              <div class="flex flex-col items-center gap-1.5">
+                <div class="flex items-center gap-2">
+                  <ClassroomsUsedCapacityBlocks :percent="campus.usedCapacityRate" class="size-8" />
+                  <span class="text-xl font-bold tabular-nums text-highlighted leading-none">{{ formatRate(campus.usedCapacityRate) }}</span>
+                </div>
+                <span class="text-xs text-muted">Espaço alocado</span>
               </div>
             </div>
           </NuxtLink>

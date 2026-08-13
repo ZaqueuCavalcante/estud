@@ -6,6 +6,8 @@ public static class ShiftExtensions
 {
     extension(Shift shift)
     {
+        public static Shift[] All => Enum.GetValues<Shift>();
+
         public Schedule ToSchedule(Day day) => Schedule.Window(day, shift.StartAtHour, shift.EndAtHour);
 
         public Hour StartAtHour => shift switch

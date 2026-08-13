@@ -102,7 +102,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           <UInput v-model="formState.name" class="w-full" placeholder="Ex: Campus Agreste" />
         </UFormField>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <UFormField label="Estado" name="state">
             <USelect
               v-model="formState.state"

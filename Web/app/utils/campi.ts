@@ -41,3 +41,8 @@ export function openingHourToMinutes(hour: string) {
 export function formatOpeningHour(hour: string) {
   return hour.replace(/^H/, '').replace('_', ':')
 }
+
+/** `67.42` → `67%` */
+export function formatRate(rate: number): string {
+  return `${rate.toFixed(0)}%`
+}

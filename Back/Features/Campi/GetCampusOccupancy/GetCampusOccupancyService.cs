@@ -4,9 +4,6 @@ namespace Estud.Back.Features.Campi.GetCampusOccupancy;
 
 public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
 {
-    private static readonly Day[] Days = Enum.GetValues<Day>();
-    private static readonly Shift[] Shifts = Enum.GetValues<Shift>();
-
     public async Task<OneOf<GetCampusOccupancyOut, EstudError>> Get(int campusId)
     {
         var institutionId = ctx.RequestUser.InstitutionId;
@@ -19,15 +16,15 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
         var classes = await GetClasses(institutionId);
         var schedules = await GetSchedules(institutionId, campusId);
 
-        var cells = new List<CampusOccupancyCellOut>(Days.Length * Shifts.Length);
+        var cells = new List<CampusOccupancyCellOut>(Day.All.Length * Shift.All.Length);
 
         var campusUsedCapacity = 0;
         var campusAvailableCapacity = 0;
         var classroomTotals = campus.Classrooms.ToDictionary(c => c.Id, _ => new ClassroomTotals());
 
-        foreach (var day in Days)
+        foreach (var day in Day.All)
         {
-            foreach (var shift in Shifts)
+            foreach (var shift in Shift.All)
             {
                 // O que a célula tem de horário real: as janelas do dia recortadas ao turno.
                 var openSchedules = campus.OpenSchedulesIn(day, shift);
@@ -160,7 +157,7 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
             .AsNoTracking().ToListAsync();
     }
 
-    private async Task<List<GetClassDto>> GetClasses(int institutionId)
+    private async Task<List<GetClassStudentsDto>> GetClasses(int institutionId)
     {
         const string sql = @"
             SELECT
@@ -180,7 +177,7 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
         ";
 
         return await ctx.Database
-            .SqlQueryRaw<GetClassDto>(sql, institutionId, ClassStatus.Finalized.ToInt(), StudentClassStatus.Matriculado.ToInt())
+            .SqlQueryRaw<GetClassStudentsDto>(sql, institutionId, ClassStatus.Finalized.ToInt(), StudentClassStatus.Matriculado.ToInt())
             .AsNoTracking().ToListAsync();
     }
 
