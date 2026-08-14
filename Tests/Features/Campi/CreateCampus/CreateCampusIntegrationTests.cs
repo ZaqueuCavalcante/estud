@@ -96,7 +96,7 @@ public partial class IntegrationTests
 
         // Assert
         var campus = result.Success;
-        campus.Id.Should().NotBe(0);
+        campus.Id.Should().BeGreaterThan(0);
     }
 
     #endregion

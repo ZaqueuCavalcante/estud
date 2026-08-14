@@ -44,7 +44,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
 
-        await client.CreateCampus("Suassuna", BrazilState.PE, "Recife");
+        await client.CreateCampus("Suassuna", BrazilState.PB, "João Pessoa");
         await client.CreateCampus("Agreste", BrazilState.PE, "Caruaru");
 
         // Act
@@ -52,8 +52,22 @@ public partial class IntegrationTests
 
         // Assert
         result.Success.Total.Should().Be(2);
-        result.Success.Items.First().Name.Should().Be("Agreste");
-        result.Success.Items.Last().Name.Should().Be("Suassuna");
+
+        var first = result.Success.Items.First();
+        first.Id.Should().BeGreaterThan(0);
+        first.Name.Should().Be("Agreste");
+        first.City.Should().Be("Caruaru");
+        first.State.Should().Be(BrazilState.PE);
+        first.UsedMinutesRate.Should().Be(0);
+        first.UsedCapacityRate.Should().Be(0);
+
+        var last = result.Success.Items.Last();
+        last.Id.Should().BeGreaterThan(0);
+        last.Name.Should().Be("Suassuna");
+        last.City.Should().Be("João Pessoa");
+        last.State.Should().Be(BrazilState.PB);
+        last.UsedMinutesRate.Should().Be(0);
+        last.UsedCapacityRate.Should().Be(0);
     }
 
     #endregion
