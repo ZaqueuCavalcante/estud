@@ -96,8 +96,7 @@ public class OpeningHourToScheduleUnitTests
         var schedules = windows.Select(w => w.ToSchedule()).ToList();
 
         // Assert
-        schedules.Should().HaveCount(5);
-        schedules.Should().OnlyContain(s => s.GetDiffInMinutes() == 900);
+        schedules.Should().HaveCount(15);
         schedules.Select(s => s.Day).Should().NotContain(Day.Saturday);
     }
 

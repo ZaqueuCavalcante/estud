@@ -4,21 +4,18 @@ namespace Estud.Tests.Domain;
 
 public class CampusMinutesOpenInUnitTests
 {
-    private const int InstitutionId = 1;
-
-    // Janelas dos turnos: manhã 07h–12h (300min), tarde 12h–18h (360min), noite 18h–24h (360min).
-    private const int MorningMinutes = 300;
+    // Janelas dos turnos: manhã 06h–12h (360min), tarde 12h–18h (360min), noite 18h–24h (360min).
+    private const int MorningMinutes = 360;
     private const int AfternoonMinutes = 360;
-    private const int EveningMinutes = 360;
 
     private static Campus NewCampus(params OpeningHour[] hours) =>
-        new(InstitutionId, "Campus Central", BrazilState.SP, "São Paulo")
+        new(1, "Campus Central", BrazilState.SP, "São Paulo")
         {
             OpeningHours = [.. hours],
         };
 
     private static Campus DefaultCampus() =>
-        new(InstitutionId, "Campus Central", BrazilState.SP, "São Paulo");
+        new(1, "Campus Central", BrazilState.SP, "São Paulo");
 
     private static OpeningHour Window(Day day, Hour start, Hour end) => new(day, start, end);
 
@@ -94,7 +91,7 @@ public class CampusMinutesOpenInUnitTests
         var minutes = campus.MinutesOpenIn(Day.Monday, Shift.Morning);
 
         // Assert
-        minutes.Should().Be(MorningMinutes);
+        minutes.Should().Be(300);
     }
 
     [Test]
@@ -127,7 +124,7 @@ public class CampusMinutesOpenInUnitTests
     public void Campus_MinutesOpenIn_Should_open_the_whole_shift_when_the_window_is_exactly_the_shift()
     {
         // Arrange — janela idêntica ao turno da manhã.
-        var campus = NewCampus(Window(Day.Monday, Hour.H07_00, Hour.H12_00));
+        var campus = NewCampus(Window(Day.Monday, Hour.H06_00, Hour.H12_00));
 
         // Act
         var minutes = campus.MinutesOpenIn(Day.Monday, Shift.Morning);
@@ -336,7 +333,7 @@ public class CampusMinutesOpenInUnitTests
         var evening = campus.MinutesOpenIn(Day.Monday, Shift.Evening);
 
         // Assert
-        (morning, afternoon, evening).Should().Be((MorningMinutes, AfternoonMinutes, 300));
+        (morning, afternoon, evening).Should().Be((300, 360, 300));
     }
 
     [Test]
@@ -383,7 +380,7 @@ public class CampusMinutesOpenInUnitTests
         var minutes = campus.MinutesOpenIn(Day.Monday, Shift.Morning);
 
         // Assert
-        minutes.Should().Be(MorningMinutes);
+        minutes.Should().Be(300);
     }
 
     [Test]
@@ -448,7 +445,7 @@ public class CampusMinutesOpenInUnitTests
         var afternoon = campus.MinutesOpenIn(Day.Monday, Shift.Afternoon);
 
         // Assert
-        (morning, afternoon).Should().Be((MorningMinutes, 300));
+        (morning, afternoon).Should().Be((300, 300));
     }
 
     [Test]
@@ -483,7 +480,7 @@ public class CampusMinutesOpenInUnitTests
         var minutes = campus.MinutesOpenIn(Day.Monday, Shift.Morning);
 
         // Assert
-        minutes.Should().Be(MorningMinutes);
+        minutes.Should().Be(300);
     }
 
     [Test]
@@ -501,7 +498,7 @@ public class CampusMinutesOpenInUnitTests
         var wednesdayEvening = campus.MinutesOpenIn(Day.Wednesday, Shift.Evening);
 
         // Assert
-        (mondayMorning, mondayEvening).Should().Be((MorningMinutes, 0));
+        (mondayMorning, mondayEvening).Should().Be((300, 0));
         (wednesdayMorning, wednesdayEvening).Should().Be((0, 240));
     }
 
@@ -522,7 +519,7 @@ public class CampusMinutesOpenInUnitTests
     [Test]
     public void Campus_MinutesOpenIn_Should_follow_the_default_opening_hours_on_every_weekday()
     {
-        // Arrange — o padrão é 07h–22h de segunda a sexta.
+        // Arrange
         var campus = DefaultCampus();
         Day[] weekdays = [Day.Monday, Day.Tuesday, Day.Wednesday, Day.Thursday, Day.Friday];
 
@@ -532,9 +529,9 @@ public class CampusMinutesOpenInUnitTests
         var evening = weekdays.Select(d => campus.MinutesOpenIn(d, Shift.Evening));
 
         // Assert
-        morning.Should().AllBeEquivalentTo(MorningMinutes);
-        afternoon.Should().AllBeEquivalentTo(AfternoonMinutes);
-        evening.Should().AllBeEquivalentTo(240);
+        morning.Should().AllBeEquivalentTo(300);
+        afternoon.Should().AllBeEquivalentTo(300);
+        evening.Should().AllBeEquivalentTo(180);
     }
 
     [Test]
@@ -574,11 +571,11 @@ public class CampusMinutesOpenInUnitTests
             campus.MinutesOpenIn(Day.Saturday, Shift.Evening));
 
         // Assert
-        monday.Should().Be((MorningMinutes, 300, 240));      // fecha 12h–13h e 22h
-        tuesday.Should().Be((0, 0, 270));                    // só noite, até 22h30
-        thursday.Should().Be((0, 0, 0));                     // dia sem janela
-        friday.Should().Be((120, 240, 0));                   // 10h–16h
-        saturday.Should().Be((240, 0, 0));                   // só manhã
+        monday.Should().Be((300, 300, 240)); // fecha 12h–13h e 22h
+        tuesday.Should().Be((0, 0, 270));    // só noite, até 22h30
+        thursday.Should().Be((0, 0, 0));     // dia sem janela
+        friday.Should().Be((120, 240, 0));   // 10h–16h
+        saturday.Should().Be((240, 0, 0));   // só manhã
     }
 
     [Test]

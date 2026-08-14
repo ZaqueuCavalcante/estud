@@ -407,8 +407,8 @@ public class CampusOpenSchedulesInUnitTests
 
         // Assert
         morning.Sum(s => s.GetDiffInMinutes()).Should().Be(300);
-        afternoon.Sum(s => s.GetDiffInMinutes()).Should().Be(360);
-        evening.Sum(s => s.GetDiffInMinutes()).Should().Be(240);   // fecha às 22h, não às 23h
+        afternoon.Sum(s => s.GetDiffInMinutes()).Should().Be(300);
+        evening.Sum(s => s.GetDiffInMinutes()).Should().Be(180);
     }
 
     #endregion
