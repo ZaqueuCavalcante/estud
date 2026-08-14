@@ -8,27 +8,21 @@ export const campusWeekDays = [
 ]
 
 /**
- * Horários oferecidos no editor de funcionamento: de 07:00 a 22:00, de 15 em 15
- * minutos. 22:00 é o limite superior — a madrugada do enum `Hour` do backend não
- * tem valores entre 00:15 e 06:45, e nenhum campus abre depois das 22h.
+ * Os limites de cada turno vêm do backend (`ShiftExtensions`), e o editor de
+ * horários depende deles: `UpdateCampusOpeningHours` recusa janela que atravesse
+ * a fronteira de um turno, e aceita no máximo uma por turno.
  */
-export function buildOpeningHourOptions() {
-  const options = []
-  for (let h = 7; h <= 22; h++) {
-    for (let m = 0; m < 60; m += 15) {
-      const hh = h.toString().padStart(2, '0')
-      const mm = m.toString().padStart(2, '0')
-      options.push({ label: `${hh}:${mm}`, value: `H${hh}_${mm}` })
-      if (h === 22) break
-    }
-  }
-  return options
-}
+export const campusShiftBands = [
+  { key: 'Morning', label: 'Manhã', start: 6 * 60, end: 12 * 60, defaultStart: 7 * 60, defaultEnd: 12 * 60 },
+  { key: 'Afternoon', label: 'Tarde', start: 12 * 60, end: 18 * 60, defaultStart: 12 * 60, defaultEnd: 18 * 60 },
+  { key: 'Evening', label: 'Noite', start: 18 * 60, end: 24 * 60, defaultStart: 18 * 60, defaultEnd: 22 * 60 },
+]
 
-/** `H07_30` → `730`, para comparar horários sem parsear data. */
-export function openingHourValue(hour: string) {
-  return Number(hour.replace(/^H/, '').replace('_', ''))
-}
+/** O passo do enum `Hour` do backend: não existe horário fora do quarto de hora. */
+export const OPENING_HOUR_STEP = 15
+
+/** Abaixo de meia hora o card não comporta dois handles sem virar um fio. */
+export const OPENING_WINDOW_MIN_MINUTES = 30
 
 /** `H07_30` → `450`, minutos desde a meia-noite (para posicionar no grid). */
 export function openingHourToMinutes(hour: string) {
@@ -37,12 +31,40 @@ export function openingHourToMinutes(hour: string) {
   return Number(match[1]) * 60 + Number(match[2])
 }
 
+/** `450` → `H07_30` */
+export function minutesToOpeningHour(minutes: number) {
+  const hh = Math.floor(minutes / 60).toString().padStart(2, '0')
+  const mm = (minutes % 60).toString().padStart(2, '0')
+  return `H${hh}_${mm}`
+}
+
 /** `H07_30` → `07:30` */
 export function formatOpeningHour(hour: string) {
   return hour.replace(/^H/, '').replace('_', ':')
 }
 
+/** `450` → `07:30` */
+export function formatOpeningMinutes(minutes: number) {
+  const hh = Math.floor(minutes / 60).toString().padStart(2, '0')
+  const mm = (minutes % 60).toString().padStart(2, '0')
+  return `${hh}:${mm}`
+}
+
+/** `330` → `5h 30min` */
+export function formatOpeningDuration(minutes: number) {
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  if (h === 0) return `${m}min`
+  if (m === 0) return `${h}h`
+  return `${h}h ${m}min`
+}
+
+export function snapToOpeningStep(minutes: number) {
+  return Math.round(minutes / OPENING_HOUR_STEP) * OPENING_HOUR_STEP
+}
+
 /** `67.42` → `67%` */
 export function formatRate(rate: number): string {
-  return `${rate.toFixed(0)}%`
+  const rounded = rate > 0 ? Math.max(Math.round(rate), 1) : 0
+  return `${rounded}%`
 }

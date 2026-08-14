@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
-import type { CampusOccupancyCell, GetCampusOccupancyOut } from '~/types/campi'
+import type { CampusOccupancyCell, GetCampusOccupancyOut, OpeningHoursDay } from '~/types/campi'
 
 interface CampusItem {
   id: number
@@ -24,6 +24,7 @@ interface ClassroomItem {
 
 const route = useRoute()
 const config = useRuntimeConfig()
+const toast = useToast()
 const campusId = Number(route.params.id)
 
 // ── Dados reais: campus + suas salas
@@ -53,7 +54,6 @@ const status = computed(() =>
 
 const createModalOpen = ref(false)
 const campusEditModalOpen = ref(false)
-const openingHoursModalOpen = ref(false)
 // ── Constantes compartilhadas (serão promovidas pra utils/classes.ts) ─────────
 const weekDays = campusWeekDays
 // A duração de cada janela vem da API (availableMinutes por célula); aqui ficam
@@ -231,6 +231,67 @@ const {
 
 const openingHoursDays = computed(() => openingHours.value?.days ?? [])
 
+// A semana em edição é um rascunho: o grid só volta a ler a API depois do salvar,
+// senão um refresh de aba jogaria fora o que está sendo arrastado.
+const editingHours = ref(false)
+const savingHours = ref(false)
+const draftHours = ref<OpeningHoursDay[]>([])
+
+const shownHours = computed(() => editingHours.value ? draftHours.value : openingHoursDays.value)
+
+const hoursDirty = computed(() =>
+  editingHours.value
+  && JSON.stringify(draftHours.value) !== JSON.stringify(normalizeHours(openingHoursDays.value)),
+)
+
+// O grid devolve os seis dias na ordem da semana, com no máximo uma janela por
+// turno. Comparar com a resposta crua da API daria sujo por ordem e por dia
+// omitido, então o lado de lá passa pela mesma normalização.
+function normalizeHours(days: OpeningHoursDay[]): OpeningHoursDay[] {
+  return campusWeekDays.map(day => ({
+    day: day.key,
+    windows: [...(days.find(d => d.day === day.key)?.windows ?? [])]
+      .sort((a, b) => openingHourToMinutes(a.start) - openingHourToMinutes(b.start)),
+  }))
+}
+
+function startEditingHours() {
+  draftHours.value = normalizeHours(openingHoursDays.value)
+  editingHours.value = true
+}
+
+function cancelEditingHours() {
+  editingHours.value = false
+  draftHours.value = []
+}
+
+async function saveOpeningHours() {
+  savingHours.value = true
+  try {
+    await $fetch(`${config.public.backendUrl}/campi/${campusId}/opening-hours`, {
+      method: 'PUT',
+      body: { days: draftHours.value },
+      credentials: 'include',
+    })
+    toast.add({ title: 'Horários de funcionamento atualizados', color: 'success' })
+    editingHours.value = false
+    draftHours.value = []
+    await onOpeningHoursSaved()
+  }
+  catch (err: unknown) {
+    const message = (err as { data?: { message?: string } })?.data?.message
+      ?? 'Erro ao atualizar os horários de funcionamento.'
+    toast.add({ title: 'Erro', description: message, color: 'error' })
+  }
+  finally {
+    savingHours.value = false
+  }
+}
+
+const closedAllWeek = computed(() =>
+  shownHours.value.length > 0 && shownHours.value.every(day => day.windows.length === 0),
+)
+
 // Criar ou editar uma sala muda o mapa (mais uma sala no denominador, outra
 // capacidade no cálculo de assentos) e os cards da aba Salas.
 async function onClassroomsChanged() {
@@ -369,16 +430,20 @@ const breadcrumb = [
               <p class="text-sm text-muted">
                 O mapa é montado a partir dos horários das turmas alocadas nas salas deste campus.
                 <template v-if="!data.totalClassrooms">
-                  Cadastre as salas na aba <button
+                  Cadastre as <button
                     type="button"
                     class="font-medium text-primary underline underline-offset-2 hover:text-primary/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     @click="() => { selectTab('rooms') }"
-                  >Salas</button> e defina
+                  >salas</button> e defina
                 </template>
                 <template v-else>
                   Cadastre
                 </template>
-                turmas com horários para o mapa começar a ganhar dados.
+                <NuxtLink
+                  to="/classes"
+                  class="font-medium text-primary underline underline-offset-2 hover:text-primary/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                >turmas</NuxtLink>
+                com horários para o mapa começar a ganhar dados.
               </p>
             </div>
           </div>
@@ -624,17 +689,43 @@ const breadcrumb = [
             <p class="text-sm text-muted">
               Os dias e horários em que este campus abre. É o que define o tamanho do mapa de ocupação.
             </p>
-            <UButton
-              icon="i-lucide-pencil"
-              label="Editar"
-              color="neutral"
-              variant="subtle"
-              class="shrink-0"
-              @click="(e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); openingHoursModalOpen = true }"
-            />
+            <div class="flex shrink-0 items-center gap-2">
+              <template v-if="editingHours">
+                <UButton
+                  label="Cancelar"
+                  color="neutral"
+                  variant="subtle"
+                  :disabled="savingHours"
+                  @click="() => { cancelEditingHours() }"
+                />
+                <UButton
+                  label="Salvar"
+                  :loading="savingHours"
+                  :disabled="!hoursDirty"
+                  @click="() => { saveOpeningHours() }"
+                />
+              </template>
+              <UButton
+                v-else
+                icon="i-lucide-pencil"
+                label="Editar"
+                color="neutral"
+                variant="subtle"
+                @click="(e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); startEditingHours() }"
+              />
+            </div>
           </div>
 
-          <CampiOpeningHoursWeek :days="openingHoursDays" />
+          <CampiOpeningHoursWeek
+            :days="shownHours"
+            :editing="editingHours"
+            @update:days="(days) => { draftHours = days }"
+          />
+
+          <p v-if="closedAllWeek" class="flex items-start gap-2 text-xs text-muted">
+            <UIcon name="i-lucide-triangle-alert" class="size-4 shrink-0 text-warning" />
+            <span>Com todos os dias fechados o campus fica sem horário nenhum, e o mapa de ocupação some.</span>
+          </p>
         </section>
 
         <!-- Salas do campus: uma sala sempre vive dentro de um campus -->
@@ -711,12 +802,6 @@ const breadcrumb = [
   </UDashboardPanel>
 
   <CampiEditModal v-model:open="campusEditModalOpen" :campus="campus" @updated="refreshCampi()" />
-  <CampiOpeningHoursModal
-    v-model:open="openingHoursModalOpen"
-    :campus-id="campusId"
-    :days="openingHoursDays"
-    @saved="onOpeningHoursSaved()"
-  />
 
   <ClassroomsCreateModal v-model:open="createModalOpen" :campus-id="campusId" @created="onClassroomsChanged()" />
 </template>

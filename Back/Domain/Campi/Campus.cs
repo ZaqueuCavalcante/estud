@@ -27,11 +27,25 @@ public class Campus
 
     public static List<OpeningHour> DefaultOpeningHours() =>
     [
-        new(Day.Monday, Hour.H07_00, Hour.H22_00),
-        new(Day.Tuesday, Hour.H07_00, Hour.H22_00),
-        new(Day.Wednesday, Hour.H07_00, Hour.H22_00),
-        new(Day.Thursday, Hour.H07_00, Hour.H22_00),
-        new(Day.Friday, Hour.H07_00, Hour.H22_00),
+        new(Day.Monday, Hour.H07_00, Hour.H12_00),
+        new(Day.Monday, Hour.H13_00, Hour.H18_00),
+        new(Day.Monday, Hour.H19_00, Hour.H22_00),
+
+        new(Day.Tuesday, Hour.H07_00, Hour.H12_00),
+        new(Day.Tuesday, Hour.H13_00, Hour.H18_00),
+        new(Day.Tuesday, Hour.H19_00, Hour.H22_00),
+
+        new(Day.Wednesday, Hour.H07_00, Hour.H12_00),
+        new(Day.Wednesday, Hour.H13_00, Hour.H18_00),
+        new(Day.Wednesday, Hour.H19_00, Hour.H22_00),
+
+        new(Day.Thursday, Hour.H07_00, Hour.H12_00),
+        new(Day.Thursday, Hour.H13_00, Hour.H18_00),
+        new(Day.Thursday, Hour.H19_00, Hour.H22_00),
+
+        new(Day.Friday, Hour.H07_00, Hour.H12_00),
+        new(Day.Friday, Hour.H13_00, Hour.H18_00),
+        new(Day.Friday, Hour.H19_00, Hour.H22_00),
     ];
 
     public void Update(string name, BrazilState state, string city)

@@ -122,19 +122,27 @@ const groups = computed(() => [
 <template>
   <UDashboardGroup unit="rem">
     <UDashboardSidebar
-      id="default"
+      id="estud"
       v-model:open="open"
       toggle-side="right"
       collapsible
-      resizable
+      :default-size="13"
       class="bg-elevated/25"
-      :ui="{ footer: 'lg:border-t lg:border-default' }"
+      :ui="{ body: 'gap-1', footer: 'lg:border-t lg:border-default' }"
     >
       <template #header="{ collapsed }">
         <TeamsMenu :collapsed="collapsed" />
+
+        <UTooltip v-if="!collapsed" text="Recolher menu">
+          <UDashboardSidebarCollapse class="ms-auto" />
+        </UTooltip>
       </template>
 
       <template #default="{ collapsed }">
+        <UTooltip v-if="collapsed" text="Expandir menu" :content="{ side: 'right' }">
+          <UDashboardSidebarCollapse class="w-full justify-center" />
+        </UTooltip>
+
         <UNavigationMenu
           v-model="openGroups"
           :collapsed="collapsed"
