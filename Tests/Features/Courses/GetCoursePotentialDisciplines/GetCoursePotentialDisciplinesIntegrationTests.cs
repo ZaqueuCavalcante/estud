@@ -87,6 +87,7 @@ public partial class IntegrationTests
         var output = result.Success;
         output.Items.Should().HaveCount(2);
         output.Items.First().Name.Should().Be("Álgebra");
+        output.Items.First().Code.Should().NotBeEmpty();
         output.Items.Last().Name.Should().Be("Geometria");
     }
 

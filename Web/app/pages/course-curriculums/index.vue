@@ -19,7 +19,6 @@ const UButton = resolveComponent('UButton')
 const UTooltip = resolveComponent('UTooltip')
 
 const config = useRuntimeConfig()
-const createModalOpen = ref(false)
 const editModalOpen = ref(false)
 const selectedCurriculum = ref<CourseCurriculumItem | null>(null)
 
@@ -62,13 +61,23 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => h(UTooltip, { text: 'Editar' }, () => h(UButton, {
-      icon: 'i-lucide-pencil',
-      color: 'neutral',
-      variant: 'ghost',
-      size: 'sm',
-      onClick: (e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); openEdit(row.original) },
-    })),
+    cell: ({ row }) => h('div', { class: 'flex gap-1' }, [
+      h(UTooltip, { text: 'Editar' }, () => h(UButton, {
+        icon: 'i-lucide-pencil',
+        color: 'neutral',
+        variant: 'ghost',
+        size: 'sm',
+        onClick: (e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); openEdit(row.original) },
+      })),
+      h(UTooltip, { text: 'Ver detalhes' }, () => h(UButton, {
+        icon: 'i-lucide-arrow-right',
+        color: 'neutral',
+        variant: 'ghost',
+        size: 'sm',
+        to: `/course-curriculums/${row.original.id}`,
+        'aria-label': 'Ver detalhes',
+      })),
+    ]),
   },
 ]
 </script>
@@ -86,7 +95,7 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
 
     <template #body>
       <div v-if="data?.items?.length" class="flex justify-end pt-4">
-        <UButton icon="i-lucide-plus" label="Grade" @click="() => { createModalOpen = true }" />
+        <UButton icon="i-lucide-plus" label="Grade" to="/course-curriculums/new" />
       </div>
       <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">
         <template #empty>
@@ -95,7 +104,7 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
             icon="i-lucide-layout-list"
             message="Nenhuma grade curricular cadastrada"
             button-label="Grade"
-            @create="createModalOpen = true"
+            @create="() => { navigateTo('/course-curriculums/new') }"
           />
         </template>
       </DataTable>
@@ -115,6 +124,5 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
     </template>
   </UDashboardPanel>
 
-  <CourseCurriculumsCreateModal v-model:open="createModalOpen" @created="refresh()" />
   <CourseCurriculumsEditModal v-model:open="editModalOpen" :curriculum="selectedCurriculum" @updated="refresh()" />
 </template>

@@ -37,12 +37,15 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (import.meta.server) return
 
   const routePolicy = routePolicies[to.path]
-  const isClassDetail = to.path.startsWith('/classes/')
-  const isClassroomDetail = to.path.startsWith('/classrooms/')
   const isCampusDetail = to.path.startsWith('/campi/')
+  const isClassDetail = to.path.startsWith('/classes/')
+  const isCourseDetail = to.path.startsWith('/courses/')
   const isTeacherDetail = to.path.startsWith('/teachers/')
   const isStudentDetail = to.path.startsWith('/students/')
-  if (!routePolicy && !isClassDetail && !isClassroomDetail && !isCampusDetail && !isTeacherDetail && !isStudentDetail) return
+  const isClassroomDetail = to.path.startsWith('/classrooms/')
+  const isDisciplineDetail = to.path.startsWith('/disciplines/')
+  const isCourseCurriculumRoute = to.path.startsWith('/course-curriculums/')
+  if (!routePolicy && !isClassDetail && !isClassroomDetail && !isCampusDetail && !isTeacherDetail && !isStudentDetail && !isDisciplineDetail && !isCourseDetail && !isCourseCurriculumRoute) return
 
   const { account, fetchAccount } = useUserAccount()
 
@@ -63,7 +66,13 @@ export default defineNuxtRouteMiddleware(async (to) => {
           ? 'AccessTeachersPage' as PolicyName
           : isStudentDetail
             ? 'AccessStudentsPage' as PolicyName
-            : classDetailPolicies[account.value!.userType])
+            : isDisciplineDetail
+              ? 'AccessDisciplinesPage' as PolicyName
+              : isCourseDetail
+                ? 'AccessCoursesPage' as PolicyName
+                : isCourseCurriculumRoute
+                  ? 'AccessCourseCurriculumsPage' as PolicyName
+                  : classDetailPolicies[account.value!.userType])
   if (!policyName) return
 
   const { can } = usePolicy()

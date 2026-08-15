@@ -4,6 +4,7 @@ using Estud.Back.Features.Disciplines.GetDisciplines;
 using Estud.Back.Features.Disciplines.CreateDiscipline;
 using Estud.Back.Features.Disciplines.UpdateDiscipline;
 using Estud.Back.Features.Disciplines.AddDisciplineCourses;
+using Estud.Back.Features.Disciplines.GetDisciplineDetails;
 using Estud.Back.Features.Disciplines.GetDisciplineTeachers;
 using Estud.Back.Features.Disciplines.RemoveDisciplineCourse;
 using Estud.Back.Features.Disciplines.GetDisciplinePotentialCourses;
@@ -39,6 +40,12 @@ public partial class TestsHttpClient
     {
         var response = await http.GetAsync($"/disciplines/{disciplineId}");
         return await response.Resolve<GetDisciplineOut>();
+    }
+
+    public async Task<OneOf<GetDisciplineDetailsOut, ErrorOut>> GetDisciplineDetails(int disciplineId)
+    {
+        var response = await http.GetAsync($"/disciplines/{disciplineId}/details");
+        return await response.Resolve<GetDisciplineDetailsOut>();
     }
 
     public async Task<OneOf<SuccessOut, ErrorOut>> AddDisciplineCourses(

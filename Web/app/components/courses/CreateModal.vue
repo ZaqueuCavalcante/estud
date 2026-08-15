@@ -76,7 +76,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         @submit="onSubmit"
       >
         <UFormField label="Nome" name="name">
-          <UInput v-model="formState.name" class="w-full" placeholder="Ex: Análise e Desenvolvimento de Sistemas" />
+          <UInput v-model="formState.name" class="w-full" placeholder="Ex: Direito" />
         </UFormField>
 
         <UFormField label="Tipo" name="type">

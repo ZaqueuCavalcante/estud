@@ -3,6 +3,7 @@ using Estud.Back.Features.Courses.GetCourse;
 using Estud.Back.Features.Courses.GetCourses;
 using Estud.Back.Features.Courses.CreateCourse;
 using Estud.Back.Features.Courses.UpdateCourse;
+using Estud.Back.Features.Courses.GetCourseDetails;
 using Estud.Back.Features.Courses.AddCourseDisciplines;
 using Estud.Back.Features.Courses.GetCourseDisciplines;
 using Estud.Back.Features.Courses.RemoveCourseDiscipline;
@@ -35,6 +36,12 @@ public partial class TestsHttpClient
     {
         var response = await http.GetAsync($"/courses/{courseId}");
         return await response.Resolve<GetCourseOut>();
+    }
+
+    public async Task<OneOf<GetCourseDetailsOut, ErrorOut>> GetCourseDetails(int courseId)
+    {
+        var response = await http.GetAsync($"/courses/{courseId}/details");
+        return await response.Resolve<GetCourseDetailsOut>();
     }
 
     public async Task<OneOf<GetCoursesOut, ErrorOut>> GetCourses(

@@ -19,7 +19,7 @@ public class GetCoursePotentialDisciplinesService(EstudDbContext ctx) : IEstudSe
 
         var items = await query
             .OrderBy(d => d.Name)
-            .Select(d => new GetCoursePotentialDisciplineItemOut { Id = d.Id, Name = d.Name })
+            .Select(d => new GetCoursePotentialDisciplineItemOut { Id = d.Id, Name = d.Name, Code = d.Code })
             .ToListAsync();
 
         return new GetCoursePotentialDisciplinesOut { Items = items };

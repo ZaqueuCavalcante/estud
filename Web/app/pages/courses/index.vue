@@ -22,19 +22,6 @@ const UTooltip = resolveComponent('UTooltip')
 
 const config = useRuntimeConfig()
 const createModalOpen = ref(false)
-const editModalOpen = ref(false)
-const disciplinesModalOpen = ref(false)
-const selectedCourse = ref<CourseItem | null>(null)
-
-function openEdit(course: CourseItem) {
-  selectedCourse.value = course
-  editModalOpen.value = true
-}
-
-function openDisciplines(course: CourseItem) {
-  selectedCourse.value = course
-  disciplinesModalOpen.value = true
-}
 
 const route = useRoute()
 const router = useRouter()
@@ -109,19 +96,13 @@ const columns: TableColumn<CourseItem>[] = [
   {
     id: 'actions',
     cell: ({ row }) => h('div', { class: 'flex gap-1' }, [
-      h(UTooltip, { text: 'Editar' }, () => h(UButton, {
-        icon: 'i-lucide-pencil',
+      h(UTooltip, { text: 'Ver detalhes' }, () => h(UButton, {
+        icon: 'i-lucide-arrow-right',
         color: 'neutral',
         variant: 'ghost',
         size: 'sm',
-        onClick: (e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); openEdit(row.original) },
-      })),
-      h(UTooltip, { text: 'Disciplinas' }, () => h(UButton, {
-        icon: 'i-lucide-book-open',
-        color: 'neutral',
-        variant: 'ghost',
-        size: 'sm',
-        onClick: (e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); openDisciplines(row.original) },
+        to: `/courses/${row.original.id}`,
+        'aria-label': 'Ver detalhes',
       })),
     ]),
   },
@@ -211,6 +192,4 @@ const columns: TableColumn<CourseItem>[] = [
   </UDashboardPanel>
 
   <CoursesCreateModal v-model:open="createModalOpen" @created="refresh()" />
-  <CoursesEditModal v-model:open="editModalOpen" :course="selectedCourse" @updated="refresh()" />
-  <CoursesDisciplinesModal v-model:open="disciplinesModalOpen" :course="selectedCourse" @updated="refresh()" />
 </template>

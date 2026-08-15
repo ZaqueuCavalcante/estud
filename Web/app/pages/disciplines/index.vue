@@ -112,6 +112,14 @@ const columns: TableColumn<DisciplineItem>[] = [
         size: 'sm',
         onClick: (e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); openCourses(row.original) },
       })),
+      h(UTooltip, { text: 'Ver detalhes' }, () => h(UButton, {
+        icon: 'i-lucide-arrow-right',
+        color: 'neutral',
+        variant: 'ghost',
+        size: 'sm',
+        to: `/disciplines/${row.original.id}`,
+        'aria-label': 'Ver detalhes',
+      })),
     ]),
   },
 ]

@@ -1,4 +1,3 @@
-using Estud.Back.Domain.Disciplines;
 using Estud.Back.Domain.CourseCurriculums;
 
 namespace Estud.Back.Database.CourseCurriculums;
@@ -14,7 +13,7 @@ public class CourseCurriculumDbConfig : IEntityTypeConfiguration<CourseCurriculu
         entity.HasMany(e => e.Disciplines)
             .WithMany()
             .UsingEntity<CourseCurriculumDiscipline>(
-                right => right.HasOne<Discipline>().WithMany().HasForeignKey(ccd => ccd.DisciplineId),
+                right => right.HasOne(ccd => ccd.Discipline).WithMany().HasForeignKey(ccd => ccd.DisciplineId),
                 left => left.HasOne<CourseCurriculum>().WithMany(cc => cc.Links).HasForeignKey(ccd => ccd.CourseCurriculumId)
             );
     }

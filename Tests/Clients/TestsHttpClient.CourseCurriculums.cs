@@ -3,6 +3,7 @@ using Estud.Back.Features.CourseCurriculums.GetCourseCurriculum;
 using Estud.Back.Features.CourseCurriculums.GetCourseCurriculums;
 using Estud.Back.Features.CourseCurriculums.CreateCourseCurriculum;
 using Estud.Back.Features.CourseCurriculums.UpdateCourseCurriculum;
+using Estud.Back.Features.CourseCurriculums.GetCourseCurriculumDetails;
 
 namespace Estud.Tests.Integration.Clients;
 
@@ -32,6 +33,12 @@ public partial class TestsHttpClient
     {
         var response = await http.GetAsync($"/course-curriculums/{courseCurriculumId}");
         return await response.Resolve<GetCourseCurriculumOut>();
+    }
+
+    public async Task<OneOf<GetCourseCurriculumDetailsOut, ErrorOut>> GetCourseCurriculumDetails(int courseCurriculumId)
+    {
+        var response = await http.GetAsync($"/course-curriculums/{courseCurriculumId}/details");
+        return await response.Resolve<GetCourseCurriculumDetailsOut>();
     }
 
     public async Task<OneOf<GetCourseCurriculumsOut, ErrorOut>> GetCourseCurriculums(

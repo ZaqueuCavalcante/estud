@@ -1,3 +1,5 @@
+using Estud.Back.Domain.Disciplines;
+
 namespace Estud.Back.Domain.CourseCurriculums;
 
 public class CourseCurriculumDiscipline
@@ -7,6 +9,8 @@ public class CourseCurriculumDiscipline
     public byte Period { get; set; }
     public byte Credits { get; set; }
     public ushort Workload { get; set; }
+
+    public Discipline? Discipline { get; set; }
 
     public CourseCurriculumDiscipline(
         int disciplineId,

@@ -8,6 +8,7 @@ public static partial class Policies
     public const string GetDisciplines = nameof(GetDisciplines);
     public const string CreateDiscipline = nameof(CreateDiscipline);
     public const string UpdateDiscipline = nameof(UpdateDiscipline);
+    public const string GetDisciplineDetails = nameof(GetDisciplineDetails);
 
     public const string GetDisciplineTeachers = nameof(GetDisciplineTeachers);
 
@@ -21,7 +22,8 @@ public static partial class Policies
             .AddEstudPolicy(GetDiscipline, UserType.Manager, EstudPermissions.ManageDisciplines)
             .AddEstudPolicy(GetDisciplines, UserType.Manager, EstudPermissions.ManageDisciplines)
             .AddEstudPolicy(CreateDiscipline, UserType.Manager, EstudPermissions.ManageDisciplines)
-            .AddEstudPolicy(UpdateDiscipline, UserType.Manager, EstudPermissions.ManageDisciplines);
+            .AddEstudPolicy(UpdateDiscipline, UserType.Manager, EstudPermissions.ManageDisciplines)
+            .AddEstudPolicy(GetDisciplineDetails, UserType.Manager, EstudPermissions.ManageDisciplines);
 
         // Usada ao definir os professores de uma turma, por isso aceita também ManageClasses.
         builder

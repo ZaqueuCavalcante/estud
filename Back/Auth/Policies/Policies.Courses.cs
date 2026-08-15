@@ -8,6 +8,7 @@ public static partial class Policies
     public const string GetCourses = nameof(GetCourses);
     public const string CreateCourse = nameof(CreateCourse);
     public const string UpdateCourse = nameof(UpdateCourse);
+    public const string GetCourseDetails = nameof(GetCourseDetails);
 
     public const string GetCourseDisciplines = nameof(GetCourseDisciplines);
     public const string AddCourseDisciplines = nameof(AddCourseDisciplines);
@@ -20,7 +21,8 @@ public static partial class Policies
             .AddEstudPolicy(GetCourse, UserType.Manager, EstudPermissions.ManageCourses)
             .AddEstudPolicy(GetCourses, UserType.Manager, EstudPermissions.ManageCourses)
             .AddEstudPolicy(CreateCourse, UserType.Manager, EstudPermissions.ManageCourses)
-            .AddEstudPolicy(UpdateCourse, UserType.Manager, EstudPermissions.ManageCourses);
+            .AddEstudPolicy(UpdateCourse, UserType.Manager, EstudPermissions.ManageCourses)
+            .AddEstudPolicy(GetCourseDetails, UserType.Manager, EstudPermissions.ManageCourses);
 
         builder
             .AddEstudPolicy(GetCourseDisciplines, UserType.Manager, EstudPermissions.ManageCourses)
