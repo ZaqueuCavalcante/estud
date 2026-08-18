@@ -16,7 +16,22 @@ export default defineNuxtConfig({
     "@nuxt/eslint",
     "@vueuse/nuxt",
     "@nuxt/content",
+    "@posthog/nuxt",
   ],
+
+  posthogConfig: {
+    publicKey: "",
+    host: "https://us.i.posthog.com",
+    clientConfig: {
+      defaults: "2026-06-25",
+      person_profiles: "identified_only",
+      mask_all_text: true,
+      capture_exceptions: true,
+    },
+    serverConfig: {
+      enableExceptionAutocapture: true,
+    },
+  },
 
   app: {
     head: {

@@ -18,6 +18,7 @@ async function logout() {
             credentials: 'include',
         })
         account.value = null
+        usePostHog()?.reset()
         await navigateTo('/')
     } finally {
         loggingOut.value = false

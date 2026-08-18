@@ -2,44 +2,14 @@ namespace Estud.Back.Features.Users.GetUserAccount;
 
 public class GetUserAccountOut : IApiDto<GetUserAccountOut>
 {
-    /// <summary>
-    /// Id do usuário.
-    /// </summary>
     public int Id { get; set; }
-
-    /// <summary>
-    /// Nome do usuário.
-    /// </summary>
     public string Name { get; set; }
-
-    /// <summary>
-    /// Email do usuário.
-    /// </summary>
     public string Email { get; set; }
-
-    /// <summary>
-    /// Instituição do usuário.
-    /// </summary>
+    public int InstitutionId { get; set; }
     public string Institution { get; set; }
-
-    /// <summary>
-    /// Role do usuário.
-    /// </summary>
     public string Role { get; set; }
-
-    /// <summary>
-    /// Tipo do usuário.
-    /// </summary>
     public UserType UserType { get; set; }
-
-    /// <summary>
-    /// Permissões do usuário.
-    /// </summary>
     public List<int> Permissions { get; set; } = [];
-
-    /// <summary>
-    /// Url da foto de perfil do usuário.
-    /// </summary>
     public string ProfilePhoto { get; set; }
 
     /// <summary>

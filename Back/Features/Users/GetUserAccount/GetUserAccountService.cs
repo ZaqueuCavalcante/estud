@@ -14,6 +14,7 @@ public class GetUserAccountService(EstudDbContext ctx) : IEstudService
                 u.name,
                 u.email,
                 u.profile_photo,
+                u.institution_id,
                 r.name AS role,
                 r.base_type AS user_type,
                 r.permissions,
