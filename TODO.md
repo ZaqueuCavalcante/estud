@@ -1,5 +1,7 @@
 # TODO
 
+- Testes E2E
+
 ## Entrega de valor mais simples possível
 
 - Criar campus com sala

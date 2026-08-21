@@ -154,7 +154,10 @@ const groups = computed(() => [
 
         <UNavigationMenu
           :collapsed="collapsed"
-          :items="[{ label: 'Documentação', icon: 'i-lucide-book-open', to: '/docs', target: '_blank' }]"
+          :items="[
+            { label: 'Code', icon: 'i-simple-icons-github', to: 'https://github.com/ZaqueuCavalcante/estud', target: '_blank' },
+            { label: 'Documentação', icon: 'i-lucide-book-open', to: '/docs', target: '_blank' }
+          ]"
           orientation="vertical"
           :external-icon="false"
           tooltip

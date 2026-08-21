@@ -31,6 +31,17 @@ watch(() => route.path, () => {
         <UTooltip text="Buscar">
           <UContentSearchButton @click="($event.currentTarget as HTMLElement).blur()" />
         </UTooltip>
+        <UTooltip text="Code">
+          <UButton
+            icon="i-simple-icons-github"
+            color="neutral"
+            variant="ghost"
+            to="https://github.com/ZaqueuCavalcante/estud"
+            target="_blank"
+            aria-label="Code"
+            @click="(e) => { (e.currentTarget as HTMLElement).blur() }"
+          />
+        </UTooltip>
         <UTooltip text="Alternar tema">
           <UColorModeButton />
         </UTooltip>
