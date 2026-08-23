@@ -43,12 +43,14 @@ public partial class TestsHttpClient
 
     public async Task<OneOf<GetCourseCurriculumsOut, ErrorOut>> GetCourseCurriculums(
         string? filter = null,
+        int? courseId = null,
         int? page = null,
         int? pageSize = null
     ) {
         var data = new GetCourseCurriculumsIn
         {
             Filter = filter,
+            CourseId = courseId,
             Page = page ?? 1,
             PageSize = pageSize ?? 10,
         };

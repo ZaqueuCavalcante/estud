@@ -13,6 +13,9 @@ public class GetCourseCurriculumsService(EstudDbContext ctx) : IEstudService
             .Include(c => c.Course)
             .Where(c => c.InstitutionId == ctx.RequestUser.InstitutionId);
 
+        if (query.CourseId.HasValue)
+            curriculumsQuery = curriculumsQuery.Where(c => c.CourseId == query.CourseId.Value);
+
         var filter = query.Filter;
         if (filter.HasValue())
             curriculumsQuery = curriculumsQuery.Where(c =>

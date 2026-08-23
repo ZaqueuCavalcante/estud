@@ -21,6 +21,9 @@ public class GetCoursesService(EstudDbContext ctx) : IEstudService
         if (query.Type.HasValue)
             coursesQuery = coursesQuery.Where(c => c.CourseType == query.Type.Value);
 
+        if (query.HasCurriculums == true)
+            coursesQuery = coursesQuery.Where(c => c.CourseCurriculums.Any());
+
         var total = await coursesQuery.CountAsync();
 
         var courses = await coursesQuery

@@ -4,6 +4,7 @@ public class GetCoursesIn : IApiDto<GetCoursesIn>
 {
     public string? Filter { get; set; }
     public CourseType? Type { get; set; }
+    public bool? HasCurriculums { get; set; }
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 10;
 

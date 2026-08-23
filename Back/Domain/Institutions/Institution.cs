@@ -56,6 +56,7 @@ public class Institution
 
     public static Institution NewForUserRegister()
     {
+        var year = DateTime.UtcNow.Year;
         var prefix = new List<string> { "UF", "IF" }.PickRandom();
         var state = Enum.GetValues<BrazilState>().PickRandom();
         var institution = new Institution($"{prefix}{state}")
@@ -70,6 +71,11 @@ public class Institution
             Notifications =
             [
                 Notification.Welcome(),
+            ],
+            AcademicPeriods =
+            [
+                new AcademicPeriod(0, $"{year}.1", new DateOnly(year, 1, 1), new DateOnly(year, 6, 30)),
+                new AcademicPeriod(0, $"{year}.2", new DateOnly(year, 7, 1), new DateOnly(year, 12, 31)),
             ]
         };
 

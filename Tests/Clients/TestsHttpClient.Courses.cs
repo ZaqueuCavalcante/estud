@@ -47,6 +47,7 @@ public partial class TestsHttpClient
     public async Task<OneOf<GetCoursesOut, ErrorOut>> GetCourses(
         string? filter = null,
         CourseType? type = null,
+        bool? hasCurriculums = null,
         int? page = null,
         int? pageSize = null
     ) {
@@ -54,6 +55,7 @@ public partial class TestsHttpClient
         {
             Filter = filter,
             Type = type,
+            HasCurriculums = hasCurriculums,
             Page = page ?? 1,
             PageSize = pageSize ?? 10,
         };

@@ -157,5 +157,24 @@ public partial class IntegrationTests
         courses.Items.Single().TypeValue.Should().Be(CourseType.Bacharelado);
     }
 
+    [Test]
+    public async Task Courses_GetCourses_Should_get_only_courses_with_curriculums()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        var ads = await client.CreateCourse("Análise e Desenvolvimento de Sistemas", CourseType.Tecnologo).Success();
+        await client.CreateCourse("Direito", CourseType.Bacharelado);
+        await client.CreateCourseCurriculum(ads.Id, "Grade 2024");
+
+        // Act
+        var result = await client.GetCourses(hasCurriculums: true);
+
+        // Assert
+        var courses = result.Success;
+        courses.Total.Should().Be(1);
+        courses.Items.Single().Id.Should().Be(ads.Id);
+    }
+
     #endregion
 }

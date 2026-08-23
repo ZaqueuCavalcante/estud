@@ -19,6 +19,7 @@ const campi = ref<CampusItem[]>([])
 const courses = ref<CourseItem[]>([])
 const curriculums = ref<CurriculumItem[]>([])
 const periods = ref<PeriodItem[]>([])
+const curriculumsLoading = ref(false)
 
 const sessionOptions = [
   { label: 'Matutino', value: 'Morning' },
@@ -45,16 +46,27 @@ const formState = reactive<Partial<Schema>>({
 })
 
 async function fetchAll() {
-  const [campiRes, coursesRes, curriculumsRes, periodsRes] = await Promise.all([
+  const [campiRes, coursesRes, periodsRes] = await Promise.all([
     $fetch<{ items: CampusItem[] }>(`${config.public.backendUrl}/campi`, { credentials: 'include' }),
-    $fetch<{ items: CourseItem[] }>(`${config.public.backendUrl}/courses`, { credentials: 'include', query: { pageSize: 100 } }),
-    $fetch<{ items: CurriculumItem[] }>(`${config.public.backendUrl}/course-curriculums`, { credentials: 'include', query: { pageSize: 100 } }),
+    $fetch<{ items: CourseItem[] }>(`${config.public.backendUrl}/courses`, { credentials: 'include', query: { pageSize: 100, hasCurriculums: true } }),
     $fetch<{ items: PeriodItem[] }>(`${config.public.backendUrl}/periods/academic`, { credentials: 'include' }),
   ])
   campi.value = campiRes.items
   courses.value = coursesRes.items
-  curriculums.value = curriculumsRes.items
   periods.value = periodsRes.items
+}
+
+async function fetchCurriculums(courseId: number) {
+  curriculumsLoading.value = true
+  try {
+    const res = await $fetch<{ items: CurriculumItem[] }>(`${config.public.backendUrl}/course-curriculums`, {
+      credentials: 'include',
+      query: { pageSize: 100, courseId },
+    })
+    curriculums.value = res.items
+  } finally {
+    curriculumsLoading.value = false
+  }
 }
 
 function resetForm() {
@@ -63,11 +75,18 @@ function resetForm() {
   formState.courseCurriculumId = undefined
   formState.academicPeriodId = undefined
   formState.courseSession = undefined
+  curriculums.value = []
 }
 
 watch(open, (val) => {
   if (val) fetchAll()
   else resetForm()
+})
+
+watch(() => formState.courseId, (courseId) => {
+  formState.courseCurriculumId = undefined
+  curriculums.value = []
+  if (courseId) fetchCurriculums(courseId)
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
@@ -129,17 +148,37 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             value-key="id"
             class="w-full"
             placeholder="Selecione o curso"
-          />
+          >
+            <template #empty="{ searchTerm }">
+              <p v-if="searchTerm" class="text-muted text-sm">
+                Nenhum curso encontrado
+              </p>
+              <div v-else class="flex flex-col items-center gap-2 py-2 text-center">
+                <p class="text-muted text-sm">
+                  Nenhum curso possui grade curricular
+                </p>
+                <UButton
+                  size="xs"
+                  variant="subtle"
+                  icon="i-lucide-plus"
+                  label="Criar grade curricular"
+                  @click="() => { open = false; navigateTo('/course-curriculums/new') }"
+                />
+              </div>
+            </template>
+          </USelectMenu>
         </UFormField>
 
         <UFormField label="Grade Curricular" name="courseCurriculumId">
           <USelectMenu
             v-model="formState.courseCurriculumId"
             :items="curriculums"
+            :disabled="!formState.courseId"
+            :loading="curriculumsLoading"
             label-key="name"
             value-key="id"
             class="w-full"
-            placeholder="Selecione a grade curricular"
+            :placeholder="formState.courseId ? 'Selecione a grade curricular' : 'Selecione o curso primeiro'"
           />
         </UFormField>
 

@@ -152,5 +152,27 @@ public partial class IntegrationTests
         curriculums.Items.Single().Course.Should().Be("Direito");
     }
 
+    [Test]
+    public async Task CourseCurriculums_GetCourseCurriculums_Should_get_curriculums_filtered_by_course_id()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var ads = await client.CreateCourse("Análise e Desenvolvimento de Sistemas", CourseType.Tecnologo).Success();
+        var direito = await client.CreateCourse("Direito", CourseType.Bacharelado).Success();
+        await client.CreateCourseCurriculum(ads.Id, "Grade 2024");
+        await client.CreateCourseCurriculum(ads.Id, "Grade 2025");
+        await client.CreateCourseCurriculum(direito.Id, "Grade 2026");
+
+        // Act
+        var result = await client.GetCourseCurriculums(courseId: ads.Id);
+
+        // Assert
+        var curriculums = result.Success;
+        curriculums.Total.Should().Be(2);
+        curriculums.Items.Should().OnlyContain(x => x.CourseId == ads.Id);
+        curriculums.Items.First().Name.Should().Be("Grade 2024");
+        curriculums.Items.Last().Name.Should().Be("Grade 2025");
+    }
+
     #endregion
 }
