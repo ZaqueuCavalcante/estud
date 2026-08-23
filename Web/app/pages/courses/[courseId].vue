@@ -114,9 +114,14 @@ const breadcrumb = [
               v-for="curriculum in curriculums"
               :key="curriculum.id"
               :to="`/course-curriculums/${curriculum.id}`"
-              class="rounded-lg border border-default bg-elevated/40 px-4 py-3 transition-colors hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              class="flex flex-col gap-2 rounded-xl border border-default bg-elevated/40 px-4 py-3 transition-all duration-200 hover:border-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              <span class="block truncate text-sm text-default">{{ curriculum.name }}</span>
+              <p class="truncate text-base font-bold text-highlighted">{{ curriculum.name }}</p>
+
+              <span class="flex items-center gap-1.5 text-sm text-muted">
+                <UIcon name="i-lucide-book-open" class="size-4 shrink-0" />
+                {{ curriculum.disciplines }} {{ curriculum.disciplines === 1 ? 'disciplina' : 'disciplinas' }}
+              </span>
             </NuxtLink>
           </div>
           <div v-else class="flex items-center gap-2 text-sm text-muted">
@@ -130,32 +135,30 @@ const breadcrumb = [
             As ofertas deste curso, por campus e período.
           </p>
 
-          <div v-if="offerings.length" class="flex flex-col gap-2">
-            <div
+          <div v-if="offerings.length" class="grid gap-3 sm:grid-cols-2">
+            <NuxtLink
               v-for="offering in offerings"
               :key="offering.id"
-              class="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg border border-default bg-elevated/40 px-3 py-2"
+              :to="`/course-offerings/${offering.id}`"
+              class="flex flex-col gap-2 rounded-xl border border-default bg-elevated/40 px-4 py-3 transition-all duration-200 hover:border-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              <span class="flex items-center gap-1.5 text-sm text-highlighted">
-                <UIcon name="i-lucide-building-2" class="size-4 shrink-0 text-muted" />
-                {{ offering.campus }}
-              </span>
-              <span class="flex items-center gap-1.5 text-sm text-muted">
-                <UIcon name="i-lucide-calendar" class="size-4 shrink-0" />
-                {{ offering.period }}
-              </span>
-              <span class="flex items-center gap-1.5 text-sm text-muted">
-                <UIcon name="i-lucide-layout-list" class="size-4 shrink-0" />
-                {{ offering.curriculum }}
-              </span>
-              <UBadge color="neutral" variant="subtle">
-                {{ sessionLabels[offering.session] ?? offering.session }}
-              </UBadge>
-              <span class="flex items-center gap-1.5 text-sm text-muted">
-                <UIcon name="i-lucide-users" class="size-4 shrink-0" />
-                {{ offering.students }} {{ offering.students === 1 ? 'aluno' : 'alunos' }}
-              </span>
-            </div>
+              <p class="truncate text-base font-bold text-highlighted">{{ offering.curriculum }}</p>
+
+              <div class="flex flex-col gap-1 text-sm text-muted">
+                <span class="flex items-center gap-1.5">
+                  <UIcon name="i-lucide-building-2" class="size-4 shrink-0" />
+                  <span class="truncate">{{ offering.campus }}</span>
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <UIcon name="i-lucide-calendar" class="size-4 shrink-0" />
+                  <span class="truncate">{{ offering.period }} · {{ sessionLabels[offering.session] ?? offering.session }}</span>
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <UIcon name="i-lucide-users" class="size-4 shrink-0" />
+                  {{ offering.students }} {{ offering.students === 1 ? 'aluno' : 'alunos' }}
+                </span>
+              </div>
+            </NuxtLink>
           </div>
           <div v-else class="flex items-center gap-2 text-sm text-muted">
             <UIcon name="i-lucide-calendar-x" class="size-4" />

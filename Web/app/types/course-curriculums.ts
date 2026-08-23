@@ -11,6 +11,13 @@ export interface CourseCurriculumDisciplineItem {
   workload: number
 }
 
+export interface CourseCurriculumDisciplineSelection {
+  id: number
+  period: number
+  credits: number
+  workload: number
+}
+
 export interface CourseCurriculumOfferingItem {
   id: number
   campus: string

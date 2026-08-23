@@ -3,8 +3,7 @@ using Estud.Back.Domain.CourseOfferings;
 namespace Estud.Back.Domain.Students;
 
 /// <summary>
-/// Vínculo entre um Aluno e uma Oferta de Curso.
-/// <br/> <br/>
+/// Vínculo entre um Aluno e uma Oferta de Curso. <br/>
 /// Um aluno pode ter múltiplos vínculos ativos simultaneamente (ex: graduação + pós-graduação).
 /// </summary>
 public class StudentCourseEnrollment
@@ -15,6 +14,7 @@ public class StudentCourseEnrollment
     public DateTime EnrolledAt { get; set; }
     public DateTime? LeftAt { get; set; }
 
+    public EstudStudent? Student { get; set; }
     public CourseOffering? CourseOffering { get; set; }
 
     private StudentCourseEnrollment() {}

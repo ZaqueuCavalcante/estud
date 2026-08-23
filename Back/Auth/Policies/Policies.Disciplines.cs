@@ -16,6 +16,9 @@ public static partial class Policies
     public const string RemoveDisciplineCourse = nameof(RemoveDisciplineCourse);
     public const string GetDisciplinePotentialCourses = nameof(GetDisciplinePotentialCourses);
 
+    public const string AssignTeachersToDiscipline = nameof(AssignTeachersToDiscipline);
+    public const string GetDisciplinePotentialTeachers = nameof(GetDisciplinePotentialTeachers);
+
     public static AuthorizationBuilder AddDisciplinesPolicies(this AuthorizationBuilder builder)
     {
         builder
@@ -33,6 +36,10 @@ public static partial class Policies
             .AddEstudPolicy(AddDisciplineCourses, UserType.Manager, EstudPermissions.ManageDisciplines)
             .AddEstudPolicy(RemoveDisciplineCourse, UserType.Manager, EstudPermissions.ManageDisciplines)
             .AddEstudPolicy(GetDisciplinePotentialCourses, UserType.Manager, EstudPermissions.ManageDisciplines);
+
+        builder
+            .AddEstudPolicy(AssignTeachersToDiscipline, UserType.Manager, EstudPermissions.ManageDisciplines)
+            .AddEstudPolicy(GetDisciplinePotentialTeachers, UserType.Manager, EstudPermissions.ManageDisciplines);
 
         return builder;
     }

@@ -13,6 +13,12 @@ public class GetCourseCurriculumsService(EstudDbContext ctx) : IEstudService
             .Include(c => c.Course)
             .Where(c => c.InstitutionId == ctx.RequestUser.InstitutionId);
 
+        var filter = query.Filter;
+        if (filter.HasValue())
+            curriculumsQuery = curriculumsQuery.Where(c =>
+                c.Name.ToLower().Contains(filter.ToLower()) ||
+                c.Course!.Name.ToLower().Contains(filter.ToLower()));
+
         var total = await curriculumsQuery.CountAsync();
 
         var curriculums = await curriculumsQuery

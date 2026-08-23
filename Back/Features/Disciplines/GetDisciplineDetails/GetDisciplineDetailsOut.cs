@@ -29,7 +29,6 @@ public class GetDisciplineDetailsOut : IApiDto<GetDisciplineDetailsOut>
                     Students = 32,
                     Workload = 60,
                     Status = ClassStatus.Started,
-                    Teachers = [new GetDisciplineDetailsTeacherOut { Id = 14, Name = "Ana Lima" }],
                 },
             ],
         }),
@@ -67,5 +66,4 @@ public class GetDisciplineDetailsClassOut
 
     public int Workload { get; set; }
     public ClassStatus Status { get; set; }
-    public List<GetDisciplineDetailsTeacherOut> Teachers { get; set; } = [];
 }

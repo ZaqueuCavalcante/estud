@@ -37,10 +37,6 @@ public class GetDisciplineDetailsService(EstudDbContext ctx) : IEstudService
                 Students = ctx.ClassStudents.Count(cs => cs.ClassId == c.Id),
                 Workload = c.Workload,
                 Status = c.Status,
-                Teachers = c.Teachers
-                    .OrderBy(t => t.Name)
-                    .Select(t => new GetDisciplineDetailsTeacherOut { Id = t.Id, Name = t.Name })
-                    .ToList(),
             })
             .ToListAsync();
 

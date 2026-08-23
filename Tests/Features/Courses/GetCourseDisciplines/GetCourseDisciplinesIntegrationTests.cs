@@ -69,6 +69,7 @@ public partial class IntegrationTests
         // Assert
         result.Success.Total.Should().Be(2);
         result.Success.Items.First().Name.Should().Be("Álgebra");
+        result.Success.Items.First().Code.Should().NotBeNullOrEmpty();
         result.Success.Items.Last().Name.Should().Be("Geometria");
     }
 

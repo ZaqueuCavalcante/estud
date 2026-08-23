@@ -146,10 +146,10 @@ const columns: TableColumn<TeacherItem>[] = [
     </template>
 
     <template #body>
-      <div class="flex items-center justify-between gap-2 pt-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-4">
         <UInput
           v-model="filter"
-          class="max-w-sm"
+          class="w-full sm:max-w-sm"
           icon="i-lucide-search"
           placeholder="Buscar por nome ou email..."
           :loading="status === 'pending'"
@@ -167,6 +167,7 @@ const columns: TableColumn<TeacherItem>[] = [
         </UInput>
         <UButton
           v-if="data?.items?.length || filter"
+          class="self-start sm:self-auto"
           icon="i-lucide-plus"
           label="Professor"
           @click="() => { createModalOpen = true }"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
+import { useDebounceFn } from '@vueuse/core'
 
 interface CourseCurriculumItem {
   id: number
@@ -19,31 +20,44 @@ const UButton = resolveComponent('UButton')
 const UTooltip = resolveComponent('UTooltip')
 
 const config = useRuntimeConfig()
-const editModalOpen = ref(false)
-const selectedCurriculum = ref<CourseCurriculumItem | null>(null)
-
-function openEdit(curriculum: CourseCurriculumItem) {
-  selectedCurriculum.value = curriculum
-  editModalOpen.value = true
-}
 
 const route = useRoute()
 const router = useRouter()
 
+const filter = ref((route.query.filter as string) || '')
+
+// The filter actually applied to the fetch. Typing updates it debounced;
+// clearing updates it immediately so the reload feels instant.
+const appliedFilter = ref(filter.value)
+const applyFilter = useDebounceFn((value: string) => { appliedFilter.value = value }, 300)
+watch(filter, (value) => { applyFilter(value) })
+
 const pageSize = 10
 const page = ref(Number(route.query.page) || 1)
 
-// Sync page to URL
-watch(page, () => {
+// Sync filter and page to URL
+watch([filter, page], () => {
   const query: Record<string, string> = {}
+  if (filter.value) query.filter = filter.value
   if (page.value > 1) query.page = String(page.value)
   router.replace({ query })
 }, { flush: 'post' })
 
-const { data, status, refresh } = await useFetch<GetCourseCurriculumsOut>(`${config.public.backendUrl}/course-curriculums`, {
+// A new search starts over from the first page
+watch(appliedFilter, () => { page.value = 1 })
+
+// Reflects the filters actually applied to the data being shown
+const hasFilters = computed(() => appliedFilter.value.length > 0)
+
+function clearFilters() {
+  filter.value = ''
+  appliedFilter.value = ''
+}
+
+const { data, status } = await useFetch<GetCourseCurriculumsOut>(`${config.public.backendUrl}/course-curriculums`, {
   credentials: 'include',
   server: false,
-  query: { page, pageSize }
+  query: { filter: appliedFilter, page, pageSize }
 })
 
 const columns: TableColumn<CourseCurriculumItem>[] = [
@@ -62,13 +76,6 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
   {
     id: 'actions',
     cell: ({ row }) => h('div', { class: 'flex gap-1' }, [
-      h(UTooltip, { text: 'Editar' }, () => h(UButton, {
-        icon: 'i-lucide-pencil',
-        color: 'neutral',
-        variant: 'ghost',
-        size: 'sm',
-        onClick: (e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); openEdit(row.original) },
-      })),
       h(UTooltip, { text: 'Ver detalhes' }, () => h(UButton, {
         icon: 'i-lucide-arrow-right',
         color: 'neutral',
@@ -94,8 +101,32 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
     </template>
 
     <template #body>
-      <div v-if="data?.items?.length" class="flex justify-end pt-4">
-        <UButton icon="i-lucide-plus" label="Grade" to="/course-curriculums/new" />
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-4">
+        <UInput
+          v-model="filter"
+          class="w-full sm:max-w-sm"
+          icon="i-lucide-search"
+          placeholder="Buscar por nome ou curso..."
+          :loading="status === 'pending'"
+        >
+          <template v-if="filter" #trailing>
+            <UButton
+              icon="i-lucide-x"
+              color="neutral"
+              variant="link"
+              size="sm"
+              aria-label="Remover filtro"
+              @click="clearFilters"
+            />
+          </template>
+        </UInput>
+        <UButton
+          v-if="data?.items?.length || filter"
+          class="self-start sm:self-auto"
+          icon="i-lucide-plus"
+          label="Grade"
+          to="/course-curriculums/new"
+        />
       </div>
       <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">
         <template #empty>
@@ -104,7 +135,10 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
             icon="i-lucide-layout-list"
             message="Nenhuma grade curricular cadastrada"
             button-label="Grade"
+            :filtered="hasFilters"
+            not-found-message="Nenhuma grade curricular encontrada com os filtros aplicados"
             @create="() => { navigateTo('/course-curriculums/new') }"
+            @clear-filters="clearFilters"
           />
         </template>
       </DataTable>
@@ -123,6 +157,4 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
       </div>
     </template>
   </UDashboardPanel>
-
-  <CourseCurriculumsEditModal v-model:open="editModalOpen" :curriculum="selectedCurriculum" @updated="refresh()" />
 </template>

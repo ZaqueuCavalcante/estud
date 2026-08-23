@@ -23,6 +23,9 @@ const sessionLabels: Record<string, string> = {
   Evening: 'Noturno',
 }
 
+const UButton = resolveComponent('UButton')
+const UTooltip = resolveComponent('UTooltip')
+
 const config = useRuntimeConfig()
 const createModalOpen = ref(false)
 
@@ -67,6 +70,19 @@ const columns: TableColumn<CourseOfferingItem>[] = [
     header: 'Turno',
     cell: ({ row }) => sessionLabels[row.original.session] ?? row.original.session,
   },
+  {
+    id: 'actions',
+    cell: ({ row }) => h('div', { class: 'flex gap-1' }, [
+      h(UTooltip, { text: 'Ver detalhes' }, () => h(UButton, {
+        icon: 'i-lucide-arrow-right',
+        color: 'neutral',
+        variant: 'ghost',
+        size: 'sm',
+        to: `/course-offerings/${row.original.id}`,
+        'aria-label': 'Ver detalhes',
+      })),
+    ]),
+  },
 ]
 </script>
 
@@ -82,7 +98,7 @@ const columns: TableColumn<CourseOfferingItem>[] = [
     </template>
 
     <template #body>
-      <div v-if="data?.items?.length" class="flex justify-end pt-4">
+      <div v-if="data?.items?.length" class="flex justify-start sm:justify-end pt-4">
         <UButton icon="i-lucide-plus" label="Oferta" @click="() => { createModalOpen = true }" />
       </div>
       <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">

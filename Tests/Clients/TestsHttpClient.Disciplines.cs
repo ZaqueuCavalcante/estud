@@ -7,7 +7,9 @@ using Estud.Back.Features.Disciplines.AddDisciplineCourses;
 using Estud.Back.Features.Disciplines.GetDisciplineDetails;
 using Estud.Back.Features.Disciplines.GetDisciplineTeachers;
 using Estud.Back.Features.Disciplines.RemoveDisciplineCourse;
+using Estud.Back.Features.Disciplines.AssignTeachersToDiscipline;
 using Estud.Back.Features.Disciplines.GetDisciplinePotentialCourses;
+using Estud.Back.Features.Disciplines.GetDisciplinePotentialTeachers;
 
 namespace Estud.Tests.Integration.Clients;
 
@@ -93,5 +95,23 @@ public partial class TestsHttpClient
         var url = $"/disciplines/{disciplineId}/potential-courses?name={name}";
         var response = await http.GetAsync(url);
         return await response.Resolve<GetDisciplinePotentialCoursesOut>();
+    }
+
+    public async Task<OneOf<SuccessOut, ErrorOut>> AssignTeachersToDiscipline(
+        int disciplineId,
+        List<int> teachers
+    ) {
+        var data = new AssignTeachersToDisciplineIn { Teachers = teachers };
+        var response = await http.PutAsJsonAsync($"/disciplines/{disciplineId}/assign-teachers", data);
+        return await response.Resolve<SuccessOut>();
+    }
+
+    public async Task<OneOf<GetDisciplinePotentialTeachersOut, ErrorOut>> GetDisciplinePotentialTeachers(
+        int disciplineId,
+        string? name = null
+    ) {
+        var url = $"/disciplines/{disciplineId}/potential-teachers?name={name}";
+        var response = await http.GetAsync(url);
+        return await response.Resolve<GetDisciplinePotentialTeachersOut>();
     }
 }

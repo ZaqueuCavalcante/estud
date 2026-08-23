@@ -1,23 +1,17 @@
 <script setup lang="ts">
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
-import type { CreateCourseCurriculumOut } from '~/types/course-curriculums'
+import type { CourseCurriculumDisciplineSelection, CreateCourseCurriculumOut } from '~/types/course-curriculums'
 
 interface CourseItem {
   id: number
   name: string
 }
 
-interface DisciplineItem {
+interface CourseDiscipline {
   id: number
   name: string
-}
-
-interface DisciplineRow {
-  disciplineId: number | undefined
-  period: number
-  credits: number
-  workload: number
+  code: string
 }
 
 const config = useRuntimeConfig()
@@ -25,9 +19,9 @@ const toast = useToast()
 const loading = ref(false)
 
 const courses = ref<CourseItem[]>([])
-const availableDisciplines = ref<DisciplineItem[]>([])
+const courseDisciplines = ref<CourseDiscipline[]>([])
 const loadingDisciplines = ref(false)
-const disciplineRows = ref<DisciplineRow[]>([])
+const selection = ref<CourseCurriculumDisciplineSelection[]>([])
 
 const schema = z.object({
   name: z.string({ error: 'Nome obrigatório' }).min(1, 'Nome obrigatório').max(50, 'Máximo 50 caracteres'),
@@ -42,44 +36,20 @@ const formState = reactive<Partial<Schema>>({
 })
 
 watch(() => formState.courseId, async (newId) => {
-  disciplineRows.value = []
-  availableDisciplines.value = []
+  selection.value = []
+  courseDisciplines.value = []
   if (!newId) return
   loadingDisciplines.value = true
   try {
-    const result = await $fetch<{ items: DisciplineItem[] }>(
+    const result = await $fetch<{ items: CourseDiscipline[] }>(
       `${config.public.backendUrl}/courses/${newId}/disciplines`,
       { credentials: 'include' },
     )
-    availableDisciplines.value = result.items
+    courseDisciplines.value = result.items
   } finally {
     loadingDisciplines.value = false
   }
 })
-
-function disciplinesForRow(rowIndex: number): DisciplineItem[] {
-  const selectedIds = new Set(
-    disciplineRows.value
-      .filter((_, i) => i !== rowIndex)
-      .map(r => r.disciplineId)
-      .filter((id): id is number => id !== undefined),
-  )
-  return availableDisciplines.value.filter(d => !selectedIds.has(d.id))
-}
-
-const canAddDiscipline = computed(() => {
-  if (!formState.courseId || availableDisciplines.value.length === 0) return false
-  const selectedCount = disciplineRows.value.filter(r => r.disciplineId !== undefined).length
-  return selectedCount < availableDisciplines.value.length
-})
-
-function addRow() {
-  disciplineRows.value.push({ disciplineId: undefined, period: 1, credits: 0, workload: 0 })
-}
-
-function removeRow(index: number) {
-  disciplineRows.value.splice(index, 1)
-}
 
 async function fetchCourses() {
   const result = await $fetch<{ items: CourseItem[] }>(`${config.public.backendUrl}/courses`, {
@@ -99,14 +69,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       body: {
         name: event.data.name,
         courseId: event.data.courseId,
-        disciplines: disciplineRows.value
-          .filter(r => r.disciplineId !== undefined)
-          .map(r => ({
-            id: r.disciplineId,
-            period: r.period,
-            credits: r.credits,
-            workload: r.workload,
-          })),
+        disciplines: selection.value,
       },
       credentials: 'include',
     })
@@ -169,98 +132,24 @@ const breadcrumb = [
           </UFormField>
 
           <div v-if="formState.courseId" class="flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-highlighted">Disciplinas</span>
-              <UButton
-                v-if="canAddDiscipline"
-                icon="i-lucide-plus"
-                label="Adicionar"
-                color="neutral"
-                variant="subtle"
-                size="sm"
-                @click="() => { addRow() }"
-              />
-            </div>
+            <span class="text-sm font-medium text-highlighted">Disciplinas</span>
 
-            <div v-if="loadingDisciplines" class="flex justify-center py-6">
-              <AppSpinner class="size-5 text-muted" />
-            </div>
-
-            <template v-else>
-              <div v-if="!disciplineRows.length" class="flex flex-col items-center gap-2 py-6 text-muted">
-                <UIcon name="i-lucide-book-open" class="size-8" />
-                <p class="text-sm">
-                  {{ availableDisciplines.length ? 'Nenhuma disciplina adicionada' : 'O curso selecionado não tem disciplinas vinculadas' }}
-                </p>
-                <UButton
-                  v-if="availableDisciplines.length"
-                  icon="i-lucide-plus"
-                  label="Adicionar disciplina"
-                  color="neutral"
-                  variant="subtle"
-                  size="sm"
-                  @click="() => { addRow() }"
+            <CourseCurriculumsDisciplinesPicker
+              :key="formState.courseId"
+              v-model="selection"
+              :catalog="courseDisciplines"
+              :loading="loadingDisciplines"
+            >
+              <template #empty>
+                <TableEmptyState
+                  :loading="false"
+                  icon="i-lucide-book-open"
+                  message="O curso selecionado não tem disciplinas vinculadas"
+                  button-label="Vincular disciplinas"
+                  @create="() => { navigateTo(`/courses/${formState.courseId}`) }"
                 />
-              </div>
-
-              <div v-else class="flex flex-col gap-2">
-                <div class="grid grid-cols-[1fr_4rem_4rem_4rem_2rem] gap-2 px-1">
-                  <span class="text-xs text-muted">Disciplina</span>
-                  <span class="text-xs text-muted text-center">Período</span>
-                  <span class="text-xs text-muted text-center">Créditos</span>
-                  <span class="text-xs text-muted text-center">C.H.</span>
-                  <span />
-                </div>
-
-                <div
-                  v-for="(row, index) in disciplineRows"
-                  :key="index"
-                  class="grid grid-cols-[1fr_4rem_4rem_4rem_2rem] items-center gap-2"
-                >
-                  <USelectMenu
-                    v-model="row.disciplineId"
-                    :items="disciplinesForRow(index)"
-                    label-key="name"
-                    value-key="id"
-                    class="min-w-0"
-                    placeholder="Selecionar..."
-                  />
-                  <UInputNumber
-                    v-model="row.period"
-                    :min="1"
-                    :max="10"
-                    :increment="false"
-                    :decrement="false"
-                    class="text-center"
-                  />
-                  <UInputNumber
-                    v-model="row.credits"
-                    :min="0"
-                    :max="100"
-                    :increment="false"
-                    :decrement="false"
-                    class="text-center"
-                  />
-                  <UInputNumber
-                    v-model="row.workload"
-                    :min="0"
-                    :max="500"
-                    :increment="false"
-                    :decrement="false"
-                    class="text-center"
-                  />
-                  <UTooltip text="Remover">
-                    <UButton
-                      icon="i-lucide-x"
-                      color="neutral"
-                      variant="ghost"
-                      size="xs"
-                      @click="() => { removeRow(index) }"
-                    />
-                  </UTooltip>
-                </div>
-              </div>
-            </template>
+              </template>
+            </CourseCurriculumsDisciplinesPicker>
           </div>
 
           <div class="flex justify-end gap-2 pt-2">

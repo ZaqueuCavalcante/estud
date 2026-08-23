@@ -114,5 +114,43 @@ public partial class IntegrationTests
         result.Success.Items.Last().Name.Should().Be("Grade 12");
     }
 
+    [Test]
+    public async Task CourseCurriculums_GetCourseCurriculums_Should_get_curriculums_filtered_by_name()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var course = await client.CreateCourse().Success();
+        await client.CreateCourseCurriculum(course.Id, "Grade 2024");
+        await client.CreateCourseCurriculum(course.Id, "Grade 2025");
+
+        // Act
+        var result = await client.GetCourseCurriculums("2025");
+
+        // Assert
+        var curriculums = result.Success;
+        curriculums.Total.Should().Be(1);
+        curriculums.Items.Single().Name.Should().Be("Grade 2025");
+    }
+
+    [Test]
+    public async Task CourseCurriculums_GetCourseCurriculums_Should_get_curriculums_filtered_by_course()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var ads = await client.CreateCourse("Análise e Desenvolvimento de Sistemas", CourseType.Tecnologo).Success();
+        var direito = await client.CreateCourse("Direito", CourseType.Bacharelado).Success();
+        await client.CreateCourseCurriculum(ads.Id, "Grade 2024");
+        await client.CreateCourseCurriculum(direito.Id, "Grade 2025");
+
+        // Act
+        var result = await client.GetCourseCurriculums("direito");
+
+        // Assert
+        var curriculums = result.Success;
+        curriculums.Total.Should().Be(1);
+        curriculums.Items.Single().Name.Should().Be("Grade 2025");
+        curriculums.Items.Single().Course.Should().Be("Direito");
+    }
+
     #endregion
 }

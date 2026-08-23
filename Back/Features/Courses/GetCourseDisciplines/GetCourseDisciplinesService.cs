@@ -9,7 +9,7 @@ public class GetCourseDisciplinesService(EstudDbContext ctx) : IEstudService
 
         var disciplines = await ctx.Disciplines
             .Where(d => d.InstitutionId == ctx.RequestUser.InstitutionId && ids.Contains(d.Id))
-            .Select(d => new GetCourseDisciplineItemOut { Id = d.Id, Name = d.Name })
+            .Select(d => new GetCourseDisciplineItemOut { Id = d.Id, Name = d.Name, Code = d.Code })
             .OrderBy(d => d.Name)
             .ToListAsync();
 

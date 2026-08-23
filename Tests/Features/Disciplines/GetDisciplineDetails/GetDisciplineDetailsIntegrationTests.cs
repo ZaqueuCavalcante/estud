@@ -132,11 +132,7 @@ public partial class IntegrationTests
         var period = await client.CreateAcademicPeriod("2024.1").Success();
         var campus = await client.CreateCampus("Agreste I").Success();
 
-        var teacher = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
-
         var @class = await client.CreateClass(discipline.Id, period.Id, vacancies: 40, campusId: campus.Id).Success();
-        await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
         await client.CreateClass(otherDiscipline.Id, period.Id);
 
@@ -152,7 +148,6 @@ public partial class IntegrationTests
         classes[0].Vacancies.Should().Be(40);
         classes[0].Students.Should().Be(0);
         classes[0].Status.Should().Be(ClassStatus.OnPreEnrollment);
-        classes[0].Teachers.Select(x => x.Name).Should().Equal("Ana Lima");
     }
 
     [Test]

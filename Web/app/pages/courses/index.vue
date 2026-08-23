@@ -155,7 +155,7 @@ const columns: TableColumn<CourseItem>[] = [
         </div>
         <UButton
           v-if="data?.items?.length || hasFilters"
-          class="self-end sm:self-auto"
+          class="self-start sm:self-auto"
           icon="i-lucide-plus"
           label="Curso"
           @click="() => { createModalOpen = true }"

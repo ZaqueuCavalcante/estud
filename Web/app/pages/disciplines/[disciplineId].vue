@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TableColumn } from '@nuxt/ui'
+import type { NavigationMenuItem, TableColumn } from '@nuxt/ui'
 import type { DisciplineClassItem, GetDisciplineDetailsOut } from '~/types/disciplines'
 
 const UBadge = resolveComponent('UBadge')
@@ -16,9 +16,8 @@ const { data, status, error, refresh } = await useFetch<GetDisciplineDetailsOut>
 )
 
 const editModalOpen = ref(false)
-const coursesModalOpen = ref(false)
 
-// Os modais de edição esperam o mesmo formato usado na listagem de disciplinas
+// O modal de edição espera o mesmo formato usado na listagem de disciplinas
 const disciplineRef = computed(() => data.value
   ? { id: data.value.id, name: data.value.name }
   : null,
@@ -27,6 +26,22 @@ const disciplineRef = computed(() => data.value
 const courses = computed(() => data.value?.courses ?? [])
 const teachers = computed(() => data.value?.teachers ?? [])
 const classes = computed(() => data.value?.classes ?? [])
+
+// Professores e turmas são mantidos em telas próprias, então trocar de aba
+// busca os dados de novo — voltar pra uma aba nunca pode mostrar uma lista
+// velha.
+const activeTab = ref('courses')
+
+function selectTab(tab: string) {
+  activeTab.value = tab
+  refresh()
+}
+
+const tabs = computed(() => [[
+  { label: 'Cursos', icon: 'i-lucide-notebook', active: activeTab.value === 'courses', onSelect: () => { selectTab('courses') } },
+  { label: 'Professores', icon: 'i-lucide-user-pen', active: activeTab.value === 'teachers', onSelect: () => { selectTab('teachers') } },
+  { label: 'Turmas', icon: 'i-lucide-door-open', active: activeTab.value === 'classes', onSelect: () => { selectTab('classes') } },
+]] satisfies NavigationMenuItem[][])
 
 const classColumns: TableColumn<DisciplineClassItem>[] = [
   {
@@ -38,17 +53,6 @@ const classColumns: TableColumn<DisciplineClassItem>[] = [
     accessorKey: 'campus',
     header: 'Campus',
     cell: ({ row }) => row.original.campus ?? h('span', { class: 'text-muted' }, 'Sem campus'),
-  },
-  {
-    accessorKey: 'teachers',
-    header: 'Professores',
-    cell: ({ row }) => {
-      const classTeachers = row.original.teachers
-      if (!classTeachers.length) return h('span', { class: 'text-muted' }, 'Sem professor')
-      return h('div', { class: 'flex flex-col gap-0.5' }, classTeachers.map(t =>
-        h('span', { class: 'text-xs text-muted' }, t.name),
-      ))
-    },
   },
   {
     accessorKey: 'students',
@@ -94,7 +98,7 @@ const breadcrumb = [
     </template>
 
     <template #body>
-      <div v-if="status === 'pending'" class="flex justify-center py-12">
+      <div v-if="status === 'pending' && !data" class="flex justify-center py-12">
         <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
       </div>
 
@@ -106,84 +110,48 @@ const breadcrumb = [
         <UButton icon="i-lucide-arrow-left" label="Voltar" to="/disciplines" />
       </div>
 
-      <div v-else class="flex flex-col gap-10 py-2">
-        <div class="flex flex-col gap-1">
-          <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
-            {{ data.name }}<UTooltip text="Editar">
-              <UButton
-                icon="i-lucide-pencil"
-                color="neutral"
-                variant="ghost"
-                size="xs"
-                class="ml-1.5 align-middle"
-                @click="(e) => { (e.currentTarget as HTMLElement).blur(); editModalOpen = true }"
-              />
-            </UTooltip>
-          </h1>
-          <span class="flex items-center gap-1.5 text-sm text-muted">
-            <UIcon name="i-lucide-hash" class="size-4" />
-            {{ data.code }}
-          </span>
+      <div v-else class="w-full lg:max-w-2xl mx-auto min-w-0 flex flex-col gap-6 py-2">
+        <div class="flex flex-col gap-6">
+          <div class="flex flex-col gap-1">
+            <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
+              {{ data.name }}<UTooltip text="Editar">
+                <UButton
+                  icon="i-lucide-pencil"
+                  color="neutral"
+                  variant="ghost"
+                  size="xs"
+                  class="ml-1.5 align-middle"
+                  @click="(e) => { (e.currentTarget as HTMLElement).blur(); editModalOpen = true }"
+                />
+              </UTooltip>
+            </h1>
+            <p class="flex items-center gap-1.5 text-sm text-muted">
+              <UIcon name="i-lucide-hash" class="size-4 shrink-0" />
+              {{ data.code }}
+            </p>
+          </div>
+
+          <UNavigationMenu :items="tabs" highlight class="-mx-1" />
         </div>
 
-        <section class="flex flex-col gap-3">
-          <div class="flex items-center gap-1.5">
-            <h2 class="font-semibold text-highlighted">
-              Cursos
-            </h2>
-            <UTooltip text="Editar">
-              <UButton
-                icon="i-lucide-pencil"
-                color="neutral"
-                variant="ghost"
-                size="xs"
-                @click="(e) => { (e.currentTarget as HTMLElement).blur(); coursesModalOpen = true }"
-              />
-            </UTooltip>
-          </div>
+        <DisciplinesCoursesEditor
+          v-show="activeTab === 'courses'"
+          :discipline-id="data.id"
+          :courses="courses"
+          @updated="refresh()"
+        />
 
-          <div v-if="courses.length" class="flex flex-wrap gap-2">
-            <div
-              v-for="course in courses"
-              :key="course.id"
-              class="flex items-center gap-1.5 rounded-full border border-default bg-elevated/40 px-3 py-1"
-            >
-              <UIcon name="i-lucide-notebook" class="size-3.5 text-muted" />
-              <span class="text-sm text-highlighted">{{ course.name }}</span>
-            </div>
-          </div>
-          <div v-else class="flex items-center gap-2 text-sm text-muted">
-            <UIcon name="i-lucide-book-dashed" class="size-4" />
-            Nenhum curso vinculado
-          </div>
-        </section>
+        <DisciplinesTeachersEditor
+          v-show="activeTab === 'teachers'"
+          :discipline-id="data.id"
+          :teachers="teachers"
+          @updated="refresh()"
+        />
 
-        <section class="flex flex-col gap-3">
-          <h2 class="font-semibold text-highlighted">
-            Professores
-          </h2>
-
-          <div v-if="teachers.length" class="flex flex-wrap gap-2">
-            <NuxtLink
-              v-for="teacher in teachers"
-              :key="teacher.id"
-              :to="`/teachers/${teacher.id}`"
-              class="flex items-center gap-1.5 rounded-full border border-default bg-elevated/40 px-3 py-1 transition-colors hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              <UIcon name="i-lucide-user-pen" class="size-3.5 text-muted" />
-              <span class="text-sm text-highlighted">{{ teacher.name }}</span>
-            </NuxtLink>
-          </div>
-          <div v-else class="flex items-center gap-2 text-sm text-muted">
-            <UIcon name="i-lucide-user-round-x" class="size-4" />
-            Nenhum professor apto a lecionar esta disciplina
-          </div>
-        </section>
-
-        <section class="flex flex-col gap-3">
-          <h2 class="font-semibold text-highlighted">
-            Turmas
-          </h2>
+        <section v-if="activeTab === 'classes'" class="flex flex-col gap-4">
+          <p class="text-sm text-muted">
+            As turmas abertas nesta disciplina.
+          </p>
 
           <DataTable :data="classes" :columns="classColumns">
             <template #empty>
@@ -199,5 +167,4 @@ const breadcrumb = [
   </UDashboardPanel>
 
   <DisciplinesEditModal v-model:open="editModalOpen" :discipline="disciplineRef" @updated="refresh()" />
-  <DisciplinesCoursesModal v-model:open="coursesModalOpen" :discipline="disciplineRef" @updated="refresh()" />
 </template>

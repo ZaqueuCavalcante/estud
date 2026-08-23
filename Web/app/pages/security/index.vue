@@ -62,7 +62,7 @@ const columns: TableColumn<RoleItem>[] = [
 
 <template>
   <div>
-    <div v-if="data?.items?.length" class="flex justify-end mb-4">
+    <div v-if="data?.items?.length" class="flex justify-start sm:justify-end mb-4">
       <UButton icon="i-lucide-plus" label="Perfil" @click="() => { createModalOpen = true }" />
     </div>
 

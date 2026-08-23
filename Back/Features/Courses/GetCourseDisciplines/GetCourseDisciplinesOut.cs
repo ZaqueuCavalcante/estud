@@ -7,7 +7,7 @@ public class GetCourseDisciplinesOut : IApiDto<GetCourseDisciplinesOut>
 
     public static IEnumerable<(string, GetCourseDisciplinesOut)> GetExamples() =>
     [
-        ("Exemplo", new() { Total = 1, Items = [new() { Id = 1, Name = "Geometria" }] }),
+        ("Exemplo", new() { Total = 1, Items = [new() { Id = 1, Name = "Geometria", Code = "A1B2C3D4" }] }),
     ];
 }
 
@@ -15,4 +15,5 @@ public class GetCourseDisciplineItemOut
 {
     public int Id { get; set; }
     public string Name { get; set; }
+    public string Code { get; set; }
 }

@@ -115,7 +115,7 @@ const columns: TableColumn<ClassItem>[] = [
     </template>
 
     <template #body>
-      <div v-if="data?.items?.length" class="flex justify-end pt-4">
+      <div v-if="data?.items?.length" class="flex justify-start sm:justify-end pt-4">
         <UButton icon="i-lucide-plus" label="Turma" @click="() => { createModalOpen = true }" />
       </div>
       <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">

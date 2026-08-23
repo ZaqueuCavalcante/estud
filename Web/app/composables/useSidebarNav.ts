@@ -47,8 +47,8 @@ export const sidebarGroups: SidebarGroup[] = [
     label: 'Secretaria',
     icon: 'i-lucide-archive',
     items: [
-      { label: 'Turmas',        icon: 'i-lucide-presentation',   to: '/classes',            policy: 'AccessClassesPage' },
       { label: 'Ofertas',       icon: 'i-lucide-library',        to: '/course-offerings',   policy: 'AccessCourseOfferingsPage' },
+      { label: 'Turmas',        icon: 'i-lucide-presentation',   to: '/classes',            policy: 'AccessClassesPage' },
       { label: 'Calendário',    icon: 'i-lucide-calendar-range', to: '/calendar',           policy: 'AccessCalendarPage' },
       { label: 'Notificações',  icon: 'i-lucide-bell',           to: '/notifications',      policy: 'AccessNotificationsPage' },
     ],

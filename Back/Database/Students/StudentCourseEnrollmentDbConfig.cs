@@ -10,7 +10,7 @@ public class StudentCourseEnrollmentDbConfig : IEntityTypeConfiguration<StudentC
 
         entity.HasKey(e => e.Id);
 
-        entity.HasOne<EstudStudent>()
+        entity.HasOne(e => e.Student)
             .WithMany()
             .HasForeignKey(e => e.StudentId);
 

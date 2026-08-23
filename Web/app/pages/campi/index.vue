@@ -47,7 +47,7 @@ const { data, status, refresh } = await useFetch<GetCampiOut>(`${config.public.b
       />
 
       <div v-else class="space-y-4">
-        <div class="flex items-start justify-between gap-4">
+        <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div>
             <p class="text-sm text-muted mt-0.5">Visualize e gerencie os campus da sua instituição.</p>
           </div>

@@ -16,7 +16,6 @@ export interface DisciplineClassItem {
   students: number
   workload: number
   status: string
-  teachers: DisciplineTeacherItem[]
 }
 
 export interface GetDisciplineDetailsOut {
