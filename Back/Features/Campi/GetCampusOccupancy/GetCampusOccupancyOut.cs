@@ -1,4 +1,4 @@
-namespace Estud.Back.Features.Campi.GetCampusOccupancy;
+﻿namespace Estud.Back.Features.Campi.GetCampusOccupancy;
 
 public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
 {
@@ -68,7 +68,7 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
                     UsedMinutesRate = 33.33M,
                     UsedCapacity = 45000,
                     UsedCapacityRate = 25M,
-                    AverageStudents = 10M,
+                    AverageStudents = 10,
                 },
             ],
             Cells =
@@ -148,10 +148,12 @@ public class CampusClassroomOccupancyOut
     public decimal UsedCapacityRate { get; set; }
 
     /// <summary>
-    /// Assentos ocupados em média enquanto o campus está aberto. É a taxa de
-    /// assentos convertida de volta em lugares: 67% de uma sala de 3 são 2.
+    /// Assentos ocupados em média enquanto o campus está aberto, arredondados
+    /// pra baixo: uma sala de 10 lugares só devolve 10 quando a média fecha em
+    /// 10 cravado. Sala com qualquer movimento devolve no mínimo 1; só sala
+    /// nunca alocada devolve 0.
     /// </summary>
-    public decimal AverageStudents { get; set; }
+    public int AverageStudents { get; set; }
 }
 
 public class CampusOccupancyCellOut

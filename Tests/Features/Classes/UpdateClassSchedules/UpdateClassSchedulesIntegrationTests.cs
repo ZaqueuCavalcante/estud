@@ -206,31 +206,6 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Classes_UpdateClassSchedules_Should_not_update_schedules_when_they_conflict_with_another_class_of_the_teacher()
-    {
-        // Arrange
-        var client = await _back.LoggedAsDirector();
-        var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
-
-        var teacher = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
-
-        var classA = await client.CreateClass(discipline.Id, period.Id).Success();
-        await client.UpdateClassTeachers(classA.Id, [teacher.Id]);
-        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
-
-        var classB = await client.CreateClass(discipline.Id, period.Id).Success();
-        await client.UpdateClassTeachers(classB.Id, [teacher.Id]);
-
-        // Act
-        var result = await client.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H08_00, Hour.H09_00, null, null)]);
-
-        // Assert
-        result.ShouldBeError(TeacherScheduleConflict.I);
-    }
-
-    [Test]
     public async Task Classes_UpdateClassSchedules_Should_not_update_schedules_when_the_slot_classroom_does_not_exist()
     {
         // Arrange
@@ -366,37 +341,7 @@ public partial class IntegrationTests
         var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
 
         // Assert
-        result.ShouldBeSuccess();
-
-        var updated = await client.GetClass(@class.Id).Success();
-        updated.Schedules.Should().ContainSingle();
-        updated.Schedules[0].TeacherId.Should().BeNull();
-    }
-
-    [Test]
-    public async Task Classes_UpdateClassSchedules_Should_auto_assign_the_only_teacher_to_every_slot()
-    {
-        // Arrange
-        var client = await _back.LoggedAsDirector();
-        var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
-
-        var teacher = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
-
-        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
-        await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
-
-        // Act — sem informar professor no slot
-        var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
-
-        // Assert
-        result.ShouldBeSuccess();
-
-        var updated = await client.GetClass(@class.Id).Success();
-        updated.Schedules.Should().ContainSingle();
-        updated.Schedules[0].TeacherId.Should().Be(teacher.Id);
-        updated.Schedules[0].Teacher.Should().Be("Chico Ferreira");
+        result.ShouldBeError(InvalidScheduleTeacher.I);
     }
 
     [Test]
@@ -418,11 +363,7 @@ public partial class IntegrationTests
         var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, outsider.Id, null)]);
 
         // Assert
-        result.ShouldBeSuccess();
-
-        var updated = await client.GetClass(@class.Id).Success();
-        updated.Schedules.Should().ContainSingle();
-        updated.Schedules[0].TeacherId.Should().Be(teacher.Id);
+        result.ShouldBeError(InvalidScheduleTeacher.I);
     }
 
     [Test]

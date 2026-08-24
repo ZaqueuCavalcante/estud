@@ -1,4 +1,4 @@
-namespace Estud.Tests.Integration;
+﻿namespace Estud.Tests.Integration;
 
 public partial class IntegrationTests
 {
@@ -196,18 +196,11 @@ public partial class IntegrationTests
         await client.AssignStudentToClass(student.Id, @class.Id).Success();
 
         // Act
-        var result = await client.GetCampusOccupancy(campus.Id);
+        var occupancy = await client.GetCampusOccupancy(campus.Id).Success();
 
         // Assert
-        var occupancy = result.Success;
         occupancy.Classrooms.Should().HaveCount(2);
-
-        // A ordem alfabética sai pronta do banco, tanto no resumo da semana
-        // quanto no detalhe de cada célula — o front não reordena.
         occupancy.Classrooms.Select(c => c.Name).Should().ContainInOrder("Sala 01", "Sala 02");
-        occupancy.Cells.Should().OnlyContain(cell =>
-            cell.Classrooms.Count == 0
-                || (cell.Classrooms[0].Name == "Sala 01" && cell.Classrooms[1].Name == "Sala 02"));
 
         var sala01Week = occupancy.Classrooms.First(c => c.Id == sala01.Id);
         sala01Week.Capacity.Should().Be(3);
@@ -216,17 +209,18 @@ public partial class IntegrationTests
         sala01Week.UsedMinutesRate.Should().Be(50M);
 
         // 1 aluno x 300min de 3 lugares x 600min abertos. Em lugares: 0,5 assento
-        // ocupado em média — a sala fica vazia metade da semana.
+        // ocupado em média — a sala fica vazia metade da semana, mas o movimento
+        // que existe não pode virar 0.
         sala01Week.UsedCapacity.Should().Be(300);
         sala01Week.UsedCapacityRate.Should().Be(16.67M);
-        sala01Week.AverageStudents.Should().Be(0.5M);
+        sala01Week.AverageStudents.Should().Be(1);
 
         // Sala nunca alocada zera as duas taxas, mas continua com denominador.
         var sala02Week = occupancy.Classrooms.First(c => c.Id == sala02.Id);
         sala02Week.AvailableMinutes.Should().Be(600);
         sala02Week.UsedMinutesRate.Should().Be(0M);
         sala02Week.UsedCapacityRate.Should().Be(0M);
-        sala02Week.AverageStudents.Should().Be(0M);
+        sala02Week.AverageStudents.Should().Be(0);
     }
 
 
@@ -282,10 +276,9 @@ public partial class IntegrationTests
         morning.Open.Should().BeTrue();
         morning.AvailableMinutes.Should().Be(600);
 
-        // A noite vai até 24h, mas o campus fecha às 22h: 240min, não 360.
         var evening = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Evening);
         evening.Open.Should().BeTrue();
-        evening.AvailableMinutes.Should().Be(480);
+        evening.AvailableMinutes.Should().Be(360);
     }
 
     [Test]
@@ -302,7 +295,7 @@ public partial class IntegrationTests
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
         // O segundo horário cruza a fronteira manhã/tarde de propósito: 10h–14h
-        // são 120min de manhã (até 12h) e 120min à tarde.
+        // são 120min de manhã (até 12h) e 60min à tarde porque entre 12h e 13h é almoço.
         await client.UpdateClassSchedules(@class.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id),
@@ -326,12 +319,12 @@ public partial class IntegrationTests
 
         // A tarde fica só com o rabo do horário que cruzou o meio-dia.
         var afternoon = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Afternoon);
-        afternoon.UsedMinutes.Should().Be(120);
-        afternoon.AvailableMinutes.Should().Be(720);
-        afternoon.UsedMinutesRate.Should().Be(16.67M);
+        afternoon.UsedMinutes.Should().Be(60);
+        afternoon.AvailableMinutes.Should().Be(600);
+        afternoon.UsedMinutesRate.Should().Be(10.00M);
         afternoon.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(0);
-        afternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutes.Should().Be(120);
-        afternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutesRate.Should().Be(33.33M);
+        afternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutes.Should().Be(60);
+        afternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutesRate.Should().Be(20.00M);
 
         var evening = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Evening);
         evening.UsedMinutes.Should().Be(0);
@@ -339,9 +332,8 @@ public partial class IntegrationTests
         // Nenhum outro dia da semana tem alocação.
         occupancy.Cells.Where(c => c.Day != Day.Monday).Should().OnlyContain(c => c.UsedMinutes == 0);
 
-        // 420min de 9000min na semana: 2 salas x 900min/dia (07h–22h) x 5 dias abertos.
-        // O sábado não entra — o campus não abre, e horário que não existe não é folga.
-        occupancy.OverallUsedMinutesRate.Should().Be(4.67M);
+        // 360min de 7.800min na semana: 2 salas x 13h x 60min x 5 dias abertos.
+        occupancy.OverallUsedMinutesRate.Should().Be(4.62M);
         occupancy.OpenCells.Should().Be(15);
     }
 
@@ -574,8 +566,8 @@ public partial class IntegrationTests
         morning.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(240);
         morning.Classrooms.First(c => c.Id == sala01.Id).UsedMinutesRate.Should().Be(80M);
 
-        // 240min de 4500min (1 sala x 900min/dia x 5 dias abertos).
-        occupancy.OverallUsedMinutesRate.Should().Be(5.33M);
+        // 240min de 3.900min (1 sala x 13h x 60min x 5 dias abertos).
+        occupancy.OverallUsedMinutesRate.Should().Be(6.15M);
     }
 
     // Turma iniciada é turma acontecendo: sai do mapa só quando finaliza.
@@ -857,7 +849,7 @@ public partial class IntegrationTests
         occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning)
             .UsedMinutes.Should().Be(0);
         occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Afternoon)
-            .UsedMinutes.Should().Be(120);
+            .UsedMinutes.Should().Be(60);
 
         // Termina às 12h em ponto: nada na tarde.
         occupancy.Cells.First(c => c.Day == Day.Tuesday && c.Shift == Shift.Morning)

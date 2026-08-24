@@ -39,18 +39,28 @@ public partial class IntegrationTests
     #region Happy path
 
     [Test]
-    public async Task Periods_GetAcademicPeriods_Should_return_empty_list_when_there_are_no_academic_periods()
+    public async Task Periods_GetAcademicPeriods_Should_return_the_current_year_periods_created_on_institution_register()
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
+        var year = DateTime.UtcNow.Year;
 
         // Act
         var result = await client.GetAcademicPeriods();
 
         // Assert
         var periods = result.Success;
-        periods.Total.Should().Be(0);
-        periods.Items.Should().BeEmpty();
+        periods.Total.Should().Be(2);
+
+        var first = periods.Items.First();
+        first.Name.Should().Be($"{year}.1");
+        first.StartAt.Should().Be(new DateOnly(year, 01, 01));
+        first.EndAt.Should().Be(new DateOnly(year, 06, 30));
+
+        var second = periods.Items.Last();
+        second.Name.Should().Be($"{year}.2");
+        second.StartAt.Should().Be(new DateOnly(year, 07, 01));
+        second.EndAt.Should().Be(new DateOnly(year, 12, 31));
     }
 
     [Test]
@@ -67,9 +77,9 @@ public partial class IntegrationTests
 
         // Assert
         var periods = result.Success;
-        periods.Total.Should().Be(2);
-        periods.Items.First().Name.Should().Be("2024.1");
-        periods.Items.Last().Name.Should().Be("2024.2");
+        periods.Total.Should().Be(4);
+        periods.Items[^2].Name.Should().Be("2024.1");
+        periods.Items[^1].Name.Should().Be("2024.2");
     }
 
     #endregion

@@ -2,10 +2,12 @@
 
   <PropertyGroup>
     <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <LangVersion>preview</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <TargetFramework>net10.0</TargetFramework>
+    <EnableNUnitRunner>true</EnableNUnitRunner>
     <WarningsAsErrors>IDE0005</WarningsAsErrors>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>CS1591;CA1806;CS8618;IDE1006;CS8625;</NoWarn>
@@ -17,18 +19,15 @@
     <PackageReference Include="NUnit" Version="4.3.2" />
     <PackageReference Include="Bogus" Version="35.6.3" />
     <PackageReference Include="ReportGenerator" Version="5.4.13" />
-    <PackageReference Include="NUnit3TestAdapter" Version="5.1.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
     <PackageReference Include="FluentAssertions" Version="[7.2.0]" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.3.3" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.10.0" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="NUnit.Analyzers" Version="4.9.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

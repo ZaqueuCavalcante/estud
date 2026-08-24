@@ -491,7 +491,7 @@ public partial class IntegrationTests
 
         openingHours.Days.First(d => d.Day == Day.Saturday).Windows.Should().BeEmpty();
         openingHours.Days.Where(d => d.Day != Day.Saturday)
-            .Should().OnlyContain(d => d.Windows.Count == 1);
+            .Should().OnlyContain(d => d.Windows.Count == 3);
     }
 
     #endregion

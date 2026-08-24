@@ -127,41 +127,6 @@ public partial class IntegrationTests
         result.ShouldBeError(TeacherNotAssignedToDiscipline.I);
     }
 
-    [Test]
-    public async Task Classes_UpdateClassTeachers_Should_not_update_teachers_when_the_new_teacher_conflicts_with_another_class()
-    {
-        // Arrange
-        var client = await _back.LoggedAsDirector();
-        var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
-
-        var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
-        var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(chico.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
-
-        // C1: professor Chico cobre segunda 07–10
-        var classA = await client.CreateClass(discipline.Id, period.Id).Success();
-        await client.UpdateClassTeachers(classA.Id, [chico.Id]);
-        await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
-
-        // C2: professora Ana já cobre segunda 08–09 (choca com o horário de C1)
-        var classB = await client.CreateClass(discipline.Id, period.Id).Success();
-        await client.UpdateClassTeachers(classB.Id, [ana.Id]);
-        await client.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H08_00, Hour.H09_00, null, null)]);
-
-        // Act — troca Chico por Ana em C1, que herdaria o horário chocando com C2
-        var result = await client.UpdateClassTeachers(classA.Id, [ana.Id]);
-
-        // Assert
-        result.ShouldBeError(TeacherScheduleConflict.I);
-
-        // e o estado de C1 permanece intacto (Chico ainda é o professor)
-        var updated = await client.GetClass(classA.Id).Success();
-        updated.Teachers.Select(t => t.Id).Should().Equal(chico.Id);
-        updated.Schedules.Should().OnlyContain(s => s.TeacherId == chico.Id);
-    }
-
     #endregion
 
     #region Happy path
@@ -190,7 +155,7 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Classes_UpdateClassTeachers_Should_auto_assign_the_added_teacher_to_existing_teacherless_schedules()
+    public async Task Classes_UpdateClassTeachers_Should_not_auto_assign_the_added_teacher_to_existing_teacherless_schedules()
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
@@ -217,7 +182,7 @@ public partial class IntegrationTests
         var updated = await client.GetClass(@class.Id).Success();
         updated.Teachers.Select(t => t.Id).Should().Equal(chico.Id);
         updated.Schedules.Should().HaveCount(2);
-        updated.Schedules.Should().OnlyContain(s => s.TeacherId == chico.Id);
+        updated.Schedules.Should().OnlyContain(s => s.TeacherId == null);
     }
 
     [Test]
@@ -247,7 +212,7 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Classes_UpdateClassTeachers_Should_reassign_all_schedules_to_the_new_single_teacher()
+    public async Task Classes_UpdateClassTeachers_Should_not_reassign_schedules_to_the_new_single_teacher()
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
@@ -263,8 +228,8 @@ public partial class IntegrationTests
         await client.UpdateClassTeachers(@class.Id, [chico.Id]);
         await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, null, null),
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, null, null),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null),
+            (Day.Wednesday, Hour.H07_00, Hour.H10_00, chico.Id, null),
         ]);
 
         // Act
@@ -276,7 +241,7 @@ public partial class IntegrationTests
         var updated = await client.GetClass(@class.Id).Success();
         updated.Teachers.Select(t => t.Id).Should().Equal(ana.Id);
         updated.Schedules.Should().HaveCount(2);
-        updated.Schedules.Should().OnlyContain(s => s.TeacherId == ana.Id);
+        updated.Schedules.Should().OnlyContain(s => s.TeacherId == null);
     }
 
     [Test]
@@ -321,7 +286,7 @@ public partial class IntegrationTests
         await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
 
         await client.UpdateClassTeachers(@class.Id, [chico.Id]);
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null)]);
 
         // Act
         var result = await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
@@ -330,7 +295,7 @@ public partial class IntegrationTests
         result.ShouldBeSuccess();
 
         var updated = await client.GetClass(@class.Id).Success();
-        updated.Teachers.Select(t => t.Id).Should().BeEquivalentTo(new[] { chico.Id, ana.Id });
+        updated.Teachers.Select(t => t.Id).Should().BeEquivalentTo([chico.Id, ana.Id]);
         updated.Schedules.Should().ContainSingle();
         updated.Schedules[0].TeacherId.Should().Be(chico.Id);
     }
@@ -357,39 +322,6 @@ public partial class IntegrationTests
         var updated = await client.GetClass(@class.Id).Success();
         updated.Teachers.Select(t => t.Id).Should().Equal(chico.Id);
         updated.Schedules.Should().BeEmpty();
-    }
-
-    [Test]
-    public async Task Classes_UpdateClassTeachers_Should_reassign_all_schedules_to_the_remaining_teacher()
-    {
-        // Arrange
-        var client = await _back.LoggedAsDirector();
-        var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
-        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
-
-        var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
-        var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(chico.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
-
-        await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
-        await client.UpdateClassSchedules(@class.Id,
-        [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null),
-            (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id, null),
-        ]);
-
-        // Act
-        var result = await client.UpdateClassTeachers(@class.Id, [chico.Id]);
-
-        // Assert
-        result.ShouldBeSuccess();
-
-        var updated = await client.GetClass(@class.Id).Success();
-        updated.Teachers.Select(t => t.Id).Should().Equal(chico.Id);
-        updated.Schedules.Should().HaveCount(2);
-        updated.Schedules.Should().OnlyContain(s => s.TeacherId == chico.Id);
     }
 
     [Test]

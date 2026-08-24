@@ -23,7 +23,7 @@ public partial class IntegrationTests
         await DevCreateAdsTeachers(client, data);
         await DevCreateDireitoTeachers(client, data);
 
-        await DevCreateAcademicPeriods(client, data);
+        await DevCreatePeriods(client, data);
 
         await DevCreateCourseOfferings(client, data);
         await DevCreateStudents(client, data);
@@ -303,20 +303,18 @@ public partial class IntegrationTests
         }
     }
 
-    private static async Task DevCreateAcademicPeriods(TestsHttpClient client, DevInstitutionData data)
+    private static async Task DevCreatePeriods(TestsHttpClient client, DevInstitutionData data)
     {
         var year = DateTime.Now.Year;
 
-        var firstStartAt = new DateOnly(year, 01, 02);
-        var secondStartAt = new DateOnly(year, 06, 03);
-
-        await client.CreateAcademicPeriod($"{year}.1", firstStartAt, new DateOnly(year, 06, 01));
-        var second = await client.CreateAcademicPeriod($"{year}.2", secondStartAt, new DateOnly(year, 12, 20)).Success();
+        var periods = await client.GetAcademicPeriods().Success();
+        var first = periods.Items.First(x => x.Name == $"{year}.1");
+        var second = periods.Items.First(x => x.Name == $"{year}.2");
         data.AcademicPeriodId = second.Id;
 
         // Matrículas abrem 2 semanas antes de cada período acadêmico e ficam abertas por 2 semanas
-        await client.CreateEnrollmentPeriod($"Matrículas {year}.1", firstStartAt.AddDays(-14), firstStartAt);
-        await client.CreateEnrollmentPeriod($"Matrículas {year}.2", secondStartAt.AddDays(-14), secondStartAt);
+        await client.CreateEnrollmentPeriod($"Matrículas {year}.1", first.StartAt.AddDays(-14), first.StartAt);
+        await client.CreateEnrollmentPeriod($"Matrículas {year}.2", second.StartAt.AddDays(-14), second.StartAt);
     }
 
     private static async Task DevCreateCourseOfferings(TestsHttpClient client, DevInstitutionData data)

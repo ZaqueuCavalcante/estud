@@ -1,4 +1,4 @@
-using Estud.Back.Domain.Classes;
+﻿using Estud.Back.Domain.Classes;
 
 namespace Estud.Back.Features.Campi.GetCampusOccupancy;
 
@@ -18,8 +18,8 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
 
         var cells = new List<CampusOccupancyCellOut>(Day.All.Length * Shift.All.Length);
 
-        var campusUsedCapacity = 0;
-        var campusAvailableCapacity = 0;
+        var campusUsedCapacity = 0L;
+        var campusAvailableCapacity = 0L;
         var classroomTotals = campus.Classrooms.ToDictionary(c => c.Id, _ => new ClassroomTotals());
 
         foreach (var day in Day.All)
@@ -112,7 +112,7 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                     UsedCapacity = totals.UsedCapacity,
                     AvailableMinutes = totals.AvailableMinutes,
                     UsedMinutesRate = ToRate(totals.UsedMinutes, totals.AvailableMinutes),
-                    AverageStudents = ToRate(totals.UsedCapacity, totals.AvailableMinutes),
+                    AverageStudents = ToAverageStudents(totals.UsedCapacity, totals.AvailableMinutes),
                     UsedCapacityRate = ToRate(totals.UsedCapacity, totals.AvailableMinutes * classroom.Capacity),
                 };
             })
@@ -181,7 +181,16 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
             .AsNoTracking().ToListAsync();
     }
 
-    private static decimal ToRate(int used, int available)
+    private static int ToAverageStudents(int usedCapacity, int availableMinutes)
+    {
+        if (usedCapacity <= 0 || availableMinutes <= 0) return 0;
+
+        // Sala com qualquer movimento nunca zera: meia turma em média ainda é gente na sala.
+        var average = usedCapacity / (decimal) availableMinutes;
+        return Math.Max((int) Math.Floor(average), 1);
+    }
+
+    private static decimal ToRate(long used, long available)
     {
         if (available <= 0) return 0M;
         return Math.Round(used * 100M / available, 2);

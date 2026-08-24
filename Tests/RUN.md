@@ -4,20 +4,15 @@ dotnet test --filter TestCategory=Integration
 dotnet test --filter "FullyQualifiedName~UnitTests"
 dotnet test --filter "FullyQualifiedName!~UnitTests"
 
-dotnet test --logger:"console;verbosity=detailed"
+dotnet test --output Detailed
 dotnet test --filter "FullyQualifiedName~IntegrationTests"
-dotnet test --logger:"console;verbosity=detailed" --filter "FullyQualifiedName~IntegrationTests"
-
-dotnet test --collect:"XPlat Code Coverage"
-dotnet test --logger:"console;verbosity=detailed" --collect:"XPlat Code Coverage"
-
-reportgenerator -reports:"C:\Users\Zaqueu\estud\Tests\TestResults\*\coverage.cobertura.xml" -targetdir:"./Tests/Reports" -reporttypes:Html
+dotnet test --output Detailed --filter "FullyQualifiedName~IntegrationTests"
 
 ## Code Coverage
 
-dotnet test --collect:"XPlat Code Coverage"
+dotnet test --coverage --coverage-settings Tests/coverage.settings.xml --coverage-output-format cobertura --coverage-output coverage.cobertura.xml --results-directory ./TestResults
 
-reportgenerator -reports:"C:\Users\Zaqueu\estud\Tests\TestResults\*\coverage.cobertura.xml" -targetdir:"./Tests/Reports" -reporttypes:Html
+reportgenerator -reports:"./TestResults/coverage.cobertura.xml" -targetdir:"./Tests/Reports" -reporttypes:Html
 
 # Mutation
 

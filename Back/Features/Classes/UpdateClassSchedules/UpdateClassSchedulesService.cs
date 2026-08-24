@@ -21,7 +21,7 @@ public class UpdateClassSchedulesService(EstudDbContext ctx) : IEstudService
         var schedules = schedulesResult.Success;
 
         var teacherIds = @class.Teachers.Select(t => t.Id).ToList();
-        var targetTeacherIds = schedules.Where(s => s.TeacherId != null).Distinct().Select(s => s.TeacherId!.Value).ToList();
+        var targetTeacherIds = schedules.Where(s => s.TeacherId != null).Select(s => s.TeacherId!.Value).Distinct().ToList();
         if (!targetTeacherIds.IsSubsetOf(teacherIds)) return InvalidScheduleTeacher.I;
 
         var teacherSchedulesResult = await ValidateTeacherSchedules(institutionId, classId, teacherIds, schedules);

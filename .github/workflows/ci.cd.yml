@@ -52,8 +52,12 @@ jobs:
           --no-build \
           --configuration Release \
           --verbosity normal \
-          --logger "trx;LogFileName=tests_results.trx" \
-          --collect:"XPlat Code Coverage" \
+          --report-trx \
+          --report-trx-filename unit_tests.trx \
+          --coverage \
+          --coverage-settings Tests/coverage.settings.xml \
+          --coverage-output-format cobertura \
+          --coverage-output unit.cobertura.xml \
           --results-directory ./TestResults
 
       - name: Integration Tests
@@ -63,8 +67,12 @@ jobs:
           --no-restore \
           --no-build \
           --verbosity normal \
-          --logger "trx;LogFileName=tests_results.trx" \
-          --collect:"XPlat Code Coverage" \
+          --report-trx \
+          --report-trx-filename integration_tests.trx \
+          --coverage \
+          --coverage-settings Tests/coverage.settings.xml \
+          --coverage-output-format cobertura \
+          --coverage-output integration.cobertura.xml \
           --results-directory ./TestResults
 
       - name: Generate coverage HTML report

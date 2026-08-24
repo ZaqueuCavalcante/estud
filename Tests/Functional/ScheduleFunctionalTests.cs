@@ -759,9 +759,10 @@ public partial class IntegrationTests
         holiday.DayType.Should().Be(DayType.Holiday);
         holiday.Description.Should().Be("Confraternização Universal");
 
-        // Os 2 períodos do ano, pra conferir se cada um cobre a carga horária mínima.
-        periods.Items.Should().HaveCount(2);
-        periods.Items.Select(x => x.Id).Should().BeEquivalentTo(new[] { firstPeriod.Id, secondPeriod.Id });
+        // Os 2 períodos de 2024, pra conferir se cada um cobre a carga horária mínima.
+        var periodsOf2024 = periods.Items.FindAll(x => x.Name.StartsWith("2024."));
+        periodsOf2024.Should().HaveCount(2);
+        periodsOf2024.Select(x => x.Id).Should().BeEquivalentTo(new[] { firstPeriod.Id, secondPeriod.Id });
 
         // Assert — a agenda semanal não muda com o calendário: continua 1 dia, 1 disciplina.
         // As ocorrências é que caem nos dias não letivos.

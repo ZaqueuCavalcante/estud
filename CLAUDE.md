@@ -178,7 +178,7 @@ dotnet ef migrations script <FromMigration> <output>.sql  # single migration SQL
 
 ```bash
 # All tests
-dotnet test --logger:"console;verbosity=detailed"
+dotnet test --output Detailed
 
 # Unit tests only
 dotnet test --filter "FullyQualifiedName~UnitTests"
@@ -189,8 +189,10 @@ dotnet test --filter "FullyQualifiedName~IntegrationTests"
 # Single test (by name substring)
 dotnet test --filter "FullyQualifiedName~Should_create_course"
 
-# Code coverage
-dotnet test --collect:"XPlat Code Coverage"
+# Code coverage (Cobertura em ./TestResults)
+dotnet test --coverage --coverage-settings Tests/coverage.settings.xml \
+  --coverage-output-format cobertura --coverage-output coverage.cobertura.xml \
+  --results-directory ./TestResults
 ```
 
 ### Frontend

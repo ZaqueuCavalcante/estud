@@ -107,12 +107,16 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod("2026.1", new DateOnly(2026, 01, 06), new DateOnly(2026, 12, 20)).Success();
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var year = today.Year;
+
+        var periods = await director.GetAcademicPeriods().Success();
+        var period = periods.Items.First(x => today >= x.StartAt && today <= x.EndAt);
+
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
         await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
         await director.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2));
         await director.ReleaseClassForEnrollment(@class.Id);
 
@@ -122,7 +126,7 @@ public partial class IntegrationTests
 
         await director.StartClass(@class.Id);
 
-        // Aulas do aluno (segundas-feiras de 2026), em ordem cronológica
+        // Aulas do aluno (segundas-feiras do período), em ordem cronológica
         List<(int Id, DateOnly Date)> lessons;
         await using (var ctx = _back.GetDbContext())
         {
@@ -134,9 +138,10 @@ public partial class IntegrationTests
             lessons = rows.Select(r => (r.Id, r.Date)).ToList();
         }
 
-        var presentLesson = lessons[0];                          // segunda passada (12/01/2026)
-        var absentLesson = lessons[1];                           // segunda passada (19/01/2026)
-        var futureLesson = lessons.First(l => l.Date > today);   // primeira segunda futura
+        var pastLessons = lessons.FindAll(l => l.Date < today);
+        var presentLesson = pastLessons[0];
+        var absentLesson = pastLessons[1];
+        var futureLesson = lessons.First(l => l.Date > today);
 
         // Professor lança a frequência das duas primeiras aulas
         var teacherClient = await _back.LoginAs(teacherEmail);
@@ -146,20 +151,20 @@ public partial class IntegrationTests
         var client = await _back.LoginAs(studentEmail);
 
         // Act
-        var calendar = (await client.GetStudentAttendanceCalendar(2026)).Success;
+        var calendar = (await client.GetStudentAttendanceCalendar(year)).Success;
 
         // Assert
         StudentDayAttendanceStatus StatusOf(DateOnly d) =>
             calendar.Items.First(i => i.Date == d.ToDateTime(TimeOnly.MinValue)).Status;
 
-        calendar.Total.Should().Be(365);
+        calendar.Total.Should().Be(DateTime.IsLeapYear(year) ? 366 : 365);
 
         StatusOf(presentLesson.Date).Should().Be(StudentDayAttendanceStatus.Present);
         StatusOf(absentLesson.Date).Should().Be(StudentDayAttendanceStatus.Absent);
         StatusOf(futureLesson.Date).Should().Be(StudentDayAttendanceStatus.Undefined);
 
         // Feriado (Confraternização Universal) → sem aula
-        StatusOf(new DateOnly(2026, 01, 01)).Should().Be(StudentDayAttendanceStatus.NoClass);
+        StatusOf(new DateOnly(year, 01, 01)).Should().Be(StudentDayAttendanceStatus.NoClass);
 
         // Domingo anterior a uma aula → sem aula
         StatusOf(presentLesson.Date.AddDays(-1)).Should().Be(StudentDayAttendanceStatus.NoClass);

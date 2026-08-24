@@ -95,9 +95,13 @@ public partial class IntegrationTests
         // Segunda a sexta, 07:00–22:00: manhã, tarde e noite.
         foreach (var day in openingHours.Days.Where(d => d.Day != Day.Saturday))
         {
-            day.Windows.Should().HaveCount(1);
+            day.Windows.Should().HaveCount(3);
             day.Windows[0].Start.Should().Be(Hour.H07_00);
-            day.Windows[0].End.Should().Be(Hour.H22_00);
+            day.Windows[0].End.Should().Be(Hour.H12_00);
+            day.Windows[1].Start.Should().Be(Hour.H13_00);
+            day.Windows[1].End.Should().Be(Hour.H18_00);
+            day.Windows[2].Start.Should().Be(Hour.H19_00);
+            day.Windows[2].End.Should().Be(Hour.H22_00);
         }
 
         // Sábado nasce fechado — lista de janelas vazia.
@@ -122,9 +126,9 @@ public partial class IntegrationTests
 
         // Assert
         var openingHours = result.Success;
-        openingHours.Days.First(d => d.Day == Day.Monday).Windows.Should().HaveCount(1);
-        openingHours.Days.First(d => d.Day == Day.Monday).Windows[0].End.Should().Be(Hour.H22_00);
-        openingHours.Days.First(d => d.Day == Day.Friday).Windows.Should().HaveCount(1);
+        openingHours.Days.First(d => d.Day == Day.Monday).Windows.Should().HaveCount(3);
+        openingHours.Days.First(d => d.Day == Day.Monday).Windows[0].End.Should().Be(Hour.H12_00);
+        openingHours.Days.First(d => d.Day == Day.Friday).Windows.Should().HaveCount(3);
     }
 
     #endregion
