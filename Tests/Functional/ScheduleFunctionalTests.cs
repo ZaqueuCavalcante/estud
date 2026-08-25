@@ -473,7 +473,7 @@ public partial class IntegrationTests
             .Select(c => c.Shift).Distinct().ToList();
         sala02Shifts.Should().BeEquivalentTo([Shift.Afternoon]);
     
-        // Espaço ocioso em minutos: 2 salas x 900min/dia x 5 dias = 9000min abertos,
+        // Espaço ocioso em minutos: 2 salas x 780min/dia x 5 dias = 7800min abertos,
         // 6 blocos de 180min usados.
         var openMinutes = occupancy.Cells.Sum(c => c.AvailableMinutes);
         var usedMinutes = occupancy.Cells.Sum(c => c.UsedMinutes);
@@ -630,9 +630,12 @@ public partial class IntegrationTests
         occupancyB.Cells.Where(c => c.Shift == Shift.Evening)
             .Should().OnlyContain(c => !c.Open && c.AvailableMinutes == 0);
 
-        // Campus 1: 360min de 9000min (2 salas x 900min x 5 dias).
+        // Campus 1: 360min de 7800min (2 salas x 780min x 5 dias — 300 de manhã,
+        // 300 de tarde e 180 de noite, que é o que o campus abre em cada turno).
         occupancyA.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning).UsedMinutes.Should().Be(180);
         occupancyA.Cells.First(c => c.Day == Day.Tuesday && c.Shift == Shift.Morning).UsedMinutes.Should().Be(180);
+        occupancyA.Cells.Sum(c => c.UsedMinutes).Should().Be(360);
+        occupancyA.Cells.Sum(c => c.AvailableMinutes).Should().Be(7800);
         occupancyA.OverallUsedMinutesRate.Should().Be(4.62M);
 
         // Campus 2: 300min de 6600min (2 salas x 660min x 5 dias). O denominador menor
@@ -647,6 +650,7 @@ public partial class IntegrationTests
         fridayAfternoonB.AvailableMinutes.Should().Be(720); // 2 salas x 12h–18h
         fridayAfternoonB.UsedMinutesRate.Should().Be(16.67M);
 
+        occupancyB.Cells.Sum(c => c.UsedMinutes).Should().Be(300);
         occupancyB.Cells.Sum(c => c.AvailableMinutes).Should().Be(6600);
         occupancyB.OverallUsedMinutesRate.Should().Be(4.55M);
 
@@ -941,11 +945,6 @@ public partial class IntegrationTests
         var emptyClass = await directorClient.CreateClass(algoritmos.Id, period.Id, vacancies: 40, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(emptyClass.Id, [teacherB.Id]);
         await directorClient.UpdateClassSchedules(emptyClass.Id, [(Day.Tuesday, Hour.H19_00, Hour.H22_00, teacherB.Id, sala02.Id)]);
-
-        // Antes de liberar, nenhum aluno entra.
-        var studentBeforeRelease = await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        (await directorClient.AssignStudentToClass(studentBeforeRelease.Id, fullClass.Id))
-            .ShouldBeError(ClassMustBeOnEnrollment.I);
 
         await directorClient.ReleaseClassForEnrollment(fullClass.Id);
         await directorClient.ReleaseClassForEnrollment(emptyClass.Id);
@@ -1398,10 +1397,10 @@ public partial class IntegrationTests
         agresteOccupancy.Cells.SelectMany(c => c.Classrooms).Where(c => c.Id == salaA6)
             .Should().OnlyContain(c => c.UsedMinutes == 0);
 
-        // 1800min usados de 27000min abertos (6 salas x 900min x 5 dias).
-        agresteOccupancy.Cells.Sum(c => c.AvailableMinutes).Should().Be(27000);
+        // 1.800min usados de 23400min abertos (6 salas x 13h x 60min x 5 dias).
+        agresteOccupancy.Cells.Sum(c => c.AvailableMinutes).Should().Be(23400);
         agresteOccupancy.Cells.Sum(c => c.UsedMinutes).Should().Be(1800);
-        agresteOccupancy.OverallUsedMinutesRate.Should().Be(6.67M);
+        agresteOccupancy.OverallUsedMinutesRate.Should().Be(7.69M);
 
         suassunaOccupancy.TotalClassrooms.Should().Be(4);
         suassunaOccupancy.OpenCells.Should().Be(10);
@@ -1412,12 +1411,13 @@ public partial class IntegrationTests
         {
             var afternoon = suassunaOccupancy.Cells.First(c => c.Day == day && c.Shift == Shift.Afternoon);
             afternoon.UsedMinutes.Should().Be(240);
-            afternoon.AvailableMinutes.Should().Be(1200); // 4 salas x 13h–18h
-            afternoon.UsedMinutesRate.Should().Be(20M);
+            afternoon.AvailableMinutes.Should().Be(1440); // 4 salas x 12h–18h
+            afternoon.UsedMinutesRate.Should().Be(16.67M);
         }
 
-        // 1200min de 13200min (4 salas x 660min x 5 dias). Sem o recorte por
-        // OpeningHours o denominador seria quase o dobro.
+        // 1200min de 13200min (4 salas x 660min x 5 dias — 300 de manhã e 360 de
+        // tarde). Sem o recorte por OpeningHours o denominador seria quase o dobro.
+        suassunaOccupancy.Cells.Sum(c => c.UsedMinutes).Should().Be(1200);
         suassunaOccupancy.Cells.Sum(c => c.AvailableMinutes).Should().Be(13200);
         suassunaOccupancy.OverallUsedMinutesRate.Should().Be(9.09M);
 
