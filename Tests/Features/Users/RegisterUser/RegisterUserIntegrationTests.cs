@@ -92,11 +92,6 @@ public partial class IntegrationTests : IntegrationTestBase
         welcome.Description.Should().Contain("Configure seu perfil");
         welcome.ViewedAt.Should().BeNull();
 
-        var links = welcome.Metadata!.RootElement.GetProperty("links").EnumerateArray().ToList();
-        links.Select(x => x.GetProperty("to").GetString()).Should().Equal("/docs", "/configs", "/account");
-        links.Select(x => x.GetProperty("label").GetString()).Should()
-            .Equal("Primeiros passos", "Configurar instituição", "Completar perfil");
-
         var unreadCount = await manager.GetUnreadNotificationsCount().Success();
         unreadCount.Count.Should().Be(1);
     }

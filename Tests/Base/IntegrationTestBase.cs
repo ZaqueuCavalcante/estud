@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Estud.Tests.Base;
 
+[Parallelizable(ParallelScope.Children)]
 public abstract class IntegrationTestBase
 {
     protected BackFactory _back = null!;
