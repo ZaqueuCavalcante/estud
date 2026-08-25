@@ -656,9 +656,14 @@ const breadcrumb = [
                 <div class="flex items-center gap-3">
                   <ClassroomsUsedCapacityBlocks :percent="room.usedCapacityRate" class="size-14" />
 
-                  <span class="text-sm font-medium text-highlighted tabular-nums">
-                    {{ formatRate(room.usedCapacityRate) }} de espaço alocado
-                  </span>
+                  <div class="flex min-w-0 flex-col">
+                    <span class="text-sm font-medium text-highlighted tabular-nums">
+                      {{ formatRate(room.usedCapacityRate) }} de espaço alocado
+                    </span>
+                    <span class="text-xs text-muted tabular-nums">
+                      {{ formatStudents(room.averageStudents) }}
+                    </span>
+                  </div>
                 </div>
               </NuxtLink>
             </div>

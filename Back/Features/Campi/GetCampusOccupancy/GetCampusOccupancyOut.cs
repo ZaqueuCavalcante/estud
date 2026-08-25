@@ -94,6 +94,7 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
                             AvailableMinutes = 300,
                             UsedMinutesRate = 100M,
                             UsedCapacityRate = 80M,
+                            AverageStudents = 32,
                         },
                         new CampusOccupancyClassroomOut
                         {
@@ -103,6 +104,7 @@ public class GetCampusOccupancyOut : IApiDto<GetCampusOccupancyOut>
                             AvailableMinutes = 300,
                             UsedMinutesRate = 60M,
                             UsedCapacityRate = 45M,
+                            AverageStudents = 18,
                         },
                     ],
                 },
@@ -232,4 +234,12 @@ public class CampusOccupancyClassroomOut
     /// Ocupação de assentos da sala no turno, em porcentagem (0 a 100)
     /// </summary>
     public decimal UsedCapacityRate { get; set; }
+
+    /// <summary>
+    /// Assentos ocupados em média enquanto o campus está aberto no turno,
+    /// arredondados pra baixo: uma sala de 10 lugares só devolve 10 quando a
+    /// média fecha em 10 cravado. Sala com qualquer movimento devolve no mínimo
+    /// 1; só sala nunca alocada devolve 0.
+    /// </summary>
+    public int AverageStudents { get; set; }
 }

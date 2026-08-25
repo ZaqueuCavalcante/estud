@@ -154,6 +154,8 @@ public partial class IntegrationTests
         // 2 alunos numa sala de 10 lugares, o dia inteiro do turno; o auditório de
         // 90 lugares fica vazio.
         morning.Classrooms.First(c => c.Id == pequena.Id).UsedCapacityRate.Should().Be(20M);
+        morning.Classrooms.First(c => c.Id == pequena.Id).AverageStudents.Should().Be(2);
+        morning.Classrooms.First(c => c.Name == "Auditório").AverageStudents.Should().Be(0);
 
         // Assento-minuto: 600 usados (2 alunos x 300min) de 30000 ofertados
         // (100 lugares x 300min). A média das taxas das salas daria 10% — o

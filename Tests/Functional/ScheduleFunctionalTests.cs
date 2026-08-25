@@ -17,7 +17,7 @@ public partial class IntegrationTests
         var teacher = await directorClient.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await directorClient.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
         await directorClient.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await directorClient.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
+        await directorClient.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
 
         await directorClient.ReleaseClassForEnrollment(@class.Id);
 
@@ -76,7 +76,7 @@ public partial class IntegrationTests
         await directorClient.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
         await directorClient.AssignCampiToTeacher(teacher.Id, [campus.Id]);
         await directorClient.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await directorClient.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
+        await directorClient.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, sala01.Id)]);
 
         await directorClient.ReleaseClassForEnrollment(@class.Id);
 
@@ -106,14 +106,13 @@ public partial class IntegrationTests
         monday.Classrooms.Should().ContainSingle().Which.UsedMinutes.Should().Be(180);
 
         // Espaço ocioso: a mesma sala aparece livre em todas as outras células abertas.
-        var otherOpenCells = occupancy.Cells
-            .Where(c => c.Open && !(c.Day == Day.Monday && c.Shift == Shift.Morning)).ToList();
+        var otherOpenCells = occupancy.Cells.Where(c => c.Open && !(c.Day == Day.Monday && c.Shift == Shift.Morning)).ToList();
         otherOpenCells.Should().HaveCount(14);
         otherOpenCells.Should().OnlyContain(c => c.UsedMinutes == 0 && c.UsedMinutesRate == 0);
         otherOpenCells.Should().OnlyContain(c => c.Classrooms.Count == 1);
 
-        // 180min de 4500min (1 sala x 900min/dia x 5 dias abertos).
-        occupancy.OverallUsedMinutesRate.Should().Be(4M);
+        // 180min de 3.900min (1 sala x 13h * 60min x 5 dias abertos).
+        occupancy.OverallUsedMinutesRate.Should().Be(4.62M);
 
         // Assert — teacher e student: 1 dia, 1 disciplina, agora com o nome da sala.
         var teacherDay = teacherAgenda.Days.Should().ContainSingle().Which;
@@ -168,13 +167,13 @@ public partial class IntegrationTests
 
         var classA = await directorClient.CreateClass(disciplineA.Id, period.Id, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(classA.Id, [teacherA.Id]);
-        await directorClient.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
+        await directorClient.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacherA.Id, sala01.Id)]);
         await directorClient.ReleaseClassForEnrollment(classA.Id);
 
         // Mesma sala, mesmo dia, outro turno.
         var classB = await directorClient.CreateClass(disciplineB.Id, period.Id, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(classB.Id, [teacherB.Id]);
-        await directorClient.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H19_00, Hour.H22_00, null, sala01.Id)]);
+        await directorClient.UpdateClassSchedules(classB.Id, [(Day.Monday, Hour.H19_00, Hour.H22_00, teacherB.Id, sala01.Id)]);
         await directorClient.ReleaseClassForEnrollment(classB.Id);
 
         var studentA = await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -209,22 +208,21 @@ public partial class IntegrationTests
         morning.AvailableMinutes.Should().Be(300); // 07h–12h
         morning.UsedMinutesRate.Should().Be(60M);
 
-        // A noite tem só 240min abertos (18h–22h), então os mesmos 180min pesam mais.
         var evening = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Evening);
         evening.UsedMinutes.Should().Be(180);
-        evening.AvailableMinutes.Should().Be(240); // 18h–22h
-        evening.UsedMinutesRate.Should().Be(75M);
+        evening.AvailableMinutes.Should().Be(180); // 17h–22h
+        evening.UsedMinutesRate.Should().Be(100);
 
         // Turno cheio x turno vazio no mesmo dia.
         var afternoon = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Afternoon);
         afternoon.Open.Should().BeTrue();
         afternoon.UsedMinutes.Should().Be(0);
-        afternoon.AvailableMinutes.Should().Be(360); // 12h–18h
+        afternoon.AvailableMinutes.Should().Be(300); // 13h–18h
 
         occupancy.Cells.Where(c => c.Day != Day.Monday).Should().OnlyContain(c => c.UsedMinutes == 0);
 
-        // 360min de 4500min.
-        occupancy.OverallUsedMinutesRate.Should().Be(8M);
+        // 360min de 3.900min.
+        occupancy.OverallUsedMinutesRate.Should().Be(9.23M);
 
         // Assert — cada professor vê só a sua aula.
         var teacherADay = teacherAAgenda.Days.Should().ContainSingle().Which;
@@ -303,7 +301,7 @@ public partial class IntegrationTests
         {
             var @class = await directorClient.CreateClass(disciplineId, period.Id, campusId: campus.Id).Success();
             await directorClient.UpdateClassTeachers(@class.Id, [teacherId]);
-            await directorClient.UpdateClassSchedules(@class.Id, [(day, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
+            await directorClient.UpdateClassSchedules(@class.Id, [(day, Hour.H07_00, Hour.H10_00, teacherId, sala01.Id)]);
             await directorClient.ReleaseClassForEnrollment(@class.Id);
             await directorClient.AssignStudentToClass(student.Id, @class.Id);
             await directorClient.StartClass(@class.Id);
@@ -327,11 +325,9 @@ public partial class IntegrationTests
         usedCells.Should().HaveCount(4);
         usedCells.Should().OnlyContain(c => c.Shift == Shift.Morning);
         usedCells.Should().OnlyContain(c => c.UsedMinutes == 180 && c.UsedMinutesRate == 60M);
-        usedCells.Select(c => c.Day).Should().BeEquivalentTo(
-            new[] { Day.Monday, Day.Tuesday, Day.Wednesday, Day.Thursday });
+        usedCells.Select(c => c.Day).Should().BeEquivalentTo([Day.Monday, Day.Tuesday, Day.Wednesday, Day.Thursday]);
 
-        // 720min de 4500min — de 4% no caso 1 para 16%.
-        occupancy.OverallUsedMinutesRate.Should().Be(16M);
+        occupancy.OverallUsedMinutesRate.Should().Be(18.46M);
 
         // Assert — carga horária: professor B com 2 dias, os outros com 1.
         teacherAAgenda.Days.Should().ContainSingle().Which.Day.Should().Be(Day.Monday);
@@ -413,7 +409,7 @@ public partial class IntegrationTests
         {
             var @class = await directorClient.CreateClass(disciplineId, period.Id, campusId: campus.Id).Success();
             await directorClient.UpdateClassTeachers(@class.Id, [teacherId]);
-            await directorClient.UpdateClassSchedules(@class.Id, [(day, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
+            await directorClient.UpdateClassSchedules(@class.Id, [(day, Hour.H07_00, Hour.H10_00, teacherId, sala01.Id)]);
             await directorClient.ReleaseClassForEnrollment(@class.Id);
             await directorClient.AssignStudentToClass(studentA.Id, @class.Id);
             await directorClient.StartClass(@class.Id);
@@ -425,8 +421,8 @@ public partial class IntegrationTests
         await directorClient.UpdateClassTeachers(secondClass.Id, [teacherB.Id]);
         await directorClient.UpdateClassSchedules(secondClass.Id,
         [
-            (Day.Tuesday, Hour.H13_00, Hour.H16_00, null, sala02.Id),
-            (Day.Thursday, Hour.H13_00, Hour.H16_00, null, sala01.Id),
+            (Day.Tuesday, Hour.H13_00, Hour.H16_00, teacherB.Id, sala02.Id),
+            (Day.Thursday, Hour.H13_00, Hour.H16_00, teacherB.Id, sala01.Id),
         ]);
         await directorClient.ReleaseClassForEnrollment(secondClass.Id);
 
@@ -456,11 +452,11 @@ public partial class IntegrationTests
 
         var tuesdayAfternoon = occupancy.Cells.First(c => c.Day == Day.Tuesday && c.Shift == Shift.Afternoon);
         tuesdayAfternoon.UsedMinutes.Should().Be(180);
-        tuesdayAfternoon.AvailableMinutes.Should().Be(720); // 2 salas x 12h–18h
-        tuesdayAfternoon.UsedMinutesRate.Should().Be(25M);
+        tuesdayAfternoon.AvailableMinutes.Should().Be(600); // 2 salas x 13h–18h
+        tuesdayAfternoon.UsedMinutesRate.Should().Be(30M);
         tuesdayAfternoon.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(0);
         tuesdayAfternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutes.Should().Be(180);
-        tuesdayAfternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutesRate.Should().Be(50M);
+        tuesdayAfternoon.Classrooms.First(c => c.Id == sala02.Id).UsedMinutesRate.Should().Be(60M);
 
         var thursdayAfternoon = occupancy.Cells.First(c => c.Day == Day.Thursday && c.Shift == Shift.Afternoon);
         thursdayAfternoon.Classrooms.First(c => c.Id == sala01.Id).UsedMinutes.Should().Be(180);
@@ -470,21 +466,21 @@ public partial class IntegrationTests
         var sala01Shifts = occupancy.Cells
             .Where(c => c.Classrooms.Any(x => x.Id == sala01.Id && x.UsedMinutes > 0))
             .Select(c => c.Shift).Distinct().ToList();
-        sala01Shifts.Should().BeEquivalentTo(new[] { Shift.Morning, Shift.Afternoon });
+        sala01Shifts.Should().BeEquivalentTo([Shift.Morning, Shift.Afternoon]);
 
         var sala02Shifts = occupancy.Cells
             .Where(c => c.Classrooms.Any(x => x.Id == sala02.Id && x.UsedMinutes > 0))
             .Select(c => c.Shift).Distinct().ToList();
-        sala02Shifts.Should().BeEquivalentTo(new[] { Shift.Afternoon });
-
+        sala02Shifts.Should().BeEquivalentTo([Shift.Afternoon]);
+    
         // Espaço ocioso em minutos: 2 salas x 900min/dia x 5 dias = 9000min abertos,
         // 6 blocos de 180min usados.
         var openMinutes = occupancy.Cells.Sum(c => c.AvailableMinutes);
         var usedMinutes = occupancy.Cells.Sum(c => c.UsedMinutes);
-        openMinutes.Should().Be(9000);
+        openMinutes.Should().Be(7800);
         usedMinutes.Should().Be(1080);
-        (openMinutes - usedMinutes).Should().Be(7920);
-        occupancy.OverallUsedMinutesRate.Should().Be(12M);
+        (openMinutes - usedMinutes).Should().Be(6720);
+        occupancy.OverallUsedMinutesRate.Should().Be(13.85M);
 
         // Assert — o professor das duas turmas vê 2 blocos na terça, em salas diferentes.
         teacherBAgenda.Days.Select(d => d.Day).Should().Equal(
@@ -576,23 +572,23 @@ public partial class IntegrationTests
         // Campus 1: Geometria segunda de manhã na Sala 01, Algoritmos terça de manhã na Sala 02.
         var geometriaClass = await directorClient.CreateClass(geometria.Id, period.Id, campusId: campusA.Id).Success();
         await directorClient.UpdateClassTeachers(geometriaClass.Id, [teacherA.Id]);
-        await directorClient.UpdateClassSchedules(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
+        await directorClient.UpdateClassSchedules(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacherA.Id, sala01.Id)]);
         await directorClient.ReleaseClassForEnrollment(geometriaClass.Id);
 
         var algoritmosClass = await directorClient.CreateClass(algoritmos.Id, period.Id, campusId: campusA.Id).Success();
         await directorClient.UpdateClassTeachers(algoritmosClass.Id, [teacherB.Id]);
-        await directorClient.UpdateClassSchedules(algoritmosClass.Id, [(Day.Tuesday, Hour.H07_00, Hour.H10_00, null, sala02.Id)]);
+        await directorClient.UpdateClassSchedules(algoritmosClass.Id, [(Day.Tuesday, Hour.H07_00, Hour.H10_00, teacherB.Id, sala02.Id)]);
         await directorClient.ReleaseClassForEnrollment(algoritmosClass.Id);
 
         // Campus 2: Didática segunda de manhã na Sala 03, Psicologia sexta à tarde na Sala 04.
         var didaticaClass = await directorClient.CreateClass(didatica.Id, period.Id, campusId: campusB.Id).Success();
         await directorClient.UpdateClassTeachers(didaticaClass.Id, [teacherC.Id]);
-        await directorClient.UpdateClassSchedules(didaticaClass.Id, [(Day.Monday, Hour.H08_00, Hour.H11_00, null, sala03.Id)]);
+        await directorClient.UpdateClassSchedules(didaticaClass.Id, [(Day.Monday, Hour.H08_00, Hour.H11_00, teacherC.Id, sala03.Id)]);
         await directorClient.ReleaseClassForEnrollment(didaticaClass.Id);
 
         var psicologiaClass = await directorClient.CreateClass(psicologia.Id, period.Id, campusId: campusB.Id).Success();
         await directorClient.UpdateClassTeachers(psicologiaClass.Id, [teacherB.Id]);
-        await directorClient.UpdateClassSchedules(psicologiaClass.Id, [(Day.Friday, Hour.H14_00, Hour.H16_00, null, sala04.Id)]);
+        await directorClient.UpdateClassSchedules(psicologiaClass.Id, [(Day.Friday, Hour.H14_00, Hour.H16_00, teacherB.Id, sala04.Id)]);
         await directorClient.ReleaseClassForEnrollment(psicologiaClass.Id);
 
         var studentA = await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -637,7 +633,7 @@ public partial class IntegrationTests
         // Campus 1: 360min de 9000min (2 salas x 900min x 5 dias).
         occupancyA.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning).UsedMinutes.Should().Be(180);
         occupancyA.Cells.First(c => c.Day == Day.Tuesday && c.Shift == Shift.Morning).UsedMinutes.Should().Be(180);
-        occupancyA.OverallUsedMinutesRate.Should().Be(4M);
+        occupancyA.OverallUsedMinutesRate.Should().Be(4.62M);
 
         // Campus 2: 300min de 6600min (2 salas x 660min x 5 dias). O denominador menor
         // é o que permite ranquear campi sem penalizar quem abre menos.
@@ -698,7 +694,7 @@ public partial class IntegrationTests
 
         var @class = await directorClient.CreateClass(discipline.Id, firstPeriod.Id, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await directorClient.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
+        await directorClient.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, sala01.Id)]);
         await directorClient.ReleaseClassForEnrollment(@class.Id);
 
         var student = await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -809,12 +805,12 @@ public partial class IntegrationTests
 
         var geometriaClass = await directorClient.CreateClass(geometria.Id, period.Id, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(geometriaClass.Id, [teacherA.Id]);
-        await directorClient.UpdateClassSchedules(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
+        await directorClient.UpdateClassSchedules(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacherA.Id, sala01.Id)]);
         await directorClient.ReleaseClassForEnrollment(geometriaClass.Id);
 
         var algoritmosClass = await directorClient.CreateClass(algoritmos.Id, period.Id, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(algoritmosClass.Id, [teacherB.Id]);
-        await directorClient.UpdateClassSchedules(algoritmosClass.Id, [(Day.Wednesday, Hour.H19_00, Hour.H22_00, null, sala02.Id)]);
+        await directorClient.UpdateClassSchedules(algoritmosClass.Id, [(Day.Wednesday, Hour.H19_00, Hour.H22_00, teacherB.Id, sala02.Id)]);
         await directorClient.ReleaseClassForEnrollment(algoritmosClass.Id);
 
         // Aluno com um responsável só.
@@ -939,12 +935,12 @@ public partial class IntegrationTests
         // Turma cheia: 40 vagas, 3 matriculados.
         var fullClass = await directorClient.CreateClass(geometria.Id, period.Id, vacancies: 40, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(fullClass.Id, [teacherA.Id]);
-        await directorClient.UpdateClassSchedules(fullClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
+        await directorClient.UpdateClassSchedules(fullClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacherA.Id, sala01.Id)]);
 
         // Turma vazia: mesmas 40 vagas, 1 matriculado — candidata a cancelamento.
         var emptyClass = await directorClient.CreateClass(algoritmos.Id, period.Id, vacancies: 40, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(emptyClass.Id, [teacherB.Id]);
-        await directorClient.UpdateClassSchedules(emptyClass.Id, [(Day.Tuesday, Hour.H19_00, Hour.H22_00, null, sala02.Id)]);
+        await directorClient.UpdateClassSchedules(emptyClass.Id, [(Day.Tuesday, Hour.H19_00, Hour.H22_00, teacherB.Id, sala02.Id)]);
 
         // Antes de liberar, nenhum aluno entra.
         var studentBeforeRelease = await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -1073,7 +1069,7 @@ public partial class IntegrationTests
         {
             var @class = await directorClient.CreateClass(disciplineId, period.Id, campusId: campus.Id).Success();
             await directorClient.UpdateClassTeachers(@class.Id, [busyTeacher.Id]);
-            await directorClient.UpdateClassSchedules(@class.Id, [(day, Hour.H07_00, Hour.H11_00, null, sala01.Id)]);
+            await directorClient.UpdateClassSchedules(@class.Id, [(day, Hour.H07_00, Hour.H11_00, busyTeacher.Id, sala01.Id)]);
             await directorClient.ReleaseClassForEnrollment(@class.Id);
             await directorClient.AssignStudentToClass(student.Id, @class.Id);
             await directorClient.StartClass(@class.Id);
@@ -1081,7 +1077,7 @@ public partial class IntegrationTests
 
         var lightClass = await directorClient.CreateClass(disciplines[5], period.Id, campusId: campus.Id).Success();
         await directorClient.UpdateClassTeachers(lightClass.Id, [lightTeacher.Id]);
-        await directorClient.UpdateClassSchedules(lightClass.Id, [(Day.Monday, Hour.H19_00, Hour.H21_00, null, sala01.Id)]);
+        await directorClient.UpdateClassSchedules(lightClass.Id, [(Day.Monday, Hour.H19_00, Hour.H21_00, lightTeacher.Id, sala01.Id)]);
         await directorClient.ReleaseClassForEnrollment(lightClass.Id);
         await directorClient.AssignStudentToClass(student.Id, lightClass.Id);
         await directorClient.StartClass(lightClass.Id);
@@ -1293,7 +1289,7 @@ public partial class IntegrationTests
         {
             var @class = await directorClient.CreateClass(item.DisciplineId, firstPeriod.Id, vacancies: 100, campusId: item.CampusId).Success();
             await directorClient.UpdateClassTeachers(@class.Id, [item.TeacherId]);
-            await directorClient.UpdateClassSchedules(@class.Id, [(item.Day, item.Start, item.End, null, item.ClassroomId)]);
+            await directorClient.UpdateClassSchedules(@class.Id, [(item.Day, item.Start, item.End, item.TeacherId, item.ClassroomId)]);
             await directorClient.ReleaseClassForEnrollment(@class.Id);
             classIds.Add(@class.Id);
         }
@@ -1390,8 +1386,8 @@ public partial class IntegrationTests
             // A noite tem menos minutos abertos, então o mesmo bloco pesa mais.
             var evening = agresteOccupancy.Cells.First(c => c.Day == day && c.Shift == Shift.Evening);
             evening.UsedMinutes.Should().Be(180);
-            evening.AvailableMinutes.Should().Be(1440); // 6 salas x 18h–22h
-            evening.UsedMinutesRate.Should().Be(12.5M);
+            evening.AvailableMinutes.Should().Be(1080); // 6 salas x 19h–22h
+            evening.UsedMinutesRate.Should().Be(16.67M);
 
             agresteOccupancy.Cells.First(c => c.Day == day && c.Shift == Shift.Afternoon)
                 .UsedMinutes.Should().Be(0);
@@ -1416,8 +1412,8 @@ public partial class IntegrationTests
         {
             var afternoon = suassunaOccupancy.Cells.First(c => c.Day == day && c.Shift == Shift.Afternoon);
             afternoon.UsedMinutes.Should().Be(240);
-            afternoon.AvailableMinutes.Should().Be(1440); // 4 salas x 12h–18h
-            afternoon.UsedMinutesRate.Should().Be(16.67M);
+            afternoon.AvailableMinutes.Should().Be(1200); // 4 salas x 13h–18h
+            afternoon.UsedMinutesRate.Should().Be(20M);
         }
 
         // 1200min de 13200min (4 salas x 660min x 5 dias). Sem o recorte por

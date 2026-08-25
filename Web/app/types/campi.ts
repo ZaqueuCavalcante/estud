@@ -5,6 +5,7 @@ export interface CampusOccupancyClassroom {
   usedMinutes: number
   usedMinutesRate: number
   usedCapacityRate: number
+  averageStudents: number
 }
 
 export interface CampusOccupancyCell {

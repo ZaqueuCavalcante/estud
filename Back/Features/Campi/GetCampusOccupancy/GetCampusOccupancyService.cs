@@ -70,6 +70,7 @@ public class GetCampusOccupancyService(EstudDbContext ctx) : IEstudService
                         UsedMinutes = classroomUsedMinutes,
                         AvailableMinutes = campusOpenMinutes,
                         UsedMinutesRate = ToRate(classroomUsedMinutes, campusOpenMinutes),
+                        AverageStudents = ToAverageStudents(classroomUsedCapacity, campusOpenMinutes),
                         UsedCapacityRate = ToRate(classroomUsedCapacity, campusOpenMinutes * classroom.Capacity),
                     });
                 }
