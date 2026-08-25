@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 namespace Estud.Back.Features.Notifications.GetNotifications;
 
 public class GetNotificationsOut : IApiDto<GetNotificationsOut>
@@ -40,5 +38,5 @@ public class GetNotificationsItemOut
     public string Description { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? ViewedAt { get; set; }
-    public JsonDocument? Metadata { get; set; }
+    public object? Metadata { get; set; }
 }

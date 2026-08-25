@@ -73,7 +73,7 @@ public partial class IntegrationTests : IntegrationTestBase
         response.ShouldBeSuccess();
     }
 
-    [Test, Ignore("Fix")]
+    [Test]
     public async Task Users_RegisterUser_Should_create_a_welcome_notification_for_the_new_manager()
     {
         // Arrange
