@@ -20,10 +20,6 @@ export interface GetCalendarOut {
   items: CalendarItem[]
 }
 
-// Períodos letivos e de matrícula: o backend guarda só o par início/fim, e os
-// dias cobertos são derivados do range aqui no front.
-export type PeriodType = 'Academic' | 'Enrollment'
-
 export interface PeriodItem {
   id: number
   name: string
@@ -34,4 +30,11 @@ export interface PeriodItem {
 export interface GetPeriodsOut {
   total: number
   items: PeriodItem[]
+}
+
+// Item das listas laterais que destacam dias no calendário (períodos, feriados).
+export interface HighlightItem {
+  key: string
+  label: string
+  hint?: string
 }
