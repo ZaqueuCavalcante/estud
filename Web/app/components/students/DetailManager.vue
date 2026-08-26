@@ -16,9 +16,16 @@ const breadcrumb = [
 
 const config = useRuntimeConfig()
 
-const { data, status, error } = await useFetch<GetStudentDetailsOut>(
+const { data, status, error, refresh } = await useFetch<GetStudentDetailsOut>(
   `${config.public.backendUrl}/students/${props.studentId}/details`,
   { credentials: 'include', server: false },
+)
+
+const courseOfferingModalOpen = ref(false)
+
+const studentRef = computed(() => data.value
+  ? { id: data.value.id, currentCourseOfferingId: data.value.course?.courseOfferingId ?? null }
+  : null,
 )
 
 const { data: institutionConfig } = await useFetch<InstitutionConfig>(
@@ -195,9 +202,20 @@ const classColumns: TableColumn<StudentClassItem>[] = [
         </div>
 
         <section class="flex flex-col gap-3">
-          <h2 class="font-semibold text-highlighted">
-            Curso
-          </h2>
+          <div class="flex items-center gap-1.5">
+            <h2 class="font-semibold text-highlighted">
+              Curso
+            </h2>
+            <UTooltip text="Oferta de curso">
+              <UButton
+                icon="i-lucide-library"
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                @click="(e) => { (e.currentTarget as HTMLElement).blur(); courseOfferingModalOpen = true }"
+              />
+            </UTooltip>
+          </div>
 
           <div
             v-if="data.course"
@@ -247,6 +265,12 @@ const classColumns: TableColumn<StudentClassItem>[] = [
             </template>
           </DataTable>
         </section>
+
+        <StudentsCourseOfferingModal
+          v-model:open="courseOfferingModalOpen"
+          :student="studentRef"
+          @enrolled="refresh()"
+        />
       </div>
     </template>
   </UDashboardPanel>

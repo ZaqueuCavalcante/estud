@@ -25,7 +25,6 @@ internal class ErrorsExamples : ErrorExamplesProvider<
     RoleNotFound,
     InvalidRoleName,
     InvalidRoleDescription,
-    InvalidRoleBaseType,
     InvalidPermissionsList,
     InvalidPermissionsForUserType,
     RoleNameAlreadyExists,

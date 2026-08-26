@@ -18,6 +18,9 @@ public class CreateLessonAttendanceService(EstudDbContext ctx) : IEstudService
         var assigned = await ctx.ClassTeachers.AnyAsync(ct => ct.ClassId == lesson.ClassId && ct.TeacherId == teacherId);
         if (!assigned) return TeacherNotAssignedToClass.I;
 
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        if (lesson.Date > today) return ClassLessonNotStarted.I;
+
         var students = await ctx.ClassStudents.AsNoTracking()
             .Where(cs => cs.ClassId == lesson.ClassId && cs.Status == StudentClassStatus.Matriculado)
             .Select(cs => cs.StudentId).ToListAsync();

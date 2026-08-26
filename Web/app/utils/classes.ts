@@ -113,3 +113,9 @@ export function formatClassLessonDate(date: string) {
 export function formatClassLesson(lesson: ClassLessonItem) {
   return `${formatClassLessonDate(lesson.date)} · ${formatClassHour(lesson.startAt)} – ${formatClassHour(lesson.endAt)}`
 }
+
+// O backend compara a data da aula com hoje em UTC, então a UI usa a mesma
+// referência para nunca liberar uma chamada que a API vai recusar.
+export function isFutureClassLesson(lesson: ClassLessonItem) {
+  return lesson.date > new Date().toISOString().slice(0, 10)
+}

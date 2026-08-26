@@ -154,6 +154,13 @@ public class ClassLessonNotFound : EstudError
     public override string Message { get; set; } = "Aula não encontrada.";
 }
 
+public class ClassLessonNotStarted : EstudError
+{
+    public static readonly ClassLessonNotStarted I = new();
+    public override string Code { get; set; } = nameof(ClassLessonNotStarted);
+    public override string Message { get; set; } = "Não é possível fazer a chamada de uma aula que ainda não aconteceu.";
+}
+
 public class InvalidStudentsList : EstudError
 {
     public static readonly InvalidStudentsList I = new();

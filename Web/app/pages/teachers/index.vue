@@ -22,25 +22,6 @@ const UTooltip = resolveComponent('UTooltip')
 
 const config = useRuntimeConfig()
 const createModalOpen = ref(false)
-const editModalOpen = ref(false)
-const campiModalOpen = ref(false)
-const disciplinesModalOpen = ref(false)
-const selectedTeacher = ref<TeacherItem | null>(null)
-
-function openEdit(teacher: TeacherItem) {
-  selectedTeacher.value = teacher
-  editModalOpen.value = true
-}
-
-function openCampi(teacher: TeacherItem) {
-  selectedTeacher.value = teacher
-  campiModalOpen.value = true
-}
-
-function openDisciplines(teacher: TeacherItem) {
-  selectedTeacher.value = teacher
-  disciplinesModalOpen.value = true
-}
 
 const route = useRoute()
 const router = useRouter()
@@ -101,27 +82,6 @@ const columns: TableColumn<TeacherItem>[] = [
   {
     id: 'actions',
     cell: ({ row }) => h('div', { class: 'flex gap-1' }, [
-      h(UTooltip, { text: 'Editar' }, () => h(UButton, {
-        icon: 'i-lucide-pencil',
-        color: 'neutral',
-        variant: 'ghost',
-        size: 'sm',
-        onClick: (e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); openEdit(row.original) },
-      })),
-      h(UTooltip, { text: 'Campi' }, () => h(UButton, {
-        icon: 'i-lucide-map-pin',
-        color: 'neutral',
-        variant: 'ghost',
-        size: 'sm',
-        onClick: (e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); openCampi(row.original) },
-      })),
-      h(UTooltip, { text: 'Disciplinas' }, () => h(UButton, {
-        icon: 'i-lucide-book-open',
-        color: 'neutral',
-        variant: 'ghost',
-        size: 'sm',
-        onClick: (e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); openDisciplines(row.original) },
-      })),
       h(UTooltip, { text: 'Ver detalhes' }, () => h(UButton, {
         icon: 'i-lucide-arrow-right',
         color: 'neutral',
@@ -204,7 +164,4 @@ const columns: TableColumn<TeacherItem>[] = [
   </UDashboardPanel>
 
   <TeachersCreateModal v-model:open="createModalOpen" @created="refresh()" />
-  <TeachersEditModal v-model:open="editModalOpen" :teacher="selectedTeacher" @updated="refresh()" />
-  <TeachersCampiModal v-model:open="campiModalOpen" :teacher="selectedTeacher" @updated="refresh()" />
-  <TeachersDisciplinesModal v-model:open="disciplinesModalOpen" :teacher="selectedTeacher" @updated="refresh()" />
 </template>

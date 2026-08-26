@@ -25,5 +25,6 @@ internal class ResponseExamples : ExamplesProvider<SuccessOut>;
 internal class ErrorsExamples : ErrorExamplesProvider<
     ClassLessonNotFound,
     TeacherNotAssignedToClass,
+    ClassLessonNotStarted,
     InvalidStudentsList
 >;

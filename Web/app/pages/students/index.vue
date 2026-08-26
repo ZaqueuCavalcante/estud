@@ -22,13 +22,6 @@ const UTooltip = resolveComponent('UTooltip')
 
 const config = useRuntimeConfig()
 const createModalOpen = ref(false)
-const courseOfferingModalOpen = ref(false)
-const selectedStudent = ref<StudentItem | null>(null)
-
-function openCourseOffering(student: StudentItem) {
-  selectedStudent.value = student
-  courseOfferingModalOpen.value = true
-}
 
 const route = useRoute()
 const router = useRouter()
@@ -89,13 +82,6 @@ const columns: TableColumn<StudentItem>[] = [
   {
     id: 'actions',
     cell: ({ row }) => h('div', { class: 'flex gap-1' }, [
-      h(UTooltip, { text: 'Oferta de curso' }, () => h(UButton, {
-        icon: 'i-lucide-library',
-        color: 'neutral',
-        variant: 'ghost',
-        size: 'sm',
-        onClick: (e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); openCourseOffering(row.original) },
-      })),
       h(UTooltip, { text: 'Ver detalhes' }, () => h(UButton, {
         icon: 'i-lucide-arrow-right',
         color: 'neutral',
@@ -178,5 +164,4 @@ const columns: TableColumn<StudentItem>[] = [
   </UDashboardPanel>
 
   <StudentsCreateModal v-model:open="createModalOpen" @created="refresh()" />
-  <StudentsCourseOfferingModal v-model:open="courseOfferingModalOpen" :student="selectedStudent" @enrolled="refresh()" />
 </template>

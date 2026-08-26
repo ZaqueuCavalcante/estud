@@ -108,10 +108,8 @@ watch(activeTab, (tab) => {
   else if (tab === 'activities') refreshActivities()
 })
 
-// Alunos matriculados usados na chamada — vêm dos dados gerais da turma,
-// para a chamada funcionar independente da tab de Alunos ter sido aberta.
 const enrolledStudents = computed(() =>
-  (data.value?.students ?? []).filter(s => s.status === 'Matriculado'),
+  students.value.filter(s => s.status === 'Matriculado'),
 )
 
 const createActivityModalOpen = ref(false)
@@ -251,6 +249,7 @@ function openAttendance(lesson: ClassLessonItem) {
                     color="neutral"
                     variant="subtle"
                     size="sm"
+                    :disabled="isFutureClassLesson(lesson)"
                     @click="() => { openAttendance(lesson) }"
                   />
                 </div>

@@ -63,7 +63,6 @@ export interface GetTeacherClassOut {
   workload: number
   status: string
   schedules: ClassSchedule[]
-  students: ClassStudentItem[]
 }
 
 export interface GetTeacherClassStudentsOut {
