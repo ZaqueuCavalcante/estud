@@ -74,7 +74,6 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
     header: 'Frequência média',
     cell: ({ row }) => {
       const attendance = row.original.averageAttendance
-      if (attendance == null) return h('span', { class: 'text-muted' }, '—')
       const color = attendance < frequencyLimit.value ? 'text-error' : 'text-success'
       return h('span', { class: `font-medium ${color}` }, `${Math.round(attendance)}%`)
     },

@@ -32,33 +32,30 @@ public class GetClassService(EstudDbContext ctx) : IEstudService
             .Where(c => classroomIds.Contains(c.Id))
             .ToDictionaryAsync(c => c.Id, c => c.Name);
 
-        var classStudents = await ctx.ClassStudents.AsNoTracking()
-            .Where(cs => cs.ClassId == classId)
-            .OrderBy(cs => cs.Student!.Name)
-            .Select(cs => new
-            {
-                cs.Student!.Id,
-                cs.Student.Name,
-                cs.Status,
-            })
-            .ToListAsync();
+        var classStudents = await GetClassStudents(classId);
 
-        // Mock: nota e frequência médias aleatórias, porém estáveis por aluno (seed = Id).
-        // TODO: calcular a partir das notas e presenças reais do aluno na turma.
+        // Mock: nota média aleatória, porém estáveis por aluno (seed = Id).
+        // TODO: calcular a partir das notas reais do aluno na turma.
         var students = classStudents
             .Select(s =>
             {
                 var random = new Random(s.Id);
+                var attendances = s.Presences + s.Absences;
                 return new GetClassStudentOut
                 {
                     Id = s.Id,
                     Name = s.Name,
                     Status = s.Status,
                     AverageGrade = Math.Round((decimal)(random.NextDouble() * 10), 1),
-                    AverageAttendance = Math.Round((decimal)(random.NextDouble() * 100), 1),
+                    AverageAttendance = attendances > 0 ? Math.Round((decimal)s.Presences / attendances * 100, 1) : 0,
                 };
             })
             .ToList();
+
+        var totalAttendances = classStudents.Sum(s => s.Presences + s.Absences);
+        var averageAttendance = totalAttendances > 0
+            ? Math.Round((decimal)classStudents.Sum(s => s.Presences) / totalAttendances * 100, 1)
+            : 0;
 
         return new GetClassOut
         {
@@ -71,6 +68,7 @@ public class GetClassService(EstudDbContext ctx) : IEstudService
             Vacancies = @class.Vacancies,
             Workload = @class.Workload,
             Status = @class.Status,
+            AverageAttendance = averageAttendance,
             Teachers = @class.Teachers
                 .OrderBy(t => t.Name)
                 .Select(t => new GetClassTeacherOut { Id = t.Id, Name = t.Name })
@@ -87,5 +85,33 @@ public class GetClassService(EstudDbContext ctx) : IEstudService
                 .ToList(),
             Students = students,
         };
+    }
+
+    private async Task<List<GetClassStudentDto>> GetClassStudents(int classId)
+    {
+        const string sql = @"
+            SELECT
+                s.id      AS id,
+                s.name    AS name,
+                cs.status AS status,
+                count(cla.id) FILTER (WHERE cla.present)     AS presences,
+                count(cla.id) FILTER (WHERE NOT cla.present) AS absences
+            FROM
+                estud.classes__students cs
+            INNER JOIN
+                estud.students s ON s.id = cs.student_id
+            LEFT JOIN
+                estud.class_lesson_attendances cla ON cla.class_id = cs.class_id AND cla.student_id = s.id
+            WHERE
+                cs.class_id = {0}
+            GROUP BY
+                s.id, cs.status
+            ORDER BY
+                s.name
+        ";
+
+        return await ctx.Database
+            .SqlQueryRaw<GetClassStudentDto>(sql, classId)
+            .AsNoTracking().ToListAsync();
     }
 }

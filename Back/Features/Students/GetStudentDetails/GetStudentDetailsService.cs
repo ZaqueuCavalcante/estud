@@ -13,19 +13,31 @@ public class GetStudentDetailsService(EstudDbContext ctx) : IEstudService
 
         var course = await GetCourse(studentId);
         var classes = await GetClasses(studentId, institutionId);
+        var attendances = (await GetAttendances(studentId)).ToDictionary(a => a.ClassId);
 
-        // Mock: nota e frequência médias aleatórias, porém estáveis por aluno (seed = Id),
-        // iguais às exibidas no detalhe da turma.
-        // TODO: calcular a partir das notas e presenças reais do aluno.
+        // Mock: nota média aleatória, porém estável por aluno (seed = Id),
+        // igual à exibida no detalhe da turma.
+        // TODO: calcular a partir das notas reais do aluno.
         var random = new Random(student.Id);
         var averageGrade = Math.Round((decimal)(random.NextDouble() * 10), 1);
-        var averageAttendance = Math.Round((decimal)(random.NextDouble() * 100), 1);
 
         foreach (var @class in classes)
         {
             @class.AverageGrade = averageGrade;
-            @class.AverageAttendance = averageAttendance;
+            @class.AverageAttendance = attendances.TryGetValue(@class.Id, out var attendance)
+                ? Percent(attendance.Presences, attendance.Presences + attendance.Absences)
+                : 0;
         }
+
+        var startedClassIds = classes
+            .Where(c => c.Status == ClassStatus.Started)
+            .Select(c => c.Id)
+            .ToHashSet();
+        var started = attendances.Values.Where(a => startedClassIds.Contains(a.ClassId)).ToList();
+        var averageAttendance = Percent(
+            started.Sum(a => a.Presences),
+            started.Sum(a => a.Presences + a.Absences)
+        );
 
         return new GetStudentDetailsOut
         {
@@ -40,6 +52,31 @@ public class GetStudentDetailsService(EstudDbContext ctx) : IEstudService
             Course = course,
             Classes = classes,
         };
+    }
+
+    private static decimal Percent(int presences, int attendances) =>
+        attendances > 0 ? Math.Round((decimal)presences / attendances * 100, 1) : 0;
+
+    private async Task<List<GetStudentClassAttendanceDto>> GetAttendances(int studentId)
+    {
+        const string sql = @"
+            SELECT
+                cs.class_id AS class_id,
+                count(cla.id) FILTER (WHERE cla.present)     AS presences,
+                count(cla.id) FILTER (WHERE NOT cla.present) AS absences
+            FROM
+                estud.classes__students cs
+            LEFT JOIN
+                estud.class_lesson_attendances cla ON cla.class_id = cs.class_id AND cla.student_id = cs.student_id
+            WHERE
+                cs.student_id = {0}
+            GROUP BY
+                cs.class_id
+        ";
+
+        return await ctx.Database
+            .SqlQueryRaw<GetStudentClassAttendanceDto>(sql, studentId)
+            .AsNoTracking().ToListAsync();
     }
 
     private async Task<GetStudentDetailsCourseOut?> GetCourse(int studentId)

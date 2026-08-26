@@ -120,9 +120,10 @@ const occupancyRingClass = computed(() => {
   return 'text-success'
 })
 
-// Mock: ainda não há endpoint para nota média e frequência média da turma.
+// Mock: ainda não há endpoint para nota média da turma.
 const averageGrade = ref(7.8)
-const averageAttendance = ref(87)
+
+const averageAttendance = computed(() => data.value?.averageAttendance ?? 0)
 
 const noteLimit = computed(() => institutionConfig.value?.noteLimit ?? 7)
 const frequencyLimit = computed(() => institutionConfig.value?.frequencyLimit ?? 70)
@@ -164,7 +165,6 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
     header: 'Frequência média',
     cell: ({ row }) => {
       const attendance = row.original.averageAttendance
-      if (attendance == null) return h('span', { class: 'text-muted' }, '—')
       const color = attendance < frequencyLimit.value ? 'text-error' : 'text-success'
       return h('span', { class: `font-medium ${color}` }, `${Math.round(attendance)}%`)
     },
@@ -361,7 +361,7 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
             />
             <ClassesRingStat
               :percent="averageAttendance"
-              :center-text="`${averageAttendance}%`"
+              :center-text="`${Math.round(averageAttendance)}%`"
               title="Frequência média"
               subtitle="da turma"
               :color-class="attendanceRingClass"
