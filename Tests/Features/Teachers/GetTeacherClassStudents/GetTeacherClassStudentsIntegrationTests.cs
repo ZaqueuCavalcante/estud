@@ -199,5 +199,67 @@ public partial class IntegrationTests
         students.Select(x => x.Name).Should().ContainInOrder("Ana Beatriz", "Bruno Silva", "Carlos Andrade");
     }
 
+    [Test]
+    public async Task Teachers_GetTeacherClassStudents_Should_get_students_attendances()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var period = await director.CreateAcademicPeriod().Success();
+        var ana = await director.CreateStudent("Ana Beatriz", DataGen.Email).Success();
+        var bruno = await director.CreateStudent("Bruno Silva", DataGen.Email).Success();
+        var (classId, teacher) = await _back.ArrangeStartedClass(director, period.Id, [ana.Id, bruno.Id]);
+
+        var lessons = (await teacher.GetTeacherClassLessons(classId).Success()).Lessons;
+        await teacher.CreateLessonAttendance(lessons[0].Id, [ana.Id, bruno.Id]);
+        await teacher.CreateLessonAttendance(lessons[1].Id, [ana.Id]);
+        await teacher.CreateLessonAttendance(lessons[2].Id, []);
+
+        // Act
+        var result = await teacher.GetTeacherClassStudents(classId);
+
+        // Assert
+        var students = result.Success.Students;
+        students.First(s => s.Id == ana.Id).AverageAttendance.Should().Be(66.7M);
+        students.First(s => s.Id == bruno.Id).AverageAttendance.Should().Be(33.3M);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassStudents_Should_get_full_attendance_when_student_was_always_present()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var period = await director.CreateAcademicPeriod().Success();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var (classId, teacher) = await _back.ArrangeStartedClass(director, period.Id, [student.Id]);
+
+        var lessons = (await teacher.GetTeacherClassLessons(classId).Success()).Lessons;
+        await teacher.CreateLessonAttendance(lessons[0].Id, [student.Id]);
+        await teacher.CreateLessonAttendance(lessons[1].Id, [student.Id]);
+
+        // Act
+        var result = await teacher.GetTeacherClassStudents(classId);
+
+        // Assert
+        result.Success.Students.Should().ContainSingle()
+            .Which.AverageAttendance.Should().Be(100M);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassStudents_Should_get_zeroed_attendances_when_no_lesson_was_recorded()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var period = await director.CreateAcademicPeriod().Success();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var (classId, teacher) = await _back.ArrangeStartedClass(director, period.Id, [student.Id]);
+
+        // Act
+        var result = await teacher.GetTeacherClassStudents(classId);
+
+        // Assert
+        result.Success.Students.Should().ContainSingle()
+            .Which.AverageAttendance.Should().Be(0M);
+    }
+
     #endregion
 }

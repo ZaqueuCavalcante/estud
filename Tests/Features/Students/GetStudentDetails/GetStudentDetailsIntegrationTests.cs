@@ -160,5 +160,92 @@ public partial class IntegrationTests
         details.Classes[0].MyStatus.Should().Be(StudentClassStatus.Matriculado);
     }
 
+    [Test]
+    public async Task Students_GetStudentDetails_Should_get_attendances_of_each_class()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var period = await director.CreateAcademicPeriod().Success();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+
+        var geometry = await _back.ArrangeStartedClass(director, period.Id, [student.Id], "Geometria");
+        var algebra = await _back.ArrangeStartedClass(director, period.Id, [student.Id], "Álgebra", Day.Tuesday);
+
+        var geometryLessons = (await geometry.Teacher.GetTeacherClassLessons(geometry.ClassId).Success()).Lessons;
+        await geometry.Teacher.CreateLessonAttendance(geometryLessons[0].Id, [student.Id]);
+        await geometry.Teacher.CreateLessonAttendance(geometryLessons[1].Id, [student.Id]);
+        await geometry.Teacher.CreateLessonAttendance(geometryLessons[2].Id, []);
+
+        var algebraLessons = (await algebra.Teacher.GetTeacherClassLessons(algebra.ClassId).Success()).Lessons;
+        await algebra.Teacher.CreateLessonAttendance(algebraLessons[0].Id, [student.Id]);
+        await algebra.Teacher.CreateLessonAttendance(algebraLessons[1].Id, []);
+
+        // Act
+        var result = await director.GetStudentDetails(student.Id);
+
+        // Assert
+        var details = result.Success;
+        details.Classes.First(c => c.Id == geometry.ClassId).AverageAttendance.Should().Be(66.7M);
+        details.Classes.First(c => c.Id == algebra.ClassId).AverageAttendance.Should().Be(50M);
+        details.AverageAttendance.Should().Be(60M);
+    }
+
+    [Test]
+    public async Task Students_GetStudentDetails_Should_get_average_attendance_only_of_started_classes()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var period = await director.CreateAcademicPeriod().Success();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+
+        var started = await _back.ArrangeStartedClass(director, period.Id, [student.Id], "Geometria");
+        var finalized = await _back.ArrangeStartedClass(director, period.Id, [student.Id], "Álgebra", Day.Tuesday);
+
+        var startedLessons = (await started.Teacher.GetTeacherClassLessons(started.ClassId).Success()).Lessons;
+        await started.Teacher.CreateLessonAttendance(startedLessons[0].Id, [student.Id]);
+        await started.Teacher.CreateLessonAttendance(startedLessons[1].Id, []);
+
+        var finalizedLessons = (await finalized.Teacher.GetTeacherClassLessons(finalized.ClassId).Success()).Lessons;
+        await finalized.Teacher.CreateLessonAttendance(finalizedLessons[0].Id, [student.Id]);
+        await finalized.Teacher.CreateLessonAttendance(finalizedLessons[1].Id, [student.Id]);
+
+        // Nenhum endpoint encerra uma turma, então o status vai direto no banco.
+        await using (var arrangeCtx = _back.GetDbContext())
+        {
+            var @class = await arrangeCtx.Classes.FirstAsync(c => c.Id == finalized.ClassId);
+            @class.Status = ClassStatus.Finalized;
+            await arrangeCtx.SaveChangesAsync();
+        }
+
+        // Act
+        var result = await director.GetStudentDetails(student.Id);
+
+        // Assert
+        var details = result.Success;
+        details.Classes.First(c => c.Id == started.ClassId).AverageAttendance.Should().Be(50M);
+        details.Classes.First(c => c.Id == finalized.ClassId).AverageAttendance.Should().Be(100M);
+        details.AverageAttendance.Should().Be(50M);
+    }
+
+    [Test]
+    public async Task Students_GetStudentDetails_Should_get_zeroed_attendances_when_no_lesson_was_recorded()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var period = await director.CreateAcademicPeriod().Success();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+
+        await _back.ArrangeStartedClass(director, period.Id, [student.Id]);
+
+        // Act
+        var result = await director.GetStudentDetails(student.Id);
+
+        // Assert
+        var details = result.Success;
+        details.Classes.Should().ContainSingle()
+            .Which.AverageAttendance.Should().Be(0M);
+        details.AverageAttendance.Should().Be(0M);
+    }
+
     #endregion
 }

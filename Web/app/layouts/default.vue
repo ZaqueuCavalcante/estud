@@ -31,6 +31,9 @@ const teacherClassesLinks = computed<NavigationMenuItem[]>(() =>
     return {
       label: name,
       to,
+      slot: 'turma' as const,
+      // Nome de disciplina raramente cabe em uma linha na largura da sidebar.
+      ui: { linkLabel: 'whitespace-normal line-clamp-4 leading-tight' },
       // Prefixo, não igualdade: as telas de dentro da turma
       // (/classes/186/activities/26) também mantêm a turma destacada.
       active: isLinkActive(to),
@@ -113,7 +116,12 @@ const groups = computed(() => [
     ? [{
         id: 'turmas',
         label: 'Turmas',
-        items: teacherClassesLinks.value.map(item => ({ ...item, icon: 'i-lucide-presentation' })),
+        items: teacherClassesLinks.value.map(({ label, to, onSelect }) => ({
+          label,
+          to,
+          onSelect,
+          icon: 'i-lucide-presentation',
+        })),
       }]
     : []),
 ])
@@ -150,7 +158,13 @@ const groups = computed(() => [
           orientation="vertical"
           tooltip
           popover
-        />
+        >
+          <template #turma-label="{ item }">
+            <UTooltip :text="item.label" :delay-duration="500" :content="{ side: 'right' }">
+              <span>{{ item.label }}</span>
+            </UTooltip>
+          </template>
+        </UNavigationMenu>
 
         <UNavigationMenu
           :collapsed="collapsed"

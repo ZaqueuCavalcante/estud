@@ -43,6 +43,13 @@ export const classActivityTypeLabels: Record<string, string> = {
   Presentation: 'Apresentação',
 }
 
+export const classActivityTypeIcons: Record<string, string> = {
+  Exam: 'i-lucide-file-pen',
+  Project: 'i-lucide-folder-kanban',
+  Work: 'i-lucide-file-text',
+  Presentation: 'i-lucide-presentation',
+}
+
 export const classActivityStatusLabels: Record<string, string> = {
   Pending: 'Pendente',
   Published: 'Publicada',

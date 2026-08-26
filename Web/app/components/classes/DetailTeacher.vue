@@ -276,37 +276,13 @@ function openAttendance(lesson: ClassLessonItem) {
               />
             </div>
 
-            <div v-if="activities.length" class="flex flex-col divide-y divide-default">
-              <NuxtLink
+            <div v-if="activities.length" class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <ActivitiesCard
                 v-for="activity in activities"
                 :key="activity.id"
+                :activity="activity"
                 :to="`/classes/${props.classId}/activities/${activity.id}`"
-                class="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between hover:bg-elevated/50"
-              >
-                <div class="flex flex-col gap-1">
-                  <span class="text-sm text-highlighted">{{ activity.title }}</span>
-                  <span class="text-xs text-muted">
-                    {{ classActivityTypeLabels[activity.type] ?? activity.type }}
-                    · {{ activity.note }}
-                    · Peso {{ activity.weight }}
-                    · Entrega até {{ formatClassActivityDueDate(activity.dueDate, activity.dueHour) }}
-                  </span>
-                </div>
-
-                <div class="flex items-center gap-2">
-                  <UBadge
-                    :label="`${activity.deliveredWorks} / ${activity.totalWorks} entregas`"
-                    color="neutral"
-                    variant="subtle"
-                    icon="i-lucide-file-check"
-                  />
-                  <UBadge
-                    :label="classActivityStatusLabels[activity.status] ?? activity.status"
-                    :color="classActivityStatusColors[activity.status] ?? 'neutral'"
-                    variant="subtle"
-                  />
-                </div>
-              </NuxtLink>
+              />
             </div>
             <div v-else class="flex flex-col items-center gap-3 py-6">
               <UIcon name="i-lucide-clipboard-list" class="size-10 text-muted" />
