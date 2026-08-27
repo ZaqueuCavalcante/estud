@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9181642001409444" branch-rate="0.76999238385377" lines-covered="10423" lines-valid="11352" branches-covered="2022" branches-valid="2626" complexity="3944" version="0" timestamp="1787781153">
+<coverage line-rate="0.9181569905735177" branch-rate="0.76999238385377" lines-covered="10422" lines-valid="11351" branches-covered="2022" branches-valid="2626" complexity="3944" version="0" timestamp="1787833612">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9198476662828802" branch-rate="0.7682271680736761" complexity="3914">
+    <package name="Back" line-rate="0.9198405668733393" branch-rate="0.7682271680736761" complexity="3914">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -13758,16 +13758,10 @@
                 <line number="25" hits="2" branch="true" condition-coverage="50% (1/2)" />
               </lines>
             </method>
-            <method name=".cctor" signature="()" line-rate="1" branch-rate="0.5" complexity="1">
+            <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="5" hits="4" branch="false" />
                 <line number="6" hits="4" branch="false" />
-                <line number="10" hits="4" branch="false" />
-                <line number="11" hits="4" branch="false" />
-                <line number="15" hits="4" branch="false" />
-                <line number="20" hits="2" branch="false" />
-                <line number="25" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="28" hits="4" branch="false" />
               </lines>
             </method>
           </methods>
@@ -13779,7 +13773,6 @@
             <line number="15" hits="4" branch="false" />
             <line number="20" hits="2" branch="false" />
             <line number="25" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="28" hits="4" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Extensions.EstudDbContextExtensions" filename="/home/runner/work/estud/estud/Back/Extensions/EstudDbContextExtensions.cs" line-rate="0" branch-rate="0" complexity="8">
