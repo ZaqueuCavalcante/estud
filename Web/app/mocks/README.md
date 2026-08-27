@@ -26,6 +26,6 @@ parâmetro, a tela vai na API normalmente.
 
 | Arquivo | Endpoint | Cenário |
 |---|---|---|
-| `campus-occupancy.json` | `GET /campi/{id}/occupancy` | Campus com 6 salas e ocupação variada ao longo da semana |
+| `campus-occupancy.json` | `GET /campi/{id}/occupancy` | Campus com 6 salas, aberto de segunda a sexta nos três turnos: 15 células abertas e 3 fechadas (sábado) |
 | `campus-occupancy-vazio.json` | `GET /campi/{id}/occupancy` | Campus sem nenhuma sala cadastrada |
 | `campus-occupancy-diurno.json` | `GET /campi/{id}/occupancy` | Campus que abre só de manhã, de segunda a sexta: 5 células abertas e 13 fechadas |

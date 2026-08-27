@@ -47,7 +47,8 @@
           "availableMinutes": 300,
           "usedMinutes": 300,
           "usedMinutesRate": 100,
-          "usedCapacityRate": 85
+          "usedCapacityRate": 85,
+          "averageStudents": 34
         },
         {
           "id": 2,
@@ -55,7 +56,8 @@
           "availableMinutes": 300,
           "usedMinutes": 180,
           "usedMinutesRate": 60,
-          "usedCapacityRate": 42
+          "usedCapacityRate": 42,
+          "averageStudents": 16
         }
       ]
     },
@@ -76,7 +78,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         },
         {
           "id": 2,
@@ -84,7 +87,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -105,7 +109,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         },
         {
           "id": 2,
@@ -113,7 +118,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -134,7 +140,8 @@
           "availableMinutes": 300,
           "usedMinutes": 240,
           "usedMinutesRate": 80,
-          "usedCapacityRate": 68
+          "usedCapacityRate": 68,
+          "averageStudents": 27
         },
         {
           "id": 2,
@@ -142,7 +149,8 @@
           "availableMinutes": 300,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -163,7 +171,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         },
         {
           "id": 2,
@@ -171,7 +180,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -192,7 +202,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         },
         {
           "id": 2,
@@ -200,7 +211,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -221,7 +233,8 @@
           "availableMinutes": 300,
           "usedMinutes": 300,
           "usedMinutesRate": 100,
-          "usedCapacityRate": 85
+          "usedCapacityRate": 85,
+          "averageStudents": 34
         },
         {
           "id": 2,
@@ -229,7 +242,8 @@
           "availableMinutes": 300,
           "usedMinutes": 270,
           "usedMinutesRate": 90,
-          "usedCapacityRate": 63
+          "usedCapacityRate": 63,
+          "averageStudents": 25
         }
       ]
     },
@@ -250,7 +264,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         },
         {
           "id": 2,
@@ -258,7 +273,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -279,7 +295,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         },
         {
           "id": 2,
@@ -287,7 +304,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -308,7 +326,8 @@
           "availableMinutes": 300,
           "usedMinutes": 120,
           "usedMinutesRate": 40,
-          "usedCapacityRate": 34
+          "usedCapacityRate": 34,
+          "averageStudents": 13
         },
         {
           "id": 2,
@@ -316,7 +335,8 @@
           "availableMinutes": 300,
           "usedMinutes": 60,
           "usedMinutesRate": 20,
-          "usedCapacityRate": 14
+          "usedCapacityRate": 14,
+          "averageStudents": 5
         }
       ]
     },
@@ -337,7 +357,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         },
         {
           "id": 2,
@@ -345,7 +366,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -366,7 +388,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         },
         {
           "id": 2,
@@ -374,7 +397,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -395,7 +419,8 @@
           "availableMinutes": 300,
           "usedMinutes": 180,
           "usedMinutesRate": 60,
-          "usedCapacityRate": 51
+          "usedCapacityRate": 51,
+          "averageStudents": 20
         },
         {
           "id": 2,
@@ -403,7 +428,8 @@
           "availableMinutes": 300,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -424,7 +450,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         },
         {
           "id": 2,
@@ -432,7 +459,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -453,7 +481,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         },
         {
           "id": 2,
@@ -461,7 +490,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -482,7 +512,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         },
         {
           "id": 2,
@@ -490,7 +521,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -511,7 +543,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         },
         {
           "id": 2,
@@ -519,7 +552,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     },
@@ -540,7 +574,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         },
         {
           "id": 2,
@@ -548,7 +583,8 @@
           "availableMinutes": 0,
           "usedMinutes": 0,
           "usedMinutesRate": 0,
-          "usedCapacityRate": 0
+          "usedCapacityRate": 0,
+          "averageStudents": 0
         }
       ]
     }

@@ -41,7 +41,7 @@ const features = [
   <NuxtLayout name="landing">
     <div>
       <UPageHero
-        :ui="{ container: 'pt-12 sm:pt-16 lg:pt-20' }"
+        :ui="{ container: 'pt-12 sm:pt-16 lg:pt-20 pb-14 sm:pb-14 lg:pb-14 gap-8 sm:gap-y-12' }"
         description="Sua instituição inteira no lugar certo, da matrícula à conclusão do curso."
         :links="[
           { label: 'Entrar', to: '/login', size: 'xl', trailingIcon: 'i-lucide-arrow-right', class: 'px-8 py-3 text-lg font-semibold' },
@@ -51,19 +51,32 @@ const features = [
           <TypewriterText :words="['Organize', 'Entenda', 'Controle']" /> sua instituição de ensino com excelência
         </template>
 
-        <UColorModeImage
-          light="/images/campus-light.png"
-          dark="/images/campus-dark.png"
-          alt="Tela de ocupação de campus do Estud, com mapa de uso das salas por turno e indicadores de tempo e espaço"
-          width="1278"
-          height="946"
-          class="rounded-xl w-full h-auto ring ring-default shadow-2xl shadow-black/10 dark:shadow-black/40"
-        />
+        <div class="sm:hidden">
+          <UColorModeImage
+            light="/images/campus-light-mobile.png"
+            dark="/images/campus-dark-mobile.png"
+            alt="Tela de ocupação de campus do Estud, com mapa de uso das salas por turno e indicadores de tempo e espaço"
+            width="360"
+            height="760"
+            class="rounded-xl w-full h-auto ring ring-default shadow-2xl shadow-black/10 dark:shadow-black/40"
+          />
+        </div>
+
+        <div class="hidden sm:block">
+          <UColorModeImage
+            light="/images/campus-light.png"
+            dark="/images/campus-dark.png"
+            alt="Tela de ocupação de campus do Estud, com mapa de uso das salas por turno e indicadores de tempo e espaço"
+            width="1278"
+            height="946"
+            class="rounded-xl w-full h-auto ring ring-default shadow-2xl shadow-black/10 dark:shadow-black/40"
+          />
+        </div>
       </UPageHero>
 
       <UPageSection
         id="features"
-        headline="Funcionalidades"
+        :ui="{ container: 'py-1 sm:py-1 lg:py-1' }"
         title="Tudo que sua instituição precisa"
         description="Uma plataforma completa para gestão acadêmica, do primeiro acesso ao diploma."
       >
@@ -71,32 +84,25 @@ const features = [
           <UPageCard
             v-for="feature in features"
             :key="feature.title"
-            :icon="feature.icon"
-            :title="feature.title"
             :description="feature.description"
+            :ui="{ title: 'flex items-center gap-2' }"
             spotlight
-          />
+          >
+            <template #title>
+              <UIcon :name="feature.icon" class="size-5 shrink-0 text-primary" />
+              {{ feature.title }}
+            </template>
+          </UPageCard>
         </UPageGrid>
       </UPageSection>
 
-      <UPageSection
-        headline="Como funciona"
-        title="Simples de começar"
-        description="Configure sua instituição em minutos e comece a usar imediatamente."
-        orientation="horizontal"
-        :features="[
-          { icon: 'i-lucide-user-plus', title: 'Crie sua conta', description: 'Cadastre-se gratuitamente e configure sua instituição em poucos minutos.' },
-          { icon: 'i-lucide-database', title: 'Importe seus dados', description: 'Importe alunos, professores e disciplinas via planilha ou cadastre manualmente.' },
-          { icon: 'i-lucide-rocket', title: 'Comece a usar', description: 'Acesse todos os módulos imediatamente. Suporte disponível 24/7.' },
-        ]"
-      />
-
       <UPageCTA
         title="Pronto para transformar sua instituição?"
-        description="Junte-se a centenas de instituições que já usam o Estud."
-        variant="subtle"
+        description="Junte-se a centenas de gestores que já usam o Estud."
+        variant="naked"
+        :ui="{ container: 'py-10 sm:py-14 lg:py-16' }"
         :links="[
-          { label: 'Entrar', to: '/login', size: 'xl' },
+          { label: 'Entrar', to: '/login', size: 'xl', trailingIcon: 'i-lucide-arrow-right', class: 'px-8 py-3 text-lg font-semibold' },
         ]"
       />
     </div>
