@@ -106,11 +106,13 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
     <div class="flex items-start justify-center px-4 pt-4 md:pt-[8vh]">
       <div class="w-full max-w-sm">
-        <div class="text-center mb-8">
-          <EstudIcon class="size-12 mx-auto mb-4" />
+        <div class="text-center space-y-1 mb-8">
           <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
             Entrar no Estud
           </h1>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            Acesse sua conta para continuar.
+          </p>
         </div>
 
         <div class="flex flex-col gap-4">

@@ -356,7 +356,7 @@ const breadcrumb = [
         <UButton icon="i-lucide-arrow-left" label="Voltar" to="/campi" />
       </div>
 
-      <div v-else class="flex flex-col gap-6 py-2">
+      <div v-else class="flex flex-col gap-6 pb-2">
         <!-- Cabeçalho: as abas sobem pra linha do nome do campus onde há
              largura pra isso. No mobile elas voltam pra baixo das infos, senão
              o nome do campus fica espremido num canto. -->
@@ -405,17 +405,6 @@ const breadcrumb = [
         </div>
 
         <template v-else-if="activeTab === 'occupancy'">
-          <!-- Mock ativo: sinaliza que a tela não está falando com a API -->
-          <div
-            v-if="mock"
-            class="flex items-center gap-2 rounded-xl border border-warning/25 bg-warning/[0.06] px-4 py-2.5 text-sm"
-          >
-            <UIcon name="i-lucide-flask-conical" class="size-4 shrink-0 text-warning" />
-            <span class="text-muted">
-              Exibindo o mock <span class="font-medium text-highlighted">{{ mock }}</span> em vez dos dados da API.
-            </span>
-          </div>
-
           <!-- Nada alocado ainda: o mapa fica zerado, e o aviso explica o
                caminho pra ele ganhar dados. -->
           <div
@@ -452,7 +441,7 @@ const breadcrumb = [
                primeiro e lado a lado, com os mesmos ícones das células do mapa:
                é a comparação entre elas que conta a história do campus — horário
                cheio com assento vazio é sala grande demais pra turma. -->
-          <div class="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div class="mt-0 grid grid-cols-2 gap-3 lg:grid-cols-4">
             <div class="flex items-center gap-4 rounded-xl border border-primary/25 bg-primary/[0.04] px-4 py-4">
               <ClassroomsUsedMinutesRing :percent="data.overallUsedMinutesRate" class="size-12 text-primary" />
               <div class="flex flex-col leading-none">
@@ -487,7 +476,7 @@ const breadcrumb = [
           </div>
 
           <!-- Mapa de calor: dia × turno -->
-          <section class="mt-4 flex flex-col gap-4">
+          <section class="mt-1 flex flex-col gap-4">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <h2 class="flex items-center gap-2 font-semibold text-highlighted">
                 <UIcon name="i-lucide-table-2" class="size-5 text-primary" />

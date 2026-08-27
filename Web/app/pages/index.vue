@@ -41,15 +41,25 @@ const features = [
   <NuxtLayout name="landing">
     <div>
       <UPageHero
-        headline="Plataforma educacional"
-        title="Gestão acadêmica para quem leva a educação a sério"
-        description="Do cadastro de alunos aos relatórios de desempenho - tudo em uma plataforma moderna, segura e fácil de usar."
+        :ui="{ container: 'pt-12 sm:pt-16 lg:pt-20' }"
+        description="Sua instituição inteira no lugar certo, da matrícula à conclusão do curso."
         :links="[
-          { label: 'Entrar', to: '/login', size: 'xl' },
+          { label: 'Entrar', to: '/login', size: 'xl', trailingIcon: 'i-lucide-arrow-right', class: 'px-8 py-3 text-lg font-semibold' },
         ]"
-      />
+      >
+        <template #title>
+          <TypewriterText :words="['Organize', 'Entenda', 'Controle']" /> sua instituição de ensino com excelência
+        </template>
 
-      <USeparator />
+        <UColorModeImage
+          light="/images/campus-light.png"
+          dark="/images/campus-dark.png"
+          alt="Tela de ocupação de campus do Estud, com mapa de uso das salas por turno e indicadores de tempo e espaço"
+          width="1278"
+          height="946"
+          class="rounded-xl w-full h-auto ring ring-default shadow-2xl shadow-black/10 dark:shadow-black/40"
+        />
+      </UPageHero>
 
       <UPageSection
         id="features"
@@ -69,8 +79,6 @@ const features = [
         </UPageGrid>
       </UPageSection>
 
-      <USeparator />
-
       <UPageSection
         headline="Como funciona"
         title="Simples de começar"
@@ -82,8 +90,6 @@ const features = [
           { icon: 'i-lucide-rocket', title: 'Comece a usar', description: 'Acesse todos os módulos imediatamente. Suporte disponível 24/7.' },
         ]"
       />
-
-      <USeparator />
 
       <UPageCTA
         title="Pronto para transformar sua instituição?"
