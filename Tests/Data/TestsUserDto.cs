@@ -1,4 +1,4 @@
-namespace Estud.Tests.Base;
+namespace Estud.Tests.Data;
 
 public class TestsUserDto
 {

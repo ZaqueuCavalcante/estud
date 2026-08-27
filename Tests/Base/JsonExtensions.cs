@@ -42,17 +42,6 @@ public static class JsonExtensions
         oneOf.Error.Message.Should().Be(expected.Message);
     }
 
-    public static void ShouldBeError<S>(this OneOf<S, ErrorOut> oneOf, ErrorOut expected)
-    {
-        if (oneOf.IsSuccess)
-        {
-            throw new InvalidOperationException($"Expected error '{expected}' not found");
-        }
-        oneOf.IsError.Should().BeTrue();
-        oneOf.Error.Code.Should().Be(expected.Code);
-        oneOf.Error.Message.Should().Be(expected.Message);
-    }
-
     public static void ShouldBeError<S>(this OneOf<S, ErrorOut> oneOf, HttpStatusCode statusCode)
     {
         if (oneOf.IsSuccess)

@@ -24,6 +24,4 @@ public static class EnvironmentExtensions
     {
         return IsDevelopment() || IsTesting();
     }
-
-    public static string DeployHash = Guid.NewGuid().ToString()[^8..];
 }

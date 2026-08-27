@@ -41,10 +41,10 @@ async function onSubmit() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="min-h-screen bg-default">
     <AuthHeader v-if="!loginSuccess" />
 
-    <div class="flex items-start justify-center px-4 pt-4 md:pt-[20vh]">
+    <div class="flex items-start justify-center px-4 pt-4 md:pt-[8vh]">
       <div class="w-full max-w-sm">
         <div class="text-center mb-8">
           <h1 class="text-2xl font-bold text-gray-900 dark:text-white">

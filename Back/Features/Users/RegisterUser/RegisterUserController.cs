@@ -21,6 +21,4 @@ public class RegisterUserController(RegisterUserService service) : ControllerBas
 
 internal class RequestExamples : ExamplesProvider<RegisterUserIn>;
 internal class ResponseExamples : ExamplesProvider<RegisterUserOut>;
-internal class ErrorsExamples : ErrorExamplesProvider<
-    EmailAlreadyUsed
->;
+internal class ErrorsExamples : ErrorExamplesProvider<EmailAlreadyUsed>;

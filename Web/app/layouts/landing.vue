@@ -3,7 +3,12 @@
 
 <template>
   <div class="min-h-screen flex flex-col">
-    <UHeader title="Estud">
+    <UHeader title="Estud" :toggle="false" :ui="{ title: 'items-center' }">
+      <template #title>
+        <EstudIcon class="size-6 shrink-0" />
+        Estud
+      </template>
+
       <template #right>
         <UTooltip text="Documentação">
           <UButton icon="i-lucide-book-open" color="neutral" variant="ghost" to="/docs" aria-label="Documentação" />
@@ -11,17 +16,6 @@
         <UTooltip text="Alternar tema">
           <UColorModeButton />
         </UTooltip>
-        <UButton to="/login">
-          Entrar
-        </UButton>
-      </template>
-
-      <template #body>
-        <div class="flex flex-col gap-2 mt-4">
-          <UButton to="/login" block>
-            Entrar
-          </UButton>
-        </div>
       </template>
     </UHeader>
 

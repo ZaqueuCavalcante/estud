@@ -25,11 +25,11 @@ public class RegisterUserService(EstudDbContext ctx, UserManager<EstudUser> user
         var institution = Institution.NewForUserRegister();
         var directorRole = institution.GetDirectorRole();
 
-        var user = new EstudUser(institution, "Seu Nome", email, false);
+        var user = new EstudUser(institution, "Seu Nome", email, emailConfirmed: false);
         var userRole = new EstudUserRole(institution, user, directorRole);
         var magicLink = new MagicLink(user);
 
-        ctx.AddRange(institution, magicLink, userRole);
+        ctx.AddRange(institution, user, userRole, magicLink);
         ctx.AddCommand(institution, new SendFirstAccessMagicLinkEmailCommand(email, magicLink.Id), maxRetries: 1);
 
         await userManager.CreateAsync(user, $"Estud@{Guid.NewGuid()}");

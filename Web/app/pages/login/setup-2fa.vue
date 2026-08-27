@@ -104,7 +104,7 @@ function goBack() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="min-h-screen bg-default">
     <AuthHeader v-if="!setupSuccess" />
 
     <div class="flex items-start justify-center px-4 pt-4 md:pt-[2vh]">

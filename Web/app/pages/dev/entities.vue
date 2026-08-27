@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { dbSchema, type DbTable } from '~/utils/db-schema'
+
 type GroupId =
   | 'identity'
   | 'auth'
@@ -148,8 +150,55 @@ const tables: TableRow[] = [
   { table: 'user_activities', entity: 'UserActivity', group: 'platform', dbSet: 'UserActivities', note: 'Trilha de atividades do usuário para exibição no produto.' },
 ]
 
+const isMobile = useIsMobile()
+
+const schemaByTable = new Map(dbSchema.map(t => [t.table, t]))
+
+const inboundByTable = computed(() => {
+  const map = new Map<string, { from: string, columns: string[] }[]>()
+  for (const t of dbSchema) {
+    for (const fk of t.fks) {
+      if (!fk.target || fk.target === t.table) continue
+      const list = map.get(fk.target) ?? []
+      list.push({ from: t.table, columns: fk.columns })
+      map.set(fk.target, list)
+    }
+  }
+  return map
+})
+
 const search = ref('')
 const activeGroup = ref<GroupId | null>(null)
+const openTable = ref<string | null>(null)
+
+const detail = computed<DbTable | null>(() => (openTable.value ? schemaByTable.get(openTable.value) ?? null : null))
+const detailRow = computed(() => tables.find(t => t.table === openTable.value) ?? null)
+const detailInbound = computed(() => (openTable.value ? inboundByTable.value.get(openTable.value) ?? [] : []))
+
+const isOpen = computed({
+  get: () => openTable.value !== null,
+  set: (v: boolean) => { if (!v) openTable.value = null },
+})
+
+const pkSet = computed(() => new Set(detail.value?.pk ?? []))
+
+const fkByColumn = computed(() => {
+  const map = new Map<string, string[]>()
+  for (const fk of detail.value?.fks ?? []) {
+    for (const c of fk.columns) {
+      const list = map.get(c) ?? []
+      if (fk.target) list.push(fk.target)
+      map.set(c, list)
+    }
+  }
+  return map
+})
+
+const indexedColumns = computed(() => {
+  const set = new Set<string>()
+  for (const i of detail.value?.indexes ?? []) for (const c of i.columns) set.add(c)
+  return set
+})
 
 const groupIds = Object.keys(groups) as GroupId[]
 
@@ -180,6 +229,11 @@ const sections = computed(() =>
 
 const withoutDbSet = computed(() => tables.filter(t => !t.dbSet))
 
+function openDetail(table: string) {
+  if (!schemaByTable.has(table)) return
+  openTable.value = table
+}
+
 function toggleGroup(id: GroupId) {
   activeGroup.value = activeGroup.value === id ? null : id
 }
@@ -208,9 +262,11 @@ function clearFilters() {
             contexto de negócio. Todas vivem no schema <code class="text-xs">estud</code>, com nomes em
             <code class="text-xs">snake_case</code>. O mapeamento vem dos
             <code class="text-xs">IEntityTypeConfiguration</code> em <code class="text-xs">Back/Database/</code> — não há
-            pasta de <span class="italic">migrations</span> no repositório.
+            pasta de <span class="italic">migrations</span> no repositório. Para atualizar depois de mexer no backend, rode
+            <code class="text-xs">python3 scripts/gen-db-schema.py</code>.
           </p>
           <p class="text-sm text-muted">
+            Clique no nome de uma tabela para ver colunas, tipos, chave primária, chaves estrangeiras e índices.
             Para ver a ordem de criação e as dependências entre as entidades, veja
             <NuxtLink to="/dev/dependencies" class="text-primary hover:underline">Dependências de Entidades</NuxtLink>.
           </p>
@@ -278,7 +334,9 @@ function clearFilters() {
               <tbody>
                 <tr v-for="row in s.rows" :key="row.table" class="border-b border-default last:border-b-0">
                   <td class="px-3 py-2 whitespace-nowrap">
-                    <span class="table-name">{{ row.table }}</span>
+                    <button type="button" class="table-name" @click="() => { openDetail(row.table) }">
+                      {{ row.table }}
+                    </button>
                     <UBadge v-if="row.join" variant="subtle" color="neutral" size="sm" class="ml-2">vínculo</UBadge>
                   </td>
                   <td class="px-3 py-2 text-toned whitespace-nowrap font-mono text-xs">{{ row.entity }}</td>
@@ -309,6 +367,119 @@ function clearFilters() {
             </div>
           </div>
         </UCard>
+
+        <UModal
+          v-model:open="isOpen"
+          :fullscreen="isMobile"
+          :title="detail?.table ?? ''"
+          :description="detailRow?.note ?? ''"
+          :ui="{ content: 'sm:max-w-6xl' }"
+        >
+          <template #body>
+            <div v-if="detail" class="space-y-5">
+              <div class="flex items-center gap-2 flex-wrap text-xs">
+                <UBadge variant="subtle" color="neutral">{{ detail.entity }}</UBadge>
+                <UBadge variant="subtle" color="neutral">schema estud</UBadge>
+                <UBadge variant="subtle" color="neutral">{{ detail.columns.length }} colunas</UBadge>
+                <code class="text-muted">{{ detail.file }}</code>
+              </div>
+
+              <div>
+                <h3 class="mb-2 text-xs font-semibold uppercase tracking-wide text-dimmed">Colunas</h3>
+                <div class="overflow-x-auto rounded-lg border border-default">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="border-b border-default bg-elevated/50 text-left text-xs text-muted">
+                        <th class="px-3 py-2 font-medium">Coluna</th>
+                        <th class="px-3 py-2 font-medium">Tipo</th>
+                        <th class="px-3 py-2 font-medium">Nulo</th>
+                        <th class="px-3 py-2 font-medium">Chaves</th>
+                        <th class="px-3 py-2 font-medium">Propriedade</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="col in detail.columns" :key="col.name" class="border-b border-default last:border-b-0">
+                        <td class="px-3 py-2 font-mono text-xs text-highlighted whitespace-nowrap">{{ col.name }}</td>
+                        <td class="px-3 py-2 font-mono text-xs text-toned whitespace-nowrap">
+                          {{ col.type }}
+                          <span v-if="col.enum" class="text-dimmed">· {{ col.enum }}</span>
+                          <span v-if="col.default !== undefined" class="text-dimmed">· default {{ col.default }}</span>
+                        </td>
+                        <td class="px-3 py-2 text-xs whitespace-nowrap">
+                          <span :class="col.nullable ? 'text-muted' : 'text-dimmed'">{{ col.nullable ? 'sim' : 'não' }}</span>
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                          <span v-if="pkSet.has(col.name)" class="key-tag key-pk">PK</span>
+                          <span v-for="t in fkByColumn.get(col.name) ?? []" :key="t" class="key-tag key-fk">FK → {{ t }}</span>
+                          <span v-if="indexedColumns.has(col.name) && !pkSet.has(col.name)" class="key-tag key-idx">IDX</span>
+                        </td>
+                        <td class="px-3 py-2 font-mono text-xs text-muted whitespace-nowrap">
+                          {{ col.prop }}<span class="text-dimmed"> : {{ col.clr }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="grid gap-5 lg:grid-cols-2">
+                <div>
+                  <h3 class="mb-2 text-xs font-semibold uppercase tracking-wide text-dimmed">Chave primária</h3>
+                  <p v-if="detail.pk.length === 0" class="text-sm text-muted">Sem chave primária declarada.</p>
+                  <div v-else class="flex items-center gap-1.5 flex-wrap">
+                    <code v-for="c in detail.pk" :key="c" class="text-xs text-toned">{{ c }}</code>
+                    <span v-if="detail.pk.length > 1" class="text-xs text-dimmed">(composta)</span>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 class="mb-2 text-xs font-semibold uppercase tracking-wide text-dimmed">Índices</h3>
+                  <p v-if="detail.indexes.length === 0" class="text-sm text-muted">Nenhum índice explícito além da chave primária.</p>
+                  <ul v-else class="space-y-1">
+                    <li v-for="(idx, i) in detail.indexes" :key="i" class="text-sm">
+                      <code class="text-xs text-toned">{{ idx.columns.join(', ') }}</code>
+                      <UBadge v-if="idx.unique" variant="subtle" color="neutral" size="sm" class="ml-1.5">único</UBadge>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="mb-2 text-xs font-semibold uppercase tracking-wide text-dimmed">Chaves estrangeiras</h3>
+                <p v-if="detail.fks.length === 0" class="text-sm text-muted">Esta tabela não aponta para nenhuma outra.</p>
+                <ul v-else class="space-y-1.5">
+                  <li v-for="(fk, i) in detail.fks" :key="i" class="text-sm flex items-center gap-1.5 flex-wrap">
+                    <code class="text-xs text-toned">{{ fk.columns.join(', ') }}</code>
+                    <UIcon name="i-lucide-arrow-right" class="size-3.5 shrink-0 text-dimmed" />
+                    <button
+                      v-if="fk.target"
+                      type="button"
+                      class="text-xs font-mono text-primary hover:underline"
+                      @click="() => { openDetail(fk.target!) }"
+                    >
+                      {{ fk.target }}<span v-if="fk.principal.length">.{{ fk.principal.join(', ') }}</span>
+                    </button>
+                    <span v-else class="text-xs text-muted">{{ fk.targetEntity ?? '—' }}</span>
+                    <UBadge v-if="fk.convention" variant="subtle" color="neutral" size="sm">por convenção</UBadge>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 class="mb-2 text-xs font-semibold uppercase tracking-wide text-dimmed">Referenciada por</h3>
+                <p v-if="detailInbound.length === 0" class="text-sm text-muted">Nenhuma outra tabela aponta para esta.</p>
+                <ul v-else class="space-y-1.5">
+                  <li v-for="(inb, i) in detailInbound" :key="i" class="text-sm flex items-center gap-1.5 flex-wrap">
+                    <button type="button" class="text-xs font-mono text-primary hover:underline" @click="() => { openDetail(inb.from) }">
+                      {{ inb.from }}
+                    </button>
+                    <code class="text-xs text-dimmed">({{ inb.columns.join(', ') }})</code>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </template>
+        </UModal>
       </div>
     </template>
   </UDashboardPanel>
@@ -350,5 +521,37 @@ function clearFilters() {
   font-size: 0.8125rem;
   color: var(--ui-text-highlighted);
   font-weight: 500;
+  cursor: pointer;
+}
+
+.table-name:hover {
+  color: var(--ui-primary);
+  text-decoration: underline;
+}
+
+.key-tag {
+  display: inline-block;
+  margin-right: 0.25rem;
+  border-radius: 0.25rem;
+  padding: 0.0625rem 0.3125rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.key-pk {
+  background: color-mix(in oklab, var(--ui-primary) 15%, transparent);
+  color: var(--ui-primary);
+}
+
+.key-fk {
+  background: var(--ui-bg-elevated);
+  color: var(--ui-text-toned);
+}
+
+.key-idx {
+  background: var(--ui-bg-elevated);
+  color: var(--ui-text-dimmed);
 }
 </style>

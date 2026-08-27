@@ -35,10 +35,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="min-h-screen bg-default">
     <AuthHeader />
 
-    <div class="flex items-start justify-center px-4 pt-4 md:pt-[20vh]">
+    <div class="flex items-start justify-center px-4 pt-4 md:pt-[8vh]">
       <div class="w-full max-w-sm">
         <!-- Confirmação de envio -->
         <template v-if="sent">
@@ -66,48 +66,37 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
               Esqueceu a senha?
             </h1>
             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              Informe seu email e enviaremos um link para redefinição
+              Informe seu email e enviaremos um link para redefinição.
             </p>
           </div>
 
-          <UCard>
-            <UForm
-              :schema="schema"
-              :state="state"
-              class="flex flex-col gap-4"
-              @submit="onSubmit"
-            >
-              <UFormField label="Email" name="email" required>
-                <UInput
-                  v-model="state.email"
-                  name="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  icon="i-lucide-mail"
-                  autocomplete="username"
-                  size="lg"
-                  class="w-full"
-                />
-              </UFormField>
-
-              <UButton
-                type="submit"
-                label="Enviar link"
+          <UForm
+            :schema="schema"
+            :state="state"
+            class="flex flex-col gap-4"
+            @submit="onSubmit"
+          >
+            <UFormField label="Email" name="email" required>
+              <UInput
+                v-model="state.email"
+                name="email"
+                type="email"
+                placeholder="seu@email.com"
+                icon="i-lucide-mail"
+                autocomplete="username"
                 size="lg"
-                block
-                :loading="loading"
+                class="w-full"
               />
+            </UFormField>
 
-              <UButton
-                type="button"
-                label="Voltar ao login"
-                variant="ghost"
-                size="sm"
-                block
-                @click="router.push('/login')"
-              />
-            </UForm>
-          </UCard>
+            <UButton
+              type="submit"
+              label="Enviar link"
+              size="lg"
+              block
+              :loading="loading"
+            />
+          </UForm>
         </template>
       </div>
     </div>

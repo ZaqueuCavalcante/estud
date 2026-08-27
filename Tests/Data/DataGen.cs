@@ -1,7 +1,7 @@
 using Bogus;
 using OtpNet;
 
-namespace Estud.Tests.Integration.Base;
+namespace Estud.Tests.Data;
 
 public static class DataGen
 {
