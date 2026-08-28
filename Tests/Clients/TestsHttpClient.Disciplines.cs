@@ -3,10 +3,9 @@ using Estud.Back.Features.Disciplines.GetDiscipline;
 using Estud.Back.Features.Disciplines.GetDisciplines;
 using Estud.Back.Features.Disciplines.CreateDiscipline;
 using Estud.Back.Features.Disciplines.UpdateDiscipline;
-using Estud.Back.Features.Disciplines.AddDisciplineCourses;
 using Estud.Back.Features.Disciplines.GetDisciplineDetails;
 using Estud.Back.Features.Disciplines.GetDisciplineTeachers;
-using Estud.Back.Features.Disciplines.RemoveDisciplineCourse;
+using Estud.Back.Features.Disciplines.AssignCoursesToDiscipline;
 using Estud.Back.Features.Disciplines.AssignTeachersToDiscipline;
 using Estud.Back.Features.Disciplines.GetDisciplinePotentialCourses;
 using Estud.Back.Features.Disciplines.GetDisciplinePotentialTeachers;
@@ -50,36 +49,27 @@ public partial class TestsHttpClient
         return await response.Resolve<GetDisciplineDetailsOut>();
     }
 
-    public async Task<OneOf<SuccessOut, ErrorOut>> AddDisciplineCourses(
+    public async Task<OneOf<SuccessOut, ErrorOut>> AssignCoursesToDiscipline(
         int disciplineId,
         List<int> courses
     ) {
-        var data = new AddDisciplineCoursesIn { DisciplineId = disciplineId, Courses = courses };
-        var response = await http.PostAsJsonAsync("/disciplines/courses", data);
-        return await response.Resolve<SuccessOut>();
-    }
-
-    public async Task<OneOf<SuccessOut, ErrorOut>> RemoveDisciplineCourse(
-        int disciplineId,
-        int courseId
-    ) {
-        var data = new RemoveDisciplineCourseIn { DisciplineId = disciplineId, CourseId = courseId };
-        var request = new HttpRequestMessage(HttpMethod.Delete, "/disciplines/courses")
-        {
-            Content = JsonContent.Create(data)
-        };
-        var response = await http.SendAsync(request);
+        var data = new AssignCoursesToDisciplineIn { Courses = courses };
+        var response = await http.PutAsJsonAsync($"/disciplines/{disciplineId}/assign-courses", data);
         return await response.Resolve<SuccessOut>();
     }
 
     public async Task<OneOf<GetDisciplinesOut, ErrorOut>> GetDisciplines(
         string? filter = null,
+        bool? hasCourses = null,
+        bool? hasTeachers = null,
         int? page = null,
         int? pageSize = null
     ) {
         var data = new GetDisciplinesIn
         {
             Filter = filter,
+            HasCourses = hasCourses,
+            HasTeachers = hasTeachers,
             Page = page ?? 1,
             PageSize = pageSize ?? 10,
         };

@@ -7,7 +7,8 @@ public class GetDisciplinesController(GetDisciplinesService service) : Controlle
     /// Disciplinas
     /// </summary>
     /// <remarks>
-    /// Retorna a lista paginada de disciplinas da instituição, ordenadas por nome.
+    /// Retorna a lista paginada de disciplinas da instituição, ordenadas por nome,
+    /// indicando se cada disciplina possui cursos e professores vinculados.
     /// </remarks>
     [HttpGet("disciplines")]
     public async Task<IActionResult> Get([FromQuery] GetDisciplinesIn query)

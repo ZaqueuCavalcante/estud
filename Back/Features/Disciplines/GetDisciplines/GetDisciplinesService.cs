@@ -1,3 +1,5 @@
+using Dapper;
+
 namespace Estud.Back.Features.Disciplines.GetDisciplines;
 
 public class GetDisciplinesService(EstudDbContext ctx) : IEstudService
@@ -9,47 +11,76 @@ public class GetDisciplinesService(EstudDbContext ctx) : IEstudService
         var page = Math.Max(query.Page, 1);
         var pageSize = Math.Clamp(query.PageSize, 1, MaxPageSize);
 
-        var disciplinesQuery = ctx.Disciplines.AsNoTracking()
-            .Where(d => d.InstitutionId == ctx.RequestUser.InstitutionId);
+        var connection = await ctx.GetOpenConnectionAsync();
 
-        var filter = query.Filter;
-        if (filter.HasValue())
-            disciplinesQuery = disciplinesQuery.Where(d =>
-                d.Name.ToLower().Contains(filter.ToLower()) ||
-                d.Code.ToLower().Contains(filter.ToLower()));
+        const string sql = @"
+            WITH filtered AS (
+                SELECT
+                    d.id,
+                    d.name,
+                    d.code
+                FROM
+                    estud.disciplines d
+                WHERE
+                    d.institution_id = @InstitutionId
+                    AND (@Filter IS NULL OR d.name ILIKE @Filter OR d.code ILIKE @Filter)
+            )
+            SELECT
+                d.id,
+                d.name,
+                d.code,
+                EXISTS (
+                    SELECT 1 FROM estud.courses_disciplines cd WHERE cd.discipline_id = d.id
+                ) AS has_courses,
+                EXISTS (
+                    SELECT 1 FROM estud.teachers_disciplines td WHERE td.discipline_id = d.id
+                ) AS has_teachers,
+                COUNT(*) OVER() AS total_rows
+            FROM
+                estud.disciplines d
+            WHERE
+                d.institution_id = @InstitutionId
+                    AND
+                (@Filter IS NULL OR d.name ILIKE @Filter OR d.code ILIKE @Filter)
+                    AND
+                (
+                    @HasCourses IS NULL
+                    OR @HasCourses = EXISTS (
+                        SELECT 1 FROM estud.courses_disciplines cd WHERE cd.discipline_id = d.id
+                    )
+                )
+                    AND
+                (
+                    @HasTeachers IS NULL
+                    OR @HasTeachers = EXISTS (
+                        SELECT 1 FROM estud.teachers_disciplines td WHERE td.discipline_id = d.id
+                    )
+                )
+            ORDER BY
+                d.name, d.id
+            LIMIT @PageSize
+            OFFSET @Offset
+        ";
 
-        var total = await disciplinesQuery.CountAsync();
-
-        var disciplines = await disciplinesQuery
-            .OrderBy(d => d.Name)
-            .ThenBy(d => d.Id)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        var ids = disciplines.Select(d => d.Id).ToHashSet();
-
-        var result = disciplines.ConvertAll(d => d.ToGetDisciplinesItemOut());
-
-        if (ids.Count > 0)
+        var filter = query.Filter.HasValue() ? $"%{query.Filter}%" : null;
+        var parameters = new
         {
-            var courses = await ctx.CoursesDisciplines.AsNoTracking()
-                .Where(c => ids.Contains(c.DisciplineId))
-                .ToListAsync();
-            result.ForEach(x => x.Courses = courses.Count(c => c.DisciplineId == x.Id));
+            Filter = filter,
+            ctx.RequestUser.InstitutionId,
+            query.HasCourses,
+            query.HasTeachers,
+            PageSize = pageSize,
+            Offset = (page - 1) * pageSize,
+        };
 
-            var teachers = await ctx.TeachersDisciplines.AsNoTracking()
-                .Where(d => ids.Contains(d.DisciplineId))
-                .ToListAsync();
-            result.ForEach(x => x.Teachers = teachers.Count(t => t.DisciplineId == x.Id));
-        }
+        var rows = (await connection.QueryAsync<DisciplineRow>(sql, parameters)).ToList();
 
         return new GetDisciplinesOut
         {
-            Total = total,
             Page = page,
             PageSize = pageSize,
-            Items = result,
+            Total = rows.FirstOrDefault()?.TotalRows ?? 0,
+            Items = rows.ConvertAll(r => r.ToGetDisciplinesItemOut()),
         };
     }
 }

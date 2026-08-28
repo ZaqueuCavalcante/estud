@@ -120,5 +120,84 @@ public partial class IntegrationTests
         disciplines.Items.Single().Name.Should().Be("Química I");
     }
 
+    [Test]
+    public async Task Disciplines_GetDisciplines_Should_get_disciplines_links_flags()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        var course = await client.CreateCourse().Success();
+        var teacher = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
+
+        var linked = await client.CreateDiscipline("Química I").Success();
+        await client.AssignCoursesToDiscipline(linked.Id, [course.Id]);
+        await client.AssignTeachersToDiscipline(linked.Id, [teacher.Id]);
+
+        await client.CreateDiscipline("Física I");
+
+        // Act
+        var result = await client.GetDisciplines();
+
+        // Assert
+        var disciplines = result.Success;
+        var fisica = disciplines.Items.First();
+        var quimica = disciplines.Items.Last();
+
+        fisica.HasCourses.Should().BeFalse();
+        fisica.HasTeachers.Should().BeFalse();
+        quimica.HasCourses.Should().BeTrue();
+        quimica.HasTeachers.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task Disciplines_GetDisciplines_Should_get_disciplines_filtered_by_courses_link()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        var course = await client.CreateCourse().Success();
+
+        var linked = await client.CreateDiscipline("Química I").Success();
+        await client.AssignCoursesToDiscipline(linked.Id, [course.Id]);
+
+        await client.CreateDiscipline("Física I");
+
+        // Act
+        var withCourses = await client.GetDisciplines(hasCourses: true);
+        var withoutCourses = await client.GetDisciplines(hasCourses: false);
+
+        // Assert
+        withCourses.Success.Total.Should().Be(1);
+        withCourses.Success.Items.Single().Name.Should().Be("Química I");
+
+        withoutCourses.Success.Total.Should().Be(1);
+        withoutCourses.Success.Items.Single().Name.Should().Be("Física I");
+    }
+
+    [Test]
+    public async Task Disciplines_GetDisciplines_Should_get_disciplines_filtered_by_teachers_link()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        var teacher = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
+
+        var linked = await client.CreateDiscipline("Química I").Success();
+        await client.AssignTeachersToDiscipline(linked.Id, [teacher.Id]);
+
+        await client.CreateDiscipline("Física I");
+
+        // Act
+        var withTeachers = await client.GetDisciplines(hasTeachers: true);
+        var withoutTeachers = await client.GetDisciplines(hasTeachers: false);
+
+        // Assert
+        withTeachers.Success.Total.Should().Be(1);
+        withTeachers.Success.Items.Single().Name.Should().Be("Química I");
+
+        withoutTeachers.Success.Total.Should().Be(1);
+        withoutTeachers.Success.Items.Single().Name.Should().Be("Física I");
+    }
+
     #endregion
 }

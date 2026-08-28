@@ -6,11 +6,8 @@ interface DisciplineItem {
   id: number
   name: string
   code: string
-  period: number
-  credits: number
-  workload: number
-  courses: number
-  teachers: number
+  hasCourses: boolean
+  hasTeachers: boolean
 }
 
 interface GetDisciplinesOut {
@@ -20,6 +17,7 @@ interface GetDisciplinesOut {
   items: DisciplineItem[]
 }
 
+const UBadge = resolveComponent('UBadge')
 const UButton = resolveComponent('UButton')
 const UTooltip = resolveComponent('UTooltip')
 
@@ -29,7 +27,20 @@ const createModalOpen = ref(false)
 const route = useRoute()
 const router = useRouter()
 
+const courseOptions = [
+  { label: 'Vinculadas', value: 'true' },
+  { label: 'Sem curso', value: 'false' },
+]
+
+const teacherOptions = [
+  { label: 'Vinculadas', value: 'true' },
+  { label: 'Sem professor', value: 'false' },
+]
+
 const filter = ref((route.query.filter as string) || '')
+// Sem opção escolhida o select fica vazio, mostrando só o placeholder.
+const hasCourses = ref<string | undefined>((route.query.hasCourses as string) || undefined)
+const hasTeachers = ref<string | undefined>((route.query.hasTeachers as string) || undefined)
 
 // The filter actually applied to the fetch. Typing updates it debounced;
 // clearing updates it immediately so the reload feels instant.
@@ -37,33 +48,58 @@ const appliedFilter = ref(filter.value)
 const applyFilter = useDebounceFn((value: string) => { appliedFilter.value = value }, 300)
 watch(filter, (value) => { applyFilter(value) })
 
+// The selects have no typing lag, so they go straight to the fetch
+const appliedHasCourses = computed(() => hasCourses.value || undefined)
+const appliedHasTeachers = computed(() => hasTeachers.value || undefined)
+
 const pageSize = 10
 const page = ref(Number(route.query.page) || 1)
 
-// Sync filter and page to URL
-watch([filter, page], () => {
+// Sync filters and page to URL
+watch([filter, hasCourses, hasTeachers, page], () => {
   const query: Record<string, string> = {}
   if (filter.value) query.filter = filter.value
+  if (appliedHasCourses.value) query.hasCourses = appliedHasCourses.value
+  if (appliedHasTeachers.value) query.hasTeachers = appliedHasTeachers.value
   if (page.value > 1) query.page = String(page.value)
   router.replace({ query })
 }, { flush: 'post' })
 
 // A new search starts over from the first page
-watch(appliedFilter, () => { page.value = 1 })
+watch([appliedFilter, appliedHasCourses, appliedHasTeachers], () => { page.value = 1 })
 
 // Reflects the filters actually applied to the data being shown
-const hasFilters = computed(() => appliedFilter.value.length > 0)
+const hasFilters = computed(() => appliedFilter.value.length > 0
+  || !!appliedHasCourses.value
+  || !!appliedHasTeachers.value,
+)
 
 function clearFilters() {
   filter.value = ''
   appliedFilter.value = ''
+  hasCourses.value = undefined
+  hasTeachers.value = undefined
 }
 
 const { data, status, refresh } = await useFetch<GetDisciplinesOut>(`${config.public.backendUrl}/disciplines`, {
   credentials: 'include',
   server: false,
-  query: { filter: appliedFilter, page, pageSize }
+  query: {
+    filter: appliedFilter,
+    hasCourses: appliedHasCourses,
+    hasTeachers: appliedHasTeachers,
+    page,
+    pageSize
+  }
 })
+
+function linkBadge(linked: boolean, missingLabel: string) {
+  return h(UBadge, {
+    label: linked ? 'Vinculada' : missingLabel,
+    color: linked ? 'success' : 'neutral',
+    variant: 'subtle',
+  })
+}
 
 const columns: TableColumn<DisciplineItem>[] = [
   {
@@ -75,12 +111,14 @@ const columns: TableColumn<DisciplineItem>[] = [
     header: 'Código',
   },
   {
-    accessorKey: 'courses',
+    accessorKey: 'hasCourses',
     header: 'Cursos',
+    cell: ({ row }) => linkBadge(row.original.hasCourses, 'Sem curso'),
   },
   {
-    accessorKey: 'teachers',
+    accessorKey: 'hasTeachers',
     header: 'Professores',
+    cell: ({ row }) => linkBadge(row.original.hasTeachers, 'Sem professor'),
   },
   {
     id: 'actions',
@@ -110,26 +148,49 @@ const columns: TableColumn<DisciplineItem>[] = [
 
     <template #body>
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-4">
-        <UInput
-          v-model="filter"
-          class="w-full sm:max-w-sm"
-          icon="i-lucide-search"
-          placeholder="Buscar por nome ou código..."
-          :loading="status === 'pending'"
-        >
-          <template v-if="filter" #trailing>
-            <UButton
-              icon="i-lucide-x"
-              color="neutral"
-              variant="link"
-              size="sm"
-              aria-label="Remover filtro"
-              @click="clearFilters"
-            />
-          </template>
-        </UInput>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <UInput
+            v-model="filter"
+            class="w-full sm:max-w-sm"
+            :ui="{ base: 'h-8' }"
+            icon="i-lucide-search"
+            placeholder="Buscar por nome ou código..."
+            :loading="status === 'pending'"
+          >
+            <template v-if="filter" #trailing>
+              <UButton
+                icon="i-lucide-x"
+                color="neutral"
+                variant="link"
+                size="sm"
+                aria-label="Remover filtro"
+                @click="() => { filter = ''; appliedFilter = '' }"
+              />
+            </template>
+          </UInput>
+          <USelectMenu
+            v-model="hasCourses"
+            :items="courseOptions"
+            value-key="value"
+            :search-input="false"
+            clear
+            class="w-full sm:w-46"
+            :ui="{ base: 'h-8 text-base/5' }"
+            placeholder="Cursos"
+          />
+          <USelectMenu
+            v-model="hasTeachers"
+            :items="teacherOptions"
+            value-key="value"
+            :search-input="false"
+            clear
+            class="w-full sm:w-54"
+            :ui="{ base: 'h-8 text-base/5' }"
+            placeholder="Professores"
+          />
+        </div>
         <UButton
-          v-if="data?.items?.length || filter"
+          v-if="data?.items?.length || hasFilters"
           class="self-start sm:self-auto"
           icon="i-lucide-plus"
           label="Disciplina"

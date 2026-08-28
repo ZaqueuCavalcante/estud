@@ -75,15 +75,15 @@
 
 - ✅ CreateDisciplineController
 - ✅ UpdateDisciplineController
-- GetDisciplinesController
-- AddDisciplineCoursesController
-- AssignTeachersToDisciplineController
+- ✅ GetDisciplinesController
+- ✅ AssignCoursesToDisciplineController
+- ✅ AssignTeachersToDisciplineController
+
 - GetDisciplineController
 - GetDisciplineDetailsController
 - GetDisciplinePotentialCoursesController
 - GetDisciplinePotentialTeachersController
 - GetDisciplineTeachersController
-- RemoveDisciplineCourseController
 
 ## Identity
 

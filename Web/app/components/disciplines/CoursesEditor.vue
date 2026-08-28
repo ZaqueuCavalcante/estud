@@ -172,22 +172,11 @@ function errorMessage(err: unknown, fallback: string) {
 async function save() {
   saving.value = true
   try {
-    if (toAdd.value.length) {
-      await $fetch(`${config.public.backendUrl}/disciplines/courses`, {
-        method: 'POST',
-        body: { disciplineId: props.disciplineId, courses: toAdd.value },
-        credentials: 'include',
-      })
-    }
-
-    // O endpoint de remoção desvincula um curso por vez.
-    for (const courseId of toRemove.value) {
-      await $fetch(`${config.public.backendUrl}/disciplines/courses`, {
-        method: 'DELETE',
-        body: { disciplineId: props.disciplineId, courseId },
-        credentials: 'include',
-      })
-    }
+    await $fetch(`${config.public.backendUrl}/disciplines/${props.disciplineId}/assign-courses`, {
+      method: 'PUT',
+      body: { courses: selectedIds.value },
+      credentials: 'include',
+    })
 
     toast.add({ title: 'Cursos da disciplina atualizados', color: 'success' })
     cancelEditing()

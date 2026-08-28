@@ -98,7 +98,7 @@ public partial class IntegrationTests
         var discipline = await client.CreateDiscipline().Success();
         var linkedCourse = await client.CreateCourse("ADS", CourseType.Tecnologo).Success();
         var potentialCourse = await client.CreateCourse("Engenharia", CourseType.Bacharelado).Success();
-        await client.AddDisciplineCourses(discipline.Id, [linkedCourse.Id]);
+        await client.AssignCoursesToDiscipline(discipline.Id, [linkedCourse.Id]);
 
         // Act
         var result = await client.GetDisciplinePotentialCourses(discipline.Id);

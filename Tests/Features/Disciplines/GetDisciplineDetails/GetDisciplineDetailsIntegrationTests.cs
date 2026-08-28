@@ -101,7 +101,7 @@ public partial class IntegrationTests
 
         var engenharia = await client.CreateCourse("Engenharia", CourseType.Bacharelado).Success();
         var ads = await client.CreateCourse("ADS", CourseType.Tecnologo).Success();
-        await client.AddDisciplineCourses(discipline.Id, [engenharia.Id, ads.Id]);
+        await client.AssignCoursesToDiscipline(discipline.Id, [engenharia.Id, ads.Id]);
 
         var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
         var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();

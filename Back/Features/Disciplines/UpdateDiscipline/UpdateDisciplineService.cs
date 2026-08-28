@@ -16,7 +16,8 @@ public class UpdateDisciplineService(EstudDbContext ctx) : IEstudService
     {
         if (V.Run(data, out var error)) return error;
 
-        var discipline = await ctx.Disciplines.FirstOrDefaultAsync(x => x.InstitutionId == ctx.RequestUser.InstitutionId && x.Id == disciplineId);
+        var institutionId = ctx.RequestUser.InstitutionId;
+        var discipline = await ctx.Disciplines.FirstOrDefaultAsync(x => x.InstitutionId == institutionId && x.Id == disciplineId);
         if (discipline == null) return DisciplineNotFound.I;
 
         discipline.Update(data.Name);

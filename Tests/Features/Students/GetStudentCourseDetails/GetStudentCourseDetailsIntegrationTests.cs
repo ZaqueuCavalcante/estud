@@ -86,8 +86,8 @@ public partial class IntegrationTests
 
         var algorithms = await director.CreateDiscipline("Algoritmos").Success();
         var databases = await director.CreateDiscipline("Banco de Dados").Success();
-        await director.AddDisciplineCourses(algorithms.Id, [course.Id]);
-        await director.AddDisciplineCourses(databases.Id, [course.Id]);
+        await director.AssignCoursesToDiscipline(algorithms.Id, [course.Id]);
+        await director.AssignCoursesToDiscipline(databases.Id, [course.Id]);
 
         var curriculum = await director.CreateCourseCurriculum(course.Id, "Grade ADS 2024",
         [
@@ -146,9 +146,9 @@ public partial class IntegrationTests
         var first = await director.CreateDiscipline("Algoritmos").Success();
         var second = await director.CreateDiscipline("Estrutura de Dados").Success();
         var third = await director.CreateDiscipline("Banco de Dados").Success();
-        await director.AddDisciplineCourses(first.Id, [course.Id]);
-        await director.AddDisciplineCourses(second.Id, [course.Id]);
-        await director.AddDisciplineCourses(third.Id, [course.Id]);
+        await director.AssignCoursesToDiscipline(first.Id, [course.Id]);
+        await director.AssignCoursesToDiscipline(second.Id, [course.Id]);
+        await director.AssignCoursesToDiscipline(third.Id, [course.Id]);
 
         var curriculum = await director.CreateCourseCurriculum(course.Id, "Grade ADS 2024",
         [
