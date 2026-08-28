@@ -14,7 +14,7 @@ public class MarkNotificationsAsViewedService(EstudDbContext ctx) : IEstudServic
     }
     private static readonly Validator V = new();
 
-    public async Task<OneOf<EstudSuccess, EstudError>> MarkAsViewed(MarkNotificationsAsViewedIn data)
+    public async Task<OneOf<EstudSuccess, EstudError>> Mark(MarkNotificationsAsViewedIn data)
     {
         if (V.Run(data, out var error)) return error;
 

@@ -13,7 +13,7 @@ public partial class IntegrationTests
         var client = _back.GetTestsClient();
 
         // Act
-        var result = await client.CreateCourseCurriculum(1);
+        var result = await client.CreateCourseCurriculum(courseId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Unauthorized);
@@ -30,7 +30,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await client.CreateCourseCurriculum(1);
+        var result = await client.CreateCourseCurriculum(courseId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -75,7 +75,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.CreateCourseCurriculum(99999);
+        var result = await client.CreateCourseCurriculum(courseId: 99999);
 
         // Assert
         result.ShouldBeError(CourseNotFound.I);
@@ -123,7 +123,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
         var course = await client.CreateCourse().Success();
         var discipline = await client.CreateDiscipline().Success();
-        await client.AddCourseDisciplines(course.Id, [discipline.Id]);
+        await client.AssignDisciplinesToCourse(course.Id, [discipline.Id]);
 
         List<CreateCourseCurriculumDisciplineIn> disciplines = [new(discipline.Id, 1, 4, 72)];
 

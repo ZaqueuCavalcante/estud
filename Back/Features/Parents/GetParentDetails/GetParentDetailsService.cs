@@ -6,8 +6,7 @@ public class GetParentDetailsService(EstudDbContext ctx) : IEstudService
     {
         var institutionId = ctx.RequestUser.InstitutionId;
 
-        var parent = await ctx.Parents.AsNoTracking()
-            .Include(p => p.User)
+        var parent = await ctx.Parents.AsNoTracking().Include(p => p.User)
             .FirstOrDefaultAsync(p => p.Id == parentId && p.InstitutionId == institutionId);
         if (parent == null) return ParentNotFound.I;
 

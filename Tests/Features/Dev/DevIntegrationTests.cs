@@ -100,7 +100,7 @@ public partial class IntegrationTests
             data.AdsDisciplinesIds.Add(result.Success.Id);
         }
 
-        await client.AddCourseDisciplines(data.AdsCourseId, data.AdsDisciplinesIds);
+        await client.AssignDisciplinesToCourse(data.AdsCourseId, data.AdsDisciplinesIds);
     }
 
     private static async Task DevCreateDireitoDisciplines(TestsHttpClient client, DevInstitutionData data)
@@ -186,7 +186,7 @@ public partial class IntegrationTests
             data.DireitoDisciplinesIds.Add(result.Success.Id);
         }
 
-        await client.AddCourseDisciplines(data.DireitoCourseId, data.DireitoDisciplinesIds);
+        await client.AssignDisciplinesToCourse(data.DireitoCourseId, data.DireitoDisciplinesIds);
     }
 
     private static async Task DevCreateAdsCourseCurriculum(TestsHttpClient client, DevInstitutionData data)

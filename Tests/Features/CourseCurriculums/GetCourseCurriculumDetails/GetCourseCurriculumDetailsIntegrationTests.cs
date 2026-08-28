@@ -108,7 +108,7 @@ public partial class IntegrationTests
         var course = await client.CreateCourse().Success();
         var calculo = await client.CreateDiscipline("Cálculo I").Success();
         var algebra = await client.CreateDiscipline("Álgebra").Success();
-        await client.AddCourseDisciplines(course.Id, [calculo.Id, algebra.Id]);
+        await client.AssignDisciplinesToCourse(course.Id, [calculo.Id, algebra.Id]);
 
         List<CreateCourseCurriculumDisciplineIn> disciplines =
         [

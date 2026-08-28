@@ -102,7 +102,7 @@ public partial class IntegrationTests
         var course = await client.CreateCourse().Success();
         var calculo = await client.CreateDiscipline("Cálculo I").Success();
         var geometria = await client.CreateDiscipline("Geometria").Success();
-        await client.AddCourseDisciplines(course.Id, [calculo.Id, geometria.Id]);
+        await client.AssignDisciplinesToCourse(course.Id, [calculo.Id, geometria.Id]);
 
         // Act
         var result = await client.GetCourseDetails(course.Id);
@@ -121,7 +121,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
         var course = await client.CreateCourse().Success();
         var discipline = await client.CreateDiscipline("Cálculo I").Success();
-        await client.AddCourseDisciplines(course.Id, [discipline.Id]);
+        await client.AssignDisciplinesToCourse(course.Id, [discipline.Id]);
 
         List<CreateCourseCurriculumDisciplineIn> disciplines =
         [

@@ -85,9 +85,8 @@ public partial class IntegrationTests
         var notification = result.Success;
         notification.Id.Should().NotBe(0);
 
-        await using var ctx = _back.GetDbContext();
-        var recipients = await ctx.UserNotifications.CountAsync(x => x.NotificationId == notification.Id);
-        recipients.Should().Be(2);
+        var recipients = await client.GetInstitutionNotifications().Success();
+        recipients.Items.Should().HaveCount(2);
     }
 
     [Test]
@@ -105,9 +104,8 @@ public partial class IntegrationTests
         var notification = result.Success;
         notification.Id.Should().NotBe(0);
 
-        await using var ctx = _back.GetDbContext();
-        var recipients = await ctx.UserNotifications.CountAsync(x => x.NotificationId == notification.Id);
-        recipients.Should().Be(1);
+        var recipients = await client.GetInstitutionNotifications().Success();
+        recipients.Items.Should().HaveCount(1);
     }
 
     [Test]
@@ -125,9 +123,8 @@ public partial class IntegrationTests
         var notification = result.Success;
         notification.Id.Should().NotBe(0);
 
-        await using var ctx = _back.GetDbContext();
-        var recipients = await ctx.UserNotifications.CountAsync(x => x.NotificationId == notification.Id);
-        recipients.Should().Be(1);
+        var recipients = await client.GetInstitutionNotifications().Success();
+        recipients.Items.Should().HaveCount(1);
     }
 
     #endregion

@@ -87,7 +87,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus("Agreste I").Success();
         var course = await client.CreateCourse("Análise e Desenvolvimento de Sistemas", CourseType.Tecnologo).Success();
         var calculo = await client.CreateDiscipline("Cálculo I").Success();
-        await client.AddCourseDisciplines(course.Id, [calculo.Id]);
+        await client.AssignDisciplinesToCourse(course.Id, [calculo.Id]);
 
         List<CreateCourseCurriculumDisciplineIn> disciplines = [new(calculo.Id, 1, 4, 60)];
         var curriculum = await client.CreateCourseCurriculum(course.Id, "Grade 2024", disciplines).Success();

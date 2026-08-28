@@ -12,9 +12,9 @@ public class MarkNotificationsAsViewedController(MarkNotificationsAsViewedServic
     [HttpPut("notifications/mark-as-viewed")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]
     [SwaggerResponseExample(400, typeof(ErrorsExamples))]
-    public async Task<IActionResult> MarkAsViewed([FromBody] MarkNotificationsAsViewedIn data)
+    public async Task<IActionResult> Mark([FromBody] MarkNotificationsAsViewedIn data)
     {
-        var result = await service.MarkAsViewed(data);
+        var result = await service.Mark(data);
         return result.Match<IActionResult>(Ok, BadRequest);
     }
 }

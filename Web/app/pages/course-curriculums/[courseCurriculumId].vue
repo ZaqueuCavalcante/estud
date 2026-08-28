@@ -117,28 +117,26 @@ const breadcrumb = [
             As ofertas que usam esta grade.
           </p>
 
-          <div v-if="offerings.length" class="flex flex-col gap-2">
-            <div
+          <div v-if="offerings.length" class="grid gap-3 sm:grid-cols-2">
+            <NuxtLink
               v-for="offering in offerings"
               :key="offering.id"
-              class="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg border border-default bg-elevated/40 px-3 py-2"
+              :to="`/course-offerings/${offering.id}`"
+              class="flex flex-col gap-2 rounded-xl border border-default bg-elevated/40 px-4 py-3 transition-all duration-200 hover:border-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              <span class="flex items-center gap-1.5 text-sm text-highlighted">
-                <UIcon name="i-lucide-building-2" class="size-4 shrink-0 text-muted" />
-                {{ offering.campus }}
-              </span>
-              <span class="flex items-center gap-1.5 text-sm text-muted">
-                <UIcon name="i-lucide-calendar" class="size-4 shrink-0" />
-                {{ offering.period }}
-              </span>
-              <UBadge color="neutral" variant="subtle">
-                {{ sessionLabels[offering.session] ?? offering.session }}
-              </UBadge>
-              <span class="flex items-center gap-1.5 text-sm text-muted">
-                <UIcon name="i-lucide-users" class="size-4 shrink-0" />
-                {{ offering.students }} {{ offering.students === 1 ? 'aluno' : 'alunos' }}
-              </span>
-            </div>
+              <p class="truncate text-base font-bold text-highlighted">{{ offering.campus }}</p>
+
+              <div class="flex flex-col gap-1 text-sm text-muted">
+                <span class="flex items-center gap-1.5">
+                  <UIcon name="i-lucide-calendar" class="size-4 shrink-0" />
+                  <span class="truncate">{{ offering.period }} · {{ sessionLabels[offering.session] ?? offering.session }}</span>
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <UIcon name="i-lucide-users" class="size-4 shrink-0" />
+                  {{ offering.students }} {{ offering.students === 1 ? 'aluno' : 'alunos' }}
+                </span>
+              </div>
+            </NuxtLink>
           </div>
           <div v-else class="flex items-center gap-2 text-sm text-muted">
             <UIcon name="i-lucide-calendar-x" class="size-4" />

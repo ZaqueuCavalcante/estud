@@ -164,7 +164,7 @@ public partial class IntegrationTests
         var course = await client.CreateCourse();
         var curriculum = await client.CreateCourseCurriculum(course.Success.Id);
         var discipline = await client.CreateDiscipline().Success();
-        await client.AddCourseDisciplines(course.Success.Id, [discipline.Id]);
+        await client.AssignDisciplinesToCourse(course.Success.Id, [discipline.Id]);
 
         List<UpdateCourseCurriculumDisciplineIn> disciplines =
             [new() { Id = discipline.Id, Period = 1, Credits = 4, Workload = 72 }];

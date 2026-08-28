@@ -64,7 +64,7 @@ public partial class IntegrationTests
 
         var course = await directorClient.CreateCourse(name: "ADS").Success();
         var discipline = await directorClient.CreateDiscipline().Success();
-        await directorClient.AddCourseDisciplines(course.Id, [discipline.Id]);
+        await directorClient.AssignDisciplinesToCourse(course.Id, [discipline.Id]);
         var curriculum = await directorClient.CreateCourseCurriculum(course.Id, "Grade 2024", [new(discipline.Id, 1, 4, 80)]).Success();
 
         var period = await directorClient.GetFirstAcademicPeriod();
@@ -146,14 +146,14 @@ public partial class IntegrationTests
         // Curso da manhã
         var courseA = await directorClient.CreateCourse(name: "ADS").Success();
         var disciplineA = await directorClient.CreateDiscipline(name: "Geometria").Success();
-        await directorClient.AddCourseDisciplines(courseA.Id, [disciplineA.Id]);
+        await directorClient.AssignDisciplinesToCourse(courseA.Id, [disciplineA.Id]);
         var curriculumA = await directorClient.CreateCourseCurriculum(courseA.Id, "Grade ADS 2024", [new(disciplineA.Id, 1, 4, 80)]).Success();
         var offeringA = await directorClient.CreateCourseOffering(campus.Id, courseA.Id, curriculumA.Id, period.Id, CourseSession.Morning).Success();
 
         // Curso da noite
         var courseB = await directorClient.CreateCourse(name: "Direito").Success();
         var disciplineB = await directorClient.CreateDiscipline(name: "Direito Civil").Success();
-        await directorClient.AddCourseDisciplines(courseB.Id, [disciplineB.Id]);
+        await directorClient.AssignDisciplinesToCourse(courseB.Id, [disciplineB.Id]);
         var curriculumB = await directorClient.CreateCourseCurriculum(courseB.Id, "Grade Direito 2024", [new(disciplineB.Id, 1, 4, 80)]).Success();
         var offeringB = await directorClient.CreateCourseOffering(campus.Id, courseB.Id, curriculumB.Id, period.Id, CourseSession.Evening).Success();
 
@@ -261,7 +261,7 @@ public partial class IntegrationTests
         var algoritmos = await directorClient.CreateDiscipline(name: "Algoritmos").Success();
         var bancoDeDados = await directorClient.CreateDiscipline(name: "Banco de Dados").Success();
         var redes = await directorClient.CreateDiscipline(name: "Redes").Success();
-        await directorClient.AddCourseDisciplines(course.Id, [geometria.Id, algoritmos.Id, bancoDeDados.Id, redes.Id]);
+        await directorClient.AssignDisciplinesToCourse(course.Id, [geometria.Id, algoritmos.Id, bancoDeDados.Id, redes.Id]);
 
         var curriculum = await directorClient.CreateCourseCurriculum(course.Id, "Grade ADS 2024",
         [
@@ -370,7 +370,7 @@ public partial class IntegrationTests
         var algoritmos = await directorClient.CreateDiscipline(name: "Algoritmos").Success();
         var bancoDeDados = await directorClient.CreateDiscipline(name: "Banco de Dados").Success();
         var redes = await directorClient.CreateDiscipline(name: "Redes").Success();
-        await directorClient.AddCourseDisciplines(course.Id, [geometria.Id, algoritmos.Id, bancoDeDados.Id, redes.Id]);
+        await directorClient.AssignDisciplinesToCourse(course.Id, [geometria.Id, algoritmos.Id, bancoDeDados.Id, redes.Id]);
 
         var curriculum = await directorClient.CreateCourseCurriculum(course.Id, "Grade ADS 2024",
         [
@@ -534,7 +534,7 @@ public partial class IntegrationTests
         var courseA = await directorClient.CreateCourse(name: "ADS").Success();
         var geometria = await directorClient.CreateDiscipline(name: "Geometria").Success();
         var algoritmos = await directorClient.CreateDiscipline(name: "Algoritmos").Success();
-        await directorClient.AddCourseDisciplines(courseA.Id, [geometria.Id, algoritmos.Id]);
+        await directorClient.AssignDisciplinesToCourse(courseA.Id, [geometria.Id, algoritmos.Id]);
         var curriculumA = await directorClient.CreateCourseCurriculum(courseA.Id, "Grade ADS 2024",
         [
             new(geometria.Id, 1, 4, 80),
@@ -546,7 +546,7 @@ public partial class IntegrationTests
         var courseB = await directorClient.CreateCourse(name: "Pedagogia").Success();
         var didatica = await directorClient.CreateDiscipline(name: "Didática").Success();
         var psicologia = await directorClient.CreateDiscipline(name: "Psicologia da Educação").Success();
-        await directorClient.AddCourseDisciplines(courseB.Id, [didatica.Id, psicologia.Id]);
+        await directorClient.AssignDisciplinesToCourse(courseB.Id, [didatica.Id, psicologia.Id]);
         var curriculumB = await directorClient.CreateCourseCurriculum(courseB.Id, "Grade Pedagogia 2024",
         [
             new(didatica.Id, 1, 4, 80),
@@ -688,7 +688,7 @@ public partial class IntegrationTests
 
         var course = await directorClient.CreateCourse(name: "ADS").Success();
         var discipline = await directorClient.CreateDiscipline().Success();
-        await directorClient.AddCourseDisciplines(course.Id, [discipline.Id]);
+        await directorClient.AssignDisciplinesToCourse(course.Id, [discipline.Id]);
         var curriculum = await directorClient.CreateCourseCurriculum(course.Id, "Grade ADS 2024", [new(discipline.Id, 1, 4, 80)]).Success();
         var offering = await directorClient.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, firstPeriod.Id, CourseSession.Morning).Success();
 
@@ -791,7 +791,7 @@ public partial class IntegrationTests
         var course = await directorClient.CreateCourse(name: "ADS").Success();
         var geometria = await directorClient.CreateDiscipline(name: "Geometria").Success();
         var algoritmos = await directorClient.CreateDiscipline(name: "Algoritmos").Success();
-        await directorClient.AddCourseDisciplines(course.Id, [geometria.Id, algoritmos.Id]);
+        await directorClient.AssignDisciplinesToCourse(course.Id, [geometria.Id, algoritmos.Id]);
         var curriculum = await directorClient.CreateCourseCurriculum(course.Id, "Grade ADS 2024",
         [
             new(geometria.Id, 1, 4, 80),
@@ -917,7 +917,7 @@ public partial class IntegrationTests
         var course = await directorClient.CreateCourse(name: "ADS").Success();
         var geometria = await directorClient.CreateDiscipline(name: "Geometria").Success();
         var algoritmos = await directorClient.CreateDiscipline(name: "Algoritmos").Success();
-        await directorClient.AddCourseDisciplines(course.Id, [geometria.Id, algoritmos.Id]);
+        await directorClient.AssignDisciplinesToCourse(course.Id, [geometria.Id, algoritmos.Id]);
         var curriculum = await directorClient.CreateCourseCurriculum(course.Id, "Grade ADS 2024",
         [
             new(geometria.Id, 1, 4, 80),
@@ -1039,7 +1039,7 @@ public partial class IntegrationTests
             var discipline = await directorClient.CreateDiscipline(name).Success();
             disciplines.Add(discipline.Id);
         }
-        await directorClient.AddCourseDisciplines(course.Id, disciplines);
+        await directorClient.AssignDisciplinesToCourse(course.Id, disciplines);
 
         var curriculum = await directorClient.CreateCourseCurriculum(course.Id, "Grade ADS 2024",
             disciplines.ConvertAll(id => new CreateCourseCurriculumDisciplineIn(id, 1, 4, 80))).Success();
@@ -1196,7 +1196,7 @@ public partial class IntegrationTests
         {
             adsDisciplines.Add((await directorClient.CreateDiscipline(name).Success()).Id);
         }
-        await directorClient.AddCourseDisciplines(ads.Id, adsDisciplines);
+        await directorClient.AssignDisciplinesToCourse(ads.Id, adsDisciplines);
         var adsCurriculum = await directorClient.CreateCourseCurriculum(ads.Id, "Grade ADS 2024",
             adsDisciplines.ConvertAll(id => new CreateCourseCurriculumDisciplineIn(id, 1, 4, 80))).Success();
 
@@ -1205,7 +1205,7 @@ public partial class IntegrationTests
         {
             direitoDisciplines.Add((await directorClient.CreateDiscipline(name).Success()).Id);
         }
-        await directorClient.AddCourseDisciplines(direito.Id, direitoDisciplines);
+        await directorClient.AssignDisciplinesToCourse(direito.Id, direitoDisciplines);
         var direitoCurriculum = await directorClient.CreateCourseCurriculum(direito.Id, "Grade Direito 2024",
             direitoDisciplines.ConvertAll(id => new CreateCourseCurriculumDisciplineIn(id, 1, 4, 80))).Success();
 
@@ -1214,7 +1214,7 @@ public partial class IntegrationTests
         {
             pedagogiaDisciplines.Add((await directorClient.CreateDiscipline(name).Success()).Id);
         }
-        await directorClient.AddCourseDisciplines(pedagogia.Id, pedagogiaDisciplines);
+        await directorClient.AssignDisciplinesToCourse(pedagogia.Id, pedagogiaDisciplines);
         var pedagogiaCurriculum = await directorClient.CreateCourseCurriculum(pedagogia.Id, "Grade Pedagogia 2024",
             pedagogiaDisciplines.ConvertAll(id => new CreateCourseCurriculumDisciplineIn(id, 1, 4, 80))).Success();
 

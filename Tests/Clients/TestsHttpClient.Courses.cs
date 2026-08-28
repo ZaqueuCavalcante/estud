@@ -3,9 +3,8 @@ using Estud.Back.Features.Courses.GetCourses;
 using Estud.Back.Features.Courses.CreateCourse;
 using Estud.Back.Features.Courses.UpdateCourse;
 using Estud.Back.Features.Courses.GetCourseDetails;
-using Estud.Back.Features.Courses.AddCourseDisciplines;
 using Estud.Back.Features.Courses.GetCourseDisciplines;
-using Estud.Back.Features.Courses.RemoveCourseDiscipline;
+using Estud.Back.Features.Courses.AssignDisciplinesToCourse;
 using Estud.Back.Features.Courses.GetCoursePotentialDisciplines;
 
 namespace Estud.Tests.Integration.Clients;
@@ -72,21 +71,12 @@ public partial class TestsHttpClient
         return await response.Resolve<GetCoursePotentialDisciplinesOut>();
     }
 
-    public async Task<OneOf<SuccessOut, ErrorOut>> AddCourseDisciplines(int courseId, List<int> disciplines)
-    {
-        var data = new AddCourseDisciplinesIn { CourseId = courseId, Disciplines = disciplines };
-        var response = await http.PostAsJsonAsync("/courses/disciplines", data);
-        return await response.Resolve<SuccessOut>();
-    }
-
-    public async Task<OneOf<SuccessOut, ErrorOut>> RemoveCourseDiscipline(int courseId, int disciplineId)
-    {
-        var data = new RemoveCourseDisciplineIn { CourseId = courseId, DisciplineId = disciplineId };
-        var request = new HttpRequestMessage(HttpMethod.Delete, "/courses/disciplines")
-        {
-            Content = JsonContent.Create(data),
-        };
-        var response = await http.SendAsync(request);
+    public async Task<OneOf<SuccessOut, ErrorOut>> AssignDisciplinesToCourse(
+        int courseId,
+        List<int> disciplines
+    ) {
+        var data = new AssignDisciplinesToCourseIn { Disciplines = disciplines };
+        var response = await http.PutAsJsonAsync($"/courses/{courseId}/assign-disciplines", data);
         return await response.Resolve<SuccessOut>();
     }
 }

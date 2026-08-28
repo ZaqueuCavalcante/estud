@@ -11,7 +11,7 @@ public partial class IntegrationTests
         var client = _back.GetTestsClient();
 
         // Act
-        var result = await client.CreateCourseOffering(1, 1, 1, 1);
+        var result = await client.CreateCourseOffering(campusId: 1, courseId: 1, courseCurriculumId: 1, academicPeriodId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Unauthorized);
@@ -28,7 +28,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await client.CreateCourseOffering(1, 1, 1, 1);
+        var result = await client.CreateCourseOffering(campusId: 1, courseId: 1, courseCurriculumId: 1, academicPeriodId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -45,7 +45,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.CreateCourseOffering(1, 1, 1, 1, (CourseSession)99);
+        var result = await client.CreateCourseOffering(campusId: 1, courseId: 1, courseCurriculumId: 1, academicPeriodId: 1, session: (CourseSession)99);
 
         // Assert
         result.ShouldBeError(InvalidCourseSession.I);
@@ -58,7 +58,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.CreateCourseOffering(99999, 1, 1, 1);
+        var result = await client.CreateCourseOffering(campusId: 99999, courseId: 1, courseCurriculumId: 1, academicPeriodId: 1);
 
         // Assert
         result.ShouldBeError(CampusNotFound.I);
@@ -74,7 +74,7 @@ public partial class IntegrationTests
         var otherCampus = await otherClient.CreateCampus().Success();
 
         // Act
-        var result = await client.CreateCourseOffering(otherCampus.Id, 1, 1, 1);
+        var result = await client.CreateCourseOffering(otherCampus.Id, courseId: 1, courseCurriculumId: 1, academicPeriodId: 1);
 
         // Assert
         result.ShouldBeError(CampusNotFound.I);
@@ -88,7 +88,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
 
         // Act
-        var result = await client.CreateCourseOffering(campus.Id, 99999, 1, 1);
+        var result = await client.CreateCourseOffering(campus.Id, courseId: 99999, courseCurriculumId: 1, academicPeriodId: 1);
 
         // Assert
         result.ShouldBeError(CourseNotFound.I);
@@ -105,7 +105,7 @@ public partial class IntegrationTests
         var otherCourse = await otherClient.CreateCourse().Success();
 
         // Act
-        var result = await client.CreateCourseOffering(campus.Id, otherCourse.Id, 1, 1);
+        var result = await client.CreateCourseOffering(campus.Id, otherCourse.Id, courseCurriculumId: 1, academicPeriodId: 1);
 
         // Assert
         result.ShouldBeError(CourseNotFound.I);
@@ -120,7 +120,7 @@ public partial class IntegrationTests
         var course = await client.CreateCourse().Success();
 
         // Act
-        var result = await client.CreateCourseOffering(campus.Id, course.Id, 99999, 1);
+        var result = await client.CreateCourseOffering(campus.Id, course.Id, courseCurriculumId: 99999, academicPeriodId: 1);
 
         // Assert
         result.ShouldBeError(CourseCurriculumNotFound.I);
@@ -139,7 +139,7 @@ public partial class IntegrationTests
         var otherCurriculum = await otherClient.CreateCourseCurriculum(otherCourse.Id).Success();
 
         // Act
-        var result = await client.CreateCourseOffering(campus.Id, course.Id, otherCurriculum.Id, 1);
+        var result = await client.CreateCourseOffering(campus.Id, course.Id, otherCurriculum.Id, academicPeriodId: 1);
 
         // Assert
         result.ShouldBeError(CourseCurriculumNotFound.I);
@@ -157,7 +157,7 @@ public partial class IntegrationTests
         var anotherCourseCurriculum = await client.CreateCourseCurriculum(anotherCourse.Id).Success();
 
         // Act
-        var result = await client.CreateCourseOffering(campus.Id, course.Id, anotherCourseCurriculum.Id, 1);
+        var result = await client.CreateCourseOffering(campus.Id, course.Id, anotherCourseCurriculum.Id, academicPeriodId: 1);
 
         // Assert
         result.ShouldBeError(CourseCurriculumNotFound.I);
@@ -173,7 +173,7 @@ public partial class IntegrationTests
         var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
 
         // Act
-        var result = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, 99999);
+        var result = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, academicPeriodId: 99999);
 
         // Assert
         result.ShouldBeError(AcademicPeriodNotFound.I);

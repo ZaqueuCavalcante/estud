@@ -20,10 +20,3 @@ public class InvalidDisciplinesList : EstudError
     public override string Code { get; set; } = nameof(InvalidDisciplinesList);
     public override string Message { get; set; } = "Lista de disciplinas inválida.";
 }
-
-public class CourseDisciplineNotFound : EstudError
-{
-    public static readonly CourseDisciplineNotFound I = new();
-    public override string Code { get; set; } = nameof(CourseDisciplineNotFound);
-    public override string Message { get; set; } = "Vínculo entre disciplina e curso não encontrado.";
-}

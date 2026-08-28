@@ -99,7 +99,7 @@ public partial class IntegrationTests
         var course = await client.CreateCourse().Success();
         var linkedDiscipline = await client.CreateDiscipline("Geometria").Success();
         var potentialDiscipline = await client.CreateDiscipline("Álgebra").Success();
-        await client.AddCourseDisciplines(course.Id, [linkedDiscipline.Id]);
+        await client.AssignDisciplinesToCourse(course.Id, [linkedDiscipline.Id]);
 
         // Act
         var result = await client.GetCoursePotentialDisciplines(course.Id);

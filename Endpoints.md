@@ -1,33 +1,28 @@
 ﻿# Endpoints ✅
 
 ## Admin
-
 - ✅ GetDomainEventsController
 - ✅ GetInstitutionsController
 
 ## Calendar
-
 - ✅ GetCalendarController
 - ✅ CreateCalendarDayController
 - ✅ DeleteCalendarDayController
 - ✅ UpdateCalendarDayController
 
 ## Classrooms
-
 - ✅ GetClassroomController
 - ✅ GetClassroomsController
 - ✅ CreateClassroomController
 - ✅ UpdateClassroomController
 
 ## Cross
-
 - ✅ HomeController
 - ✅ HealthController
 - ✅ VersionController
 - ✅ GetHomeStatsController
 
 ## Disciplines
-
 - ✅ GetDisciplinesController
 - ✅ CreateDisciplineController
 - ✅ UpdateDisciplineController
@@ -39,16 +34,54 @@
 - ✅ GetDisciplinePotentialTeachersController
 
 ## Users
-
 - ✅ RegisterUserController
 - ✅ GetAuthStatusController
 - ✅ GetUserAccountController
 - ✅ UpdateUserAccountController
 
 ## Institutions
-
 - ✅ GetInstitutionConfigController
 - ✅ SetupInstitutionConfigController
+
+## CourseCurriculums
+- ✅ CreateCourseCurriculumController
+- ✅ GetCourseCurriculumDetailsController
+- ✅ GetCourseCurriculumsController
+- ✅ UpdateCourseCurriculumController
+
+## Courses
+- ✅ GetCoursesController
+- ✅ CreateCourseController
+- ✅ UpdateCourseController
+- ✅ GetCourseDetailsController
+- ✅ GetCourseDisciplinesController
+- ✅ AssignDisciplinesToCourseController
+- ✅ GetCoursePotentialDisciplinesController
+
+## CourseOfferings
+- ✅ CreateCourseOfferingController
+- ✅ GetCourseOfferingDetailsController
+- ✅ GetCourseOfferingsController
+
+## Notifications
+- ✅ GetNotificationsController
+- ✅ CreateNotificationController
+- ✅ MarkNotificationsAsViewedController
+- ✅ GetInstitutionNotificationController
+- ✅ GetInstitutionNotificationsController
+- ✅ GetUnreadNotificationsCountController
+
+## Parents
+
+- ✅ GetParentsController
+- ✅ CreateParentController
+- ✅ GetParentDetailsController
+- ✅ GetParentStudentsController
+- GetParentStudentAgendaController (revisar endpoint, testes e front)
+
+
+
+
 
 ## Campi
 
@@ -66,33 +99,9 @@
 - StartClassController
 - ✅ CreateClassController
 - ✅ UpdateClassTeachersController
-- UpdateClassSchedulesController
-- ReleaseClassForEnrollmentController
+- ✅ UpdateClassSchedulesController
+- ✅ ReleaseClassForEnrollmentController
 
-## CourseCurriculums
-
-- CreateCourseCurriculumController
-- GetCourseCurriculumController
-- GetCourseCurriculumDetailsController
-- GetCourseCurriculumsController
-- UpdateCourseCurriculumController
-
-## CourseOfferings
-
-- CreateCourseOfferingController
-- GetCourseOfferingDetailsController
-- GetCourseOfferingsController
-
-## Courses
-
-- ✅ CreateCourseController
-- ✅ UpdateCourseController
-- ✅ AddCourseDisciplinesController
-- GetCourseDetailsController
-- GetCourseDisciplinesController
-- GetCoursePotentialDisciplinesController
-- GetCoursesController
-- RemoveCourseDisciplineController
 
 ## Identity
 
@@ -120,22 +129,7 @@
 - UpdateRoleController
 - UpdateSsoConfigurationController
 
-## Notifications
 
-- CreateNotificationController
-- GetInstitutionNotificationController
-- GetInstitutionNotificationsController
-- GetNotificationsController
-- GetUnreadNotificationsCountController
-- MarkNotificationsAsViewedController
-
-## Parents
-
-- CreateParentController
-- GetParentDetailsController
-- GetParentStudentAgendaController
-- GetParentStudentsController
-- GetParentsController
 
 ## Periods
 

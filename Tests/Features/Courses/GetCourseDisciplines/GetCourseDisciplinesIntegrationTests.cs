@@ -61,7 +61,7 @@ public partial class IntegrationTests
         var course = await client.CreateCourse().Success();
         var discipline1 = await client.CreateDiscipline("Geometria").Success();
         var discipline2 = await client.CreateDiscipline("Álgebra").Success();
-        await client.AddCourseDisciplines(course.Id, [discipline1.Id, discipline2.Id]);
+        await client.AssignDisciplinesToCourse(course.Id, [discipline1.Id, discipline2.Id]);
 
         // Act
         var result = await client.GetCourseDisciplines(course.Id);
