@@ -115,10 +115,10 @@ public partial class IntegrationTests
 
         // Assert
         var details = result.Success;
-        details.Courses.Select(x => x.Name).Should().Equal("ADS", "Engenharia");
         details.Courses.Select(x => x.Id).Should().Equal(ads.Id, engenharia.Id);
-        details.Teachers.Select(x => x.Name).Should().Equal("Ana Lima", "Chico Ferreira");
+        details.Courses.Select(x => x.Name).Should().Equal("ADS", "Engenharia");
         details.Teachers.Select(x => x.Id).Should().Equal(ana.Id, chico.Id);
+        details.Teachers.Select(x => x.Name).Should().Equal("Ana Lima", "Chico Ferreira");
     }
 
     [Test]

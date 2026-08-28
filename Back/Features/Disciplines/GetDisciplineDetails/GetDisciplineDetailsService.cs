@@ -6,8 +6,7 @@ public class GetDisciplineDetailsService(EstudDbContext ctx) : IEstudService
     {
         var institutionId = ctx.RequestUser.InstitutionId;
 
-        var discipline = await ctx.Disciplines.AsNoTracking()
-            .Include(d => d.Links)
+        var discipline = await ctx.Disciplines.AsNoTracking().Include(d => d.Links)
             .FirstOrDefaultAsync(d => d.InstitutionId == institutionId && d.Id == disciplineId);
         if (discipline == null) return DisciplineNotFound.I;
 

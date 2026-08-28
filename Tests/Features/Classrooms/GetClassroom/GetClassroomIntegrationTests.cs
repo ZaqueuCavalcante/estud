@@ -109,18 +109,9 @@ public partial class IntegrationTests
 
         await client.UpdateClassSchedules(@class.Id,
         [
-            (Day.Monday, Hour.H07_00, Hour.H10_00, null, null),
-            (Day.Wednesday, Hour.H07_00, Hour.H09_00, null, null),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
+            (Day.Wednesday, Hour.H07_00, Hour.H09_00, null, classroom.Id),
         ]);
-
-        // Não há endpoint que aloque uma sala a um horário ainda, então o vínculo
-        // é feito direto no banco.
-        await using (var ctx = _back.GetDbContext())
-        {
-            var schedules = await ctx.Schedules.Where(s => s.ClassId == @class.Id).ToListAsync();
-            foreach (var schedule in schedules) schedule.ClassroomId = classroom.Id;
-            await ctx.SaveChangesAsync();
-        }
 
         // Act
         var result = await client.GetClassroom(classroom.Id);
@@ -152,19 +143,12 @@ public partial class IntegrationTests
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id)]);
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         await client.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2));
         await client.ReleaseClassForEnrollment(@class.Id);
         await client.AssignStudentToClass(student.Id, @class.Id);
-
-        await using (var ctx = _back.GetDbContext())
-        {
-            var schedules = await ctx.Schedules.Where(s => s.ClassId == @class.Id).ToListAsync();
-            foreach (var schedule in schedules) schedule.ClassroomId = classroom.Id;
-            await ctx.SaveChangesAsync();
-        }
 
         // Act
         var result = await client.GetClassroom(classroom.Id);

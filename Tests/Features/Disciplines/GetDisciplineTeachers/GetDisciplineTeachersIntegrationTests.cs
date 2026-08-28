@@ -76,8 +76,8 @@ public partial class IntegrationTests
 
         // Assert
         var items = result.Success.Items;
-        items.Select(x => x.Name).Should().Equal("Ana Lima", "Chico Ferreira");
         items.Select(x => x.Id).Should().Equal(ana.Id, chico.Id);
+        items.Select(x => x.Name).Should().Equal("Ana Lima", "Chico Ferreira");
     }
 
     [Test]

@@ -78,12 +78,10 @@
 - ✅ GetDisciplinesController
 - ✅ AssignCoursesToDisciplineController
 - ✅ AssignTeachersToDisciplineController
-
-- GetDisciplineController
-- GetDisciplineDetailsController
-- GetDisciplinePotentialCoursesController
-- GetDisciplinePotentialTeachersController
-- GetDisciplineTeachersController
+- ✅ GetDisciplineDetailsController
+- ✅ GetDisciplinePotentialCoursesController
+- ✅ GetDisciplinePotentialTeachersController
+- ✅ GetDisciplineTeachersController
 
 ## Identity
 

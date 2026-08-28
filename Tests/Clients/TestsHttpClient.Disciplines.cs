@@ -1,5 +1,4 @@
 using System.Net.Http.Json;
-using Estud.Back.Features.Disciplines.GetDiscipline;
 using Estud.Back.Features.Disciplines.GetDisciplines;
 using Estud.Back.Features.Disciplines.CreateDiscipline;
 using Estud.Back.Features.Disciplines.UpdateDiscipline;
@@ -35,12 +34,6 @@ public partial class TestsHttpClient
         var data = new UpdateDisciplineIn { Name = name };
         var response = await http.PutAsJsonAsync($"/disciplines/{disciplineId}", data);
         return await response.Resolve<UpdateDisciplineOut>();
-    }
-
-    public async Task<OneOf<GetDisciplineOut, ErrorOut>> GetDiscipline(int disciplineId)
-    {
-        var response = await http.GetAsync($"/disciplines/{disciplineId}");
-        return await response.Resolve<GetDisciplineOut>();
     }
 
     public async Task<OneOf<GetDisciplineDetailsOut, ErrorOut>> GetDisciplineDetails(int disciplineId)

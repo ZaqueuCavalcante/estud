@@ -4,14 +4,16 @@ public class GetDisciplinePotentialCoursesService(EstudDbContext ctx) : IEstudSe
 {
     public async Task<OneOf<GetDisciplinePotentialCoursesOut, EstudError>> Get(int disciplineId, string? name)
     {
+        var institutionId = ctx.RequestUser.InstitutionId;
+
         var discipline = await ctx.Disciplines.AsNoTracking().Include(d => d.Links)
-            .FirstOrDefaultAsync(d => d.InstitutionId == ctx.RequestUser.InstitutionId && d.Id == disciplineId);
+            .FirstOrDefaultAsync(d => d.InstitutionId == institutionId && d.Id == disciplineId);
         if (discipline == null) return DisciplineNotFound.I;
 
         var linkedCourseIds = discipline.Links.Select(l => l.CourseId).ToHashSet();
 
         var query = ctx.Courses.AsNoTracking()
-            .Where(c => c.InstitutionId == ctx.RequestUser.InstitutionId && !linkedCourseIds.Contains(c.Id));
+            .Where(c => c.InstitutionId == institutionId && !linkedCourseIds.Contains(c.Id));
 
         if (name.HasValue()) query = query.Where(c => c.Name.ToLower().Contains(name.ToLower()));
 
