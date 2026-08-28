@@ -5,7 +5,8 @@ definePageMeta({
 
 useSeoMeta({
   title: 'Contato — Estud',
-  description: 'Fale com a equipe do Estud. Tire dúvidas, peça suporte ou converse com nosso time comercial.'
+  description: 'Fale com a equipe do Estud. Tire dúvidas, peça suporte ou converse com nosso time comercial.',
+  robots: 'index, follow'
 })
 
 const channels = [

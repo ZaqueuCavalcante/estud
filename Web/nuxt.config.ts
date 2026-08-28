@@ -17,7 +17,24 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "@nuxt/content",
     "@posthog/nuxt",
+    "@nuxtjs/sitemap",
   ],
+
+  site: {
+    url: "https://estud.com.br",
+    name: "Estud",
+  },
+
+  sitemap: {
+    include: [
+      "/",
+      "/docs",
+      "/docs/**",
+      "/contact",
+      "/privacy-policy",
+      "/terms-of-service",
+    ],
+  },
 
   posthogConfig: {
     publicKey: "",
@@ -50,15 +67,11 @@ export default defineNuxtConfig({
         { property: 'og:image:width', content: '2400' },
         { property: 'og:image:height', content: '1260' },
         { property: 'og:image:alt', content: 'Tela inicial do Estud' },
-        { property: 'og:url', content: 'https://estud.com.br' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: 'Estud' },
         { name: 'twitter:description', content: 'Organize sua instituição de ensino com excelência' },
         { name: 'twitter:image', content: 'https://estud.com.br/images/home-page.png' },
         { name: 'twitter:image:alt', content: 'Tela inicial do Estud' }
-      ],
-      link: [
-        { rel: 'canonical', href: 'https://estud.com.br' }
       ]
     }
   },

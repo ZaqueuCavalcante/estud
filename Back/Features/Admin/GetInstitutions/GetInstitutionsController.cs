@@ -7,8 +7,7 @@ public class GetInstitutionsController(GetInstitutionsService service) : Control
     /// Listar instituições
     /// </summary>
     /// <remarks>
-    /// Lista paginada de instituições, atravessando todos os tenants, com filtro por nome e a
-    /// contagem de usuários de cada instituição. Ordenação: mais recente primeiro.
+    /// Lista paginada de instituições, atravessando todos os tenants.
     /// </remarks>
     [HttpGet("admin/institutions")]
     public async Task<IActionResult> Get([FromQuery] GetInstitutionsIn query)

@@ -71,8 +71,6 @@ public partial class IntegrationTests
 
     #region Happy path
 
-    // Todo campus nasce configurado: sem isso existiria um estado "campus ainda não
-    // configurado" que o cálculo de ocupação leria como fechado a semana inteira.
     [Test]
     public async Task Campi_GetCampusOpeningHours_Should_get_default_opening_hours_of_a_new_campus()
     {

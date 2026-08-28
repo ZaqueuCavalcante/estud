@@ -229,7 +229,6 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         // Act
-        // 09/05/2026 é um sábado.
         await client.CreateCalendarDay(new DateTime(2026, 5, 9), DayType.Default, "Reposição de aulas").Success();
 
         // Assert
@@ -282,7 +281,6 @@ public partial class IntegrationTests
         var result = await client.CreateCalendarDay(date, DayType.Recess, "Recesso local", campusId: campus.Id);
 
         // Assert
-        // O override do campus convive com o da instituição: níveis diferentes não colidem.
         result.IsSuccess.Should().BeTrue();
     }
 

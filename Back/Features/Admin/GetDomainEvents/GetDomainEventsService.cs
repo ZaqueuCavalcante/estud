@@ -9,7 +9,6 @@ public class GetDomainEventsService(EstudDbContext ctx) : IEstudService
         var page = Math.Max(query.Page, 1);
         var pageSize = Math.Clamp(query.PageSize, 1, MaxPageSize);
 
-        // Leitura cross-tenant: sem escopo por RequestUser (que fica 0/0 no host de admin).
         var eventsQuery = ctx.DomainEvents.AsNoTracking();
 
         if (query.Status is not null)

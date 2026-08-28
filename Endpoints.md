@@ -2,24 +2,24 @@
 
 ## Admin
 
-- GetDomainEventsController
-- GetInstitutionsController
+- ✅ GetDomainEventsController
+- ✅ GetInstitutionsController
 
 ## Calendar
 
-- CreateCalendarDayController
-- DeleteCalendarDayController
-- GetCalendarController
-- UpdateCalendarDayController
+- ✅ CreateCalendarDayController
+- ✅ DeleteCalendarDayController
+- ✅ GetCalendarController
+- ✅ UpdateCalendarDayController
 
 ## Campi
 
-- CreateCampusController
-- GetCampiController
-- GetCampusOccupancyController
-- GetCampusOpeningHoursController
-- UpdateCampusController
-- UpdateCampusOpeningHoursController
+- ✅ CreateCampusController
+- ✅ UpdateCampusController
+- ✅ GetCampusOpeningHoursController
+- ✅ UpdateCampusOpeningHoursController
+- GetCampusOccupancyController (falta revisar os testes)
+- GetCampiController (falta teste com ocupação não nula)
 
 ## Classes
 
@@ -66,24 +66,24 @@
 
 ## Cross
 
-- GetHomeStatsController
-- HealthController
-- HomeController
-- VersionController
+- ✅ GetHomeStatsController
+- ✅ HealthController
+- ✅ HomeController
+- ✅ VersionController
 
 ## Disciplines
 
+- ✅ CreateDisciplineController
+- ✅ UpdateDisciplineController
+- GetDisciplinesController
 - AddDisciplineCoursesController
 - AssignTeachersToDisciplineController
-- CreateDisciplineController
 - GetDisciplineController
 - GetDisciplineDetailsController
 - GetDisciplinePotentialCoursesController
 - GetDisciplinePotentialTeachersController
 - GetDisciplineTeachersController
-- GetDisciplinesController
 - RemoveDisciplineCourseController
-- UpdateDisciplineController
 
 ## Identity
 
@@ -113,8 +113,8 @@
 
 ## Institutions
 
-- GetInstitutionConfigController
-- SetupInstitutionConfigController
+- ✅ GetInstitutionConfigController
+- ✅ SetupInstitutionConfigController
 
 ## Notifications
 
@@ -182,10 +182,10 @@
 
 ## Users
 
-- GetAuthStatusController
-- GetUserAccountController
-- RegisterUserController
-- UpdateUserAccountController
+- ✅ GetAuthStatusController
+- ✅ GetUserAccountController
+- ✅ RegisterUserController
+- ✅ UpdateUserAccountController
 
 ## Webhooks
 

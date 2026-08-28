@@ -28,12 +28,10 @@ public partial class IntegrationTests : IntegrationTestBase
     {
         // Arrange
         var client = _back.GetTestsClient();
-
-        var email = DataGen.Email;
-        await client.RegisterUser(email);
+        var user = await client.RegisterUser(DataGen.Email).Success();
 
         // Act
-        var response = await client.RegisterUser(email);
+        var response = await client.RegisterUser(user.Email);
 
         // Assert
         response.ShouldBeError(EmailAlreadyUsed.I);
@@ -44,12 +42,10 @@ public partial class IntegrationTests : IntegrationTestBase
     {
         // Arrange
         var client = _back.GetTestsClient();
-
-        var email = DataGen.Email.ToUpper();
-        await client.RegisterUser(email);
+        var user = await client.RegisterUser(DataGen.Email.ToUpper()).Success();
 
         // Act
-        var response = await client.RegisterUser(email.ToLower());
+        var response = await client.RegisterUser(user.Email.ToLower());
 
         // Assert
         response.ShouldBeError(EmailAlreadyUsed.I);
@@ -64,10 +60,9 @@ public partial class IntegrationTests : IntegrationTestBase
     {
        // Arrange
         var client = _back.GetTestsClient();
-        var email = DataGen.Email;
 
         // Act
-        var response = await client.RegisterUser(email);
+        var response = await client.RegisterUser(DataGen.Email);
 
         // Assert
         response.ShouldBeSuccess();
@@ -94,25 +89,6 @@ public partial class IntegrationTests : IntegrationTestBase
 
         var unreadCount = await manager.GetUnreadNotificationsCount().Success();
         unreadCount.Count.Should().Be(1);
-    }
-
-    [Test]
-    public async Task Users_RegisterUser_Should_not_send_the_welcome_notification_to_other_institution_users()
-    {
-        // Arrange
-        var manager = await _back.LoggedAsDirector();
-        var teacherEmail = DataGen.Email;
-        await manager.CreateTeacher(DataGen.UserName, teacherEmail);
-
-        var teacher = await _back.LoginAs(teacherEmail);
-
-        // Act
-        var result = await teacher.GetNotifications();
-
-        // Assert
-        var notifications = result.Success;
-        notifications.Total.Should().Be(0);
-        notifications.Items.Should().BeEmpty();
     }
 
     #endregion

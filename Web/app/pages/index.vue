@@ -3,6 +3,10 @@
 // servidor pelo middleware redirect-if-logged (sem gate/spinner no caminho do não logado).
 definePageMeta({ layout: false, middleware: 'redirect-if-logged' })
 
+useSeoMeta({
+  robots: 'index, follow'
+})
+
 const features = [
   {
     icon: 'i-lucide-graduation-cap',

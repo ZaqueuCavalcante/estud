@@ -7,8 +7,7 @@ public class UpdateCampusOpeningHoursController(UpdateCampusOpeningHoursService 
     /// Definir horários de funcionamento do campus
     /// </summary>
     /// <remarks>
-    /// Define a semana de funcionamento do campus. Substitui a configuração atual (replace-all).
-    /// Dia omitido, ou com a lista de janelas vazia, significa que o campus não abre nele.
+    /// Define a semana de funcionamento do campus.
     /// </remarks>
     [HttpPut("campi/{campusId}/opening-hours")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]

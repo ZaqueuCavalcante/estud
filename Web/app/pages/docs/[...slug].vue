@@ -25,6 +25,7 @@ const { data: surround } = await useAsyncData(
 useSeoMeta({
   title: () => page.value ? `${page.value.title} - Estud Docs` : 'Estud Docs',
   description: () => page.value?.description ?? '',
+  robots: 'index, follow',
 })
 </script>
 

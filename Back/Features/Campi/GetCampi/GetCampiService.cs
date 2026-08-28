@@ -102,7 +102,8 @@ public class GetCampiService(EstudDbContext ctx) : IEstudService
     {
         const string sql = @"
             SELECT
-                c.id, count(s.student_id) AS students
+                c.id,
+                count(s.student_id) AS students
             FROM
                 estud.classes c
             INNER JOIN

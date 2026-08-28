@@ -218,3 +218,5 @@ export type PolicyName
   // Admin
     | 'AccessAdminInstitutionsPage'
     | 'GetAdminInstitutions'
+    | 'AccessAdminDomainEventsPage'
+    | 'GetAdminDomainEvents'

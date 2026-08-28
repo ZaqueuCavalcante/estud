@@ -24,21 +24,25 @@ useEventListener('keydown', (e: KeyboardEvent) => {
 
 const { unreadCount } = useNotifications()
 
-const titleTemplate = computed(() => {
-  const prefix = unreadCount.value > 0 ? `(${unreadCount.value > 9 ? '+9' : unreadCount.value}) ` : ''
-  return (title?: string) => `${prefix}${title || 'Estud'}`
-})
+const route = useRoute()
 
-useHead({
-  titleTemplate,
-  meta: [
-    { charset: 'utf-8' },
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-    { key: 'theme-color', name: 'theme-color', content: color }
-  ],
-  link: [
-    { rel: 'icon', href: '/favicon.ico' }
-  ]
+useHead(() => {
+  const prefix = unreadCount.value > 0 ? `(${unreadCount.value > 9 ? '+9' : unreadCount.value}) ` : ''
+  const canonical = `https://estud.com.br${route.path === '/' ? '' : route.path}`
+
+  return {
+    titleTemplate: (title?: string) => `${prefix}${title || 'Estud'}`,
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { key: 'theme-color', name: 'theme-color', content: color.value },
+      { property: 'og:url', content: canonical }
+    ],
+    link: [
+      { rel: 'icon', href: '/favicon.ico' },
+      { rel: 'canonical', href: canonical }
+    ]
+  }
 })
 
 const loggingOut = useState('loggingOut', () => false)

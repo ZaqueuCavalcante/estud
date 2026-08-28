@@ -20,12 +20,6 @@ public class CreateDisciplineService(EstudDbContext ctx) : IEstudService
 
         var discipline = new Discipline(ctx.RequestUser.InstitutionId, data.Name);
 
-        var courses = await ctx.Courses
-            .Where(c => c.InstitutionId == ctx.RequestUser.InstitutionId && data.Courses.Contains(c.Id))
-            .Select(c => c.Id).ToListAsync();
-
-        courses.ForEach(id => discipline.Links.Add(new() { CourseId = id }));
-
         await ctx.SaveChangesAsync(discipline);
 
         return new CreateDisciplineOut { Id = discipline.Id };

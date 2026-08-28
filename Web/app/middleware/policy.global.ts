@@ -22,6 +22,7 @@ const routePolicies: Record<string, PolicyName> = {
   '/configs': 'AccessConfigsPage',
   '/children': 'AccessChildrenPage',
   '/admin/institutions': 'AccessAdminInstitutionsPage',
+  '/admin/domain-events': 'AccessAdminDomainEventsPage',
 }
 
 // A página de detalhe da turma é a mesma rota para os 3 perfis, mas cada um

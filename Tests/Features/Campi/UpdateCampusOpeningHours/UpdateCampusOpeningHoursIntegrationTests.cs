@@ -11,10 +11,7 @@ public partial class IntegrationTests
         var client = _back.GetTestsClient();
 
         // Act
-        var result = await client.UpdateCampusOpeningHours(campusId: 1,
-        [
-            (Day.Monday, [(Hour.H07_00, Hour.H12_00)]),
-        ]);
+        var result = await client.UpdateCampusOpeningHours(campusId: 1, []);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Unauthorized);
@@ -31,10 +28,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await client.UpdateCampusOpeningHours(campusId: 1,
-        [
-            (Day.Monday, [(Hour.H07_00, Hour.H12_00)]),
-        ]);
+        var result = await client.UpdateCampusOpeningHours(campusId: 1, []);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -51,10 +45,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.UpdateCampusOpeningHours(campusId: 99999,
-        [
-            (Day.Monday, [(Hour.H07_00, Hour.H12_00)]),
-        ]);
+        var result = await client.UpdateCampusOpeningHours(campusId: 99999, []);
 
         // Assert
         result.ShouldBeError(CampusNotFound.I);
@@ -70,10 +61,7 @@ public partial class IntegrationTests
         var otherCampus = await otherClient.CreateCampus().Success();
 
         // Act
-        var result = await client.UpdateCampusOpeningHours(otherCampus.Id,
-        [
-            (Day.Monday, [(Hour.H07_00, Hour.H12_00)]),
-        ]);
+        var result = await client.UpdateCampusOpeningHours(otherCampus.Id, []);
 
         // Assert
         result.ShouldBeError(CampusNotFound.I);
@@ -130,8 +118,6 @@ public partial class IntegrationTests
         result.ShouldBeError(OverlappingOpeningHours.I);
     }
 
-    // A segunda está correta e a colisão está na terça: um dia válido não pode
-    // mascarar o inválido, e a checagem varre todos os dias do payload.
     [Test]
     public async Task Campi_UpdateCampusOpeningHours_Should_not_update_campus_opening_hours_when_windows_overlap_in_another_day()
     {
@@ -184,8 +170,6 @@ public partial class IntegrationTests
         result.ShouldBeError(OpeningHourOutsideShift.I);
     }
 
-    // 07:00–22:00 cobre manhã, tarde e noite: uma janela só não pode varrer o dia
-    // inteiro, precisa ser quebrada em uma por turno.
     [Test]
     public async Task Campi_UpdateCampusOpeningHours_Should_not_update_campus_opening_hours_when_window_spans_the_whole_day()
     {
@@ -203,7 +187,6 @@ public partial class IntegrationTests
         result.ShouldBeError(OpeningHourOutsideShift.I);
     }
 
-    // 00:00 fica antes do início da manhã (06:00), então a janela não cai em turno nenhum.
     [Test]
     public async Task Campi_UpdateCampusOpeningHours_Should_not_update_campus_opening_hours_when_window_starts_before_the_first_shift()
     {
@@ -221,7 +204,6 @@ public partial class IntegrationTests
         result.ShouldBeError(OpeningHourOutsideShift.I);
     }
 
-    // As duas janelas cabem na manhã e não se sobrepõem, mas o turno só comporta uma.
     [Test]
     public async Task Campi_UpdateCampusOpeningHours_Should_not_update_campus_opening_hours_when_a_shift_has_two_windows()
     {
@@ -239,8 +221,6 @@ public partial class IntegrationTests
         result.ShouldBeError(MultipleOpeningHoursInShift.I);
     }
 
-    // A segunda tem uma janela por turno e a colisão está na terça: um dia válido
-    // não pode mascarar o inválido.
     [Test]
     public async Task Campi_UpdateCampusOpeningHours_Should_not_update_campus_opening_hours_when_a_shift_has_two_windows_in_another_day()
     {
@@ -305,7 +285,6 @@ public partial class IntegrationTests
         saturday.Windows[0].Start.Should().Be(Hour.H08_00);
         saturday.Windows[0].End.Should().Be(Hour.H12_00);
 
-        // Terça a sexta não vieram no PUT, então fecharam — replace-all.
         openingHours.Days.Where(d => d.Day is Day.Tuesday or Day.Wednesday or Day.Thursday or Day.Friday)
             .Should().OnlyContain(d => d.Windows.Count == 0);
     }
@@ -336,8 +315,6 @@ public partial class IntegrationTests
         monday.Windows[1].End.Should().Be(Hour.H18_00);
     }
 
-    // Duas janelas no mesmo intervalo em dias diferentes não colidem: a checagem
-    // de sobreposição é por dia, não pela lista inteira.
     [Test]
     public async Task Campi_UpdateCampusOpeningHours_Should_update_campus_opening_hours_with_two_windows_in_more_than_one_day()
     {
@@ -367,8 +344,6 @@ public partial class IntegrationTests
         }
     }
 
-    // 07:00–12:00 e 12:00–18:00 se encostam sem se sobrepor — o fim de uma é o
-    // início da outra. É a fronteira onde um `<=` no lugar do `<` erraria.
     [Test]
     public async Task Campi_UpdateCampusOpeningHours_Should_update_campus_opening_hours_with_adjacent_windows()
     {
@@ -393,8 +368,6 @@ public partial class IntegrationTests
         monday.Windows[1].Start.Should().Be(Hour.H12_00);
     }
 
-    // O limite é uma janela por turno, não uma por dia: três janelas cabem no dia
-    // desde que cada uma fique dentro de um turno diferente.
     [Test]
     public async Task Campi_UpdateCampusOpeningHours_Should_update_campus_opening_hours_with_one_window_per_shift()
     {
@@ -470,8 +443,6 @@ public partial class IntegrationTests
         openingHours.Days.Should().OnlyContain(d => d.Windows.Count == 0);
     }
 
-    // A configuração vive só no nível do campus, sem herança: um PUT num campus
-    // não pode, por construção, alcançar outro.
     [Test]
     public async Task Campi_UpdateCampusOpeningHours_Should_not_change_the_opening_hours_of_another_campus()
     {

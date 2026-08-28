@@ -7,9 +7,7 @@ public class CreateCalendarDayController(CreateCalendarDayService service) : Con
     /// Customizar dias do calendário
     /// </summary>
     /// <remarks>
-    /// Customiza um dia — ou um intervalo, quando há data final — do calendário acadêmico, marcando-o como
-    /// férias, recesso, feriado ou letivo. Sem campus, o override vale para a instituição inteira; com campus,
-    /// vale só naquele campus e entra por cima do override da instituição.
+    /// Customiza um dia (ou um intervalo, quando há data final) do calendário acadêmico.
     /// </remarks>
     [HttpPost("calendar/days")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]

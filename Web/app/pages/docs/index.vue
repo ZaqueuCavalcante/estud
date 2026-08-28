@@ -7,6 +7,7 @@ tocLinks.value = []
 useSeoMeta({
   title: 'Documentação - Estud',
   description: 'Guia completo para configurar e usar a plataforma Estud.',
+  robots: 'index, follow',
 })
 
 const sections = [

@@ -5,7 +5,8 @@ definePageMeta({
 
 useSeoMeta({
   title: 'Termos de Serviço — Estud',
-  description: 'Conheça os termos e condições de uso da plataforma Estud.'
+  description: 'Conheça os termos e condições de uso da plataforma Estud.',
+  robots: 'index, follow'
 })
 
 const lastUpdated = '16 de junho de 2026'

@@ -5,7 +5,8 @@ definePageMeta({
 
 useSeoMeta({
   title: 'Política de Privacidade — Estud',
-  description: 'Saiba como o Estud coleta, usa e protege seus dados pessoais.'
+  description: 'Saiba como o Estud coleta, usa e protege seus dados pessoais.',
+  robots: 'index, follow'
 })
 
 const lastUpdated = '16 de junho de 2026'

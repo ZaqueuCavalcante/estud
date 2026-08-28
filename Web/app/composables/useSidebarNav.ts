@@ -81,6 +81,7 @@ export const sidebarGroups: SidebarGroup[] = [
     icon: 'i-lucide-shield-user',
     items: [
       { label: 'Instituições',  icon: 'i-lucide-building-2',     to: '/admin/institutions', policy: 'AccessAdminInstitutionsPage' },
+      { label: 'Eventos',       icon: 'i-lucide-zap',            to: '/admin/domain-events', policy: 'AccessAdminDomainEventsPage' },
     ],
   },
 ]

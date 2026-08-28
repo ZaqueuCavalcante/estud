@@ -94,7 +94,6 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var institutionId = client.User.InstitutionId;
 
         // Act
         var result = await client.SetupInstitutionConfig(8.50M, 85.00M);
@@ -104,8 +103,7 @@ public partial class IntegrationTests
         config.NoteLimit.Should().Be(8.50M);
         config.FrequencyLimit.Should().Be(85.00M);
 
-        await using var ctx = _back.GetDbContext();
-        var saved = await ctx.InstitutionConfigs.FirstAsync(x => x.InstitutionId == institutionId);
+        var saved = await client.GetInstitutionConfig().Success();
         saved.Id.Should().Be(config.Id);
         saved.NoteLimit.Should().Be(8.50M);
         saved.FrequencyLimit.Should().Be(85.00M);

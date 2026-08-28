@@ -552,6 +552,18 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
       isAdm(),
     ],
   },
+  AccessAdminDomainEventsPage: {
+    description: "Acessar a página de eventos de domínio do adm",
+    requirements: [
+      isAdm(),
+    ],
+  },
+  GetAdminDomainEvents: {
+    description: "Listar os eventos de domínio de todos os tenants",
+    requirements: [
+      isAdm(),
+    ],
+  },
 };
 
 export function getPolicy(name: PolicyName): PolicyDefinition {

@@ -8,8 +8,9 @@ public class UpdateCalendarDayService(EstudDbContext ctx) : IEstudService
         {
             RuleFor(x => x.DayType).NotNull().WithError(InvalidCalendarDayType.I);
             RuleFor(x => x.DayType).IsInEnum().WithError(InvalidCalendarDayType.I);
+
             // Fim de semana é derivado da data, não é um override que alguém grava.
-            RuleFor(x => x.DayType).NotEqual(Domain.Enums.DayType.Weekend).WithError(InvalidCalendarDayType.I);
+            RuleFor(x => x.DayType).NotEqual(DayType.Weekend).WithError(InvalidCalendarDayType.I);
 
             RuleFor(x => x.Description).MaximumLength(100).WithError(InvalidCalendarDayDescription.I);
         }
