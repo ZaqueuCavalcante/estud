@@ -75,7 +75,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
 
         var teacherEmail = DataGen.Email;
         var teacher = await director.CreateTeacher("Chico Ferreira", teacherEmail).Success();
@@ -111,7 +111,7 @@ public partial class IntegrationTests
         // Cada schedule aponta pro professor que o cobre, então cada agenda mostra só os horários daquele professor.
         var director = await _back.LoggedAsDirector();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
 
         var chicoEmail = DataGen.Email;
         var anaEmail = DataGen.Email;
@@ -165,7 +165,7 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
         var geometria = await director.CreateDiscipline("Geometria").Success();
         var algebra = await director.CreateDiscipline("Álgebra").Success();
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
 
         var teacherEmail = DataGen.Email;
         var teacher = await director.CreateTeacher("Chico Ferreira", teacherEmail).Success();
@@ -207,7 +207,7 @@ public partial class IntegrationTests
         var campus = await director.CreateCampus().Success();
         var classroom = await director.CreateClassroom(campus.Id, "Sala 07").Success();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
 
         var teacherEmail = DataGen.Email;
         var teacher = await director.CreateTeacher("Chico Ferreira", teacherEmail).Success();

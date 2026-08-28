@@ -189,7 +189,7 @@ public partial class IntegrationTests
         var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
 
         var otherClient = await _back.LoggedAsDirector();
-        var otherPeriod = await otherClient.CreateAcademicPeriod("2024.1").Success();
+        var otherPeriod = await otherClient.GetFirstAcademicPeriod();
 
         // Act
         var result = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, otherPeriod.Id);
@@ -210,7 +210,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var course = await client.CreateCourse().Success();
         var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
-        var period = await client.CreateAcademicPeriod("2024.1").Success();
+        var period = await client.GetFirstAcademicPeriod();
 
         // Act
         var result = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();

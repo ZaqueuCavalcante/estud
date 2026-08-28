@@ -103,7 +103,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var teacher = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
@@ -125,7 +125,7 @@ public partial class IntegrationTests
         var found = details.Classes[0];
         found.Id.Should().Be(@class.Id);
         found.Discipline.Should().Be("Geometria");
-        found.Period.Should().Be("2024.1");
+        found.Period.Should().Be(period.Name);
         found.Status.Should().Be(ClassStatus.OnPreEnrollment);
         found.Students.Should().Be(0);
         found.Schedules.Should().ContainSingle();
@@ -139,7 +139,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();

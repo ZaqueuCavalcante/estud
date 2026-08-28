@@ -104,7 +104,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var classroom = await client.CreateClassroom(campus.Id, capacity: 40).Success();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         await client.UpdateClassSchedules(@class.Id,
@@ -125,7 +125,7 @@ public partial class IntegrationTests
 
         found.Schedules[0].ClassId.Should().Be(@class.Id);
         found.Schedules[0].Discipline.Should().Be("Geometria");
-        found.Schedules[0].Period.Should().Be("2024.1");
+        found.Schedules[0].Period.Should().Be(period.Name);
         found.Schedules[0].Status.Should().Be(ClassStatus.OnPreEnrollment);
         found.Schedules[0].Students.Should().Be(0);
         found.Schedules[0].Day.Should().Be(Day.Monday);
@@ -139,7 +139,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var classroom = await client.CreateClassroom(campus.Id, capacity: 40).Success();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 

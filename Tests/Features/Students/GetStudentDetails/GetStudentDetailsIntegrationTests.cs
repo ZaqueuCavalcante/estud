@@ -118,7 +118,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var course = await client.CreateCourse().Success();
         var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var offering = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
         await client.EnrollStudentInCourseOffering(student.Id, offering.Id);
 
@@ -129,7 +129,7 @@ public partial class IntegrationTests
         var details = result.Success;
         details.Course.Should().NotBeNull();
         details.Course!.CourseOfferingId.Should().Be(offering.Id);
-        details.Course.Period.Should().Be("2024.1");
+        details.Course.Period.Should().Be(period.Name);
     }
 
     [Test]
@@ -139,7 +139,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -155,7 +155,7 @@ public partial class IntegrationTests
         details.Classes.Should().ContainSingle();
         details.Classes[0].Id.Should().Be(@class.Id);
         details.Classes[0].Discipline.Should().Be("Geometria");
-        details.Classes[0].Period.Should().Be("2024.1");
+        details.Classes[0].Period.Should().Be(period.Name);
         details.Classes[0].Status.Should().Be(ClassStatus.OnEnrollment);
         details.Classes[0].MyStatus.Should().Be(StudentClassStatus.Matriculado);
     }
@@ -232,7 +232,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
         await _back.ArrangeStartedClass(director, period.Id, [student.Id]);

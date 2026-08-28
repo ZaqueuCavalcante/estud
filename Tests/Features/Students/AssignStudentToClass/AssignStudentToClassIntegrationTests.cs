@@ -72,7 +72,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         await client.ReleaseClassForEnrollment(@class.Id);
@@ -93,7 +93,7 @@ public partial class IntegrationTests
         var studentA = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var studentB = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id, vacancies: 1).Success();
 
         await client.ReleaseClassForEnrollment(@class.Id);
@@ -117,7 +117,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         await client.ReleaseClassForEnrollment(@class.Id);

@@ -95,7 +95,7 @@ public partial class IntegrationTests
             new CreateCourseCurriculumDisciplineIn(databases.Id, 2, 4, 60),
         ]).Success();
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var offering = await director.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
 
         var email = DataGen.Email;
@@ -118,7 +118,7 @@ public partial class IntegrationTests
         details.Course.Should().Be("Análise e Desenvolvimento de Sistemas");
         details.Curriculum.Should().Be("Grade ADS 2024");
         details.Campus.Should().NotBeNullOrEmpty();
-        details.Period.Should().Be("2024.1");
+        details.Period.Should().Be(period.Name);
         details.Disciplines.Should().HaveCount(2);
 
         var algorithmsItem = details.Disciplines.Single(d => d.Id == algorithms.Id);
@@ -157,7 +157,7 @@ public partial class IntegrationTests
             new CreateCourseCurriculumDisciplineIn(second.Id, 2, 4, 60),
         ]).Success();
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var offering = await director.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
 
         var email = DataGen.Email;

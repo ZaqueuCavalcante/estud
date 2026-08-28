@@ -57,7 +57,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
 
         var client = await _back.LoggedAsTeacher();
@@ -79,7 +79,7 @@ public partial class IntegrationTests
         await director.CreateTeacher(DataGen.UserName, email);
 
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
 
         var client = await _back.LoginAs(email);
@@ -104,7 +104,7 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(otherTeacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
 
         var client = await _back.LoginAs(email);
@@ -132,7 +132,7 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
@@ -145,7 +145,7 @@ public partial class IntegrationTests
         var details = result.Success;
         details.Id.Should().Be(@class.Id);
         details.Discipline.Should().Be("Geometria");
-        details.Period.Should().Be("2024.1");
+        details.Period.Should().Be(period.Name);
         details.Vacancies.Should().Be(40);
         details.Status.Should().Be(ClassStatus.OnPreEnrollment);
         details.Schedules.Should().BeEmpty();

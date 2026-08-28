@@ -61,7 +61,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         // Act
@@ -71,7 +71,7 @@ public partial class IntegrationTests
         var details = result.Success;
         details.Id.Should().Be(@class.Id);
         details.Discipline.Should().Be("Geometria");
-        details.Period.Should().Be("2024.1");
+        details.Period.Should().Be(period.Name);
         details.Status.Should().Be(ClassStatus.OnPreEnrollment);
         details.Schedules.Should().BeEmpty();
         details.Students.Should().BeEmpty();
@@ -84,7 +84,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -110,7 +110,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -179,7 +179,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var (classId, _) = await _back.ArrangeStartedClass(director, period.Id, [student.Id]);
 

@@ -61,7 +61,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var course = await client.CreateCourse().Success();
         var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
-        var period = await client.CreateAcademicPeriod("2024.1").Success();
+        var period = await client.GetFirstAcademicPeriod();
         await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id);
 
         // Act
@@ -72,7 +72,7 @@ public partial class IntegrationTests
         offerings.Total.Should().Be(1);
         offerings.Page.Should().Be(1);
         offerings.PageSize.Should().Be(10);
-        offerings.Items[0].Period.Should().Be("2024.1");
+        offerings.Items[0].Period.Should().Be(period.Name);
     }
 
     [Test]
@@ -83,12 +83,10 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var course = await client.CreateCourse().Success();
         var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
+        var period = await client.GetFirstAcademicPeriod();
 
         for (var i = 1; i <= 12; i++)
-        {
-            var period = await client.CreateAcademicPeriod($"20{i:00}.1").Success();
             await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id);
-        }
 
         // Act
         var result = await client.GetCourseOfferings();
@@ -109,12 +107,10 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var course = await client.CreateCourse().Success();
         var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
+        var period = await client.GetFirstAcademicPeriod();
 
         for (var i = 1; i <= 12; i++)
-        {
-            var period = await client.CreateAcademicPeriod($"20{i:00}.1").Success();
             await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id);
-        }
 
         // Act
         var result = await client.GetCourseOfferings(page: 2);

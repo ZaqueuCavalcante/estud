@@ -51,7 +51,7 @@ public partial class IntegrationTests
         var algebra = await director.CreateDiscipline("Álgebra").Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [geometria.Id, algebra.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var geometriaClass = await director.CreateClass(geometria.Id, period.Id).Success();
         var algebraClass = await director.CreateClass(algebra.Id, period.Id).Success();
 
@@ -95,7 +95,7 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         await director.CreateClass(discipline.Id, period.Id);
 
         var client = await _back.LoginAs(email);
@@ -120,7 +120,7 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(otherTeacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var otherClass = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(otherClass.Id, [otherTeacher.Id]);
         await director.UpdateClassSchedules(otherClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);

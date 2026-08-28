@@ -63,7 +63,7 @@ public partial class IntegrationTests
         var otherCampus = await otherClient.CreateCampus().Success();
         var otherCourse = await otherClient.CreateCourse().Success();
         var otherCurriculum = await otherClient.CreateCourseCurriculum(otherCourse.Id).Success();
-        var otherPeriod = await otherClient.CreateAcademicPeriod("2024.1").Success();
+        var otherPeriod = await otherClient.GetFirstAcademicPeriod();
         var otherOffering = await otherClient
             .CreateCourseOffering(otherCampus.Id, otherCourse.Id, otherCurriculum.Id, otherPeriod.Id)
             .Success();
@@ -92,7 +92,7 @@ public partial class IntegrationTests
         List<CreateCourseCurriculumDisciplineIn> disciplines = [new(calculo.Id, 1, 4, 60)];
         var curriculum = await client.CreateCourseCurriculum(course.Id, "Grade 2024", disciplines).Success();
 
-        var period = await client.CreateAcademicPeriod("2024.1").Success();
+        var period = await client.GetFirstAcademicPeriod();
         var offering = await client
             .CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id, CourseSession.Morning)
             .Success();
@@ -110,7 +110,7 @@ public partial class IntegrationTests
         output.CourseType.Should().Be("Tecnólogo");
         output.CourseCurriculumId.Should().Be(curriculum.Id);
         output.Curriculum.Should().Be("Grade 2024");
-        output.Period.Should().Be("2024.1");
+        output.Period.Should().Be(period.Name);
         output.Session.Should().Be(CourseSession.Morning);
         output.Disciplines.Should().Be(1);
         output.Students.Should().BeEmpty();
@@ -124,7 +124,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var course = await client.CreateCourse().Success();
         var curriculum = await client.CreateCourseCurriculum(course.Id, "Grade 2024").Success();
-        var period = await client.CreateAcademicPeriod("2024.1").Success();
+        var period = await client.GetFirstAcademicPeriod();
         var offering = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
 
         var maria = await client.CreateStudent("Maria Souza", DataGen.Email).Success();

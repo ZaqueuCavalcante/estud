@@ -75,7 +75,7 @@ public partial class IntegrationTests
         // Arrange
         var otherDirector = await _back.LoggedAsDirector();
         var discipline = await otherDirector.CreateDiscipline().Success();
-        var period = await otherDirector.CreateAcademicPeriod().Success();
+        var period = await otherDirector.GetFirstAcademicPeriod();
         var @class = await otherDirector.CreateClass(discipline.Id, period.Id).Success();
 
         var director = await _back.LoggedAsDirector();
@@ -99,7 +99,7 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
 
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
 
         var email = DataGen.Email;
@@ -130,7 +130,7 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
         await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
@@ -155,7 +155,7 @@ public partial class IntegrationTests
         var details = result.Success;
         details.Id.Should().Be(@class.Id);
         details.Discipline.Should().Be("Geometria");
-        details.Period.Should().Be("2024.1");
+        details.Period.Should().Be(period.Name);
         details.Status.Should().Be(ClassStatus.Started);
         details.MyStatus.Should().Be(StudentClassStatus.Matriculado);
         details.Schedules.Should().ContainSingle();

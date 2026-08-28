@@ -11,7 +11,7 @@ public partial class IntegrationTests
         var directorClient = await _back.LoggedAsDirector();
 
         var discipline = await directorClient.CreateDiscipline().Success();
-        var period = await directorClient.CreateAcademicPeriod().Success();
+        var period = await directorClient.GetFirstAcademicPeriod();
         var @class = await directorClient.CreateClass(discipline.Id, period.Id).Success();
 
         var teacher = await directorClient.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
@@ -67,7 +67,7 @@ public partial class IntegrationTests
         await directorClient.AddCourseDisciplines(course.Id, [discipline.Id]);
         var curriculum = await directorClient.CreateCourseCurriculum(course.Id, "Grade 2024", [new(discipline.Id, 1, 4, 80)]).Success();
 
-        var period = await directorClient.CreateAcademicPeriod().Success();
+        var period = await directorClient.GetFirstAcademicPeriod();
         var offering = await directorClient.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id, CourseSession.Morning).Success();
 
         var @class = await directorClient.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
@@ -141,7 +141,7 @@ public partial class IntegrationTests
         var campus = await directorClient.CreateCampus(name: "Agreste I").Success();
         var sala01 = await directorClient.CreateClassroom(campus.Id, name: "Sala 01").Success();
 
-        var period = await directorClient.CreateAcademicPeriod().Success();
+        var period = await directorClient.GetFirstAcademicPeriod();
 
         // Curso da manhã
         var courseA = await directorClient.CreateCourse(name: "ADS").Success();
@@ -254,7 +254,7 @@ public partial class IntegrationTests
         var campus = await directorClient.CreateCampus(name: "Agreste I").Success();
         var sala01 = await directorClient.CreateClassroom(campus.Id, name: "Sala 01").Success();
 
-        var period = await directorClient.CreateAcademicPeriod().Success();
+        var period = await directorClient.GetFirstAcademicPeriod();
 
         var course = await directorClient.CreateCourse(name: "ADS").Success();
         var geometria = await directorClient.CreateDiscipline(name: "Geometria").Success();
@@ -363,7 +363,7 @@ public partial class IntegrationTests
         var sala01 = await directorClient.CreateClassroom(campus.Id, name: "Sala 01").Success();
         var sala02 = await directorClient.CreateClassroom(campus.Id, name: "Sala 02").Success();
 
-        var period = await directorClient.CreateAcademicPeriod().Success();
+        var period = await directorClient.GetFirstAcademicPeriod();
 
         var course = await directorClient.CreateCourse(name: "ADS").Success();
         var geometria = await directorClient.CreateDiscipline(name: "Geometria").Success();
@@ -528,7 +528,7 @@ public partial class IntegrationTests
         var sala03 = await directorClient.CreateClassroom(campusB.Id, name: "Sala 03").Success();
         var sala04 = await directorClient.CreateClassroom(campusB.Id, name: "Sala 04").Success();
 
-        var period = await directorClient.CreateAcademicPeriod().Success();
+        var period = await directorClient.GetFirstAcademicPeriod();
 
         // Curso do campus 1
         var courseA = await directorClient.CreateCourse(name: "ADS").Success();
@@ -786,7 +786,7 @@ public partial class IntegrationTests
         var sala01 = await directorClient.CreateClassroom(campus.Id, name: "Sala 01").Success();
         var sala02 = await directorClient.CreateClassroom(campus.Id, name: "Sala 02").Success();
 
-        var period = await directorClient.CreateAcademicPeriod().Success();
+        var period = await directorClient.GetFirstAcademicPeriod();
 
         var course = await directorClient.CreateCourse(name: "ADS").Success();
         var geometria = await directorClient.CreateDiscipline(name: "Geometria").Success();
@@ -908,7 +908,7 @@ public partial class IntegrationTests
         var sala01 = await directorClient.CreateClassroom(campus.Id, name: "Sala 01", capacity: 40).Success();
         var sala02 = await directorClient.CreateClassroom(campus.Id, name: "Sala 02", capacity: 40).Success();
 
-        var period = await directorClient.CreateAcademicPeriod().Success();
+        var period = await directorClient.GetFirstAcademicPeriod();
 
         // Período de matrícula aberto dentro do ano do calendário.
         var enrollmentPeriod = await directorClient.CreateEnrollmentPeriod(
@@ -1028,7 +1028,7 @@ public partial class IntegrationTests
         var campus = await directorClient.CreateCampus(name: "Agreste I").Success();
         var sala01 = await directorClient.CreateClassroom(campus.Id, name: "Sala 01").Success();
 
-        var period = await directorClient.CreateAcademicPeriod().Success();
+        var period = await directorClient.GetFirstAcademicPeriod();
 
         var course = await directorClient.CreateCourse(name: "ADS").Success();
 

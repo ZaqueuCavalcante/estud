@@ -157,7 +157,7 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
 
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
 
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
@@ -199,7 +199,7 @@ public partial class IntegrationTests
         var campus = await director.CreateCampus().Success();
         var classroom = await director.CreateClassroom(campus.Id, "Sala 07").Success();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();

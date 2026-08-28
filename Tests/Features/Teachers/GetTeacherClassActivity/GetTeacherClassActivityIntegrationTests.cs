@@ -57,7 +57,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
 
         var client = await _back.LoggedAsTeacher();
@@ -84,7 +84,7 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(otherTeacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var otherClass = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(otherClass.Id, [otherTeacher.Id]);
 
@@ -112,7 +112,7 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
@@ -134,16 +134,16 @@ public partial class IntegrationTests
         var email = DataGen.Email;
         var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
 
+        var period = await director.GetFirstAcademicPeriod();
+
         var disciplineA = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [disciplineA.Id]);
-        var periodA = await director.CreateAcademicPeriod().Success();
-        var classA = await director.CreateClass(disciplineA.Id, periodA.Id).Success();
+        var classA = await director.CreateClass(disciplineA.Id, period.Id).Success();
         await director.UpdateClassTeachers(classA.Id, [teacher.Id]);
 
         var disciplineB = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [disciplineB.Id]);
-        var periodB = await director.CreateAcademicPeriod().Success();
-        var classB = await director.CreateClass(disciplineB.Id, periodB.Id).Success();
+        var classB = await director.CreateClass(disciplineB.Id, period.Id).Success();
         await director.UpdateClassTeachers(classB.Id, [teacher.Id]);
 
         var client = await _back.LoginAs(email);
@@ -172,7 +172,7 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
@@ -222,7 +222,7 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);

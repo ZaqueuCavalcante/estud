@@ -65,7 +65,7 @@
 - GetClassesController
 - StartClassController
 - ✅ CreateClassController
-- UpdateClassTeachersController
+- ✅ UpdateClassTeachersController
 - UpdateClassSchedulesController
 - ReleaseClassForEnrollmentController
 

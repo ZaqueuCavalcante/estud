@@ -146,7 +146,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var course = await client.CreateCourse().Success();
         var curriculum = await client.CreateCourseCurriculum(course.Id, "Grade 2024").Success();
-        var period = await client.CreateAcademicPeriod("2024.1").Success();
+        var period = await client.GetFirstAcademicPeriod();
         var offering = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
 
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -159,7 +159,7 @@ public partial class IntegrationTests
         result.Success.Offerings.Should().HaveCount(1);
         result.Success.Offerings.First().Id.Should().Be(offering.Id);
         result.Success.Offerings.First().Curriculum.Should().Be("Grade 2024");
-        result.Success.Offerings.First().Period.Should().Be("2024.1");
+        result.Success.Offerings.First().Period.Should().Be(period.Name);
         result.Success.Offerings.First().Session.Should().Be(CourseSession.Evening);
         result.Success.Offerings.First().Students.Should().Be(1);
         result.Success.Students.Should().Be(1);
