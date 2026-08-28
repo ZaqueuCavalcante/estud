@@ -1,4 +1,4 @@
-# Endpoints ✅
+﻿# Endpoints ✅
 
 ## Admin
 
@@ -7,10 +7,48 @@
 
 ## Calendar
 
+- ✅ GetCalendarController
 - ✅ CreateCalendarDayController
 - ✅ DeleteCalendarDayController
-- ✅ GetCalendarController
 - ✅ UpdateCalendarDayController
+
+## Classrooms
+
+- ✅ GetClassroomController
+- ✅ GetClassroomsController
+- ✅ CreateClassroomController
+- ✅ UpdateClassroomController
+
+## Cross
+
+- ✅ HomeController
+- ✅ HealthController
+- ✅ VersionController
+- ✅ GetHomeStatsController
+
+## Disciplines
+
+- ✅ GetDisciplinesController
+- ✅ CreateDisciplineController
+- ✅ UpdateDisciplineController
+- ✅ GetDisciplineDetailsController
+- ✅ GetDisciplineTeachersController
+- ✅ AssignCoursesToDisciplineController
+- ✅ AssignTeachersToDisciplineController
+- ✅ GetDisciplinePotentialCoursesController
+- ✅ GetDisciplinePotentialTeachersController
+
+## Users
+
+- ✅ RegisterUserController
+- ✅ GetAuthStatusController
+- ✅ GetUserAccountController
+- ✅ UpdateUserAccountController
+
+## Institutions
+
+- ✅ GetInstitutionConfigController
+- ✅ SetupInstitutionConfigController
 
 ## Campi
 
@@ -23,20 +61,13 @@
 
 ## Classes
 
-- CreateClassController
 - GetClassController
 - GetClassesController
-- ReleaseClassForEnrollmentController
 - StartClassController
-- UpdateClassSchedulesController
+- ✅ CreateClassController
 - UpdateClassTeachersController
-
-## Classrooms
-
-- CreateClassroomController
-- GetClassroomController
-- GetClassroomsController
-- UpdateClassroomController
+- UpdateClassSchedulesController
+- ReleaseClassForEnrollmentController
 
 ## CourseCurriculums
 
@@ -54,34 +85,14 @@
 
 ## Courses
 
-- AddCourseDisciplinesController
-- CreateCourseController
-- GetCourseController
+- ✅ CreateCourseController
+- ✅ UpdateCourseController
+- ✅ AddCourseDisciplinesController
 - GetCourseDetailsController
 - GetCourseDisciplinesController
 - GetCoursePotentialDisciplinesController
 - GetCoursesController
 - RemoveCourseDisciplineController
-- UpdateCourseController
-
-## Cross
-
-- ✅ GetHomeStatsController
-- ✅ HealthController
-- ✅ HomeController
-- ✅ VersionController
-
-## Disciplines
-
-- ✅ CreateDisciplineController
-- ✅ UpdateDisciplineController
-- ✅ GetDisciplinesController
-- ✅ AssignCoursesToDisciplineController
-- ✅ AssignTeachersToDisciplineController
-- ✅ GetDisciplineDetailsController
-- ✅ GetDisciplinePotentialCoursesController
-- ✅ GetDisciplinePotentialTeachersController
-- ✅ GetDisciplineTeachersController
 
 ## Identity
 
@@ -108,11 +119,6 @@
 - TwoFactorSetupLoginController
 - UpdateRoleController
 - UpdateSsoConfigurationController
-
-## Institutions
-
-- ✅ GetInstitutionConfigController
-- ✅ SetupInstitutionConfigController
 
 ## Notifications
 
@@ -177,13 +183,6 @@
 - GetTeacherPotentialDisciplinesController
 - GetTeachersController
 - UpdateTeacherController
-
-## Users
-
-- ✅ GetAuthStatusController
-- ✅ GetUserAccountController
-- ✅ RegisterUserController
-- ✅ UpdateUserAccountController
 
 ## Webhooks
 

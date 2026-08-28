@@ -57,7 +57,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var first = await client.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
@@ -77,7 +77,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var teacher = await client.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
@@ -96,7 +96,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
         var teacher = await client.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
@@ -114,14 +114,14 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline("Geometria").Success();
         var otherDiscipline = await client.CreateDiscipline("Fisica").Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
-        var teacher = await client.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(teacher.Id, [otherDiscipline.Id]);
+        var chico = await client.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+        await client.AssignDisciplinesToTeacher(chico.Id, [otherDiscipline.Id]);
 
         // Act
-        var result = await client.UpdateClassTeachers(@class.Id, teachers: [teacher.Id]);
+        var result = await client.UpdateClassTeachers(@class.Id, teachers: [chico.Id]);
 
         // Assert
         result.ShouldBeError(TeacherNotAssignedToDiscipline.I);
@@ -137,7 +137,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
@@ -160,10 +160,9 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
-        // horários definidos com a turma ainda sem professor (TeacherId nulo)
         await client.UpdateClassSchedules(@class.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, null, null),
@@ -191,13 +190,13 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
         var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(chico.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
+        await client.AssignTeachersToDiscipline(discipline.Id, [chico.Id, ana.Id]);
+
         await client.UpdateClassTeachers(@class.Id, [chico.Id]);
 
         // Act
@@ -217,15 +216,15 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
         var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(chico.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
+        await client.AssignTeachersToDiscipline(discipline.Id, [chico.Id, ana.Id]);
 
         await client.UpdateClassTeachers(@class.Id, [chico.Id]);
+
         await client.UpdateClassSchedules(@class.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null),
@@ -250,7 +249,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
@@ -277,13 +276,12 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
         var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(chico.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
+        await client.AssignTeachersToDiscipline(discipline.Id, [chico.Id, ana.Id]);
 
         await client.UpdateClassTeachers(@class.Id, [chico.Id]);
         await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null)]);
@@ -306,7 +304,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
@@ -330,15 +328,13 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
         var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
         var joao = await client.CreateTeacher("João Alves", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(chico.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(joao.Id, [discipline.Id]);
+        await client.AssignTeachersToDiscipline(discipline.Id, [chico.Id, ana.Id, joao.Id]);
 
         await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
         await client.UpdateClassSchedules(@class.Id,
@@ -347,14 +343,14 @@ public partial class IntegrationTests
             (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id, null),
         ]);
 
-        // Act — Ana sai, João entra
+        // Act
         var result = await client.UpdateClassTeachers(@class.Id, [chico.Id, joao.Id]);
 
         // Assert
         result.ShouldBeSuccess();
 
         var updated = await client.GetClass(@class.Id).Success();
-        updated.Teachers.Select(t => t.Id).Should().BeEquivalentTo(new[] { chico.Id, joao.Id });
+        updated.Teachers.Select(t => t.Id).Should().BeEquivalentTo([chico.Id, joao.Id]);
         updated.Schedules.Single(s => s.Day == Day.Monday).TeacherId.Should().Be(chico.Id);
         updated.Schedules.Single(s => s.Day == Day.Wednesday).TeacherId.Should().BeNull();
     }
@@ -365,17 +361,14 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
         var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
         var joao = await client.CreateTeacher("João Alves", DataGen.Email).Success();
         var maria = await client.CreateTeacher("Maria Souza", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(chico.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(joao.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(maria.Id, [discipline.Id]);
+        await client.AssignTeachersToDiscipline(discipline.Id, [chico.Id, ana.Id, joao.Id, maria.Id]);
 
         await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
         await client.UpdateClassSchedules(@class.Id,
@@ -391,7 +384,7 @@ public partial class IntegrationTests
         result.ShouldBeSuccess();
 
         var updated = await client.GetClass(@class.Id).Success();
-        updated.Teachers.Select(t => t.Id).Should().BeEquivalentTo(new[] { joao.Id, maria.Id });
+        updated.Teachers.Select(t => t.Id).Should().BeEquivalentTo([joao.Id, maria.Id]);
         updated.Schedules.Should().HaveCount(2);
         updated.Schedules.Should().OnlyContain(s => s.TeacherId == null);
     }
@@ -402,13 +395,12 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
         var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(chico.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
+        await client.AssignTeachersToDiscipline(discipline.Id, [chico.Id, ana.Id]);
 
         await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
         await client.UpdateClassSchedules(@class.Id,
@@ -435,13 +427,12 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
         var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(chico.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
+        await client.AssignTeachersToDiscipline(discipline.Id, [chico.Id, ana.Id]);
 
         await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
         await client.UpdateClassSchedules(@class.Id,
@@ -450,14 +441,14 @@ public partial class IntegrationTests
             (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id, null),
         ]);
 
-        // Act — mesma dupla, ordem trocada
+        // Act
         var result = await client.UpdateClassTeachers(@class.Id, [ana.Id, chico.Id]);
 
         // Assert
         result.ShouldBeSuccess();
 
         var updated = await client.GetClass(@class.Id).Success();
-        updated.Teachers.Select(t => t.Id).Should().BeEquivalentTo(new[] { chico.Id, ana.Id });
+        updated.Teachers.Select(t => t.Id).Should().BeEquivalentTo([chico.Id, ana.Id]);
         updated.Schedules.Single(s => s.Day == Day.Monday).TeacherId.Should().Be(chico.Id);
         updated.Schedules.Single(s => s.Day == Day.Wednesday).TeacherId.Should().Be(ana.Id);
     }
@@ -468,15 +459,13 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
         var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
         var joao = await client.CreateTeacher("João Alves", DataGen.Email).Success();
-        await client.AssignDisciplinesToTeacher(chico.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
-        await client.AssignDisciplinesToTeacher(joao.Id, [discipline.Id]);
+        await client.AssignTeachersToDiscipline(discipline.Id, [chico.Id, ana.Id, joao.Id]);
 
         await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
         await client.UpdateClassSchedules(@class.Id,
@@ -484,17 +473,17 @@ public partial class IntegrationTests
             (Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, null),
             (Day.Wednesday, Hour.H07_00, Hour.H10_00, ana.Id, null),
         ]);
-        // troca Ana por João → o horário da quarta fica órfão (S2→∅)
+
         await client.UpdateClassTeachers(@class.Id, [chico.Id, joao.Id]);
 
-        // Act — reatribui a mesma dupla
+        // Act
         var result = await client.UpdateClassTeachers(@class.Id, [chico.Id, joao.Id]);
 
         // Assert
         result.ShouldBeSuccess();
 
         var updated = await client.GetClass(@class.Id).Success();
-        updated.Teachers.Select(t => t.Id).Should().BeEquivalentTo(new[] { chico.Id, joao.Id });
+        updated.Teachers.Select(t => t.Id).Should().BeEquivalentTo([chico.Id, joao.Id]);
         updated.Schedules.Single(s => s.Day == Day.Monday).TeacherId.Should().Be(chico.Id);
         updated.Schedules.Single(s => s.Day == Day.Wednesday).TeacherId.Should().BeNull();
     }

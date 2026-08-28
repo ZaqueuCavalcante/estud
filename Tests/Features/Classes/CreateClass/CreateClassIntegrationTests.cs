@@ -44,7 +44,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
 
         // Act
         var result = await client.CreateClass(discipline.Id, period.Id, vacancies: -1);
@@ -59,7 +59,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
 
         // Act
         var result = await client.CreateClass(discipline.Id, period.Id, vacancies: 101);
@@ -73,7 +73,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
 
         // Act
         var result = await client.CreateClass(disciplineId: 999999, period.Id);
@@ -102,7 +102,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
 
         // Act
         var result = await client.CreateClass(discipline.Id, period.Id, campusId: 999999);
@@ -116,7 +116,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
 
         var otherClient = await _back.LoggedAsDirector();
         var otherDiscipline = await otherClient.CreateDiscipline().Success();
@@ -136,7 +136,7 @@ public partial class IntegrationTests
         var discipline = await client.CreateDiscipline().Success();
 
         var otherClient = await _back.LoggedAsDirector();
-        var otherPeriod = await otherClient.CreateAcademicPeriod().Success();
+        var otherPeriod = await otherClient.GetFirstAcademicPeriod();
 
         // Act
         var result = await client.CreateClass(discipline.Id, otherPeriod.Id);
@@ -151,7 +151,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
 
         var otherClient = await _back.LoggedAsDirector();
         var otherCampus = await otherClient.CreateCampus().Success();
@@ -173,7 +173,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
 
         // Act
         var result = await client.CreateClass(discipline.Id, period.Id);
@@ -189,7 +189,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.CreateAcademicPeriod().Success();
+        var period = await client.GetFirstAcademicPeriod();
         var campus = await client.CreateCampus().Success();
 
         // Act

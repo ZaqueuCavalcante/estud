@@ -4,7 +4,6 @@ namespace Estud.Back.Auth.Policies;
 
 public static partial class Policies
 {
-    public const string GetCourse = nameof(GetCourse);
     public const string GetCourses = nameof(GetCourses);
     public const string CreateCourse = nameof(CreateCourse);
     public const string UpdateCourse = nameof(UpdateCourse);
@@ -18,7 +17,6 @@ public static partial class Policies
     public static AuthorizationBuilder AddCoursesPolicies(this AuthorizationBuilder builder)
     {
         builder
-            .AddEstudPolicy(GetCourse, UserType.Manager, EstudPermissions.ManageCourses)
             .AddEstudPolicy(GetCourses, UserType.Manager, EstudPermissions.ManageCourses)
             .AddEstudPolicy(CreateCourse, UserType.Manager, EstudPermissions.ManageCourses)
             .AddEstudPolicy(UpdateCourse, UserType.Manager, EstudPermissions.ManageCourses)

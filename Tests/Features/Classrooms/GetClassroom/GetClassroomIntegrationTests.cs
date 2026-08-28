@@ -144,10 +144,6 @@ public partial class IntegrationTests
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
         await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id)]);
-
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        await client.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2));
-        await client.ReleaseClassForEnrollment(@class.Id);
         await client.AssignStudentToClass(student.Id, @class.Id);
 
         // Act
@@ -158,7 +154,7 @@ public partial class IntegrationTests
         found.PeakStudents.Should().Be(1);
         found.Schedules.Should().ContainSingle();
         found.Schedules[0].Students.Should().Be(1);
-        found.Schedules[0].Status.Should().Be(ClassStatus.OnEnrollment);
+        found.Schedules[0].Status.Should().Be(ClassStatus.OnPreEnrollment);
     }
 
     #endregion

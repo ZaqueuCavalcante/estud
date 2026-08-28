@@ -7,6 +7,7 @@ global using FluentAssertions;
 global using Estud.Back.Errors;
 global using Estud.Back.Commands;
 global using Estud.Back.Database;
+global using Estud.Tests.Shortcuts;
 global using Estud.Back.Extensions;
 global using Estud.Back.Domain.Enums;
 global using Estud.Back.Auth.Permissions;
