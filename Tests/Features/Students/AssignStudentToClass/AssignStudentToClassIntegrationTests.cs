@@ -70,12 +70,12 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var discipline = await client.CreateDiscipline().Success();
         var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
-
         await client.ReleaseClassForEnrollment(@class.Id);
+
+        var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         await client.AssignStudentToClass(student.Id, @class.Id);
 
         // Act
@@ -90,13 +90,13 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var studentA = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        var studentB = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var discipline = await client.CreateDiscipline().Success();
         var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id, vacancies: 1).Success();
-
         await client.ReleaseClassForEnrollment(@class.Id);
+
+        var studentA = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var studentB = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         await client.AssignStudentToClass(studentA.Id, @class.Id);
 
         // Act
@@ -115,12 +115,12 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var discipline = await client.CreateDiscipline().Success();
         var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
-
         await client.ReleaseClassForEnrollment(@class.Id);
+
+        var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
         // Act
         var result = await client.AssignStudentToClass(student.Id, @class.Id);
@@ -128,9 +128,8 @@ public partial class IntegrationTests
         // Assert
         result.ShouldBeSuccess();
 
-        await using var ctx = _back.GetDbContext();
-        var link = await ctx.ClassStudents.FirstAsync(x => x.ClassId == @class.Id && x.StudentId == student.Id);
-        link.Status.Should().Be(StudentClassStatus.Matriculado);
+        var studentClass = await client.GetClass(@class.Id).Success();
+        studentClass.Students.Should().ContainSingle(x => x.Id == student.Id && x.Status == StudentClassStatus.Matriculado);
     }
 
     #endregion

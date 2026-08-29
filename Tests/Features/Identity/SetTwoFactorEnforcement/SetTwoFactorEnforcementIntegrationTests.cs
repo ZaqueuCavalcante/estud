@@ -11,7 +11,7 @@ public partial class IntegrationTests : IntegrationTestBase
         var client = _back.GetTestsClient();
 
         // Act
-        var result = await client.SetTwoFactorEnforcement(1, true);
+        var result = await client.SetTwoFactorEnforcement(roleId: 1, required: true);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Unauthorized);
@@ -28,7 +28,7 @@ public partial class IntegrationTests : IntegrationTestBase
         var client = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await client.SetTwoFactorEnforcement(1, true);
+        var result = await client.SetTwoFactorEnforcement(roleId: 1, required: true);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -45,7 +45,7 @@ public partial class IntegrationTests : IntegrationTestBase
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.SetTwoFactorEnforcement(999999, true);
+        var result = await client.SetTwoFactorEnforcement(roleId: 999999, required: true);
 
         // Assert
         result.ShouldBeError(RoleNotFound.I);
@@ -54,20 +54,19 @@ public partial class IntegrationTests : IntegrationTestBase
     [Test]
     public async Task Identity_SetTwoFactorEnforcement_Should_not_set_for_role_from_another_institution()
     {
-        // Arrange - cada director registra uma nova instituição; pegamos uma role real da instituição B
+        // Arrange
         var directorB = await _back.LoggedAsDirector();
         var rolesB = await directorB.GetRoles().Success();
         var roleFromB = rolesB.Items.First(r => r.BaseType == UserType.Manager);
 
         var directorA = await _back.LoggedAsDirector();
 
-        // Act - director A tenta alterar o enforcement de uma role da instituição B
-        var result = await directorA.SetTwoFactorEnforcement(roleFromB.Id, true);
+        // Act
+        var result = await directorA.SetTwoFactorEnforcement(roleFromB.Id, required: true);
 
-        // Assert - a role existe, mas não pertence à instituição de A → RoleNotFound (isolamento multi-tenant)
+        // Assert
         result.ShouldBeError(RoleNotFound.I);
 
-        // Controle: a role da instituição B continua sem enforcement
         var afterB = await directorB.GetTwoFactorEnforcement().Success();
         afterB.Items.First(r => r.RoleId == roleFromB.Id).TwoFactorRequired.Should().BeFalse();
     }
@@ -94,7 +93,7 @@ public partial class IntegrationTests : IntegrationTestBase
         var afterEnable = await client.GetTwoFactorEnforcement().Success();
         afterEnable.Items.First(r => r.RoleId == role.Id).TwoFactorRequired.Should().BeTrue();
 
-        // Act - desliga de novo
+        // Act
         var disabled = await client.SetTwoFactorEnforcement(role.Id, false).Success();
 
         // Assert

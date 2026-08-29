@@ -122,10 +122,7 @@ async function onLinkClick(notification: NotificationItem, link: NotificationLin
                 {{ formatTimeAgo(new Date(notification.createdAt)) }}
               </time>
             </div>
-            <p
-              class="text-sm text-dimmed mt-0.5 pl-3"
-              :class="isWelcome(notification) ? '' : 'line-clamp-2'"
-            >
+            <p class="text-sm text-dimmed mt-0.5 pl-3">
               {{ notification.description }}
             </p>
 

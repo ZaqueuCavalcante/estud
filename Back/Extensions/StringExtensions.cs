@@ -152,6 +152,16 @@ public static class StringExtensions
         {
             return int.TryParse(value, out int integer) ? integer : 0;
         }
+
+        public string ToNormalizedName()
+        {
+            var withoutAccents = value.Trim()
+                .Normalize(NormalizationForm.FormD)
+                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .ToArray();
+
+            return new string(withoutAccents).Normalize(NormalizationForm.FormC).ToUpperInvariant();
+        }
     }
 
     extension(decimal value)

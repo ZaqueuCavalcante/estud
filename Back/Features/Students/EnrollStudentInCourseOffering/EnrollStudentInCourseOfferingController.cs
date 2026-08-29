@@ -3,8 +3,12 @@ namespace Estud.Back.Features.Students.EnrollStudentInCourseOffering;
 [ApiController, Authorize(Policies.EnrollStudentInCourseOffering)]
 public class EnrollStudentInCourseOfferingController(EnrollStudentInCourseOfferingService service) : ControllerBase
 {
-    /// <summary>Matricular aluno em oferta de curso</summary>
-    /// <remarks>Vincula um aluno a uma oferta de curso, criando uma matrícula.</remarks>
+    /// <summary>
+    /// Matricular aluno em oferta de curso
+    /// </summary>
+    /// <remarks>
+    /// Vincula um aluno a uma oferta de curso, criando uma matrícula.
+    /// </remarks>
     [HttpPost("students/{studentId}/course-offerings")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]
     [SwaggerResponseExample(400, typeof(ErrorsExamples))]

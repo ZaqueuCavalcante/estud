@@ -37,4 +37,10 @@ public class EstudTeacher
         InstitutionId = institutionId;
         Name = name;
     }
+
+    public void Update(string name, string email)
+    {
+        Name = name;
+        User.Update(name, email);
+    }
 }

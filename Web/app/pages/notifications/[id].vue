@@ -45,19 +45,19 @@ function viewRateBadgeColor(rate: number): 'error' | 'warning' | 'success' {
   if (rate < 80) return 'warning'
   return 'success'
 }
+
+const breadcrumb = [
+  { label: 'Notificações', to: '/notifications', icon: 'i-lucide-bell' },
+  { label: 'Detalhes' },
+]
 </script>
 
 <template>
   <UDashboardPanel id="notification-details">
     <template #header>
-      <UDashboardNavbar :title="data?.title ?? 'Notificação'">
-        <template #leading>
-          <UButton
-            icon="i-lucide-arrow-left"
-            color="neutral"
-            variant="ghost"
-            to="/notifications"
-          />
+      <UDashboardNavbar>
+        <template #title>
+          <UBreadcrumb :items="breadcrumb" />
         </template>
       </UDashboardNavbar>
     </template>
@@ -76,56 +76,38 @@ function viewRateBadgeColor(rate: number): 'error' | 'warning' | 'success' {
       </div>
 
       <div v-else class="flex flex-col gap-6 py-4">
-        <UPageCard title="Dados da notificação">
-          <dl class="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-            <div class="flex flex-col gap-1 sm:col-span-2">
-              <dt class="text-xs text-muted">
-                Descrição
-              </dt>
-              <dd class="text-sm text-highlighted">
-                {{ data.description }}
-              </dd>
-            </div>
+        <div class="flex flex-col gap-1">
+          <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
+            {{ data.title }}
+          </h1>
+          <span class="flex items-center gap-1.5 text-sm text-muted">
+            <UIcon name="i-lucide-clock" class="size-4 shrink-0" />
+            {{ formatDateTime(data.createdAt) }}
+          </span>
+          <p class="mt-3 text-sm text-highlighted">
+            {{ data.description }}
+          </p>
+        </div>
 
-            <div class="flex flex-col gap-1">
-              <dt class="text-xs text-muted">
-                Criada em
-              </dt>
-              <dd class="text-sm text-highlighted">
-                {{ formatDateTime(data.createdAt) }}
-              </dd>
-            </div>
-
-            <div class="flex flex-col gap-1">
-              <dt class="text-xs text-muted">
-                Destinatários
-              </dt>
-              <dd class="text-sm text-highlighted">
-                {{ data.recipients }}
-              </dd>
-            </div>
-          </dl>
-
-          <div class="mt-6">
-            <div class="h-1.5 w-full rounded-full bg-accented overflow-hidden">
-              <div
-                class="h-full rounded-full"
-                :style="{ width: `${data.viewRate}%`, backgroundColor: viewRateColor(data.viewRate) }"
-              />
-            </div>
-            <div class="flex items-center justify-between mt-1">
-              <p class="text-xs text-muted">
-                {{ data.viewed }} de {{ data.recipients }} visualizaram
-              </p>
-              <UBadge
-                :color="viewRateBadgeColor(data.viewRate)"
-                variant="subtle"
-                size="sm"
-                :label="`${data.viewRate}%`"
-              />
-            </div>
+        <div>
+          <div class="h-1.5 w-full rounded-full bg-accented overflow-hidden">
+            <div
+              class="h-full rounded-full"
+              :style="{ width: `${data.viewRate}%`, backgroundColor: viewRateColor(data.viewRate) }"
+            />
           </div>
-        </UPageCard>
+          <div class="flex items-center justify-between mt-1">
+            <p class="text-xs text-muted">
+              {{ data.viewed }} de {{ data.recipients }} visualizaram
+            </p>
+            <UBadge
+              :color="viewRateBadgeColor(data.viewRate)"
+              variant="subtle"
+              size="sm"
+              :label="`${data.viewRate}%`"
+            />
+          </div>
+        </div>
 
         <NotificationsViewsChart :views-by-day="data.viewsByDay" />
       </div>

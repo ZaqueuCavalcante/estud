@@ -7,6 +7,8 @@ public class GetStudentDetailsOut : IApiDto<GetStudentDetailsOut>
     public string Email { get; set; }
     public string EnrollmentCode { get; set; }
     public StudentStatus Status { get; set; }
+    public string? PhoneNumber { get; set; }
+    public DateOnly? Birthdate { get; set; }
 
     /// <summary>
     /// Coeficiente de rendimento do aluno (de 0 a 10)

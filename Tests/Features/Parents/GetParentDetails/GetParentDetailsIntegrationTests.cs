@@ -58,8 +58,8 @@ public partial class IntegrationTests
         var studentId = (await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
 
         var email = DataGen.Email;
-        var parent = (await directorClient.CreateParent(DataGen.UserName, email,
-            [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }])).Success;
+        var parent = await directorClient.CreateParent(DataGen.UserName, email,
+            [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();
 
         var client = await _back.LoginAs(email);
 
@@ -93,8 +93,8 @@ public partial class IntegrationTests
         // Arrange
         var otherClient = await _back.LoggedAsDirector();
         var studentId = (await otherClient.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
-        var parent = (await otherClient.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }])).Success;
+        var parent = await otherClient.CreateParent(DataGen.UserName, DataGen.Email,
+            [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();
 
         var client = await _back.LoggedAsDirector();
 
@@ -116,8 +116,8 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
         var studentId = (await client.CreateStudent("Maria Souza", DataGen.Email).Success()).Id;
         var email = DataGen.Email;
-        var parent = (await client.CreateParent("Ana Souza", email,
-            [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }], "82988887777")).Success;
+        var parent = await client.CreateParent("Ana Souza", email,
+            [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }], "82988887777").Success();
 
         // Act
         var result = await client.GetParentDetails(parent.Id);
@@ -146,11 +146,11 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
         var first = (await client.CreateStudent("Ana Lima", DataGen.Email).Success()).Id;
         var second = (await client.CreateStudent("Bruno Lima", DataGen.Email).Success()).Id;
-        var parent = (await client.CreateParent(DataGen.UserName, DataGen.Email,
+        var parent = await client.CreateParent(DataGen.UserName, DataGen.Email,
         [
             new() { StudentId = first, Relationship = ParentRelationship.Mother },
             new() { StudentId = second, Relationship = ParentRelationship.Guardian },
-        ])).Success;
+        ]).Success();
 
         // Act
         var result = await client.GetParentDetails(parent.Id);
@@ -177,8 +177,8 @@ public partial class IntegrationTests
         var offering = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
         await client.EnrollStudentInCourseOffering(studentId, offering.Id);
 
-        var parent = (await client.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = studentId, Relationship = ParentRelationship.Father }])).Success;
+        var parent = await client.CreateParent(DataGen.UserName, DataGen.Email,
+            [new() { StudentId = studentId, Relationship = ParentRelationship.Father }]).Success();
 
         // Act
         var result = await client.GetParentDetails(parent.Id);

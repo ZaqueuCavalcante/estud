@@ -10,10 +10,10 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
 
-        var subscription = (await client.CreateWebhookSubscription(
+        var subscription = await client.CreateWebhookSubscription(
             url: $"{MocksFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated],
-            customHeaders: new() { ["X-Api-Key"] = "secret-key-123" })).Success;
+            customHeaders: new() { ["X-Api-Key"] = "secret-key-123" }).Success();
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
 
@@ -41,10 +41,10 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
 
-        var subscription = (await client.CreateWebhookSubscription(
+        var subscription = await client.CreateWebhookSubscription(
             url: $"{MocksFactory.Url}/webhooks/target/error",
             events: [WebhookEventType.StudentCreated],
-            customHeaders: new() { ["X-Api-Key"] = "secret-key-123" })).Success;
+            customHeaders: new() { ["X-Api-Key"] = "secret-key-123" }).Success();
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
 
@@ -70,9 +70,9 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
 
-        var subscription = (await client.CreateWebhookSubscription(
+        var subscription = await client.CreateWebhookSubscription(
             url: $"{MocksFactory.Url}/webhooks/target",
-            events: [WebhookEventType.StudentCreated])).Success;
+            events: [WebhookEventType.StudentCreated]).Success();
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
 

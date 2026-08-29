@@ -59,11 +59,10 @@ public partial class IntegrationTests
 
         var email = DataGen.Email;
         await director.CreateStudent(DataGen.UserName, email);
-
         var client = await _back.LoginAs(email);
 
         // Act
-        var calendar = (await client.GetStudentAttendanceCalendar(2026)).Success;
+        var calendar = await client.GetStudentAttendanceCalendar(2026).Success();
 
         // Assert
         calendar.Year.Should().Be(2026);
@@ -85,11 +84,10 @@ public partial class IntegrationTests
 
         var email = DataGen.Email;
         await director.CreateStudent(DataGen.UserName, email);
-
         var client = await _back.LoginAs(email);
 
         // Act
-        var calendar = (await client.GetStudentAttendanceCalendar()).Success;
+        var calendar = await client.GetStudentAttendanceCalendar().Success();
 
         // Assert
         calendar.Year.Should().Be(DateTime.UtcNow.Year);
@@ -151,7 +149,7 @@ public partial class IntegrationTests
         var client = await _back.LoginAs(studentEmail);
 
         // Act
-        var calendar = (await client.GetStudentAttendanceCalendar(year)).Success;
+        var calendar = await client.GetStudentAttendanceCalendar(year).Success();
 
         // Assert
         StudentDayAttendanceStatus StatusOf(DateOnly d) =>

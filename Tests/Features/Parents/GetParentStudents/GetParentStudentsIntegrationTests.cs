@@ -142,12 +142,7 @@ public partial class IntegrationTests
         var parentEmail = DataGen.Email;
         var parentId = (await director.CreateParent(DataGen.UserName, parentEmail, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success()).Id;
 
-        await using (var ctx = _back.GetDbContext())
-        {
-            var link = await ctx.ParentStudents.FirstAsync(x => x.ParentId == parentId);
-            link.Status = ParentStudentStatus.Revoked;
-            await ctx.SaveChangesAsync();
-        }
+        await director.RevokeParentStudentLink(parentId, studentId).Success();
 
         var client = await _back.LoginAs(parentEmail);
 
@@ -164,17 +159,14 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var studentId = (await director.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
+        var studentEmail = DataGen.Email;
+        var studentId = (await director.CreateStudent(DataGen.UserName, studentEmail, birthdate: AdultBirthdate).Success()).Id;
 
         var parentEmail = DataGen.Email;
         var parentId = (await director.CreateParent(DataGen.UserName, parentEmail, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success()).Id;
 
-        await using (var ctx = _back.GetDbContext())
-        {
-            var link = await ctx.ParentStudents.FirstAsync(x => x.ParentId == parentId);
-            link.RevokedByStudent = true;
-            await ctx.SaveChangesAsync();
-        }
+        var studentClient = await _back.LoginAs(studentEmail);
+        await studentClient.RevokeParentLink(parentId).Success();
 
         var client = await _back.LoginAs(parentEmail);
 

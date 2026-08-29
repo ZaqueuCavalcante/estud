@@ -18,8 +18,8 @@ public class EstudRole : IdentityRole<int>
         List<int> permissions)
     {
         InstitutionId = institutionId;
-        Name = name;
-        NormalizedName = name.ToUpper();
+        Name = name.Trim();
+        NormalizedName = name.ToNormalizedName();
         Description = description;
         BaseType = baseType;
         Permissions = permissions;
@@ -28,12 +28,11 @@ public class EstudRole : IdentityRole<int>
 
     public void Update(
         string name,
-        string normalizedName,
         string description,
         List<int> permissions)
     {
-        Name = name;
-        NormalizedName = normalizedName;
+        Name = name.Trim();
+        NormalizedName = name.ToNormalizedName();
         Description = description;
         Permissions = permissions;
     }

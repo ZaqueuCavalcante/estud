@@ -25,12 +25,7 @@ public class UpdateTeacherService(EstudDbContext ctx) : IEstudService
         var emailUsed = await ctx.Users.AnyAsync(u => u.Email == email && u.Id != teacher.UserId);
         if (emailUsed) return EmailAlreadyUsed.I;
 
-        teacher.Name = data.Name;
-        teacher.User.Name = data.Name;
-        teacher.User.Email = email;
-        teacher.User.NormalizedEmail = email.ToUpperInvariant();
-        teacher.User.UserName = email;
-        teacher.User.NormalizedUserName = email.ToUpperInvariant();
+        teacher.Update(data.Name, email);
 
         await ctx.SaveChangesAsync();
 

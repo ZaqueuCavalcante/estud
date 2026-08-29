@@ -159,6 +159,11 @@ public partial class TestsHttpClient
         return await response.Resolve<CreateSsoConfigurationOut>();
     }
 
+    public async Task<HttpResponseMessage> SsoChallenge(string? email)
+    {
+        return await http.GetAsync($"identity/sso/challenge?email={Uri.EscapeDataString(email ?? "")}");
+    }
+
     public async Task<OneOf<CheckSocialLoginAvailabilityOut, ErrorOut>> CheckSocialLoginAvailability()
     {
         var response = await http.GetAsync("identity/social-login/check-availability");

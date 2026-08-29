@@ -19,8 +19,8 @@ public class AssignStudentToClassService(EstudDbContext ctx) : IEstudService
         var alreadyEnrolled = await ctx.ClassStudents.AnyAsync(x => x.ClassId == @class.Id && x.StudentId == studentId);
         if (alreadyEnrolled) return StudentAlreadyEnrolledInClass.I;
 
-        var enrolled = await ctx.ClassStudents.CountAsync(x => x.ClassId == @class.Id);
-        if (enrolled >= @class.Vacancies) return NoVacanciesInClass.I;
+        var enrolledStudents = await ctx.ClassStudents.CountAsync(x => x.ClassId == @class.Id);
+        if (enrolledStudents >= @class.Vacancies) return NoVacanciesInClass.I;
 
         ctx.Add(new ClassStudent(@class.Id, studentId));
         await ctx.SaveChangesAsync();

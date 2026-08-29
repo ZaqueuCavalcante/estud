@@ -71,16 +71,22 @@
 - ✅ GetInstitutionNotificationsController
 - ✅ GetUnreadNotificationsCountController
 
-## Parents
+## Periods
+- ✅ CreateAcademicPeriodController
+- ✅ CreateEnrollmentPeriodController
+- ✅ GetAcademicPeriodsController
+- ✅ GetEnrollmentPeriodsController
+- ✅ UpdateEnrollmentPeriodController
 
-- ✅ GetParentsController
-- ✅ CreateParentController
-- ✅ GetParentDetailsController
-- ✅ GetParentStudentsController
-- GetParentStudentAgendaController (revisar endpoint, testes e front)
+## Webhooks
+- ✅ GetWebhookCallsController
+- ✅ GetWebhookSubscriptionController
+- ✅ GetWebhookSubscriptionsController
+- ✅ CreateWebhookSubscriptionController
+- ✅ UpdateWebhookSubscriptionController
 
 
-
+---------------------------------------------------------------------------------------------------
 
 
 ## Campi
@@ -102,51 +108,41 @@
 - ✅ UpdateClassSchedulesController
 - ✅ ReleaseClassForEnrollmentController
 
-
 ## Identity
-
-- CheckSocialLoginAvailabilityController
-- CheckSsoAvailabilityController
-- CreateRoleController
-- CreateSsoConfigurationController
-- EmailPasswordLoginController
-- GetPermissionsController
-- GetRoleController
-- GetRolesController
-- GetSsoConfigurationController
-- GetTwoFactorEnforcementController
-- GetTwoFactorKeyController
+- ✅ GetSsoConfigurationController
+- ✅ CheckSsoAvailabilityController
+- ✅ CreateSsoConfigurationController
+- ✅ UpdateSsoConfigurationController
+- ✅ GetRoleController
+- ✅ GetRolesController
+- ✅ CreateRoleController
+- ✅ UpdateRoleController
+- ✅ SetupTwoFactorController
+- ✅ TwoFactorLoginController
+- ✅ GetTwoFactorKeyController
+- ✅ TwoFactorSetupLoginController
+- ✅ GetTwoFactorEnforcementController
+- ✅ SetTwoFactorEnforcementController
+- ✅ ResetPasswordController
+- ✅ EmailPasswordLoginController
+- ✅ SendResetPasswordTokenController
+- ✅ LogoutController
+- ✅ GetPermissionsController
+- ✅ MagicLinkLoginController
 - GoogleOneTapLoginController
-- LogoutController
-- MagicLinkLoginController
-- ResetPasswordController
-- SendResetPasswordTokenController
-- SetTwoFactorEnforcementController
-- SetupTwoFactorController
 - SocialLoginChallengeController
-- TwoFactorLoginController
-- TwoFactorSetupLoginController
-- UpdateRoleController
-- UpdateSsoConfigurationController
-
-
-
-## Periods
-
-- CreateAcademicPeriodController
-- CreateEnrollmentPeriodController
-- GetAcademicPeriodsController
-- GetEnrollmentPeriodsController
-- UpdateEnrollmentPeriodController
+- ✅ CheckSocialLoginAvailabilityController
 
 ## Students
 
-- AssignStudentToClassController
+- ✅ GetStudentController
+- ✅ GetStudentsController
+- ✅ CreateStudentController
+- ✅ AssignStudentToClassController
+- ✅ EnrollStudentInCourseOfferingController
+
 - CreateClassActivityWorkController
-- CreateStudentController
-- EnrollStudentInCourseOfferingController
 - GenerateEnrollmentProofController
-- GetStudentController
 - GetStudentAgendaController
 - GetStudentAttendanceCalendarController
 - GetStudentClassController
@@ -154,17 +150,19 @@
 - GetStudentClassActivityController
 - GetStudentCourseDetailsController
 - GetStudentDetailsController
-- GetStudentsController
 - ValidateEnrollmentProofController
 
 ## Teachers
 
-- AssignCampiToTeacherController
-- AssignDisciplinesToTeacherController
+- ✅ GetTeachersController
+- ✅ CreateTeacherController
+- ✅ UpdateTeacherController
+- ✅ GetTeacherDetailsController
+- ✅ AssignCampiToTeacherController
+- ✅ AssignDisciplinesToTeacherController
+
 - CreateClassActivityController
 - CreateLessonAttendanceController
-- CreateTeacherController
-- GetTeacherController
 - GetTeacherAgendaController
 - GetTeacherClassController
 - GetTeacherClassActivitiesController
@@ -172,16 +170,14 @@
 - GetTeacherClassLessonsController
 - GetTeacherClassStudentsController
 - GetTeacherCurrentClassesController
-- GetTeacherDetailsController
-- GetTeacherPotentialCampiController
-- GetTeacherPotentialDisciplinesController
-- GetTeachersController
-- UpdateTeacherController
 
-## Webhooks
+- ✅ GetTeacherPotentialCampiController
+- ✅ GetTeacherPotentialDisciplinesController
 
-- CreateWebhookSubscriptionController
-- GetWebhookCallsController
-- GetWebhookSubscriptionController
-- GetWebhookSubscriptionsController
-- UpdateWebhookSubscriptionController
+## Parents
+
+- ✅ GetParentsController
+- ✅ CreateParentController
+- ✅ GetParentDetailsController
+- ✅ GetParentStudentsController
+- GetParentStudentAgendaController (revisar endpoint, testes e front)

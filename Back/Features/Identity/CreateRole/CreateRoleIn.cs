@@ -2,8 +2,8 @@ namespace Estud.Back.Features.Identity.CreateRole;
 
 public class CreateRoleIn : IApiDto<CreateRoleIn>
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
+    public string? Name { get; set; }
+    public string? Description { get; set; }
     public UserType BaseType { get; set; }
     public List<int> Permissions { get; set; } = [];
 

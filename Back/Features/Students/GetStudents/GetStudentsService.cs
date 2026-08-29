@@ -47,7 +47,6 @@ public class GetStudentsService(EstudDbContext ctx) : IEstudService
             .Select(c => new { c.Id, c.Name })
             .ToListAsync();
 
-
         var result = students.ConvertAll(s => s.ToGetStudentsItemOut());
         foreach (var item in result)
         {

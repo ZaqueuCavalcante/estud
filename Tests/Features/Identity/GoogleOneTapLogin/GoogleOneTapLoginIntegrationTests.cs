@@ -143,7 +143,7 @@ public partial class IntegrationTests
 
         var firstCredential = Guid.NewGuid().ToString();
         FakeGoogleService.SeedGoogleToken(firstCredential, email, subject: subject);
-        var first = (await client.GoogleOneTapLogin(firstCredential)).Success;
+        var first = await client.GoogleOneTapLogin(firstCredential).Success();
 
         var secondCredential = Guid.NewGuid().ToString();
         FakeGoogleService.SeedGoogleToken(secondCredential, email, subject: subject);
@@ -269,7 +269,7 @@ public partial class IntegrationTests
 
         var firstCredential = Guid.NewGuid().ToString();
         FakeGoogleService.SeedGoogleToken(firstCredential, emailA, subject: subject);
-        var first = (await client.GoogleOneTapLogin(firstCredential)).Success;
+        var first = await client.GoogleOneTapLogin(firstCredential).Success();
 
         // Same Google account (subject S) but now reporting a different e-mail B
         var emailB = DataGen.Email;

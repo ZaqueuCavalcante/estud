@@ -25,5 +25,6 @@ internal class ErrorsExamples : ErrorExamplesProvider<
     LoginRequiresTwoFactor,
     LoginTwoFactorEnforced,
     LoginUserLockedOut,
-    LoginWrongEmailOrPassword
+    LoginWrongEmailOrPassword,
+    SsoLoginRequired
 >;

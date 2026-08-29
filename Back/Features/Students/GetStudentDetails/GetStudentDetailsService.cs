@@ -44,6 +44,8 @@ public class GetStudentDetailsService(EstudDbContext ctx) : IEstudService
             Id = student.Id,
             Name = student.Name,
             Email = student.User!.Email!,
+            Birthdate = student.User!.Birthdate!,
+            PhoneNumber = student.User!.PhoneNumber!,
             EnrollmentCode = student.EnrollmentCode,
             Status = student.Status,
             YieldCoefficient = student.YieldCoefficient,

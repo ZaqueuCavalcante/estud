@@ -60,11 +60,11 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var created = (await client.CreateWebhookSubscription(
+        var created = await client.CreateWebhookSubscription(
             name: "Aluno criado",
             url: "https://webhook.site/my-webhook",
             events: [WebhookEventType.StudentCreated],
-            customHeaders: new() { ["Estud-AuthToken"] = "6r4g654rs6g4we6f4qw684f68qwf4" })).Success;
+            customHeaders: new() { ["Estud-AuthToken"] = "6r4g654rs6g4we6f4qw684f68qwf4" }).Success();
 
         // Act
         var result = await client.GetWebhookSubscription(created.Id);

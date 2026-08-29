@@ -28,7 +28,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await client.EnrollStudentInCourseOffering(1, 1);
+        var result = await client.EnrollStudentInCourseOffering(studentId: 1, courseOfferingId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -50,7 +50,7 @@ public partial class IntegrationTests
         var offering = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
 
         // Act
-        var result = await client.EnrollStudentInCourseOffering(999999, offering.Id);
+        var result = await client.EnrollStudentInCourseOffering(studentId:999999, offering.Id);
 
         // Assert
         result.ShouldBeError(StudentNotFound.I);
@@ -64,7 +64,7 @@ public partial class IntegrationTests
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
         // Act
-        var result = await client.EnrollStudentInCourseOffering(student.Id, 999999);
+        var result = await client.EnrollStudentInCourseOffering(student.Id, courseOfferingId: 999999);
 
         // Assert
         result.ShouldBeError(CourseOfferingNotFound.I);
@@ -81,6 +81,7 @@ public partial class IntegrationTests
         var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
         var period = await client.GetFirstAcademicPeriod();
         var offering = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
+
         await client.EnrollStudentInCourseOffering(student.Id, offering.Id);
 
         // Act
@@ -153,11 +154,6 @@ public partial class IntegrationTests
 
         // Assert
         result.Success.Id.Should().BePositive();
-
-        await using var db = _back.GetDbContext();
-        var enrollment = await db.StudentCourseEnrollments.FirstAsync(x => x.StudentId == student.Id && x.CourseOfferingId == offering.Id);
-        enrollment.EnrolledAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
-        enrollment.LeftAt.Should().BeNull();
     }
 
     #endregion

@@ -47,4 +47,16 @@ public partial class TestsHttpClient
         var response = await http.GetAsync($"/parents/students/{studentId}/agenda");
         return await response.Resolve<GetParentStudentAgendaOut>();
     }
+
+    public async Task<OneOf<SuccessOut, ErrorOut>> RevokeParentStudentLink(int parentId, int studentId)
+    {
+        var response = await http.PutAsync($"/parents/{parentId}/students/{studentId}/revoke", null);
+        return await response.Resolve<SuccessOut>();
+    }
+
+    public async Task<OneOf<SuccessOut, ErrorOut>> RevokeParentLink(int parentId)
+    {
+        var response = await http.PutAsync($"/parents/{parentId}/revoke", null);
+        return await response.Resolve<SuccessOut>();
+    }
 }

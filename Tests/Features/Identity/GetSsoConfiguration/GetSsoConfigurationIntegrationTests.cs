@@ -43,10 +43,10 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector("director@sso-get-happy-path.com");
-        var created = (await client.CreateSsoConfiguration(
+        var created = await client.CreateSsoConfiguration(
             providerType: SsoProviderType.AzureAd,
             authority: "https://login.microsoftonline.com/tenant-id/v2.0",
-            clientId: "00000000-0000-0000-0000-000000000000")).Success;
+            clientId: "00000000-0000-0000-0000-000000000000").Success();
 
         // Act
         var result = await client.GetSsoConfiguration();

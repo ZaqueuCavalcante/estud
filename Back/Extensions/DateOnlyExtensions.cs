@@ -5,6 +5,7 @@ namespace Estud.Back.Extensions;
 
 public static class DateOnlyExtensions
 {
+    private const int AdultAge = 18;
     private static readonly DateOnly MinBirthdate = new(1900, 1, 1);
 
     extension(DateOnly date)
@@ -22,6 +23,11 @@ public static class DateOnlyExtensions
         public bool IsValidBirthdate()
         {
             return date >= MinBirthdate && date <= DateOnly.FromDateTime(DateTime.UtcNow);
+        }
+
+        public bool IsAdult()
+        {
+            return date <= DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-AdultAge);
         }
     }
 

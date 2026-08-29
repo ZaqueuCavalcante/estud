@@ -43,10 +43,13 @@ public class EstudUser : IdentityUser<int>
         InstitutionId = institutionId;
     }
 
-    public void Update(string name, string profilePhoto)
+    public void Update(string name, string email)
     {
         Name = name;
-        ProfilePhoto = profilePhoto;
+        Email = email;
+        NormalizedEmail = email.ToUpperInvariant();
+        UserName = email;
+        NormalizedUserName = email.ToUpperInvariant();
     }
 
     public void ConfirmEmail()

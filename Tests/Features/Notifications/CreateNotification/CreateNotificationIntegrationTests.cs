@@ -85,8 +85,9 @@ public partial class IntegrationTests
         var notification = result.Success;
         notification.Id.Should().NotBe(0);
 
-        var recipients = await client.GetInstitutionNotifications().Success();
-        recipients.Items.Should().HaveCount(2);
+        var notifications = await client.GetInstitutionNotifications().Success();
+        notifications.Items.Should().HaveCount(1);
+        notifications.Items[0].Recipients.Should().Be(2);
     }
 
     [Test]
@@ -104,8 +105,9 @@ public partial class IntegrationTests
         var notification = result.Success;
         notification.Id.Should().NotBe(0);
 
-        var recipients = await client.GetInstitutionNotifications().Success();
-        recipients.Items.Should().HaveCount(1);
+        var notifications = await client.GetInstitutionNotifications().Success();
+        notifications.Items.Should().HaveCount(1);
+        notifications.Items[0].Recipients.Should().Be(1);
     }
 
     [Test]
@@ -123,8 +125,9 @@ public partial class IntegrationTests
         var notification = result.Success;
         notification.Id.Should().NotBe(0);
 
-        var recipients = await client.GetInstitutionNotifications().Success();
-        recipients.Items.Should().HaveCount(1);
+        var notifications = await client.GetInstitutionNotifications().Success();
+        notifications.Items.Should().HaveCount(1);
+        notifications.Items[0].Recipients.Should().Be(1);
     }
 
     #endregion

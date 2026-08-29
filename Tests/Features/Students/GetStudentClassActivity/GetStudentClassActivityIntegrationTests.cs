@@ -173,7 +173,7 @@ public partial class IntegrationTests
 
         var teacherClient = await _back.LoginAs(teacherEmail);
         var dueDate = DateTime.UtcNow.AddDays(7).ToDateOnly();
-        var activity = (await teacherClient.CreateClassActivity(
+        var activity = await teacherClient.CreateClassActivity(
             classId,
             ClassNoteType.N2,
             "Modelagem de Banco de Dados",
@@ -182,7 +182,7 @@ public partial class IntegrationTests
             40,
             dueDate,
             Hour.H08_30
-        )).Success;
+        ).Success();
 
         var client = await _back.LoginAs(email);
 

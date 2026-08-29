@@ -110,18 +110,26 @@ public static class SsoOidcScheme
 
         var domain = email!.Split('@').Last().ToLowerInvariant();
 
-        // Load SSO configuration for this domain
-        var ssoConfigId = await ctx.WebSsoAllowedDomains.Where(x => x.Domain == domain).Select(x => x.SsoConfigurationId).FirstOrDefaultAsync();
-        var ssoConfig = await ctx.WebSsoConfigurations.Where(x => x.Id == ssoConfigId && x.IsActive).FirstOrDefaultAsync();
-        if (ssoConfig == null)
+        // The config comes from the scheme that authenticated, never from the email the IdP returned:
+        // resolving it by domain would let any IdP pick which institution it signs into.
+        var publicId = Guid.Parse(context.Scheme.Name[Prefix.Length..]);
+
+        var ssoConfig = await ctx.WebSsoConfigurations
+            .Include(x => x.AllowedDomains)
+            .Where(x => x.PublicId == publicId && x.IsActive)
+            .FirstOrDefaultAsync();
+
+        if (ssoConfig == null || ssoConfig.AllowedDomains.All(d => d.Domain != domain))
         {
             context.Response.Redirect($"{frontendSettings.Url}?sso_error={nameof(SsoNotConfiguredForDomain)}");
             context.HandleResponse();
             return;
         }
 
+        var institutionId = ssoConfig.InstitutionId;
+
         // Look up user by email
-        var user = await ctx.Users.FirstOrDefaultAsync(u => u.Email == email);
+        var user = await ctx.Users.FirstOrDefaultAsync(u => u.Email == email && u.InstitutionId == institutionId);
         if (user == null)
         {
             context.Response.Redirect($"{frontendSettings.Url}?sso_error={nameof(SsoLoginUserNotFound)}");

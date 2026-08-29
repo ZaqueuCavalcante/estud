@@ -11,6 +11,8 @@ public class EmailPasswordLoginService(
 {
     public async Task<OneOf<EmailPasswordLoginOut, EstudError>> Login(EmailPasswordLoginIn data)
     {
+        if (await ctx.EmailRequiresSsoAsync(data.Email)) return SsoLoginRequired.I;
+
         var user = await userManager.FindByEmailAsync(data.Email);
         if (user == null) return new LoginWrongEmailOrPassword();
 

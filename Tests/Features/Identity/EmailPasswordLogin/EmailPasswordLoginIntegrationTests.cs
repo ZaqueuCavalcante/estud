@@ -74,6 +74,25 @@ public partial class IntegrationTests : IntegrationTestBase
     }
 
     [Test]
+    public async Task Identity_EmailPasswordLogin_Should_not_login_when_email_domain_requires_sso()
+    {
+        // Arrange
+        var domain = $"sso-required-{DataGen.Numbers}.com";
+        var client = await _back.LoggedAsDirector($"director@{domain}");
+
+        var config = await client.CreateSsoConfiguration().Success();
+        await client.UpdateSsoConfiguration(config.Id, requireSso: true);
+
+        await client.Logout();
+
+        // Act
+        var result = await client.EmailPasswordLogin(client.User.Email, "My@nEw@strong@P4ssword");
+
+        // Assert
+        result.ShouldBeError(SsoLoginRequired.I);
+    }
+
+    [Test]
     public async Task Identity_EmailPasswordLogin_Should_require_two_factor_when_2fa_is_enabled()
     {
         // Arrange
@@ -199,6 +218,25 @@ public partial class IntegrationTests : IntegrationTestBase
         result.ShouldBeSuccess();
         result.Success.UserId.Should().BeGreaterThan(0);
         result.Success.InstitutionId.Should().BeGreaterThan(0);
+    }
+
+    [Test]
+    public async Task Identity_EmailPasswordLogin_Should_login_when_sso_is_configured_but_not_required()
+    {
+        // Arrange
+        var domain = $"sso-optional-{DataGen.Numbers}.com";
+        var client = await _back.LoggedAsDirector($"director@{domain}");
+
+        var config = await client.CreateSsoConfiguration().Success();
+        await client.UpdateSsoConfiguration(config.Id, requireSso: false);
+
+        await client.Logout();
+
+        // Act
+        var result = await client.EmailPasswordLogin(client.User.Email, "My@nEw@strong@P4ssword");
+
+        // Assert
+        result.ShouldBeSuccess();
     }
 
     [Test]

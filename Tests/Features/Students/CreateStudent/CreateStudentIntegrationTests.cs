@@ -43,11 +43,10 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var email = DataGen.Email;
-        await client.CreateStudent(DataGen.UserName, email);
+        var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
         // Act
-        var result = await client.CreateStudent(DataGen.UserName, email);
+        var result = await client.CreateStudent(DataGen.UserName, student.Email);
 
         // Assert
         result.ShouldBeError(EmailAlreadyUsed.I);
@@ -128,12 +127,10 @@ public partial class IntegrationTests
 
         // Assert
         result.ShouldBeSuccess();
-        var studentId = result.Success.Id;
 
-        await using var ctx = _back.GetDbContext();
-        var user = await ctx.Students.Where(s => s.Id == studentId).Select(s => s.User!).FirstAsync();
-        user.PhoneNumber.Should().BeNull();
-        user.Birthdate.Should().BeNull();
+        var student = await client.GetStudentDetails(result.Success.Id).Success();
+        student.PhoneNumber.Should().BeNull();
+        student.Birthdate.Should().BeNull();
     }
 
     [Test]
@@ -149,12 +146,10 @@ public partial class IntegrationTests
 
         // Assert
         result.ShouldBeSuccess();
-        var studentId = result.Success.Id;
 
-        await using var ctx = _back.GetDbContext();
-        var user = await ctx.Students.Where(s => s.Id == studentId).Select(s => s.User!).FirstAsync();
-        user.PhoneNumber.Should().Be(phoneNumber);
-        user.Birthdate.Should().Be(birthdate);
+        var student = await client.GetStudentDetails(result.Success.Id).Success();
+        student.PhoneNumber.Should().Be(phoneNumber);
+        student.Birthdate.Should().Be(birthdate);
     }
 
     [Test]
@@ -169,12 +164,10 @@ public partial class IntegrationTests
 
         // Assert
         result.ShouldBeSuccess();
-        var studentId = result.Success.Id;
 
-        await using var ctx = _back.GetDbContext();
-        var user = await ctx.Students.Where(s => s.Id == studentId).Select(s => s.User!).FirstAsync();
-        user.PhoneNumber.Should().Be(phoneNumber);
-        user.Birthdate.Should().BeNull();
+        var student = await client.GetStudentDetails(result.Success.Id).Success();
+        student.PhoneNumber.Should().Be(phoneNumber);
+        student.Birthdate.Should().BeNull();
     }
 
     [Test]
@@ -189,12 +182,10 @@ public partial class IntegrationTests
 
         // Assert
         result.ShouldBeSuccess();
-        var studentId = result.Success.Id;
 
-        await using var ctx = _back.GetDbContext();
-        var user = await ctx.Students.Where(s => s.Id == studentId).Select(s => s.User!).FirstAsync();
-        user.PhoneNumber.Should().BeNull();
-        user.Birthdate.Should().Be(birthdate);
+        var student = await client.GetStudentDetails(result.Success.Id).Success();
+        student.PhoneNumber.Should().BeNull();
+        student.Birthdate.Should().Be(birthdate);
     }
 
     #endregion

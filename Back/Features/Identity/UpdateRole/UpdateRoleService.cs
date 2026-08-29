@@ -33,14 +33,14 @@ public class UpdateRoleService(EstudDbContext ctx) : IEstudService
         var baseTypePermissionsOk = data.Permissions.All(id => EstudPermissions.IsAllowedFor(id, role.BaseType));
         if (!baseTypePermissionsOk) return InvalidPermissionsForUserType.I;
 
-        var upperCaseName = data.Name.Normalize().ToUpperInvariant();
-        var nameConflict = await ctx.Roles.AnyAsync(r => r.InstitutionId == institutionId && r.NormalizedName == upperCaseName && r.Id != roleId);
+        var normalizedName = data.Name.ToNormalizedName();
+        var nameConflict = await ctx.Roles.AnyAsync(r => r.InstitutionId == institutionId && r.NormalizedName == normalizedName && r.Id != roleId);
         if (nameConflict) return RoleNameAlreadyExists.I;
 
         var rolePermissionsOk = role.IsSubsetOf(ctx.RequestUser.Permissions) && data.Permissions.IsSubsetOf(ctx.RequestUser.Permissions);
         if (!rolePermissionsOk) return InvalidRolePermissions.I;
 
-        role.Update(data.Name, upperCaseName, data.Description, data.Permissions);
+        role.Update(data.Name, data.Description, data.Permissions);
 
         await ctx.SaveChangesAsync();
 

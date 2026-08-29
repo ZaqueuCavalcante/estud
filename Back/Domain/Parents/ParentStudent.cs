@@ -39,4 +39,14 @@ public class ParentStudent
         Status = ParentStudentStatus.Active;
         CreatedAt = DateTime.UtcNow;
     }
+
+    public void Revoke()
+    {
+        Status = ParentStudentStatus.Revoked;
+    }
+
+    public void RevokeByStudent()
+    {
+        RevokedByStudent = true;
+    }
 }

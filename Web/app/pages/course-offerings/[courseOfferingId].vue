@@ -51,20 +51,24 @@ const breadcrumb = [
             {{ data.course }}
           </h1>
           <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
+            <span class="flex items-center gap-1.5">
+              <UIcon name="i-lucide-graduation-cap" class="size-4 shrink-0" />
+              {{ data.courseType }}
+            </span>
             <NuxtLink
               :to="`/campi/${data.campusId}`"
               class="flex items-center gap-1.5 transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              <UIcon name="i-lucide-building-2" class="size-4 shrink-0" />
+              <UIcon name="i-lucide-map-pin" class="size-4 shrink-0" />
               {{ data.campus }}
             </NuxtLink>
             <span class="flex items-center gap-1.5">
               <UIcon name="i-lucide-calendar" class="size-4 shrink-0" />
-              {{ data.period }} · {{ courseSessionLabels[data.session] ?? data.session }}
+              {{ data.period }}
             </span>
             <span class="flex items-center gap-1.5">
-              <UIcon name="i-lucide-graduation-cap" class="size-4 shrink-0" />
-              {{ data.courseType }}
+              <UIcon name="i-lucide-sun" class="size-4 shrink-0" />
+              {{ courseSessionLabels[data.session] ?? data.session }}
             </span>
           </div>
         </div>
@@ -94,7 +98,8 @@ const breadcrumb = [
         </div>
 
         <section class="flex flex-col gap-3">
-          <h2 class="font-semibold text-highlighted">
+          <h2 class="flex items-center gap-1.5 font-semibold text-highlighted">
+            <UIcon name="i-lucide-users" class="size-4 shrink-0 text-muted" />
             Alunos
           </h2>
 
@@ -105,20 +110,13 @@ const breadcrumb = [
               :to="`/students/${student.id}`"
               class="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg border border-default bg-elevated/40 px-3 py-2 transition-colors hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              <span class="flex items-center gap-1.5 text-sm text-highlighted">
-                <UIcon name="i-lucide-user" class="size-4 shrink-0 text-muted" />
+              <span class="flex items-center gap-2 text-sm text-highlighted">
+                <UAvatar :alt="student.name" size="2xs" />
                 {{ student.name }}
               </span>
-              <span class="flex items-center gap-1.5 text-sm text-muted">
-                <UIcon name="i-lucide-hash" class="size-4 shrink-0" />
-                {{ student.enrollmentCode }}
-              </span>
-              <UBadge :color="studentStatusColors[student.status] ?? 'neutral'" variant="subtle">
+              <UBadge class="ml-auto" :color="studentStatusColors[student.status] ?? 'neutral'" variant="subtle">
                 {{ studentStatusLabels[student.status] ?? student.status }}
               </UBadge>
-              <span class="ml-auto text-sm text-muted tabular-nums">
-                Desde {{ formatDate(student.enrolledAt) }}
-              </span>
             </NuxtLink>
           </div>
           <div v-else class="flex items-center gap-2 text-sm text-muted">

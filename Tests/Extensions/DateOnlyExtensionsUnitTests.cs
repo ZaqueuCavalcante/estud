@@ -46,6 +46,58 @@ public class DateOnlyExtensionsUnitTests
         result.Should().BeFalse();
     }
 
+    [Test]
+    [TestCaseSource(nameof(AdultBirthdates))]
+    public void DateOnlyExtensions_Should_return_true_when_birthdate_is_from_an_adult(DateOnly date)
+    {
+        // Arrange / Act
+        var result = date.IsAdult();
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Test]
+    [TestCaseSource(nameof(UnderAgeBirthdates))]
+    public void DateOnlyExtensions_Should_return_false_when_birthdate_is_from_an_under_age(DateOnly date)
+    {
+        // Arrange / Act
+        var result = date.IsAdult();
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    private static IEnumerable<object[]> AdultBirthdates()
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        foreach (var day in new List<DateOnly>()
+        {
+            today.AddYears(-18),      // faz 18 anos hoje
+            today.AddYears(-18).AddDays(-1),
+            today.AddYears(-40),
+        })
+        {
+            yield return [day];
+        }
+    }
+
+    private static IEnumerable<object[]> UnderAgeBirthdates()
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        foreach (var day in new List<DateOnly>()
+        {
+            today.AddYears(-18).AddDays(1),  // faz 18 anos amanhã
+            today.AddYears(-10),
+            today,
+        })
+        {
+            yield return [day];
+        }
+    }
+
     private static IEnumerable<object[]> ValidBirthdates()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
