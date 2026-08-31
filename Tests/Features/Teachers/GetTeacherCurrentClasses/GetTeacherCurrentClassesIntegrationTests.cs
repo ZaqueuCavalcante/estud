@@ -43,9 +43,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
-        var email = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var geometria = await director.CreateDiscipline("Geometria").Success();
         var algebra = await director.CreateDiscipline("Álgebra").Success();
@@ -57,19 +55,15 @@ public partial class IntegrationTests
 
         await director.UpdateClassTeachers(geometriaClass.Id, [teacher.Id]);
         await director.UpdateClassTeachers(algebraClass.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
-        await director.UpdateClassSchedules(algebraClass.Id, [(Day.Tuesday, Hour.H07_00, Hour.H10_00, null, null)]);
+        await director.UpdateClassSchedules(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
+        await director.UpdateClassSchedules(algebraClass.Id, [(Day.Tuesday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
 
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var enrollment = await director.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2)).Success();
         await director.ReleaseClassForEnrollment(geometriaClass.Id);
         await director.ReleaseClassForEnrollment(algebraClass.Id);
-        await director.UpdateEnrollmentPeriod(enrollment.Id, startAt: today.AddDays(-10), endAt: today.AddDays(-5));
-
         await director.StartClass(geometriaClass.Id);
         await director.StartClass(algebraClass.Id);
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(teacher.Email);
 
         // Act
         var result = await client.GetTeacherCurrentClasses();
@@ -88,9 +82,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
-        var email = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
@@ -98,7 +90,7 @@ public partial class IntegrationTests
         var period = await director.GetFirstAcademicPeriod();
         await director.CreateClass(discipline.Id, period.Id);
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(teacher.Email);
 
         // Act
         var result = await client.GetTeacherCurrentClasses();
@@ -113,8 +105,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
 
-        var email = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         var otherTeacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
@@ -123,16 +114,12 @@ public partial class IntegrationTests
         var period = await director.GetFirstAcademicPeriod();
         var otherClass = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(otherClass.Id, [otherTeacher.Id]);
-        await director.UpdateClassSchedules(otherClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
+        await director.UpdateClassSchedules(otherClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, otherTeacher.Id, null)]);
 
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var enrollment = await director.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2)).Success();
         await director.ReleaseClassForEnrollment(otherClass.Id);
-        await director.UpdateEnrollmentPeriod(enrollment.Id, startAt: today.AddDays(-10), endAt: today.AddDays(-5));
-
         await director.StartClass(otherClass.Id);
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(teacher.Email);
 
         // Act
         var result = await client.GetTeacherCurrentClasses();

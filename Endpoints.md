@@ -90,7 +90,6 @@
 
 
 ## Campi
-
 - ✅ CreateCampusController
 - ✅ UpdateCampusController
 - ✅ GetCampusOpeningHoursController
@@ -99,7 +98,6 @@
 - GetCampiController (falta teste com ocupação não nula)
 
 ## Classes
-
 - GetClassController
 - GetClassesController
 - StartClassController
@@ -129,12 +127,12 @@
 - ✅ LogoutController
 - ✅ GetPermissionsController
 - ✅ MagicLinkLoginController
-- GoogleOneTapLoginController
-- SocialLoginChallengeController
 - ✅ CheckSocialLoginAvailabilityController
 
-## Students
+- GoogleOneTapLoginController
+- SocialLoginChallengeController
 
+## Students
 - ✅ GetStudentController
 - ✅ GetStudentsController
 - ✅ CreateStudentController
@@ -153,29 +151,27 @@
 - ValidateEnrollmentProofController
 
 ## Teachers
-
 - ✅ GetTeachersController
 - ✅ CreateTeacherController
 - ✅ UpdateTeacherController
 - ✅ GetTeacherDetailsController
 - ✅ AssignCampiToTeacherController
 - ✅ AssignDisciplinesToTeacherController
-
-- CreateClassActivityController
+- ✅ CreateClassActivityController
+- ✅ GetTeacherClassActivitiesController
+- ✅ GetTeacherClassActivityController
 - CreateLessonAttendanceController
+
 - GetTeacherAgendaController
 - GetTeacherClassController
-- GetTeacherClassActivitiesController
-- GetTeacherClassActivityController
 - GetTeacherClassLessonsController
 - GetTeacherClassStudentsController
-- GetTeacherCurrentClassesController
 
+- ✅ GetTeacherCurrentClassesController
 - ✅ GetTeacherPotentialCampiController
 - ✅ GetTeacherPotentialDisciplinesController
 
 ## Parents
-
 - ✅ GetParentsController
 - ✅ CreateParentController
 - ✅ GetParentDetailsController

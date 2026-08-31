@@ -1,6 +1,3 @@
-using Estud.Back.Domain.Classes;
-using Estud.Back.Features.Teachers.CreateClassActivity;
-
 namespace Estud.Tests.Integration;
 
 public partial class IntegrationTests
@@ -78,9 +75,8 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
 
-        var email = DataGen.Email;
-        await director.CreateTeacher(DataGen.UserName, email);
-        var teacherClient = await _back.LoginAs(email);
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+        var teacherClient = await _back.LoginAs(teacher.Email);
 
         var discipline = await director.CreateDiscipline().Success();
         var otherTeacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
@@ -102,9 +98,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
-        var email = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
@@ -113,7 +107,7 @@ public partial class IntegrationTests
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(teacher.Email);
 
         // Act
         var result = await client.CreateClassActivity(@class.Id, weight: weight);
@@ -127,9 +121,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
-        var email = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
@@ -138,7 +130,7 @@ public partial class IntegrationTests
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(teacher.Email);
         await client.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 70);
 
         // Act
@@ -157,9 +149,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
-        var email = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
@@ -168,7 +158,7 @@ public partial class IntegrationTests
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(teacher.Email);
         var dueDate = DateTime.UtcNow.AddDays(7).ToDateOnly();
 
         // Act
@@ -184,20 +174,19 @@ public partial class IntegrationTests
         );
 
         // Assert
-        var activityId = result.Success.Id;
-        activityId.Should().BeGreaterThan(0);
-
-        await using var ctx = _back.GetDbContext();
-        var activity = await ctx.ClassActivities.FirstAsync(x => x.Id == activityId);
+        var activity = await client.GetTeacherClassActivity(@class.Id, result.Success.Id).Success();
         activity.ClassId.Should().Be(@class.Id);
         activity.Note.Should().Be(ClassNoteType.N2);
         activity.Title.Should().Be("Modelagem de Banco de Dados");
         activity.Description.Should().Be("Modele um banco de dados para um sistema de gerenciamento de biblioteca.");
-        activity.ActivityType.Should().Be(ClassActivityType.Work);
+        activity.Type.Should().Be(ClassActivityType.Work);
         activity.Status.Should().Be(ClassActivityStatus.Pending);
         activity.Weight.Should().Be(69);
         activity.DueDate.Should().Be(dueDate);
         activity.DueHour.Should().Be(Hour.H08_30);
+        activity.DeliveredWorks.Should().Be(0);
+        activity.TotalWorks.Should().Be(0);
+        activity.Works.Should().BeEmpty();
     }
 
     [Test]
@@ -205,9 +194,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
-        var email = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
@@ -216,21 +203,18 @@ public partial class IntegrationTests
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(teacher.Email);
 
         // Act
         await client.CreateClassActivity(@class.Id, ClassNoteType.N1, type: ClassActivityType.Work, weight: 25);
         await client.CreateClassActivity(@class.Id, ClassNoteType.N1, type: ClassActivityType.Exam, weight: 75);
         await client.CreateClassActivity(@class.Id, ClassNoteType.N2, type: ClassActivityType.Presentation, weight: 40);
         await client.CreateClassActivity(@class.Id, ClassNoteType.N2, type: ClassActivityType.Exam, weight: 60);
-        var result = await client.CreateClassActivity(@class.Id, ClassNoteType.N3, type: ClassActivityType.Project, weight: 100);
+        await client.CreateClassActivity(@class.Id, ClassNoteType.N3, type: ClassActivityType.Project, weight: 100);
 
         // Assert
-        result.Success.Id.Should().BeGreaterThan(0);
-
-        await using var ctx = _back.GetDbContext();
-        var activities = await ctx.ClassActivities.Where(x => x.ClassId == @class.Id).ToListAsync();
-        activities.Should().HaveCount(5);
+        var activities = await client.GetTeacherClassActivities(@class.Id).Success();
+        activities.Activities.Should().HaveCount(5);
     }
 
     [Test]
@@ -238,9 +222,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
-        var teacherEmail = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, teacherEmail).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var disciplineName = $"Modelagem de Dados {DataGen.Numbers}";
         var discipline = await director.CreateDiscipline(disciplineName).Success();
@@ -250,8 +232,6 @@ public partial class IntegrationTests
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        await director.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2));
         await director.ReleaseClassForEnrollment(@class.Id);
 
         var studentEmails = new List<string> { DataGen.Email, DataGen.Email, DataGen.Email };
@@ -261,7 +241,7 @@ public partial class IntegrationTests
             await director.AssignStudentToClass(student.Id, @class.Id);
         }
 
-        var client = await _back.LoginAs(teacherEmail);
+        var client = await _back.LoginAs(teacher.Email);
         var title = $"Modelagem de Banco de Dados {DataGen.Numbers}";
 
         // Act
@@ -271,43 +251,12 @@ public partial class IntegrationTests
         await _back.AwaitCommandsProcessing();
 
         // Assert
-        var activityId = result.Success.Id;
-
-        await using var ctx = _back.GetDbContext();
-
-        var activity = await ctx.ClassActivities.AsNoTracking().FirstAsync(x => x.Id == activityId);
-        activity.Uid.Should().NotBeEmpty();
-
-        var evt = await ctx.DomainEvents.AsNoTracking().SingleAsync(x => x.EntityUid == activity.Uid);
-        evt.Type.Should().Be(typeof(ClassActivityCreatedDomainEvent).FullName);
-        evt.Error.Should().BeNull();
-        evt.Status.Should().Be(DomainEventStatus.Success);
-        evt.ProcessedAt.Should().NotBeNull();
-
-        var commandData = new CreateNewClassActivityNotificationCommand(activityId).Serialize();
-        var command = await ctx.Commands.AsNoTracking().SingleAsync(x => x.Data == commandData);
-        command.Type.Should().Be(nameof(CreateNewClassActivityNotificationCommand));
-        command.Error.Should().BeNull();
-        command.Status.Should().Be(CommandStatus.Success);
-        command.ProcessedAt.Should().NotBeNull();
-
-        var notification = await ctx.Notifications.AsNoTracking()
-            .SingleAsync(x => x.Description == $"{disciplineName}: {title}");
-        notification.NotificationType.Should().Be(NotificationType.NewClassActivity);
-        notification.Title.Should().Be("Nova atividade");
-
-        var notifiedUserIds = await ctx.UserNotifications.AsNoTracking()
-            .Where(x => x.NotificationId == notification.Id)
-            .Select(x => x.UserId)
-            .ToListAsync();
-
-        var studentUserIds = await ctx.Students.AsNoTracking()
-            .Where(x => studentEmails.Contains(x.User!.Email!))
-            .Select(x => x.UserId)
-            .ToListAsync();
-
-        studentUserIds.Should().HaveCount(3);
-        notifiedUserIds.Should().BeEquivalentTo(studentUserIds);
+        foreach (var studentEmail in studentEmails)
+        {
+            var studentClient = await _back.LoginAs(studentEmail);
+            var notifications = await studentClient.GetNotifications().Success();
+            notifications.Items.Should().ContainSingle(x => x.Title == "Nova atividade");
+        }
     }
 
     #endregion

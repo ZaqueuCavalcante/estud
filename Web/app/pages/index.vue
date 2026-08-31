@@ -55,27 +55,7 @@ const features = [
           <TypewriterText :words="['Organize', 'Entenda', 'Controle']" /> sua instituição de ensino com excelência
         </template>
 
-        <div class="sm:hidden">
-          <UColorModeImage
-            light="/images/campus-light-mobile.png"
-            dark="/images/campus-dark-mobile.png"
-            alt="Tela de ocupação de campus do Estud, com mapa de uso das salas por turno e indicadores de tempo e espaço"
-            width="360"
-            height="760"
-            class="rounded-xl w-full h-auto ring ring-default shadow-2xl shadow-black/10 dark:shadow-black/40"
-          />
-        </div>
-
-        <div class="hidden sm:block">
-          <UColorModeImage
-            light="/images/campus-light.png"
-            dark="/images/campus-dark.png"
-            alt="Tela de ocupação de campus do Estud, com mapa de uso das salas por turno e indicadores de tempo e espaço"
-            width="1278"
-            height="946"
-            class="rounded-xl w-full h-auto ring ring-default shadow-2xl shadow-black/10 dark:shadow-black/40"
-          />
-        </div>
+        <LandingCampusPreview class="hidden sm:block" />
       </UPageHero>
 
       <UPageSection

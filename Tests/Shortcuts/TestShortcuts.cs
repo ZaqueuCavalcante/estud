@@ -9,4 +9,16 @@ public static class TestShortcuts
     {
         return (await client.GetAcademicPeriods().Success()).Items.First();
     }
+
+    public static async Task<GetAcademicPeriodsItemOut> GetLastAcademicPeriod(this TestsHttpClient client)
+    {
+        return (await client.GetAcademicPeriods().Success()).Items.Last();
+    }
+
+    public static async Task<List<int>> GetClassLessons(this TestsHttpClient client, int classId)
+    {
+        var lessons = await client.GetTeacherClassLessons(classId).Success();
+
+        return lessons.Lessons.Select(x => x.Id).ToList();
+    }
 }

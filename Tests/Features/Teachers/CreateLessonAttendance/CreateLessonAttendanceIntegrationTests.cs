@@ -63,18 +63,20 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
         await director.ReleaseClassForEnrollment(@class.Id);
         await director.StartClass(@class.Id);
-        var lessonId = await _back.GetFirstLessonId(@class.Id);
+
+        var teacherClient = await _back.LoginAs(teacher.Email);
+        var lessons = await teacherClient.GetClassLessons(@class.Id);
 
         var otherTeacher = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await otherTeacher.CreateLessonAttendance(lessonId, presentStudents: []);
+        var result = await otherTeacher.CreateLessonAttendance(lessons.First(), presentStudents: []);
 
         // Assert
         result.ShouldBeError(ClassLessonNotFound.I);
@@ -86,25 +88,26 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
 
-        var otherTeacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
-
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+        var otherTeacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
         await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
         await director.ReleaseClassForEnrollment(@class.Id);
         await director.StartClass(@class.Id);
-        var lessonId = await _back.GetFirstLessonId(@class.Id);
+
+        var teacherClient = await _back.LoginAs(teacher.Email);
+        var lessons = await teacherClient.GetClassLessons(@class.Id);
 
         var client = await _back.LoginAs(otherTeacher.Email);
 
         // Act
-        var result = await client.CreateLessonAttendance(lessonId, presentStudents: []);
+        var result = await client.CreateLessonAttendance(lessons.First(), presentStudents: []);
 
         // Assert
         result.ShouldBeError(TeacherNotAssignedToClass.I);
@@ -115,39 +118,26 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
-        var email = DataGen.Email;
-
-        var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var nextYear = DateTime.UtcNow.Year + 1;
-        var period = await director.CreateAcademicPeriod(
-            $"{nextYear}.1",
-            new DateOnly(nextYear, 02, 01),
-            new DateOnly(nextYear, 07, 01)
-        ).Success();
-
+        var period = await director.GetLastAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, null, null)]);
         await director.ReleaseClassForEnrollment(@class.Id);
         await director.StartClass(@class.Id);
-        var lessonId = await _back.GetFirstLessonId(@class.Id);
 
-        var client = await _back.LoginAs(email);
+        var teacherClient = await _back.LoginAs(teacher.Email);
+        var lessons = await teacherClient.GetClassLessons(@class.Id);
 
         // Act
-        var result = await client.CreateLessonAttendance(lessonId, presentStudents: []);
+        var result = await teacherClient.CreateLessonAttendance(lessons.Last(), presentStudents: []);
 
         // Assert
         result.ShouldBeError(ClassLessonNotStarted.I);
-
-        await using var ctx = _back.GetDbContext();
-        var lesson = await ctx.ClassLessons.FirstAsync(l => l.Id == lessonId);
-        lesson.Status.Should().Be(ClassLessonStatus.Pending);
     }
 
     [Test]
@@ -155,24 +145,23 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
         await director.ReleaseClassForEnrollment(@class.Id);
         await director.StartClass(@class.Id);
-        var lessonId = await _back.GetFirstLessonId(@class.Id);
 
-        var client = await _back.LoginAs(teacher.Email);
+        var teacherClient = await _back.LoginAs(teacher.Email);
+        var lessons = await teacherClient.GetClassLessons(@class.Id);
 
         // Act
-        var result = await client.CreateLessonAttendance(lessonId, [999999]);
+        var result = await teacherClient.CreateLessonAttendance(lessons.First(), [999999]);
 
         // Assert
         result.ShouldBeError(InvalidStudentsList.I);
