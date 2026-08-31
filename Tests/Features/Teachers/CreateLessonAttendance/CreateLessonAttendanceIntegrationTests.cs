@@ -1,5 +1,3 @@
-using Estud.Tests.Integration.Clients;
-
 namespace Estud.Tests.Integration;
 
 public partial class IntegrationTests
@@ -172,25 +170,24 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
 
-        var students = await EnrollStudentsInClass(director, @class.Id, 1);
+        var students = await director.EnrollStudentsInClass(@class.Id, 1);
         await director.StartClass(@class.Id);
-        var lessonId = await _back.GetFirstLessonId(@class.Id);
 
-        var client = await _back.LoginAs(teacher.Email);
+        var teacherClient = await _back.LoginAs(teacher.Email);
+        var lessons = await teacherClient.GetClassLessons(@class.Id);
 
         // Act
-        var result = await client.CreateLessonAttendance(lessonId, [students[0], students[0]]);
+        var result = await teacherClient.CreateLessonAttendance(lessons.First(), [students[0], students[0]]);
 
         // Assert
         result.ShouldBeError(InvalidStudentsList.I);
@@ -205,38 +202,32 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
         await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
 
-        var students = await EnrollStudentsInClass(director, @class.Id, 2);
+        var students = await director.EnrollStudentsInClass(@class.Id, 2);
         await director.StartClass(@class.Id);
-        var lessonId = await _back.GetFirstLessonId(@class.Id);
 
-        var client = await _back.LoginAs(teacher.Email);
+        var teacherClient = await _back.LoginAs(teacher.Email);
+        var lessons = await teacherClient.GetClassLessons(@class.Id);
 
         // Act
-        var result = await client.CreateLessonAttendance(lessonId, [students[0]]);
+        var result = await teacherClient.CreateLessonAttendance(lessons.First(), [students[0]]);
 
         // Assert
         result.ShouldBeSuccess();
 
-        await using var ctx = _back.GetDbContext();
-        var attendances = await ctx.ClassLessonAttendances.Where(a => a.LessonId == lessonId).ToListAsync();
-        attendances.Should().HaveCount(2);
-        attendances.First(a => a.StudentId == students[0]).Present.Should().BeTrue();
-        attendances.First(a => a.StudentId == students[1]).Present.Should().BeFalse();
-        attendances.Should().AllSatisfy(a => a.ClassId.Should().Be(@class.Id));
-
-        var lesson = await ctx.ClassLessons.FirstAsync(l => l.Id == lessonId);
+        var classLessons = await teacherClient.GetTeacherClassLessons(@class.Id).Success();
+        var lesson = classLessons.Lessons.First(l => l.Id == lessons.First());
         lesson.Status.Should().Be(ClassLessonStatus.Finalized);
+        lesson.PresentStudents.Should().BeEquivalentTo([students[0]]);
     }
 
     [Test]
@@ -244,20 +235,17 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
-        var email = DataGen.Email;
-
-        var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
         await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
-        var students = await EnrollStudentsInClass(director, @class.Id, 1);
+        var students = await director.EnrollStudentsInClass(@class.Id, 1);
         await director.StartClass(@class.Id);
         var lessonId = await _back.GetFirstLessonId(@class.Id);
 
@@ -271,7 +259,7 @@ public partial class IntegrationTests
             await arrangeCtx.SaveChangesAsync();
         }
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(teacher.Email);
 
         // Act
         var result = await client.CreateLessonAttendance(lessonId, [students[0]]);
@@ -299,7 +287,7 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
         await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
@@ -328,18 +316,17 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.CreateAcademicPeriod().Success();
+        var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
         await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
 
-        var students = await EnrollStudentsInClass(director, @class.Id, 2);
+        var students = await director.EnrollStudentsInClass(@class.Id, 2);
         await director.StartClass(@class.Id);
         var lessonId = await _back.GetFirstLessonId(@class.Id);
 
@@ -360,21 +347,4 @@ public partial class IntegrationTests
     }
 
     #endregion
-
-    private static async Task<List<int>> EnrollStudentsInClass(TestsHttpClient director, int classId, int count)
-    {
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        await director.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2));
-        await director.ReleaseClassForEnrollment(classId);
-
-        List<int> students = [];
-        for (var i = 0; i < count; i++)
-        {
-            var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-            await director.AssignStudentToClass(student.Id, classId);
-            students.Add(student.Id);
-        }
-
-        return students;
-    }
 }

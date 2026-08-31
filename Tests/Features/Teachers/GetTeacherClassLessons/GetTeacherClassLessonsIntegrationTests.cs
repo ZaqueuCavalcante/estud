@@ -136,7 +136,7 @@ public partial class IntegrationTests
         await director.ReleaseClassForEnrollment(@class.Id);
         await director.StartClass(@class.Id);
 
-        var students = await EnrollStudentsInClass(director, @class.Id, 2);
+        var students = await director.EnrollStudentsInClass(@class.Id, 2);
         var lessonId = await _back.GetFirstLessonId(@class.Id);
 
         var client = await _back.LoginAs(teacher.Email);

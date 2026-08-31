@@ -21,4 +21,19 @@ public static class TestShortcuts
 
         return lessons.Lessons.Select(x => x.Id).ToList();
     }
+
+    public static async Task<List<int>> EnrollStudentsInClass(this TestsHttpClient client, int classId, int count)
+    {
+        await client.ReleaseClassForEnrollment(classId);
+
+        List<int> students = [];
+        for (var i = 0; i < count; i++)
+        {
+            var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+            await client.AssignStudentToClass(student.Id, classId);
+            students.Add(student.Id);
+        }
+
+        return students;
+    }
 }
