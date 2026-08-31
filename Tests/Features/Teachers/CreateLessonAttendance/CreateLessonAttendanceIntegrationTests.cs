@@ -247,33 +247,30 @@ public partial class IntegrationTests
 
         var students = await director.EnrollStudentsInClass(@class.Id, 1);
         await director.StartClass(@class.Id);
-        var lessonId = await _back.GetFirstLessonId(@class.Id);
+
+        var teacherClient = await _back.LoginAs(teacher.Email);
+        var lessons = await teacherClient.GetClassLessons(@class.Id);
 
         // Nenhum endpoint agenda uma aula para hoje: a data sai do calendário do período
         // letivo, e hoje pode nem ser dia letivo. Por isso a data vai direto no banco.
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
         await using (var arrangeCtx = _back.GetDbContext())
         {
+            var lessonId = lessons.First();
             var lesson = await arrangeCtx.ClassLessons.FirstAsync(l => l.Id == lessonId);
-            lesson.Date = today;
+            lesson.Date = DateOnly.FromDateTime(DateTime.UtcNow);
             await arrangeCtx.SaveChangesAsync();
         }
 
-        var client = await _back.LoginAs(teacher.Email);
-
         // Act
-        var result = await client.CreateLessonAttendance(lessonId, [students[0]]);
+        var result = await teacherClient.CreateLessonAttendance(lessons.First(), [students[0]]);
 
         // Assert
         result.ShouldBeSuccess();
 
-        await using var ctx = _back.GetDbContext();
-        var attendances = await ctx.ClassLessonAttendances.Where(a => a.LessonId == lessonId).ToListAsync();
-        attendances.Should().HaveCount(1);
-        attendances[0].Present.Should().BeTrue();
-
-        var finished = await ctx.ClassLessons.FirstAsync(l => l.Id == lessonId);
+        var classLessons = await teacherClient.GetTeacherClassLessons(@class.Id).Success();
+        var finished = classLessons.Lessons.First(l => l.Id == lessons.First());
         finished.Status.Should().Be(ClassLessonStatus.Finalized);
+        finished.PresentStudents.Should().BeEquivalentTo([students[0]]);
     }
 
     [Test]
@@ -293,22 +290,20 @@ public partial class IntegrationTests
         await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
         await director.ReleaseClassForEnrollment(@class.Id);
         await director.StartClass(@class.Id);
-        var lessonId = await _back.GetFirstLessonId(@class.Id);
 
-        var client = await _back.LoginAs(teacher.Email);
+        var teacherClient = await _back.LoginAs(teacher.Email);
+        var lessons = await teacherClient.GetClassLessons(@class.Id);
 
         // Act
-        var result = await client.CreateLessonAttendance(lessonId, []);
+        var result = await teacherClient.CreateLessonAttendance(lessons.First(), []);
 
         // Assert
         result.ShouldBeSuccess();
 
-        await using var ctx = _back.GetDbContext();
-        var attendances = await ctx.ClassLessonAttendances.Where(a => a.LessonId == lessonId).ToListAsync();
-        attendances.Should().BeEmpty();
-
-        var lesson = await ctx.ClassLessons.FirstAsync(l => l.Id == lessonId);
+        var classLessons = await teacherClient.GetTeacherClassLessons(@class.Id).Success();
+        var lesson = classLessons.Lessons.First(l => l.Id == lessons.First());
         lesson.Status.Should().Be(ClassLessonStatus.Finalized);
+        lesson.PresentStudents.Should().BeEmpty();
     }
 
     [Test]
@@ -328,22 +323,21 @@ public partial class IntegrationTests
 
         var students = await director.EnrollStudentsInClass(@class.Id, 2);
         await director.StartClass(@class.Id);
-        var lessonId = await _back.GetFirstLessonId(@class.Id);
 
-        var client = await _back.LoginAs(teacher.Email);
-        await client.CreateLessonAttendance(lessonId, [students[0]]);
+        var teacherClient = await _back.LoginAs(teacher.Email);
+        var lessons = await teacherClient.GetClassLessons(@class.Id);
+        await teacherClient.CreateLessonAttendance(lessons.First(), [students[0]]);
 
         // Act
-        var result = await client.CreateLessonAttendance(lessonId, [students[1]]);
+        var result = await teacherClient.CreateLessonAttendance(lessons.First(), [students[1]]);
 
         // Assert
         result.ShouldBeSuccess();
 
-        await using var ctx = _back.GetDbContext();
-        var attendances = await ctx.ClassLessonAttendances.Where(a => a.LessonId == lessonId).ToListAsync();
-        attendances.Should().HaveCount(2);
-        attendances.First(a => a.StudentId == students[0]).Present.Should().BeFalse();
-        attendances.First(a => a.StudentId == students[1]).Present.Should().BeTrue();
+        var classLessons = await teacherClient.GetTeacherClassLessons(@class.Id).Success();
+        var lesson = classLessons.Lessons.First(l => l.Id == lessons.First());
+        lesson.Status.Should().Be(ClassLessonStatus.Finalized);
+        lesson.PresentStudents.Should().BeEquivalentTo([students[1]]);
     }
 
     #endregion

@@ -32,5 +32,6 @@ internal class ErrorsExamples : ErrorExamplesProvider<
     SsoAuthorityLoopbackNotAllowed,
     SsoAuthorityPrivateIpNotAllowed,
     SsoAuthorityLinkLocalNotAllowed,
-    SsoDomainAlreadyConfigured
+    SsoDomainAlreadyConfigured,
+    SsoPublicDomainNotAllowed
 >;

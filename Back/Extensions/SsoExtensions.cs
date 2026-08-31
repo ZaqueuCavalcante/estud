@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Collections.Frozen;
 using System.Text.RegularExpressions;
 
 namespace Estud.Back.Extensions;
@@ -58,6 +59,8 @@ public static partial class SsoExtensions
 
             return normalized;
         }
+
+        public bool IsPublicEmailDomain() => PublicEmailDomains.Contains(value);
     }
 
     extension(IPAddress ip)
@@ -112,6 +115,27 @@ public static partial class SsoExtensions
             return null;
         }
     }
+
+    private static readonly FrozenSet<string> PublicEmailDomains = new[]
+    {
+        "gmail.com", "googlemail.com",
+        "outlook.com", "outlook.com.br", "outlook.es", "outlook.fr", "outlook.de", "outlook.it", "outlook.pt",
+        "hotmail.com", "hotmail.com.br", "hotmail.co.uk", "hotmail.es", "hotmail.fr", "hotmail.de", "hotmail.it",
+        "live.com", "live.com.br", "live.co.uk", "live.fr", "live.de", "live.it", "live.nl",
+        "msn.com", "passport.com", "windowslive.com",
+        "yahoo.com", "yahoo.com.br", "yahoo.co.uk", "yahoo.co.jp", "yahoo.ca", "yahoo.fr", "yahoo.de", "yahoo.es", "yahoo.it", "yahoo.in",
+        "ymail.com", "rocketmail.com",
+        "icloud.com", "me.com", "mac.com",
+        "aol.com", "aim.com",
+        "uol.com.br", "mailinator.com",
+        "proton.me", "protonmail.com", "protonmail.ch", "pm.me",
+        "zoho.com", "zohomail.com",
+        "yandex.com", "yandex.ru",
+        "mail.ru", "bk.ru", "inbox.ru", "list.ru",
+        "gmx.com", "gmx.net", "gmx.de", "gmx.us", "web.de",
+        "fastmail.com", "fastmail.fm",
+        "tutanota.com", "tutanota.de", "tuta.io", "tuta.com",
+    }.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
 
     private static bool IsPrivateSsoIpV4(byte[] bytes)
     {

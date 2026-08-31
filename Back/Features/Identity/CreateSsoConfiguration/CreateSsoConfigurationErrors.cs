@@ -13,3 +13,10 @@ public class SsoDomainAlreadyConfigured : EstudError
     public override string Code { get; set; } = nameof(SsoDomainAlreadyConfigured);
     public override string Message { get; set; } = "Um ou mais domínios já estão configurados em outro SSO.";
 }
+
+public class SsoPublicDomainNotAllowed : EstudError
+{
+    public static readonly SsoPublicDomainNotAllowed I = new();
+    public override string Code { get; set; } = nameof(SsoPublicDomainNotAllowed);
+    public override string Message { get; set; } = "Não é possível configurar SSO para um domínio de e-mail público.";
+}

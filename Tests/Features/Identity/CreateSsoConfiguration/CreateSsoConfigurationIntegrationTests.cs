@@ -138,6 +138,27 @@ public partial class IntegrationTests
     }
 
     [Test]
+    [TestCase("gmail.com")]
+    [TestCase("outlook.com")]
+    [TestCase("hotmail.com")]
+    [TestCase("yahoo.com.br")]
+    [TestCase("icloud.com")]
+    [TestCase("proton.me")]
+    [TestCase("uol.com.br")]
+    [TestCase("mailinator.com")]
+    public async Task Identity_CreateSsoConfiguration_Should_not_create_sso_configuration_with_public_email_domain(string domain)
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector($"{DataGen.Numbers}.director@{domain}");
+
+        // Act
+        var result = await client.CreateSsoConfiguration();
+
+        // Assert
+        result.ShouldBeError(SsoPublicDomainNotAllowed.I);
+    }
+
+    [Test]
     public async Task Identity_CreateSsoConfiguration_Should_not_create_sso_configuration_when_domain_already_configured()
     {
         // Arrange

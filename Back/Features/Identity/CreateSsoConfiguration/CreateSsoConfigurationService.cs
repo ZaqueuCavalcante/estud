@@ -33,6 +33,7 @@ public class CreateSsoConfigurationService(EstudDbContext ctx, SsoEncryptionMana
 
         var domain = userEmail!.Split('@').Last().NormalizeSsoDomain();
         if (domain == null) return InvalidSsoAllowedDomains.I;
+        if (domain.IsPublicEmailDomain()) return SsoPublicDomainNotAllowed.I;
 
         var domainExists = await ctx.WebSsoAllowedDomains.AnyAsync(d => d.Domain == domain);
         if (domainExists) return SsoDomainAlreadyConfigured.I;

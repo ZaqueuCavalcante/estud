@@ -56,10 +56,6 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
-        var email = DataGen.Email;
-        await director.CreateTeacher(DataGen.UserName, email);
-
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
@@ -69,7 +65,8 @@ public partial class IntegrationTests
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
-        var client = await _back.LoginAs(email);
+        var otherTeacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+        var client = await _back.LoginAs(otherTeacher.Email);
 
         // Act
         var result = await client.GetTeacherClassLessons(@class.Id);
@@ -87,7 +84,6 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
@@ -122,7 +118,6 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
@@ -137,16 +132,16 @@ public partial class IntegrationTests
         await director.StartClass(@class.Id);
 
         var students = await director.EnrollStudentsInClass(@class.Id, 2);
-        var lessonId = await _back.GetFirstLessonId(@class.Id);
 
         var client = await _back.LoginAs(teacher.Email);
-        await client.CreateLessonAttendance(lessonId, [students[0]]);
+        var lessons = await client.GetClassLessons(@class.Id);
+        await client.CreateLessonAttendance(lessons.First(), [students[0]]);
 
         // Act
         var result = await client.GetTeacherClassLessons(@class.Id);
 
         // Assert
-        var lesson = result.Success.Lessons.First(l => l.Id == lessonId);
+        var lesson = result.Success.Lessons.First(l => l.Id == lessons.First());
         lesson.Status.Should().Be(ClassLessonStatus.Finalized);
         lesson.PresentStudents.Should().BeEquivalentTo([students[0]]);
     }

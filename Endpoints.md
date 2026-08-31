@@ -128,7 +128,6 @@
 - ✅ GetPermissionsController
 - ✅ MagicLinkLoginController
 - ✅ CheckSocialLoginAvailabilityController
-
 - GoogleOneTapLoginController
 - SocialLoginChallengeController
 
@@ -138,9 +137,10 @@
 - ✅ CreateStudentController
 - ✅ AssignStudentToClassController
 - ✅ EnrollStudentInCourseOfferingController
+- GenerateEnrollmentProofController
+- ValidateEnrollmentProofController
 
 - CreateClassActivityWorkController
-- GenerateEnrollmentProofController
 - GetStudentAgendaController
 - GetStudentAttendanceCalendarController
 - GetStudentClassController
@@ -148,7 +148,6 @@
 - GetStudentClassActivityController
 - GetStudentCourseDetailsController
 - GetStudentDetailsController
-- ValidateEnrollmentProofController
 
 ## Teachers
 - ✅ GetTeachersController
@@ -160,16 +159,14 @@
 - ✅ CreateClassActivityController
 - ✅ GetTeacherClassActivitiesController
 - ✅ GetTeacherClassActivityController
-- CreateLessonAttendanceController
-
-- GetTeacherAgendaController
-- GetTeacherClassController
-- GetTeacherClassLessonsController
-- GetTeacherClassStudentsController
-
+- ✅ CreateLessonAttendanceController
+- ✅ GetTeacherClassLessonsController
+- ✅ GetTeacherClassController
+- ✅ GetTeacherClassStudentsController
 - ✅ GetTeacherCurrentClassesController
 - ✅ GetTeacherPotentialCampiController
 - ✅ GetTeacherPotentialDisciplinesController
+- GetTeacherAgendaController
 
 ## Parents
 - ✅ GetParentsController
