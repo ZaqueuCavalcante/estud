@@ -5,6 +5,7 @@ using Estud.Back.Features.Students.CreateStudent;
 using Estud.Back.Features.Students.GetStudentClass;
 using Estud.Back.Features.Students.GetStudentAgenda;
 using Estud.Back.Features.Students.GetStudentDetails;
+using Estud.Back.Features.Students.GetEnrollmentProofs;
 using Estud.Back.Features.Students.AssignStudentToClass;
 using Estud.Back.Features.Students.CreateClassActivityWork;
 using Estud.Back.Features.Students.GetStudentClassActivity;
@@ -125,6 +126,12 @@ public partial class TestsHttpClient
             return ForbiddenErrorOut.I;
 
         return await response.ToError();
+    }
+
+    public async Task<OneOf<GetEnrollmentProofsOut, ErrorOut>> GetEnrollmentProofs()
+    {
+        var response = await http.GetAsync("/students/enrollment-proofs");
+        return await response.Resolve<GetEnrollmentProofsOut>();
     }
 
     public async Task<OneOf<ValidateEnrollmentProofOut, ErrorOut>> ValidateEnrollmentProof(string code)

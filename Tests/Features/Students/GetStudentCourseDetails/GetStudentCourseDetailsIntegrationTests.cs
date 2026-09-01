@@ -58,11 +58,9 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
-        var email = DataGen.Email;
-        await director.CreateStudent(DataGen.UserName, email);
-
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
         var result = await client.GetStudentCourseDetails();
@@ -98,16 +96,15 @@ public partial class IntegrationTests
         var period = await director.GetFirstAcademicPeriod();
         var offering = await director.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
 
-        var email = DataGen.Email;
-        var student = await director.CreateStudent(DataGen.UserName, email).Success();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         await director.EnrollStudentInCourseOffering(student.Id, offering.Id);
 
-        // Aluno está cursando "Algoritmos" (matriculado numa turma da disciplina)
+        // Aluno está na turma "Algoritmos"
         var @class = await director.CreateClass(algorithms.Id, period.Id).Success();
         await director.ReleaseClassForEnrollment(@class.Id);
         await director.AssignStudentToClass(student.Id, @class.Id);
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
         var result = await client.GetStudentCourseDetails();
@@ -160,11 +157,10 @@ public partial class IntegrationTests
         var period = await director.GetFirstAcademicPeriod();
         var offering = await director.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
 
-        var email = DataGen.Email;
-        var student = await director.CreateStudent(DataGen.UserName, email).Success();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         await director.EnrollStudentInCourseOffering(student.Id, offering.Id);
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
         var result = await client.GetStudentCourseDetails();

@@ -25,11 +25,23 @@ public partial class IntegrationTests
     public async Task Students_ValidateEnrollmentProof_Should_validate_a_generated_proof_without_authentication()
     {
         // Arrange
-        var (email, studentName) = await ArrangeEnrolledStudent();
-        var student = await _back.LoginAs(email);
-        await student.GenerateEnrollmentProof();
+        var director = await _back.LoggedAsDirector();
 
-        var code = await GetLastEnrollmentProofCode();
+        var campus = await director.CreateCampus().Success();
+        var course = await director.CreateCourse().Success();
+        var curriculum = await director.CreateCourseCurriculum(course.Id).Success();
+        var period = await director.GetFirstAcademicPeriod();
+        var offering = await director.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
+
+        var studentName = DataGen.UserName;
+        var student = await director.CreateStudent(studentName, DataGen.Email).Success();
+        await director.EnrollStudentInCourseOffering(student.Id, offering.Id);
+
+        var client = await _back.LoginAs(student.Email);
+        await client.GenerateEnrollmentProof();
+
+        var proofs = await client.GetEnrollmentProofs().Success();
+        var code = proofs.Items[0].Code;
 
         var anonymous = _back.GetTestsClient();
 
@@ -50,13 +62,4 @@ public partial class IntegrationTests
     }
 
     #endregion
-
-    private async Task<string> GetLastEnrollmentProofCode()
-    {
-        await using var ctx = _back.GetDbContext();
-        return await ctx.EnrollmentProofs.AsNoTracking()
-            .OrderByDescending(p => p.Id)
-            .Select(p => p.Code)
-            .FirstAsync();
-    }
 }

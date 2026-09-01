@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace Estud.Tests.Integration;
 
 public partial class IntegrationTests
@@ -7,13 +5,13 @@ public partial class IntegrationTests
     #region Authentication
 
     [Test]
-    public async Task Students_GenerateEnrollmentProof_Should_not_generate_when_not_authenticated()
+    public async Task Students_GetEnrollmentProofs_Should_not_get_proofs_when_not_authenticated()
     {
         // Arrange
         var client = _back.GetTestsClient();
 
         // Act
-        var result = await client.GenerateEnrollmentProof();
+        var result = await client.GetEnrollmentProofs();
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Unauthorized);
@@ -24,26 +22,26 @@ public partial class IntegrationTests
     #region Authorization
 
     [Test]
-    public async Task Students_GenerateEnrollmentProof_Should_not_generate_when_user_is_a_director()
+    public async Task Students_GetEnrollmentProofs_Should_not_get_proofs_when_user_is_a_director()
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.GenerateEnrollmentProof();
+        var result = await client.GetEnrollmentProofs();
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
     }
 
     [Test]
-    public async Task Students_GenerateEnrollmentProof_Should_not_generate_when_user_is_a_teacher()
+    public async Task Students_GetEnrollmentProofs_Should_not_get_proofs_when_user_is_a_teacher()
     {
         // Arrange
         var client = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await client.GenerateEnrollmentProof();
+        var result = await client.GetEnrollmentProofs();
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -51,10 +49,10 @@ public partial class IntegrationTests
 
     #endregion
 
-    #region Validation errors
+    #region Happy path
 
     [Test]
-    public async Task Students_GenerateEnrollmentProof_Should_not_generate_when_student_is_not_enrolled_in_any_course()
+    public async Task Students_GetEnrollmentProofs_Should_get_an_empty_list_when_student_never_generated_a_proof()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -63,18 +61,16 @@ public partial class IntegrationTests
         var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.GenerateEnrollmentProof();
+        var result = await client.GetEnrollmentProofs();
 
         // Assert
-        result.ShouldBeError(StudentNotEnrolledInAnyCourse.I);
+        var proofs = result.Success;
+        proofs.Total.Should().Be(0);
+        proofs.Items.Should().BeEmpty();
     }
 
-    #endregion
-
-    #region Happy path
-
     [Test]
-    public async Task Students_GenerateEnrollmentProof_Should_generate_a_pdf_for_an_enrolled_student()
+    public async Task Students_GetEnrollmentProofs_Should_get_the_proofs_of_the_logged_student_ordered_by_issue_date()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -88,15 +84,27 @@ public partial class IntegrationTests
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         await director.EnrollStudentInCourseOffering(student.Id, offering.Id);
 
+        var other = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        await director.EnrollStudentInCourseOffering(other.Id, offering.Id);
+
         var client = await _back.LoginAs(student.Email);
+        await client.GenerateEnrollmentProof();
+        await client.GenerateEnrollmentProof();
+
+        var otherClient = await _back.LoginAs(other.Email);
+        await otherClient.GenerateEnrollmentProof();
 
         // Act
-        var result = await client.GenerateEnrollmentProof();
+        var result = await client.GetEnrollmentProofs();
 
         // Assert
-        var pdf = result.Success;
-        pdf.Should().NotBeEmpty();
-        Encoding.ASCII.GetString(pdf, 0, 5).Should().Be("%PDF-");
+        var proofs = result.Success;
+        proofs.Total.Should().Be(2);
+        proofs.Items.Should().HaveCount(2);
+        proofs.Items.Should().OnlyContain(p => p.Code.StartsWith("ESTUD-"));
+        proofs.Items.Select(p => p.Code).Should().OnlyHaveUniqueItems();
+        proofs.Items.Should().BeInDescendingOrder(p => p.IssuedAt);
+        proofs.Items[0].IssuedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(5));
     }
 
     #endregion

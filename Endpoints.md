@@ -111,6 +111,7 @@
 - ✅ CheckSsoAvailabilityController
 - ✅ CreateSsoConfigurationController
 - ✅ UpdateSsoConfigurationController
+- ✅ VerifySsoDomainController
 - ✅ GetRoleController
 - ✅ GetRolesController
 - ✅ CreateRoleController
@@ -137,17 +138,17 @@
 - ✅ CreateStudentController
 - ✅ AssignStudentToClassController
 - ✅ EnrollStudentInCourseOfferingController
-- GenerateEnrollmentProofController
-- ValidateEnrollmentProofController
+- ✅ GenerateEnrollmentProofController
+- ✅ ValidateEnrollmentProofController
+- ✅ GetStudentClassController
+- ✅ GetStudentCourseDetailsController
 
 - CreateClassActivityWorkController
-- GetStudentAgendaController
 - GetStudentAttendanceCalendarController
-- GetStudentClassController
 - GetStudentClassActivitiesController
 - GetStudentClassActivityController
-- GetStudentCourseDetailsController
 - GetStudentDetailsController
+- GetStudentAgendaController
 
 ## Teachers
 - ✅ GetTeachersController
