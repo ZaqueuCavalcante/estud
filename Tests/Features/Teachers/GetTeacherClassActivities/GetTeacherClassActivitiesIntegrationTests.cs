@@ -206,29 +206,28 @@ public partial class IntegrationTests
         activities.Select(x => x.Note).Should().ContainInOrder(ClassNoteType.N1, ClassNoteType.N2, ClassNoteType.N3);
     }
 
-    [Test, Ignore("Fix")]
+    [Test]
     public async Task Teachers_GetTeacherClassActivities_Should_get_activities_works_count()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
-        var email = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
         var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
-
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        await director.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2));
+        await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
+        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
         await director.ReleaseClassForEnrollment(@class.Id);
 
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         await director.AssignStudentToClass(student.Id, @class.Id);
 
-        var client = await _back.LoginAs(email);
+        await director.StartClass(@class.Id).Success();
+
+        var client = await _back.LoginAs(teacher.Email);
         await client.CreateClassActivity(@class.Id);
 
         // Act

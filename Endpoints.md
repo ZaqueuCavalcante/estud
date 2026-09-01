@@ -96,13 +96,13 @@
 ---------------------------------------------------------------------------------------------------
 
 ## Classes
-- GetClassController
-- GetClassesController
-- StartClassController
+- ✅ StartClassController
+- ✅ GetClassesController
 - ✅ CreateClassController
 - ✅ UpdateClassTeachersController
 - ✅ UpdateClassSchedulesController
 - ✅ ReleaseClassForEnrollmentController
+- GetClassController
 
 ## Identity
 - ✅ GetSsoConfigurationController
@@ -140,13 +140,12 @@
 - ✅ ValidateEnrollmentProofController
 - ✅ GetStudentClassController
 - ✅ GetStudentCourseDetailsController
-
-- CreateClassActivityWorkController
-- GetStudentClassActivitiesController
-- GetStudentClassActivityController
+- ✅ GetStudentClassActivitiesController
+- ✅ GetStudentClassActivityController
+- ✅ CreateClassActivityWorkController
+- GetStudentAgendaController
 - GetStudentDetailsController
 - GetStudentAttendanceCalendarController
-- GetStudentAgendaController
 
 ## Teachers
 - ✅ GetTeachersController

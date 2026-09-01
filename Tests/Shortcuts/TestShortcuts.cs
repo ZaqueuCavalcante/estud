@@ -36,4 +36,25 @@ public static class TestShortcuts
 
         return students;
     }
+
+    public static async Task<ShortcutCreateClassDto> ShortcutCreateStartedClass(this TestsHttpClient client)
+    {
+        var discipline = await client.CreateDiscipline().Success();
+        var teacher = await client.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+        await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
+        var period = await client.GetFirstAcademicPeriod();
+        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
+        await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
+
+        await client.ReleaseClassForEnrollment(@class.Id);
+
+        var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        await client.AssignStudentToClass(student.Id, @class.Id);
+
+        await client.StartClass(@class.Id);
+
+        return new ShortcutCreateClassDto { Id = @class.Id, TeacherEmail = teacher.Email, StudentEmail = student.Email };
+    }
 }

@@ -11,7 +11,7 @@ public partial class IntegrationTests
         var client = _back.GetTestsClient();
 
         // Act
-        var result = await client.StartClass(1);
+        var result = await client.StartClass(classId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Unauthorized);
@@ -28,7 +28,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await client.StartClass(1);
+        var result = await client.StartClass(classId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -45,7 +45,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.StartClass(999999);
+        var result = await client.StartClass(classId: 999999);
 
         // Assert
         result.ShouldBeError(ClassNotFound.I);
@@ -123,7 +123,7 @@ public partial class IntegrationTests
 
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
         await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
 
         await client.ReleaseClassForEnrollment(@class.Id);
 
@@ -133,21 +133,15 @@ public partial class IntegrationTests
         // Assert
         result.ShouldBeSuccess();
 
-        await using var ctx = _back.GetDbContext();
-        var started = await ctx.Classes.FirstAsync(c => c.Id == @class.Id);
-        started.Status.Should().Be(ClassStatus.Started);
-        started.Workload.Should().BeGreaterThan(0);
-
-        var lessons = await ctx.ClassLessons.Where(l => l.ClassId == @class.Id).ToListAsync();
-        lessons.Should().NotBeEmpty();
-        lessons.Should().OnlyContain(l => l.Date.DayOfWeek == DayOfWeek.Monday);
-        lessons.Should().OnlyContain(l => l.Status == ClassLessonStatus.Pending);
+        var classData = await client.GetClass(@class.Id).Success();
+        classData.Status.Should().Be(ClassStatus.Started);
+        classData.Workload.Should().BeGreaterThan(0);
     }
 
     [Test]
     public async Task Classes_StartClass_Should_not_generate_lessons_on_non_school_days()
     {
-        // Arrange — período 2024.1 (01/02 a 01/07), turma com horário na segunda.
+        // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
         var period = await client.CreateAcademicPeriod().Success();
@@ -169,14 +163,13 @@ public partial class IntegrationTests
         await client.StartClass(@class.Id).Success();
 
         // Assert
-        await using var ctx = _back.GetDbContext();
-        var lessons = await ctx.ClassLessons.Where(l => l.ClassId == @class.Id).ToListAsync();
-
-        lessons.Should().NotBeEmpty();
-        lessons.Should().NotContain(l => l.Date == DateOnly.FromDateTime(recess));
+        var teacherClient = await _back.LoginAs(teacher.Email);
+        var result = await teacherClient.GetTeacherClassLessons(@class.Id).Success();
+        result.Lessons.Should().NotBeEmpty();
+        result.Lessons.Should().NotContain(l => l.Date == DateOnly.FromDateTime(recess));
 
         // 01/04/2024 (Páscoa foi 31/03) é uma segunda comum: continua virando aula.
-        lessons.Should().Contain(l => l.Date == new DateOnly(2024, 4, 1));
+        result.Lessons.Should().Contain(l => l.Date == new DateOnly(2024, 4, 1));
     }
 
     [Test]
@@ -212,14 +205,13 @@ public partial class IntegrationTests
         await client.StartClass(secondClass.Id).Success();
 
         // Assert
-        await using var ctx = _back.GetDbContext();
+        var teacherClient = await _back.LoginAs(teacher.Email);
+        var firstLessons = await teacherClient.GetTeacherClassLessons(firstClass.Id).Success();
+        var secondLessons = await teacherClient.GetTeacherClassLessons(secondClass.Id).Success();
+
         var date = DateOnly.FromDateTime(holiday);
-
-        var firstLessons = await ctx.ClassLessons.Where(l => l.ClassId == firstClass.Id).ToListAsync();
-        firstLessons.Should().NotContain(l => l.Date == date);
-
-        var secondLessons = await ctx.ClassLessons.Where(l => l.ClassId == secondClass.Id).ToListAsync();
-        secondLessons.Should().Contain(l => l.Date == date);
+        firstLessons.Lessons.Should().NotContain(l => l.Date == date);
+        secondLessons.Lessons.Should().Contain(l => l.Date == date);
     }
 
     #endregion

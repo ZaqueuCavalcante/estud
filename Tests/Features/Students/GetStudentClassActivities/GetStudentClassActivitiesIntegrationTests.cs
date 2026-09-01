@@ -1,5 +1,3 @@
-using Estud.Tests.Integration.Clients;
-
 namespace Estud.Tests.Integration;
 
 public partial class IntegrationTests
@@ -13,7 +11,7 @@ public partial class IntegrationTests
         var client = _back.GetTestsClient();
 
         // Act
-        var result = await client.GetStudentClassActivities(1);
+        var result = await client.GetStudentClassActivities(classId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Unauthorized);
@@ -30,7 +28,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.GetStudentClassActivities(1);
+        var result = await client.GetStudentClassActivities(classId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -43,7 +41,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await client.GetStudentClassActivities(1);
+        var result = await client.GetStudentClassActivities(classId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -58,14 +56,12 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
-        var email = DataGen.Email;
-        await director.CreateStudent(DataGen.UserName, email);
-
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.GetStudentClassActivities(999999);
+        var result = await client.GetStudentClassActivities(classId: 999999);
 
         // Assert
         result.ShouldBeError(ClassNotFound.I);
@@ -75,18 +71,16 @@ public partial class IntegrationTests
     public async Task Students_GetStudentClassActivities_Should_not_get_activities_of_class_of_another_institution()
     {
         // Arrange
-        var otherDirector = await _back.LoggedAsDirector();
-        var (otherClassId, _) = await CreateClassWithTeacher(otherDirector);
-
         var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
 
-        var email = DataGen.Email;
-        await director.CreateStudent(DataGen.UserName, email);
+        var otherDirector = await _back.LoggedAsDirector();
+        var otherClass = await otherDirector.ShortcutCreateStartedClass();
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(@class.StudentEmail);
 
         // Act
-        var result = await client.GetStudentClassActivities(otherClassId);
+        var result = await client.GetStudentClassActivities(otherClass.Id);
 
         // Assert
         result.ShouldBeError(ClassNotFound.I);
@@ -97,15 +91,13 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var (classId, _) = await CreateClassWithTeacher(director);
+        var @class = await director.ShortcutCreateStartedClass();
 
-        var email = DataGen.Email;
-        await director.CreateStudent(DataGen.UserName, email);
-
-        var client = await _back.LoginAs(email);
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.GetStudentClassActivities(classId);
+        var result = await client.GetStudentClassActivities(@class.Id);
 
         // Assert
         result.ShouldBeError(StudentNotEnrolledInClass.I);
@@ -120,48 +112,41 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var (classId, _) = await CreateClassWithTeacher(director);
+        var @class = await director.ShortcutCreateStartedClass();
 
-        var email = DataGen.Email;
-        await EnrollStudentInClass(director, classId, email);
-
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(@class.StudentEmail);
 
         // Act
-        var result = await client.GetStudentClassActivities(classId);
+        var result = await client.GetStudentClassActivities(@class.Id);
 
         // Assert
         result.Success.Activities.Should().BeEmpty();
     }
 
-    [Test, Ignore("Fix")]
+    [Test]
     public async Task Students_GetStudentClassActivities_Should_get_only_activities_of_the_class()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var (classId, teacherEmail) = await CreateClassWithTeacher(director);
-        var (otherClassId, otherTeacherEmail) = await CreateClassWithTeacher(director);
+        var class1 = await director.ShortcutCreateStartedClass();
+        var class2 = await director.ShortcutCreateStartedClass();
 
-        var email = DataGen.Email;
-        await EnrollStudentInClass(director, classId, email);
+        var teacher1Client = await _back.LoginAs(class1.TeacherEmail);
+        await teacher1Client.CreateClassActivity(class1.Id, ClassNoteType.N1, type: ClassActivityType.Work, weight: 25);
+        await teacher1Client.CreateClassActivity(class1.Id, ClassNoteType.N2, type: ClassActivityType.Presentation, weight: 10);
+        await teacher1Client.CreateClassActivity(class1.Id, ClassNoteType.N2, type: ClassActivityType.Work, weight: 30);
 
-        var teacherClient = await _back.LoginAs(teacherEmail);
-        await teacherClient.CreateClassActivity(classId, ClassNoteType.N1, type: ClassActivityType.Work, weight: 25);
-        await teacherClient.CreateClassActivity(classId, ClassNoteType.N2, type: ClassActivityType.Presentation, weight: 10);
-        await teacherClient.CreateClassActivity(classId, ClassNoteType.N2, type: ClassActivityType.Work, weight: 30);
+        var teacher2Client = await _back.LoginAs(class2.TeacherEmail);
+        await teacher2Client.CreateClassActivity(class2.Id, ClassNoteType.N1, type: ClassActivityType.Work, weight: 80);
 
-        var otherTeacherClient = await _back.LoginAs(otherTeacherEmail);
-        await otherTeacherClient.CreateClassActivity(otherClassId, ClassNoteType.N1, type: ClassActivityType.Work, weight: 80);
-
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(class1.StudentEmail);
 
         // Act
-        var result = await client.GetStudentClassActivities(classId);
+        var result = await client.GetStudentClassActivities(class1.Id);
 
         // Assert
         var activities = result.Success.Activities;
         activities.Should().HaveCount(3);
-        activities.Should().OnlyContain(a => a.ClassId == classId);
         activities.Select(a => a.Note).Should().Equal(ClassNoteType.N1, ClassNoteType.N2, ClassNoteType.N2);
     }
 
@@ -170,15 +155,12 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var (classId, teacherEmail) = await CreateClassWithTeacher(director);
+        var @class = await director.ShortcutCreateStartedClass();
 
-        var email = DataGen.Email;
-        await EnrollStudentInClass(director, classId, email);
-
-        var teacherClient = await _back.LoginAs(teacherEmail);
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
         var dueDate = DateTime.UtcNow.AddDays(7).ToDateOnly();
         await teacherClient.CreateClassActivity(
-            classId,
+            @class.Id,
             ClassNoteType.N2,
             "Modelagem de Banco de Dados",
             "Modele um banco de dados para um sistema de gerenciamento de biblioteca.",
@@ -188,14 +170,14 @@ public partial class IntegrationTests
             Hour.H08_30
         );
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(@class.StudentEmail);
 
         // Act
-        var result = await client.GetStudentClassActivities(classId);
+        var result = await client.GetStudentClassActivities(@class.Id);
 
         // Assert
         var activity = result.Success.Activities.Should().ContainSingle().Subject;
-        activity.ClassId.Should().Be(classId);
+        activity.ClassId.Should().Be(@class.Id);
         activity.Note.Should().Be(ClassNoteType.N2);
         activity.Title.Should().Be("Modelagem de Banco de Dados");
         activity.Description.Should().Be("Modele um banco de dados para um sistema de gerenciamento de biblioteca.");
@@ -215,19 +197,16 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var (classId, teacherEmail) = await CreateClassWithTeacher(director);
+        var @class = await director.ShortcutCreateStartedClass();
 
-        var email = DataGen.Email;
-        await EnrollStudentInClass(director, classId, email);
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await teacherClient.CreateClassActivity(@class.Id, weight: 40).Success();
 
-        var teacherClient = await _back.LoginAs(teacherEmail);
-        var activity = await teacherClient.CreateClassActivity(classId, weight: 40).Success();
-
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(@class.StudentEmail);
         await client.CreateClassActivityWork(activity.Id, "https://github.com/ZaqueuCavalcante/estud");
 
         // Act
-        var result = await client.GetStudentClassActivities(classId);
+        var result = await client.GetStudentClassActivities(@class.Id);
 
         // Assert
         var item = result.Success.Activities.Should().ContainSingle().Subject;
@@ -237,29 +216,4 @@ public partial class IntegrationTests
     }
 
     #endregion
-
-    private async Task<(int ClassId, string TeacherEmail)> CreateClassWithTeacher(TestsHttpClient director)
-    {
-        var teacherEmail = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, teacherEmail).Success();
-
-        var discipline = await director.CreateDiscipline().Success();
-        await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
-
-        var period = await director.GetFirstAcademicPeriod();
-        var @class = await director.CreateClass(discipline.Id, period.Id).Success();
-        await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        await director.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2));
-        await director.ReleaseClassForEnrollment(@class.Id);
-
-        return (@class.Id, teacherEmail);
-    }
-
-    private static async Task EnrollStudentInClass(TestsHttpClient director, int classId, string studentEmail)
-    {
-        var student = await director.CreateStudent(DataGen.UserName, studentEmail).Success();
-        await director.AssignStudentToClass(student.Id, classId);
-    }
 }

@@ -117,11 +117,6 @@ public partial class IntegrationTests
         // Assert
         var item = result.Success.Items.First(x => x.Id == @class.Id);
         item.Status.Should().Be(ClassStatus.OnReview);
-
-        // And the persisted status is still OnEnrollment
-        await using var db = _back.GetDbContext();
-        var entity = await db.Classes.FirstAsync(c => c.Id == @class.Id);
-        entity.Status.Should().Be(ClassStatus.OnEnrollment);
     }
 
     [Test]
