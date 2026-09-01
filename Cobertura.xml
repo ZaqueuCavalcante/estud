@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9159100925517849" branch-rate="0.7658760520275439" lines-covered="10391" lines-valid="11345" branches-covered="2002" branches-valid="2614" complexity="3932" version="0" timestamp="1788225430">
+<coverage line-rate="0.9170559717937418" branch-rate="0.769319051262433" lines-covered="10404" lines-valid="11345" branches-covered="2011" branches-valid="2614" complexity="3932" version="0" timestamp="1788232196">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9175824175824175" branch-rate="0.764070932922128" complexity="3902">
+    <package name="Back" line-rate="0.9187344913151365" branch-rate="0.7675404780262144" complexity="3902">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -16409,14 +16409,14 @@
             <line number="36" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Features.Campi.GetCampi.GetCampiService" filename="/home/runner/work/estud/estud/Back/Features/Campi/GetCampi/GetCampiService.cs" line-rate="0.7291666666666666" branch-rate="0.375" complexity="18">
+        <class name="Estud.Back.Features.Campi.GetCampi.GetCampiService" filename="/home/runner/work/estud/estud/Back/Features/Campi/GetCampi/GetCampiService.cs" line-rate="1" branch-rate="0.9375" complexity="18">
           <methods>
             <method name=".ctor" signature="(Estud.Back.Database.EstudDbContext)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="6" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="GetUsedRates" signature="(Estud.Back.Domain.Campi.Campus, System.Collections.Generic.List&lt;Estud.Back.Domain.Classes.Schedule&gt;, System.Collections.Generic.List&lt;Estud.Back.Features.Campi.GetCampi.GetClassStudentsDto&gt;)" line-rate="0.45454545454545453" branch-rate="0.35714285714285715" complexity="12">
+            <method name="GetUsedRates" signature="(Estud.Back.Domain.Campi.Campus, System.Collections.Generic.List&lt;Estud.Back.Domain.Classes.Schedule&gt;, System.Collections.Generic.List&lt;Estud.Back.Features.Campi.GetCampi.GetClassStudentsDto&gt;)" line-rate="1" branch-rate="0.9285714285714286" complexity="12">
               <lines>
                 <line number="35" hits="2" branch="false" />
                 <line number="36" hits="2" branch="false" />
@@ -16426,26 +16426,26 @@
                 <line number="43" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="46" hits="2" branch="false" />
                 <line number="47" hits="2" branch="false" />
-                <line number="49" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="51" hits="0" branch="true" condition-coverage="0% (0/2)" />
-                <line number="53" hits="0" branch="true" condition-coverage="0% (0/2)" />
-                <line number="55" hits="0" branch="false" />
-                <line number="56" hits="0" branch="true" condition-coverage="0% (0/2)" />
-                <line number="59" hits="0" branch="true" condition-coverage="0% (0/2)" />
-                <line number="60" hits="0" branch="false" />
-                <line number="61" hits="0" branch="false" />
-                <line number="62" hits="0" branch="false" />
-                <line number="64" hits="0" branch="false" />
-                <line number="65" hits="0" branch="false" />
-                <line number="68" hits="0" branch="false" />
-                <line number="69" hits="0" branch="false" />
+                <line number="49" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="51" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="53" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="55" hits="2" branch="false" />
+                <line number="56" hits="2" branch="true" condition-coverage="50% (1/2)" />
+                <line number="59" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="60" hits="2" branch="false" />
+                <line number="61" hits="2" branch="false" />
+                <line number="62" hits="2" branch="false" />
+                <line number="64" hits="2" branch="false" />
+                <line number="65" hits="2" branch="false" />
+                <line number="68" hits="2" branch="false" />
+                <line number="69" hits="2" branch="false" />
                 <line number="74" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="ToRate" signature="(int, int)" line-rate="0.5" branch-rate="0.5" complexity="2">
+            <method name="ToRate" signature="(int, int)" line-rate="1" branch-rate="1" complexity="2">
               <lines>
-                <line number="128" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="129" hits="0" branch="false" />
+                <line number="128" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="129" hits="2" branch="false" />
               </lines>
             </method>
             <method name="Get" signature="()" line-rate="1" branch-rate="1" complexity="1">
@@ -16509,19 +16509,19 @@
             <line number="43" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="46" hits="2" branch="false" />
             <line number="47" hits="2" branch="false" />
-            <line number="49" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="51" hits="0" branch="true" condition-coverage="0% (0/2)" />
-            <line number="53" hits="0" branch="true" condition-coverage="0% (0/2)" />
-            <line number="55" hits="0" branch="false" />
-            <line number="56" hits="0" branch="true" condition-coverage="0% (0/2)" />
-            <line number="59" hits="0" branch="true" condition-coverage="0% (0/2)" />
-            <line number="60" hits="0" branch="false" />
-            <line number="61" hits="0" branch="false" />
-            <line number="62" hits="0" branch="false" />
-            <line number="64" hits="0" branch="false" />
-            <line number="65" hits="0" branch="false" />
-            <line number="68" hits="0" branch="false" />
-            <line number="69" hits="0" branch="false" />
+            <line number="49" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="51" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="53" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="55" hits="2" branch="false" />
+            <line number="56" hits="2" branch="true" condition-coverage="50% (1/2)" />
+            <line number="59" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="60" hits="2" branch="false" />
+            <line number="61" hits="2" branch="false" />
+            <line number="62" hits="2" branch="false" />
+            <line number="64" hits="2" branch="false" />
+            <line number="65" hits="2" branch="false" />
+            <line number="68" hits="2" branch="false" />
+            <line number="69" hits="2" branch="false" />
             <line number="74" hits="2" branch="false" />
             <line number="96" hits="2" branch="false" />
             <line number="97" hits="2" branch="false" />
@@ -16531,8 +16531,8 @@
             <line number="122" hits="2" branch="false" />
             <line number="123" hits="2" branch="false" />
             <line number="124" hits="2" branch="false" />
-            <line number="128" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="129" hits="0" branch="false" />
+            <line number="128" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="129" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Features.Campi.GetCampusOccupancy.CampusOccupancyCellOut" filename="/home/runner/work/estud/estud/Back/Features/Campi/GetCampusOccupancy/GetCampusOccupancyOut.cs" line-rate="1" branch-rate="1" complexity="1">
