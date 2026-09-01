@@ -42,3 +42,4 @@ msbuild.wrn
 # Crash log files
 crash.log
 crash.*.log
+/tests.txt

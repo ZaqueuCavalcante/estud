@@ -8,7 +8,7 @@
 
 - Ciclo de vida de uma turma
 
-- Remover usos do GetDbContext e do ArrangeStartedClass e do ArrangeEnrolledStudent
+- Remover usos do GetDbContext e do ArrangeStartedClass
 
 
 
