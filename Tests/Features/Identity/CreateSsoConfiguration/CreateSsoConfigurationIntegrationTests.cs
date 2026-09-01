@@ -1,3 +1,4 @@
+using Estud.Back.Domain.Identity;
 using Estud.Back.Features.Identity.CreateSsoConfiguration;
 
 namespace Estud.Tests.Integration;
@@ -188,6 +189,11 @@ public partial class IntegrationTests
         // Assert
         var config = result.Success;
         config.Id.Should().NotBeEmpty();
+        config.Domain.Should().Be("sso-happy-path.com");
+        config.DomainStatus.Should().Be(SsoDomainStatus.Pending);
+        config.VerificationToken.Should().NotBeNullOrEmpty();
+        config.RecordName.Should().Be($"{SsoAllowedDomain.RecordPrefix}.sso-happy-path.com");
+        config.RecordValue.Should().Be($"{SsoAllowedDomain.RecordValuePrefix}{config.VerificationToken}");
     }
 
     #endregion

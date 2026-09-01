@@ -4,6 +4,7 @@ public static class SettingsConfigs
 {
     public static void AddSettingsConfigs(this WebApplicationBuilder builder)
     {
+        builder.Services.AddSingleton<SsoSettings>();
         builder.Services.AddSingleton<AuthSettings>();
         builder.Services.AddSingleton<EmailSettings>();
         builder.Services.AddSingleton<FrontendSettings>();

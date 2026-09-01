@@ -9,6 +9,7 @@ using Estud.Back.Features.Identity.MagicLinkLogin;
 using Estud.Back.Features.Identity.SetupTwoFactor;
 using Estud.Back.Features.Identity.TwoFactorLogin;
 using Estud.Back.Features.Identity.GetTwoFactorKey;
+using Estud.Back.Features.Identity.VerifySsoDomain;
 using Estud.Back.Features.Identity.GoogleOneTapLogin;
 using Estud.Back.Features.Identity.EmailPasswordLogin;
 using Estud.Back.Features.Identity.GetSsoConfiguration;
@@ -157,6 +158,12 @@ public partial class TestsHttpClient
         };
         var response = await http.PostAsJsonAsync("identity/sso/configurations", data);
         return await response.Resolve<CreateSsoConfigurationOut>();
+    }
+
+    public async Task<OneOf<VerifySsoDomainOut, ErrorOut>> VerifySsoDomain(string domain)
+    {
+        var response = await http.PostAsync($"identity/sso/domains/{domain}/verify", null);
+        return await response.Resolve<VerifySsoDomainOut>();
     }
 
     public async Task<HttpResponseMessage> SsoChallenge(string? email)

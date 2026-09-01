@@ -1,3 +1,4 @@
+using Estud.Back.Sso;
 using Estud.Back.Emails;
 using Estud.Back.Google;
 using Estud.Back.Storage;
@@ -11,6 +12,8 @@ public static class ServicesConfigs
     {
         builder.Services.AddServices(typeof(IEstudService));
 
+        builder.Services.AddScoped<DnsTxtResolver>();
+        builder.Services.AddScoped<SsoDomainVerifier>();
         builder.Services.AddScoped<IEmailsService, EmailsService>();
         builder.Services.AddScoped<IGoogleService, GoogleService>();
         builder.Services.AddScoped<IStorageService, FakeStorageService>();

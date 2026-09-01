@@ -59,6 +59,14 @@ public partial class IntegrationTests
         config.ClientId.Should().Be("00000000-0000-0000-0000-000000000000");
         config.IsActive.Should().BeTrue();
         config.RequireSso.Should().BeFalse();
+
+        var domain = config.Domains.Single();
+        domain.Domain.Should().Be("sso-get-happy-path.com");
+        domain.Status.Should().Be(SsoDomainStatus.Pending);
+        domain.VerificationToken.Should().Be(created.VerificationToken);
+        domain.RecordName.Should().Be(created.RecordName);
+        domain.RecordValue.Should().Be(created.RecordValue);
+        domain.VerifiedAt.Should().BeNull();
     }
 
     [Test]

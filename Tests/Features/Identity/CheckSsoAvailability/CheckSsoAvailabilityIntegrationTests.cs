@@ -41,11 +41,32 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Identity_CheckSsoAvailability_Should_return_sso_not_enabled_when_domain_is_not_verified()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector("director@sso-check-unverified.com");
+        await director.CreateSsoConfiguration(providerType: SsoProviderType.AzureAd).Success();
+
+        var client = _back.GetTestsClient();
+
+        // Act
+        var result = await client.CheckSsoAvailability("someone@sso-check-unverified.com");
+
+        // Assert
+        var availability = result.Success;
+        availability.SsoEnabled.Should().BeFalse();
+        availability.ProviderType.Should().BeNull();
+    }
+
+    [Test]
     public async Task Identity_CheckSsoAvailability_Should_return_sso_enabled_when_domain_has_configuration()
     {
         // Arrange
         var director = await _back.LoggedAsDirector("director@sso-check-available.com");
-        await director.CreateSsoConfiguration(providerType: SsoProviderType.AzureAd);
+        var created = await director.CreateSsoConfiguration(providerType: SsoProviderType.AzureAd).Success();
+
+        await _mocks.SetDnsTxtRecord(created.RecordName, created.RecordValue);
+        await director.VerifySsoDomain(created.Domain).Success();
 
         var client = _back.GetTestsClient();
 

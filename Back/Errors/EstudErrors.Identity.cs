@@ -105,6 +105,20 @@ public class SsoConfigurationNotFound : EstudError
     public override string Message { get; set; } = "Configuração SSO não encontrada.";
 }
 
+public class SsoDomainNotFound : EstudError
+{
+    public static readonly SsoDomainNotFound I = new();
+    public override string Code { get; set; } = nameof(SsoDomainNotFound);
+    public override string Message { get; set; } = "Domínio não encontrado na configuração SSO da instituição.";
+}
+
+public class SsoDomainVerificationFailed : EstudError
+{
+    public static readonly SsoDomainVerificationFailed I = new();
+    public override string Code { get; set; } = nameof(SsoDomainVerificationFailed);
+    public override string Message { get; set; } = "Registro TXT de verificação não encontrado no DNS do domínio.";
+}
+
 public class SsoNotConfiguredForDomain : EstudError
 {
     public static readonly SsoNotConfiguredForDomain I = new();

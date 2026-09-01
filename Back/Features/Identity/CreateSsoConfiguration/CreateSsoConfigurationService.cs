@@ -50,6 +50,14 @@ public class CreateSsoConfigurationService(EstudDbContext ctx, SsoEncryptionMana
 
         ssoSchemeManager.RegisterScheme(config);
 
-        return new CreateSsoConfigurationOut { Id = config.PublicId };
+        var allowedDomain = config.AllowedDomains.First();
+
+        return new CreateSsoConfigurationOut
+        {
+            Id = config.PublicId,
+            Domain = allowedDomain.Domain,
+            DomainStatus = allowedDomain.Status,
+            VerificationToken = allowedDomain.VerificationToken,
+        };
     }
 }

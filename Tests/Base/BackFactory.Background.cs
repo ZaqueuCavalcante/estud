@@ -1,3 +1,6 @@
+using Estud.Back.Settings;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Estud.Tests.Base;
 
 public static class BackFactoryBackground
@@ -16,6 +19,31 @@ public static class BackFactoryBackground
 
             var events = await ctx.DomainEvents.CountAsync(x => x.ProcessedAt == null);
             if (events == 0) break;
+            await Task.Delay(500);
+            count ++;
+        }
+    }
+
+    public static async Task AwaitSsoDomainsVerification(this BackFactory factory)
+    {
+        await using var ctx = factory.GetDbContext();
+
+        var settings = factory.Services.GetRequiredService<SsoSettings>();
+        var threshold = DateTime.UtcNow.AddHours(-settings.DomainRecheckIntervalInHours);
+
+        var scheduler = await factory.GetSchedulerFactory().GetScheduler();
+        await scheduler.TriggerSsoDomainsVerificationProcessorJob();
+
+        var count = 0;
+        while (true)
+        {
+            if (count == 10) break;
+
+            var pending = await ctx.WebSsoAllowedDomains
+                .Where(d => d.Status == SsoDomainStatus.Verified || d.Status == SsoDomainStatus.Expired)
+                .CountAsync(d => d.LastCheckedAt == null || d.LastCheckedAt < threshold);
+
+            if (pending == 0) break;
             await Task.Delay(500);
             count ++;
         }

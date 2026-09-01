@@ -11,7 +11,7 @@ public class SsoConfigurationDbConfig : IEntityTypeConfiguration<SsoConfiguratio
         entity.HasKey(e => e.Id);
 
         entity.HasMany(e => e.AllowedDomains)
-            .WithOne()
+            .WithOne(d => d.Configuration)
             .HasPrincipalKey(e => e.Id)
             .HasForeignKey(d => d.SsoConfigurationId);
 

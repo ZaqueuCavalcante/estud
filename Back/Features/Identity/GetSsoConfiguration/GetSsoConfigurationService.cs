@@ -15,6 +15,15 @@ public class GetSsoConfigurationService(EstudDbContext ctx) : IEstudService
                 IsActive = x.IsActive,
                 RequireSso = x.RequireSso,
                 CreatedAt = x.CreatedAt,
+                Domains = x.AllowedDomains.Select(d => new SsoDomainOut
+                {
+                    Domain = d.Domain,
+                    Status = d.Status,
+                    VerificationToken = d.VerificationToken,
+                    VerifiedAt = d.VerifiedAt,
+                    LastCheckedAt = d.LastCheckedAt,
+                    LastError = d.LastError,
+                }).ToList(),
             })
             .FirstOrDefaultAsync();
     }

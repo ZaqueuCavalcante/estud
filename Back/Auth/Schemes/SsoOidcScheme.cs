@@ -119,7 +119,7 @@ public static class SsoOidcScheme
             .Where(x => x.PublicId == publicId && x.IsActive)
             .FirstOrDefaultAsync();
 
-        if (ssoConfig == null || ssoConfig.AllowedDomains.All(d => d.Domain != domain))
+        if (ssoConfig == null || !ssoConfig.AllowedDomains.Any(d => d.Domain == domain && d.IsVerified))
         {
             context.Response.Redirect($"{frontendSettings.Url}?sso_error={nameof(SsoNotConfiguredForDomain)}");
             context.HandleResponse();
