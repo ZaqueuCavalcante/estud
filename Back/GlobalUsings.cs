@@ -1,5 +1,6 @@
 global using OneOf;
 global using Serilog;
+global using Estud.Back.Dns;
 global using FluentValidation;
 global using Estud.Back.Errors;
 global using Estud.Back.Filters;

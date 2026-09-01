@@ -1,4 +1,5 @@
 using Quartz;
+using Estud.Back.Sso;
 
 namespace Estud.Back.Configs;
 
@@ -8,6 +9,7 @@ public static class QuartzConfigs
     {
         var commands = builder.Configuration.Jobs.CommandsPollingIntervalInSeconds;
         var domainEvents = builder.Configuration.Jobs.DomainEventsPollingIntervalInSeconds;
+        var ssoDomains = builder.Configuration.Jobs.SsoDomainsPollingIntervalInSeconds;
 
         builder.Services.AddQuartz(q =>
         {
@@ -25,6 +27,14 @@ public static class QuartzConfigs
                 .ForJob(domainEventsId)
                 .WithIdentity($"{domainEventsId}-trigger")
                 .WithSimpleSchedule(s => s.WithIntervalInSeconds(domainEvents).RepeatForever())
+            );
+
+            var ssoDomainsId = nameof(SsoDomainsVerificationProcessor);
+            q.AddJob<SsoDomainsVerificationProcessor>(j => j.WithIdentity(ssoDomainsId));
+            q.AddTrigger(t => t
+                .ForJob(ssoDomainsId)
+                .WithIdentity($"{ssoDomainsId}-trigger")
+                .WithSimpleSchedule(s => s.WithIntervalInSeconds(ssoDomains).RepeatForever())
             );
         });
 

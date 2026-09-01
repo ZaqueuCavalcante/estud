@@ -19,6 +19,7 @@ public static partial class Policies
     public const string GetSsoConfigurations = nameof(GetSsoConfigurations);
     public const string CreateSsoConfiguration = nameof(CreateSsoConfiguration);
     public const string UpdateSsoConfiguration = nameof(UpdateSsoConfiguration);
+    public const string VerifySsoDomain = nameof(VerifySsoDomain);
 
     public const string SetupTwoFactor = nameof(SetupTwoFactor);
     public const string GetTwoFactorKey = nameof(GetTwoFactorKey);
@@ -47,7 +48,8 @@ public static partial class Policies
             .AddEstudPolicy(GetSsoConfiguration, UserType.Manager, EstudPermissions.ManageSso)
             .AddEstudPolicy(GetSsoConfigurations, UserType.Manager, EstudPermissions.ManageSso)
             .AddEstudPolicy(CreateSsoConfiguration, UserType.Manager, EstudPermissions.ManageSso)
-            .AddEstudPolicy(UpdateSsoConfiguration, UserType.Manager, EstudPermissions.ManageSso);
+            .AddEstudPolicy(UpdateSsoConfiguration, UserType.Manager, EstudPermissions.ManageSso)
+            .AddEstudPolicy(VerifySsoDomain, UserType.Manager, EstudPermissions.ManageSso);
 
         builder
             .AddEstudPolicy(GetTwoFactorEnforcement, UserType.Manager, EstudPermissions.ManageTwoFactor)
