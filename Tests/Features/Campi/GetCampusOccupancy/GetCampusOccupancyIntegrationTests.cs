@@ -73,6 +73,26 @@ public partial class IntegrationTests
     #region Happy path
 
     [Test]
+    public async Task Campi_GetCampusOccupancy_Should_get_campus_without_occupancy()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+
+        // Act
+        var occupancy = await client.GetCampusOccupancy(campus.Id).Success();
+
+        // Assert
+        occupancy.Campus.Should().Be("Agreste I");
+        occupancy.TotalClassrooms.Should().Be(0);
+        occupancy.OverallUsedMinutesRate.Should().Be(0);
+        occupancy.OverallUsedCapacityRate.Should().Be(0);
+        occupancy.OpenCells.Should().Be(15);
+        occupancy.Cells.Should().AllSatisfy(x => x.UsedMinutes.Should().Be(0));
+        occupancy.Classrooms.Should().BeEmpty();
+    }
+
+    [Test]
     public async Task Campi_GetCampusOccupancy_Should_get_small_campus_occupancy_with_allocated_class()
     {
         // Arrange
@@ -99,27 +119,24 @@ public partial class IntegrationTests
         await client.AssignStudentToClass(studentC.Id, @class.Id).Success();
 
         // Act
-        var result = await client.GetCampusOccupancy(campus.Id);
+        var occupancy = await client.GetCampusOccupancy(campus.Id).Success();
 
         // Assert
-        var occupancy = result.Success;
-
-        // 300min usados de 900min abertos: só a segunda abre, e nos três turnos.
+        // 5h x 60min = 300min usados
+        // 15h x 60min = 900min disponíveis
         occupancy.OverallUsedMinutesRate.Should().Be(33.33M);
 
-        // Em assento-minuto: 900 usados (3 alunos x 300min) de 5400 ofertados
-        // (6 lugares x 900min). A sala lota de horário sem lotar de gente.
+        // 3 alunos x 300min = 900 assento-minutos usados
+        // 6 lugares x 900min = 5.400 assento-minutos disponíveis
         occupancy.OverallUsedCapacityRate.Should().Be(16.67M);
 
-        // A sala enche de horário na manhã, mas só com metade dos assentos:
-        // 3 alunos numa sala de 6 lugares.
+        // A sala passa a manhã inteira com metade dos assentos ocupados (3/6)
         var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
+        morning.UsedCapacityRate.Should().Be(50M);
+
         var sala = morning.Classrooms.First(c => c.Id == classroom.Id);
         sala.UsedMinutesRate.Should().Be(100M);
         sala.UsedCapacityRate.Should().Be(50M);
-
-        // Sala única no campus: a taxa de assentos da célula é a da sala.
-        morning.UsedCapacityRate.Should().Be(50M);
     }
 
     [Test]
@@ -128,8 +145,8 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var campus = await client.CreateCampus().Success();
-        var pequena = await client.CreateClassroom(campus.Id, name: "Sala 01", capacity: 10).Success();
-        await client.CreateClassroom(campus.Id, name: "Auditório", capacity: 90);
+        var sala = await client.CreateClassroom(campus.Id, name: "Sala 01", capacity: 10).Success();
+        var auditorio = await client.CreateClassroom(campus.Id, name: "Auditório", capacity: 90).Success();
 
         await client.UpdateCampusOpeningHours(campus.Id, [(Day.Monday, [(Hour.H07_00, Hour.H12_00)])]);
 
@@ -137,7 +154,7 @@ public partial class IntegrationTests
         var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
-        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, null, pequena.Id)]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, null, sala.Id)]);
 
         var studentA = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var studentB = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -145,30 +162,30 @@ public partial class IntegrationTests
         await client.AssignStudentToClass(studentB.Id, @class.Id).Success();
 
         // Act
-        var result = await client.GetCampusOccupancy(campus.Id);
+        var occupancy = await client.GetCampusOccupancy(campus.Id).Success();
 
         // Assert
-        var occupancy = result.Success;
+        // 5h x 60min = 300min usados
+        // 5h x 60min x 2 salas = 600min disponíveis
+        occupancy.OverallUsedMinutesRate.Should().Be(50.00M);
+
+        // 2 alunos x 300min = 600 assento-minutos usados
+        // 100 lugares x 300min = 30.000 assento-minutos disponíveis
+        occupancy.OverallUsedCapacityRate.Should().Be(2.00M);
+
         var morning = occupancy.Cells.First(c => c.Day == Day.Monday && c.Shift == Shift.Morning);
-
-        // 2 alunos numa sala de 10 lugares, o dia inteiro do turno; o auditório de
-        // 90 lugares fica vazio.
-        morning.Classrooms.First(c => c.Id == pequena.Id).UsedCapacityRate.Should().Be(20M);
-        morning.Classrooms.First(c => c.Id == pequena.Id).AverageStudents.Should().Be(2);
-        morning.Classrooms.First(c => c.Name == "Auditório").AverageStudents.Should().Be(0);
-
-        // Assento-minuto: 600 usados (2 alunos x 300min) de 30000 ofertados
-        // (100 lugares x 300min). A média das taxas das salas daria 10% — o
-        // auditório vazio pesa mais do que a salinha cheia.
-        morning.UsedCapacity.Should().Be(600);
+        // 1 sala usada a manhã toda, uma vazia a manhã toda
+        morning.UsedMinutesRate.Should().Be(50.00M);
+        // 2 alunos presentes, 100 lugares disponíveis
         morning.UsedCapacityRate.Should().Be(2M);
 
-        // A janela do turno, sem multiplicar pelas salas: 07h–12h.
-        morning.OpenMinutes.Should().Be(300);
-        morning.AvailableMinutes.Should().Be(600);
+        // 2 alunos numa sala de 10 lugares
+        morning.Classrooms.First(c => c.Id == sala.Id).AverageStudents.Should().Be(2);
+        morning.Classrooms.First(c => c.Id == sala.Id).UsedCapacityRate.Should().Be(20M);
 
-        // Só a manhã de segunda abre, então o total da semana é o da célula.
-        occupancy.OverallUsedCapacityRate.Should().Be(2M);
+        // Auditório de 90 lugares fica vazio
+        morning.Classrooms.First(c => c.Id == auditorio.Id).AverageStudents.Should().Be(0);
+        morning.Classrooms.First(c => c.Id == auditorio.Id).UsedCapacityRate.Should().Be(0);
     }
 
     [Test]
@@ -180,18 +197,16 @@ public partial class IntegrationTests
         var sala01 = await client.CreateClassroom(campus.Id, name: "Sala 01", capacity: 3).Success();
         var sala02 = await client.CreateClassroom(campus.Id, name: "Sala 02", capacity: 10).Success();
 
-        // Segunda e terça de manhã: 600min abertos na semana, 300 em cada dia.
         await client.UpdateCampusOpeningHours(campus.Id,
         [
             (Day.Monday, [(Hour.H07_00, Hour.H12_00)]),
             (Day.Tuesday, [(Hour.H07_00, Hour.H12_00)]),
         ]);
 
-        var discipline = await client.CreateDiscipline().Success();
+        var disciplina = await client.CreateDiscipline().Success();
         var period = await client.GetFirstAcademicPeriod();
-        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+        var @class = await client.CreateClass(disciplina.Id, period.Id, campusId: campus.Id).Success();
 
-        // A turma só usa a Sala 01, e só na segunda: metade da semana do campus.
         await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, null, sala01.Id)]);
 
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -224,26 +239,6 @@ public partial class IntegrationTests
         sala02Week.UsedCapacityRate.Should().Be(0M);
         sala02Week.AverageStudents.Should().Be(0);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     [Test]
     public async Task Campi_GetCampusOccupancy_Should_get_campus_occupancy_without_allocated_classes()
@@ -388,8 +383,6 @@ public partial class IntegrationTests
         occupancy.OpenCells.Should().Be(15);
     }
 
-    // O caso que motivou a feature: campus só de manhã tinha o denominador inflado
-    // em 4x, e o gestor lia folga onde não havia.
     [Test]
     public async Task Campi_GetCampusOccupancy_Should_get_campus_occupancy_of_a_morning_only_campus()
     {
@@ -535,8 +528,6 @@ public partial class IntegrationTests
             .Open.Should().BeFalse();
     }
 
-    // Uma sala costuma receber várias turmas ao longo do turno, e a célula precisa
-    // somar todas — não é "a turma daquele horário", é quanto da sala foi usado.
     [Test]
     public async Task Campi_GetCampusOccupancy_Should_sum_the_schedules_of_different_classes_in_the_same_classroom()
     {
@@ -572,7 +563,6 @@ public partial class IntegrationTests
         occupancy.OverallUsedMinutesRate.Should().Be(6.15M);
     }
 
-    // Turma iniciada é turma acontecendo: sai do mapa só quando finaliza.
     [Test]
     public async Task Campi_GetCampusOccupancy_Should_count_the_schedules_of_a_started_class()
     {
@@ -606,8 +596,6 @@ public partial class IntegrationTests
         morning.UsedMinutesRate.Should().Be(60M);
     }
 
-    // Turma finalizada é histórico: a sala dela está livre para o próximo período,
-    // então continuar ocupando o mapa seria mentir sobre a capacidade do campus.
     [Test]
     public async Task Campi_GetCampusOccupancy_Should_not_count_the_schedules_of_a_finalized_class()
     {
@@ -640,7 +628,6 @@ public partial class IntegrationTests
         occupancy.OverallUsedMinutesRate.Should().Be(0);
     }
 
-    // Turma online tem horário mas não tem sala: existe na agenda, não no mapa.
     [Test]
     public async Task Campi_GetCampusOccupancy_Should_not_count_schedules_without_classroom()
     {
@@ -666,8 +653,6 @@ public partial class IntegrationTests
         occupancy.OverallUsedMinutesRate.Should().Be(0);
     }
 
-    // Campus que fecha para o almoço tem duas janelas no mesmo dia, e o turno inteiro
-    // que cai no intervalo entre elas fica fechado — mesmo cercado por turnos abertos.
     [Test]
     public async Task Campi_GetCampusOccupancy_Should_sum_the_opening_hours_windows_of_the_same_day()
     {
@@ -821,8 +806,6 @@ public partial class IntegrationTests
         occupancy.OverallUsedMinutesRate.Should().Be(50M);
     }
 
-    // Horário que encosta na fronteira do turno pertence a um turno só: 12h–14h é
-    // tarde inteira, e 07h–12h é manhã inteira. Nenhum dos dois vaza para o vizinho.
     [Test]
     public async Task Campi_GetCampusOccupancy_Should_not_count_a_schedule_that_ends_where_the_shift_starts()
     {
@@ -860,8 +843,6 @@ public partial class IntegrationTests
             .UsedMinutes.Should().Be(0);
     }
 
-    // A noite do mapa vai das 18h à meia-noite, e não até as 22h do padrão: campus
-    // que fecha mais tarde tem mais denominador, não uma célula estourada.
     [Test]
     public async Task Campi_GetCampusOccupancy_Should_get_the_evening_of_a_campus_open_after_22h()
     {

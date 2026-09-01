@@ -49,7 +49,7 @@ public class GenerateEnrollmentProofService(EstudDbContext ctx, FrontendSettings
         var proof = new EnrollmentProof(institutionId, studentId, metadata);
         await ctx.SaveChangesAsync(proof);
 
-        var validationUrl = frontend.BuildUrl($"/validar-comprovante?codigo={proof.Code}");
+        var validationUrl = frontend.BuildUrl($"/validate-enrollment-proof?code={proof.Code}");
 
         var pdf = new EnrollmentProofDocument(proof, validationUrl).GeneratePdf();
 

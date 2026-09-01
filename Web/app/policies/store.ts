@@ -539,6 +539,26 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
     ],
   },
 
+  // Documents
+  AccessDocumentsPage: {
+    description: "Acessar a página de documentos",
+    requirements: [
+      hasUserType(UserTypes.Student),
+    ],
+  },
+  GetEnrollmentProofs: {
+    description: "Ver os comprovantes de matrícula emitidos",
+    requirements: [
+      hasUserType(UserTypes.Student),
+    ],
+  },
+  GenerateEnrollmentProof: {
+    description: "Emitir comprovantes de matrícula",
+    requirements: [
+      hasUserType(UserTypes.Student),
+    ],
+  },
+
   // Admin
   AccessAdminInstitutionsPage: {
     description: "Acessar a página de instituições do adm",

@@ -85,17 +85,15 @@
 - ✅ CreateWebhookSubscriptionController
 - ✅ UpdateWebhookSubscriptionController
 
-
----------------------------------------------------------------------------------------------------
-
-
 ## Campi
+- ✅ GetCampiController
 - ✅ CreateCampusController
 - ✅ UpdateCampusController
+- ✅ GetCampusOccupancyController
 - ✅ GetCampusOpeningHoursController
 - ✅ UpdateCampusOpeningHoursController
-- GetCampusOccupancyController (falta revisar os testes)
-- GetCampiController (falta teste com ocupação não nula)
+
+---------------------------------------------------------------------------------------------------
 
 ## Classes
 - GetClassController
@@ -144,10 +142,10 @@
 - ✅ GetStudentCourseDetailsController
 
 - CreateClassActivityWorkController
-- GetStudentAttendanceCalendarController
 - GetStudentClassActivitiesController
 - GetStudentClassActivityController
 - GetStudentDetailsController
+- GetStudentAttendanceCalendarController
 - GetStudentAgendaController
 
 ## Teachers

@@ -215,6 +215,10 @@ export type PolicyName
     | 'AccessChildrenPage'
   // Frequencies
     | 'AccessFrequenciesPage'
+  // Documents
+    | 'AccessDocumentsPage'
+    | 'GetEnrollmentProofs'
+    | 'GenerateEnrollmentProof'
   // Admin
     | 'AccessAdminInstitutionsPage'
     | 'GetAdminInstitutions'

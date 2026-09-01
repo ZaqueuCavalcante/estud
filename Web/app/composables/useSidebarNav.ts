@@ -29,6 +29,7 @@ export const sidebarGroups: SidebarGroup[] = [
       { label: 'Filhos',        icon: 'i-lucide-users-round',    to: '/children',           policy: 'AccessChildrenPage' },
       { label: 'Agenda',        icon: 'i-lucide-calendar-days',  to: '/agenda',             policy: 'AccessAgendaPage' },
       { label: 'Frequência',    icon: 'i-lucide-calendar-check', to: '/frequencies',        policy: 'AccessFrequenciesPage' },
+      { label: 'Documentos',    icon: 'i-lucide-file-text',      to: '/documents',          policy: 'AccessDocumentsPage' },
     ],
   },
   {
