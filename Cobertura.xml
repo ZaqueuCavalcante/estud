@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9156200247656112" branch-rate="0.7658760520275439" lines-covered="10352" lines-valid="11306" branches-covered="2002" branches-valid="2614" complexity="3926" version="0" timestamp="1788219981">
+<coverage line-rate="0.9159100925517849" branch-rate="0.7658760520275439" lines-covered="10391" lines-valid="11345" branches-covered="2002" branches-valid="2614" complexity="3932" version="0" timestamp="1788225430">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9172965762561138" branch-rate="0.764070932922128" complexity="3896">
+    <package name="Back" line-rate="0.9175824175824175" branch-rate="0.764070932922128" complexity="3902">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -1049,48 +1049,50 @@
           <methods>
             <method name="AddStudentsPolicies" signature="(Microsoft.AspNetCore.Authorization.AuthorizationBuilder)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="27" hits="2" branch="false" />
                 <line number="28" hits="2" branch="false" />
                 <line number="29" hits="2" branch="false" />
                 <line number="30" hits="2" branch="false" />
                 <line number="31" hits="2" branch="false" />
                 <line number="32" hits="2" branch="false" />
                 <line number="33" hits="2" branch="false" />
-                <line number="35" hits="2" branch="false" />
+                <line number="34" hits="2" branch="false" />
                 <line number="36" hits="2" branch="false" />
                 <line number="37" hits="2" branch="false" />
                 <line number="38" hits="2" branch="false" />
                 <line number="39" hits="2" branch="false" />
-                <line number="41" hits="2" branch="false" />
+                <line number="40" hits="2" branch="false" />
                 <line number="42" hits="2" branch="false" />
+                <line number="43" hits="2" branch="false" />
                 <line number="44" hits="2" branch="false" />
-                <line number="45" hits="2" branch="false" />
                 <line number="46" hits="2" branch="false" />
                 <line number="47" hits="2" branch="false" />
+                <line number="48" hits="2" branch="false" />
                 <line number="49" hits="2" branch="false" />
+                <line number="51" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="27" hits="2" branch="false" />
             <line number="28" hits="2" branch="false" />
             <line number="29" hits="2" branch="false" />
             <line number="30" hits="2" branch="false" />
             <line number="31" hits="2" branch="false" />
             <line number="32" hits="2" branch="false" />
             <line number="33" hits="2" branch="false" />
-            <line number="35" hits="2" branch="false" />
+            <line number="34" hits="2" branch="false" />
             <line number="36" hits="2" branch="false" />
             <line number="37" hits="2" branch="false" />
             <line number="38" hits="2" branch="false" />
             <line number="39" hits="2" branch="false" />
-            <line number="41" hits="2" branch="false" />
+            <line number="40" hits="2" branch="false" />
             <line number="42" hits="2" branch="false" />
+            <line number="43" hits="2" branch="false" />
             <line number="44" hits="2" branch="false" />
-            <line number="45" hits="2" branch="false" />
             <line number="46" hits="2" branch="false" />
             <line number="47" hits="2" branch="false" />
+            <line number="48" hits="2" branch="false" />
             <line number="49" hits="2" branch="false" />
+            <line number="51" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Auth.Policies.Policies" filename="/home/runner/work/estud/estud/Back/Auth/Policies/Policies.Teachers.cs" line-rate="1" branch-rate="1" complexity="1">
@@ -29665,6 +29667,124 @@
             <line number="54" hits="2" branch="false" />
             <line number="56" hits="2" branch="false" />
             <line number="57" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Students.GetEnrollmentProofs.GetEnrollmentProofsController" filename="/home/runner/work/estud/estud/Back/Features/Students/GetEnrollmentProofs/GetEnrollmentProofsController.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="(Estud.Back.Features.Students.GetEnrollmentProofs.GetEnrollmentProofsService)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="4" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="Get" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="17" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
+                <line number="19" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="4" hits="2" branch="false" />
+            <line number="17" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Students.GetEnrollmentProofs.GetEnrollmentProofsOut" filename="/home/runner/work/estud/estud/Back/Features/Students/GetEnrollmentProofs/GetEnrollmentProofsOut.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name="GetExamples" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="9" hits="2" branch="false" />
+                <line number="10" hits="2" branch="false" />
+                <line number="11" hits="2" branch="false" />
+                <line number="12" hits="2" branch="false" />
+                <line number="13" hits="2" branch="false" />
+                <line number="14" hits="2" branch="false" />
+                <line number="15" hits="2" branch="false" />
+                <line number="16" hits="2" branch="false" />
+                <line number="17" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
+                <line number="19" hits="2" branch="false" />
+                <line number="20" hits="2" branch="false" />
+                <line number="21" hits="2" branch="false" />
+                <line number="22" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="6" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="6" hits="2" branch="false" />
+            <line number="9" hits="2" branch="false" />
+            <line number="10" hits="2" branch="false" />
+            <line number="11" hits="2" branch="false" />
+            <line number="12" hits="2" branch="false" />
+            <line number="13" hits="2" branch="false" />
+            <line number="14" hits="2" branch="false" />
+            <line number="15" hits="2" branch="false" />
+            <line number="16" hits="2" branch="false" />
+            <line number="17" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
+            <line number="20" hits="2" branch="false" />
+            <line number="21" hits="2" branch="false" />
+            <line number="22" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Students.GetEnrollmentProofs.GetEnrollmentProofsService" filename="/home/runner/work/estud/estud/Back/Features/Students/GetEnrollmentProofs/GetEnrollmentProofsService.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="(Estud.Back.Database.EstudDbContext)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="3" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="Get" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="7" hits="2" branch="false" />
+                <line number="8" hits="2" branch="false" />
+                <line number="9" hits="2" branch="false" />
+                <line number="11" hits="2" branch="false" />
+                <line number="12" hits="2" branch="false" />
+                <line number="13" hits="2" branch="false" />
+                <line number="14" hits="2" branch="false" />
+                <line number="15" hits="2" branch="false" />
+                <line number="16" hits="2" branch="false" />
+                <line number="17" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
+                <line number="19" hits="2" branch="false" />
+                <line number="21" hits="2" branch="false" />
+                <line number="22" hits="2" branch="false" />
+                <line number="23" hits="2" branch="false" />
+                <line number="24" hits="2" branch="false" />
+                <line number="25" hits="2" branch="false" />
+                <line number="26" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="3" hits="2" branch="false" />
+            <line number="7" hits="2" branch="false" />
+            <line number="8" hits="2" branch="false" />
+            <line number="9" hits="2" branch="false" />
+            <line number="11" hits="2" branch="false" />
+            <line number="12" hits="2" branch="false" />
+            <line number="13" hits="2" branch="false" />
+            <line number="14" hits="2" branch="false" />
+            <line number="15" hits="2" branch="false" />
+            <line number="16" hits="2" branch="false" />
+            <line number="17" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
+            <line number="21" hits="2" branch="false" />
+            <line number="22" hits="2" branch="false" />
+            <line number="23" hits="2" branch="false" />
+            <line number="24" hits="2" branch="false" />
+            <line number="25" hits="2" branch="false" />
+            <line number="26" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Features.Students.GetStudent.GetStudentController" filename="/home/runner/work/estud/estud/Back/Features/Students/GetStudent/GetStudentController.cs" line-rate="1" branch-rate="1" complexity="2">
