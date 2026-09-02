@@ -39,10 +39,8 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var email = DataGen.Email;
-        await director.CreateStudent(DataGen.UserName, email);
-
-        var client = await _back.LoginAs(email);
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var client = await _back.LoginAs(student.Email);
 
         // Act
         var result = await client.GetTeacherAgenda();

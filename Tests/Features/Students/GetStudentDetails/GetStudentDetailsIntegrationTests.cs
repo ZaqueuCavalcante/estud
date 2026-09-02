@@ -38,10 +38,9 @@ public partial class IntegrationTests
     public async Task Students_GetStudentDetails_Should_not_get_student_details_when_user_is_a_student()
     {
         // Arrange
-        var directorClient = await _back.LoggedAsDirector();
-        var email = DataGen.Email;
-        var student = await directorClient.CreateStudent(DataGen.UserName, email).Success();
-        var client = await _back.LoginAs(email);
+        var director = await _back.LoggedAsDirector();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var client = await _back.LoginAs(student.Email);
 
         // Act
         var result = await client.GetStudentDetails(student.Id);
@@ -165,28 +164,30 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var period = await director.CreateAcademicPeriod().Success();
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
-        var geometry = await _back.ArrangeStartedClass(director, period.Id, [student.Id], "Geometria");
-        var algebra = await _back.ArrangeStartedClass(director, period.Id, [student.Id], "Álgebra", Day.Tuesday);
+        var geometry = await director.ShortcutCreateStartedClass([student.Id]);
+        var algebra = await director.ShortcutCreateStartedClass([student.Id], "Álgebra", Day.Tuesday);
 
-        var geometryLessons = (await geometry.Teacher.GetTeacherClassLessons(geometry.ClassId).Success()).Lessons;
-        await geometry.Teacher.CreateLessonAttendance(geometryLessons[0].Id, [student.Id]);
-        await geometry.Teacher.CreateLessonAttendance(geometryLessons[1].Id, [student.Id]);
-        await geometry.Teacher.CreateLessonAttendance(geometryLessons[2].Id, []);
+        var geometryTeacher = await _back.LoginAs(geometry.TeacherEmail);
+        var algebraTeacher = await _back.LoginAs(algebra.TeacherEmail);
 
-        var algebraLessons = (await algebra.Teacher.GetTeacherClassLessons(algebra.ClassId).Success()).Lessons;
-        await algebra.Teacher.CreateLessonAttendance(algebraLessons[0].Id, [student.Id]);
-        await algebra.Teacher.CreateLessonAttendance(algebraLessons[1].Id, []);
+        var geometryLessons = (await geometryTeacher.GetTeacherClassLessons(geometry.Id).Success()).Lessons;
+        await geometryTeacher.CreateLessonAttendance(geometryLessons[0].Id, [student.Id]);
+        await geometryTeacher.CreateLessonAttendance(geometryLessons[1].Id, [student.Id]);
+        await geometryTeacher.CreateLessonAttendance(geometryLessons[2].Id, []);
+
+        var algebraLessons = (await algebraTeacher.GetTeacherClassLessons(algebra.Id).Success()).Lessons;
+        await algebraTeacher.CreateLessonAttendance(algebraLessons[0].Id, [student.Id]);
+        await algebraTeacher.CreateLessonAttendance(algebraLessons[1].Id, []);
 
         // Act
         var result = await director.GetStudentDetails(student.Id);
 
         // Assert
         var details = result.Success;
-        details.Classes.First(c => c.Id == geometry.ClassId).AverageAttendance.Should().Be(66.7M);
-        details.Classes.First(c => c.Id == algebra.ClassId).AverageAttendance.Should().Be(50M);
+        details.Classes.First(c => c.Id == geometry.Id).AverageAttendance.Should().Be(66.7M);
+        details.Classes.First(c => c.Id == algebra.Id).AverageAttendance.Should().Be(50M);
         details.AverageAttendance.Should().Be(60M);
     }
 
@@ -195,24 +196,26 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var period = await director.CreateAcademicPeriod().Success();
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
-        var started = await _back.ArrangeStartedClass(director, period.Id, [student.Id], "Geometria");
-        var finalized = await _back.ArrangeStartedClass(director, period.Id, [student.Id], "Álgebra", Day.Tuesday);
+        var started = await director.ShortcutCreateStartedClass([student.Id]);
+        var finalized = await director.ShortcutCreateStartedClass([student.Id], "Álgebra", Day.Tuesday);
 
-        var startedLessons = (await started.Teacher.GetTeacherClassLessons(started.ClassId).Success()).Lessons;
-        await started.Teacher.CreateLessonAttendance(startedLessons[0].Id, [student.Id]);
-        await started.Teacher.CreateLessonAttendance(startedLessons[1].Id, []);
+        var startedTeacher = await _back.LoginAs(started.TeacherEmail);
+        var finalizedTeacher = await _back.LoginAs(finalized.TeacherEmail);
 
-        var finalizedLessons = (await finalized.Teacher.GetTeacherClassLessons(finalized.ClassId).Success()).Lessons;
-        await finalized.Teacher.CreateLessonAttendance(finalizedLessons[0].Id, [student.Id]);
-        await finalized.Teacher.CreateLessonAttendance(finalizedLessons[1].Id, [student.Id]);
+        var startedLessons = (await startedTeacher.GetTeacherClassLessons(started.Id).Success()).Lessons;
+        await startedTeacher.CreateLessonAttendance(startedLessons[0].Id, [student.Id]);
+        await startedTeacher.CreateLessonAttendance(startedLessons[1].Id, []);
+
+        var finalizedLessons = (await finalizedTeacher.GetTeacherClassLessons(finalized.Id).Success()).Lessons;
+        await finalizedTeacher.CreateLessonAttendance(finalizedLessons[0].Id, [student.Id]);
+        await finalizedTeacher.CreateLessonAttendance(finalizedLessons[1].Id, [student.Id]);
 
         // Nenhum endpoint encerra uma turma, então o status vai direto no banco.
         await using (var arrangeCtx = _back.GetDbContext())
         {
-            var @class = await arrangeCtx.Classes.FirstAsync(c => c.Id == finalized.ClassId);
+            var @class = await arrangeCtx.Classes.FirstAsync(c => c.Id == finalized.Id);
             @class.Status = ClassStatus.Finalized;
             await arrangeCtx.SaveChangesAsync();
         }
@@ -222,8 +225,8 @@ public partial class IntegrationTests
 
         // Assert
         var details = result.Success;
-        details.Classes.First(c => c.Id == started.ClassId).AverageAttendance.Should().Be(50M);
-        details.Classes.First(c => c.Id == finalized.ClassId).AverageAttendance.Should().Be(100M);
+        details.Classes.First(c => c.Id == started.Id).AverageAttendance.Should().Be(50M);
+        details.Classes.First(c => c.Id == finalized.Id).AverageAttendance.Should().Be(100M);
         details.AverageAttendance.Should().Be(50M);
     }
 
@@ -232,10 +235,9 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var period = await director.GetFirstAcademicPeriod();
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
-        await _back.ArrangeStartedClass(director, period.Id, [student.Id]);
+        await director.ShortcutCreateStartedClass([student.Id]);
 
         // Act
         var result = await director.GetStudentDetails(student.Id);

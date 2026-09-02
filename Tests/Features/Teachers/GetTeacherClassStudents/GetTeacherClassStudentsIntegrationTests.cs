@@ -190,18 +190,18 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var period = await director.GetFirstAcademicPeriod();
         var ana = await director.CreateStudent("Ana Beatriz", DataGen.Email).Success();
         var bruno = await director.CreateStudent("Bruno Silva", DataGen.Email).Success();
-        var (classId, teacher) = await _back.ArrangeStartedClass(director, period.Id, [ana.Id, bruno.Id]);
+        var @class = await director.ShortcutCreateStartedClass([ana.Id, bruno.Id]);
+        var teacher = await _back.LoginAs(@class.TeacherEmail);
 
-        var lessons = await teacher.GetClassLessons(classId);
+        var lessons = await teacher.GetClassLessons(@class.Id);
         await teacher.CreateLessonAttendance(lessons[0], [ana.Id, bruno.Id]);
         await teacher.CreateLessonAttendance(lessons[1], [ana.Id]);
         await teacher.CreateLessonAttendance(lessons[2], []);
 
         // Act
-        var result = await teacher.GetTeacherClassStudents(classId);
+        var result = await teacher.GetTeacherClassStudents(@class.Id);
 
         // Assert
         var students = result.Success.Students;
@@ -214,16 +214,16 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var period = await director.GetFirstAcademicPeriod();
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        var (classId, teacher) = await _back.ArrangeStartedClass(director, period.Id, [student.Id]);
+        var @class = await director.ShortcutCreateStartedClass([student.Id]);
+        var teacher = await _back.LoginAs(@class.TeacherEmail);
 
-        var lessons = await teacher.GetClassLessons(classId);
+        var lessons = await teacher.GetClassLessons(@class.Id);
         await teacher.CreateLessonAttendance(lessons[0], [student.Id]);
         await teacher.CreateLessonAttendance(lessons[1], [student.Id]);
 
         // Act
-        var result = await teacher.GetTeacherClassStudents(classId);
+        var result = await teacher.GetTeacherClassStudents(@class.Id);
 
         // Assert
         result.Success.Students.Should().ContainSingle()
@@ -235,12 +235,12 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var period = await director.GetFirstAcademicPeriod();
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        var (classId, teacher) = await _back.ArrangeStartedClass(director, period.Id, [student.Id]);
+        var @class = await director.ShortcutCreateStartedClass([student.Id]);
+        var teacher = await _back.LoginAs(@class.TeacherEmail);
 
         // Act
-        var result = await teacher.GetTeacherClassStudents(classId);
+        var result = await teacher.GetTeacherClassStudents(@class.Id);
 
         // Assert
         result.Success.Students.Should().ContainSingle()

@@ -77,16 +77,20 @@ public partial class TestsHttpClient
         return await response.Resolve<TwoFactorSetupLoginOut>();
     }
 
-    public async Task<HttpResponseMessage> SendResetPasswordToken(string email)
+    public async Task<OneOf<SuccessOut, ErrorOut>> SendResetPasswordToken(string email)
     {
         var data = new SendResetPasswordTokenIn { Email = email };
-        return await http.PostAsJsonAsync("identity/reset-password-token", data);
+        var response = await http.PostAsJsonAsync("identity/reset-password-token", data);
+
+        return await response.Resolve<SuccessOut>();
     }
 
-    public async Task<HttpResponseMessage> ResetPassword(string token, string password)
+    public async Task<OneOf<SuccessOut, ErrorOut>> ResetPassword(string token, string password)
     {
         var data = new ResetPasswordIn { Token = token, Password = password };
-        return await http.PostAsJsonAsync("identity/reset-password", data);
+        var response = await http.PostAsJsonAsync("identity/reset-password", data);
+
+        return await response.Resolve<SuccessOut>();
     }
 
     public async Task<OneOf<CreateRoleOut, ErrorOut>> CreateRole(

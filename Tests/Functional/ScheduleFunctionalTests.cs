@@ -1300,13 +1300,14 @@ public partial class IntegrationTests
         var studentEmails = new List<string>();
         foreach (var index in Enumerable.Range(0, 100))
         {
-            var email = DataGen.Email;
-            var student = await directorClient.CreateStudent(DataGen.UserName, email).Success();
+            var student = await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+            var client = await _back.LoginAs(student.Email);
+
             var classIndex = index % 15;
             await directorClient.EnrollStudentInCourseOffering(student.Id, offeringOf[classIndex / 5]);
             await directorClient.AssignStudentToClass(student.Id, classIds[classIndex]);
             studentIds.Add(student.Id);
-            studentEmails.Add(email);
+            studentEmails.Add(student.Email);
         }
 
         foreach (var classId in classIds)
