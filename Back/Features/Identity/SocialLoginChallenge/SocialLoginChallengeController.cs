@@ -12,10 +12,9 @@ public class SocialLoginChallengeController(FrontendSettings frontendSettings) :
     /// <remarks>
     /// Redirects to the social login provider (Google) for authentication.
     /// This is a browser redirect endpoint, not a JSON API.
-    /// The optional email parameter sets login_hint for the provider.
     /// </remarks>
     [HttpGet("identity/social-login/challenge/{provider}")]
-    public IActionResult Challenge(string provider, [FromQuery] string? email = null)
+    public IActionResult Challenge(string provider)
     {
         Enum.TryParse(provider, ignoreCase: true, out SocialLoginProvider loginProvider);
 
@@ -31,8 +30,6 @@ public class SocialLoginChallengeController(FrontendSettings frontendSettings) :
         {
             RedirectUri = "/home",
         };
-
-        if (email != null) properties.Items["login_hint"] = email;
 
         return Challenge(properties, schemeName);
     }

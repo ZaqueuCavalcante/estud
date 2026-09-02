@@ -16,7 +16,7 @@ export interface SidebarGroup {
   items: SidebarLink[]
 }
 
-export const TEACHER_CLASSES_GROUP_ID = 'turmas'
+export const CURRENT_CLASSES_GROUP_ID = 'turmas'
 
 // O primeiro grupo não tem título: pro Manager ele fica vazio (e é descartado),
 // e pros demais perfis (Professor, Aluno, Responsável) é a sidebar inteira —
@@ -99,7 +99,7 @@ export function useSidebarNav() {
   }
 
   // Item da sidebar correspondente à tela atual, quando existe — telas fora da
-  // sidebar (conta, detalhe de turma do professor, ...) não têm.
+  // sidebar (conta, detalhe de turma, ...) não têm.
   const currentLink = computed(() => sidebarLinks.find(({ to }) => isLinkActive(to)) ?? null)
 
   return { sidebarGroups, isLinkActive, currentLink }

@@ -171,9 +171,10 @@ function openAttendance(lesson: ClassLessonItem) {
               class="flex flex-col gap-0.5 rounded-lg border border-default bg-elevated/40 px-3 py-2"
             >
               <span
-                class="text-sm font-medium"
+                class="flex items-center gap-1 text-sm font-medium"
                 :class="s.teacher ? 'text-highlighted' : 'text-muted'"
               >
+                <UIcon :name="s.teacher ? 'i-lucide-user-pen' : 'i-lucide-user-x'" class="size-3.5" />
                 {{ s.teacher ?? 'Sem professor' }}
               </span>
               <span class="flex items-center gap-1 text-xs text-muted">
@@ -277,7 +278,7 @@ function openAttendance(lesson: ClassLessonItem) {
             </div>
 
             <div v-if="activities.length" class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              <ActivitiesCard
+              <ActivitiesCardTeacher
                 v-for="activity in activities"
                 :key="activity.id"
                 :activity="activity"

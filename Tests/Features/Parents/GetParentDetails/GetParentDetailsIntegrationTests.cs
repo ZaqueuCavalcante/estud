@@ -56,11 +56,10 @@ public partial class IntegrationTests
         var directorClient = await _back.LoggedAsDirector();
         var studentId = (await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
 
-        var email = DataGen.Email;
-        var parent = await directorClient.CreateParent(DataGen.UserName, email,
+        var parent = await directorClient.CreateParent(DataGen.UserName, DataGen.Email,
             [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(parent.Email);
 
         // Act
         var result = await client.GetParentDetails(parent.Id);
@@ -114,8 +113,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var studentId = (await client.CreateStudent("Maria Souza", DataGen.Email).Success()).Id;
-        var email = DataGen.Email;
-        var parent = await client.CreateParent("Ana Souza", email,
+        var parent = await client.CreateParent("Ana Souza", DataGen.Email,
             [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }], "82988887777").Success();
 
         // Act
@@ -125,7 +123,7 @@ public partial class IntegrationTests
         var details = result.Success;
         details.Id.Should().Be(parent.Id);
         details.Name.Should().Be("Ana Souza");
-        details.Email.Should().Be(email);
+        details.Email.Should().Be(parent.Email);
         details.PhoneNumber.Should().Be("82988887777");
         details.Students.Should().ContainSingle();
         details.Students[0].Id.Should().Be(studentId);

@@ -60,8 +60,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var email = DataGen.Email;
-        var teacher = await client.CreateTeacher("Ana Lima", email).Success();
+        var teacher = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
 
         // Act
         var result = await client.GetTeacher(teacher.Id);
@@ -70,7 +69,7 @@ public partial class IntegrationTests
         var found = result.Success;
         found.Id.Should().Be(teacher.Id);
         found.Name.Should().Be("Ana Lima");
-        found.Email.Should().Be(email);
+        found.Email.Should().Be(teacher.Email);
         found.Campi.Should().BeEmpty();
         found.Disciplines.Should().BeEmpty();
     }

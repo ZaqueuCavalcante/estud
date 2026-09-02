@@ -41,13 +41,12 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
         var studentId = (await director.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
 
-        var parentEmail = DataGen.Email;
-        var parentId = (await director.CreateParent(DataGen.UserName, parentEmail, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success()).Id;
+        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();
 
-        var client = await _back.LoginAs(parentEmail);
+        var client = await _back.LoginAs(parent.Email);
 
         // Act
-        var result = await client.RevokeParentStudentLink(parentId, studentId);
+        var result = await client.RevokeParentStudentLink(parent.Id, studentId);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);

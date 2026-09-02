@@ -303,9 +303,10 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
               class="flex flex-col gap-0.5 rounded-lg border border-default bg-elevated/40 px-3 py-2"
             >
               <span
-                class="text-sm font-medium"
+                class="flex items-center gap-1 text-sm font-medium"
                 :class="s.teacher ? 'text-highlighted' : 'text-muted'"
               >
+                <UIcon :name="s.teacher ? 'i-lucide-user-pen' : 'i-lucide-user-x'" class="size-3.5" />
                 {{ s.teacher ?? 'Sem professor' }}
               </span>
               <span class="flex items-center gap-1 text-xs text-muted">

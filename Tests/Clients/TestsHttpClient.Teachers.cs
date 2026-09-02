@@ -4,6 +4,7 @@ using Estud.Back.Features.Teachers.GetTeachers;
 using Estud.Back.Features.Teachers.CreateTeacher;
 using Estud.Back.Features.Teachers.UpdateTeacher;
 using Estud.Back.Features.Teachers.GetTeacherClass;
+using Estud.Back.Features.Teachers.AddActivityNote;
 using Estud.Back.Features.Teachers.GetTeacherAgenda;
 using Estud.Back.Features.Teachers.GetTeacherDetails;
 using Estud.Back.Features.Teachers.CreateClassActivity;
@@ -145,6 +146,16 @@ public partial class TestsHttpClient
     {
         var response = await http.GetAsync($"/teachers/classes/{classId}/activities/{activityId}");
         return await response.Resolve<GetTeacherClassActivityOut>();
+    }
+
+    public async Task<OneOf<SuccessOut, ErrorOut>> AddActivityNote(
+        int activityId,
+        int workId,
+        decimal note = 8.5m
+    ) {
+        var data = new AddActivityNoteIn { Note = note };
+        var response = await http.PutAsJsonAsync($"/teachers/activities/{activityId}/works/{workId}/note", data);
+        return await response.Resolve<SuccessOut>();
     }
 
     public async Task<OneOf<GetTeacherClassStudentsOut, ErrorOut>> GetTeacherClassStudents(int classId)

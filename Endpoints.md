@@ -1,4 +1,4 @@
-﻿# Endpoints ✅ ❌
+﻿# Endpoints
 
 ## Admin
 - ✅ GetDomainEventsController
@@ -102,7 +102,7 @@
 - ✅ UpdateClassTeachersController
 - ✅ UpdateClassSchedulesController
 - ✅ ReleaseClassForEnrollmentController
-- GetClassController
+- ❌ GetClassController (falta nota do aluno)
 
 ## Identity
 - ✅ GetSsoConfigurationController
@@ -144,8 +144,9 @@
 - ✅ GetStudentClassActivityController
 - ✅ CreateClassActivityWorkController
 - ✅ GetStudentAgendaController
-- ❌ GetStudentDetailsController
-- ❌ GetStudentAttendanceCalendarController
+- ✅ GetStudentAttendanceCalendarController
+- ✅ GetStudentCurrentClassesController
+- ❌ GetStudentDetailsController (falta nota)
 
 ## Teachers
 - ✅ GetTeachersController
@@ -157,18 +158,19 @@
 - ✅ CreateClassActivityController
 - ✅ GetTeacherClassActivitiesController
 - ✅ GetTeacherClassActivityController
+- ✅ AddActivityNoteController
 - ✅ CreateLessonAttendanceController
 - ✅ GetTeacherClassLessonsController
 - ✅ GetTeacherClassController
-- ✅ GetTeacherClassStudentsController
 - ✅ GetTeacherCurrentClassesController
 - ✅ GetTeacherPotentialCampiController
 - ✅ GetTeacherPotentialDisciplinesController
 - ✅ GetTeacherAgendaController
+- ❌ GetTeacherClassStudentsController (falta nota)
 
 ## Parents
 - ✅ GetParentsController
 - ✅ CreateParentController
 - ✅ GetParentDetailsController
 - ✅ GetParentStudentsController
-- ❌ GetParentStudentAgendaController (revisar endpoint, testes e front)
+- ✅ GetParentStudentAgendaController

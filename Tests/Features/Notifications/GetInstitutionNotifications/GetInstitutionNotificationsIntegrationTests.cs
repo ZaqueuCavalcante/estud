@@ -43,8 +43,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var teacherEmail = DataGen.Email;
-        await director.CreateTeacher(DataGen.UserName, teacherEmail);
+        await director.CreateTeacher(DataGen.UserName, DataGen.Email);
         await director.CreateNotification("Aviso importante", "Descrição do aviso.", UsersGroup.Teachers);
 
         // Act

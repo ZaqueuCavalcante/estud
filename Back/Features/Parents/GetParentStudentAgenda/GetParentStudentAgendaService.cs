@@ -15,38 +15,62 @@ public class GetParentStudentAgendaService(EstudDbContext ctx) : IEstudService
             !x.RevokedByStudent);
         if (!hasActiveLink) return StudentNotFound.I;
 
-        var ids = await ctx.ClassStudents.Where(x => x.StudentId == studentId && x.Status == StudentClassStatus.Matriculado)
-            .Select(x => x.ClassId).ToListAsync();
+        var classes = await GetStudentClasses(institutionId, studentId);
 
-        var classes = await ctx.Classes.AsNoTracking()
-            .Include(t => t.Discipline)
-            .Include(t => t.Schedules).ThenInclude(s => s.Classroom)
-            .Where(t => t.InstitutionId == institutionId && ids.Contains(t.Id))
-            .ToListAsync();
-
-        // Pra cada dia, pegar as aulas que acontecem nesse dia, ordenadas pelo horário de início
-        var days = classes.Select(x => x.Schedules.Select(s => s.Day)).SelectMany(x => x).Distinct().OrderBy(x => x).ToList();
-        var agenda = new List<GetParentStudentAgendaItemOut>();
-
-        foreach (var day in days)
-        {
-            var dayClasses = classes.Where(c => c.Schedules.Any(s => s.Day == day)).ToList();
-            var disciplines = dayClasses.SelectMany(c => c.Schedules.Where(s => s.Day == day).Select(s => new GetParentStudentAgendaItemDisciplineOut
+        var agenda = classes
+            .GroupBy(x => x.Day)
+            .OrderBy(g => g.Key)
+            .Select(g => new GetParentStudentAgendaItemOut
             {
-                ClassId = c.Id,
-                Name = c.Discipline.Name,
-                ClassroomName = s.Classroom != null ? s.Classroom.Name : null,
-                Start = s.Start,
-                End = s.End
-            })).OrderBy(d => d.Start).ToList();
-
-            agenda.Add(new GetParentStudentAgendaItemOut
-            {
-                Day = day,
-                Disciplines = disciplines
-            });
-        }
+                Day = g.Key,
+                Disciplines = g.OrderBy(x => x.Start).Select(x => new GetParentStudentAgendaItemDisciplineOut
+                {
+                    ClassId = x.Id,
+                    Name = x.Discipline,
+                    ClassroomName = x.Classroom,
+                    Start = x.Start,
+                    End = x.End
+                }).ToList()
+            })
+            .ToList();
 
         return new GetParentStudentAgendaOut { Days = agenda };
+    }
+
+    private async Task<List<GetParentStudentAgendaDto>> GetStudentClasses(int institutionId, int studentId)
+    {
+        const string sql = @"
+            SELECT
+                c.id,
+                d.name AS discipline,
+                s.day,
+                s.start,
+                s.end,
+                cr.name AS classroom
+            FROM
+                estud.classes__students cs
+            INNER JOIN
+                estud.classes c ON c.id = cs.class_id
+            INNER JOIN
+                estud.disciplines d ON d.id = c.discipline_id
+            INNER JOIN
+                estud.schedules s ON s.class_id = c.id
+            LEFT JOIN
+                estud.classrooms cr ON cr.id = s.classroom_id
+            WHERE
+                c.institution_id = {0}
+                    AND
+                c.status = {1}
+                    AND
+                cs.student_id = {2}
+                    AND
+                cs.status = {3}
+            ORDER BY
+                s.day, s.start
+        ";
+
+        return await ctx.Database
+            .SqlQueryRaw<GetParentStudentAgendaDto>(sql, institutionId, ClassStatus.Started.ToInt(), studentId, StudentClassStatus.Matriculado.ToInt())
+            .AsNoTracking().ToListAsync();
     }
 }

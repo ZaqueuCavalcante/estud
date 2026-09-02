@@ -41,13 +41,12 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
         var studentId = (await director.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
 
-        var parentEmail = DataGen.Email;
-        var parentId = (await director.CreateParent(DataGen.UserName, parentEmail, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success()).Id;
+        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();
 
-        var client = await _back.LoginAs(parentEmail);
+        var client = await _back.LoginAs(parent.Email);
 
         // Act
-        var result = await client.RevokeParentLink(parentId);
+        var result = await client.RevokeParentLink(parent.Id);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -62,14 +61,13 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var studentEmail = DataGen.Email;
-        var studentId = (await director.CreateStudent(DataGen.UserName, studentEmail, birthdate: AdultBirthdate).Success()).Id;
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email, birthdate: AdultBirthdate).Success();
         var otherStudentId = (await director.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
 
-        await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]);
+        await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]);
         var otherParentId = (await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = otherStudentId, Relationship = ParentRelationship.Father }]).Success()).Id;
 
-        var client = await _back.LoginAs(studentEmail);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
         var result = await client.RevokeParentLink(otherParentId);
@@ -83,13 +81,12 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var studentEmail = DataGen.Email;
         var birthdate = DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-18).AddDays(1);
-        var studentId = (await director.CreateStudent(DataGen.UserName, studentEmail, birthdate: birthdate).Success()).Id;
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email, birthdate: birthdate).Success();
 
-        var parentId = (await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success()).Id;
+        var parentId = (await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success()).Id;
 
-        var client = await _back.LoginAs(studentEmail);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
         var result = await client.RevokeParentLink(parentId);
@@ -103,12 +100,11 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var studentEmail = DataGen.Email;
-        var studentId = (await director.CreateStudent(DataGen.UserName, studentEmail).Success()).Id;
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
-        var parentId = (await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success()).Id;
+        var parentId = (await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success()).Id;
 
-        var client = await _back.LoginAs(studentEmail);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
         var result = await client.RevokeParentLink(parentId);
@@ -122,12 +118,11 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var studentEmail = DataGen.Email;
-        var studentId = (await director.CreateStudent(DataGen.UserName, studentEmail, birthdate: AdultBirthdate).Success()).Id;
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email, birthdate: AdultBirthdate).Success();
 
-        var parentId = (await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success()).Id;
+        var parentId = (await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success()).Id;
 
-        var client = await _back.LoginAs(studentEmail);
+        var client = await _back.LoginAs(student.Email);
         await client.RevokeParentLink(parentId).Success();
 
         // Act
@@ -146,12 +141,11 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var studentEmail = DataGen.Email;
-        var studentId = (await director.CreateStudent(DataGen.UserName, studentEmail, birthdate: AdultBirthdate).Success()).Id;
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email, birthdate: AdultBirthdate).Success();
 
-        var parentId = (await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success()).Id;
+        var parentId = (await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success()).Id;
 
-        var client = await _back.LoginAs(studentEmail);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
         var result = await client.RevokeParentLink(parentId);
@@ -170,13 +164,12 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var studentEmail = DataGen.Email;
-        var studentId = (await director.CreateStudent(DataGen.UserName, studentEmail, birthdate: AdultBirthdate).Success()).Id;
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email, birthdate: AdultBirthdate).Success();
 
-        var motherId = (await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success()).Id;
-        var fatherId = (await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Father }]).Success()).Id;
+        var motherId = (await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success()).Id;
+        var fatherId = (await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = student.Id, Relationship = ParentRelationship.Father }]).Success()).Id;
 
-        var client = await _back.LoginAs(studentEmail);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
         var result = await client.RevokeParentLink(motherId);

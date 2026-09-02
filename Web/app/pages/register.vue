@@ -36,9 +36,7 @@ const success = ref(false)
 
 function registerWithGoogle() {
   googleLoading.value = true
-  const email = state.email?.trim()
-  const params = email ? `?email=${encodeURIComponent(email)}` : ''
-  const url = `${config.public.backendUrl}/identity/social-login/challenge/Google${params}`
+  const url = `${config.public.backendUrl}/identity/social-login/challenge/Google`
   requestAnimationFrame(() => { window.location.href = url })
 }
 

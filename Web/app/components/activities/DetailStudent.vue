@@ -5,8 +5,10 @@ const props = defineProps<{ classId: string, activityId: string }>()
 
 const config = useRuntimeConfig()
 
+// "Turmas" não é link: pro aluno as turmas vivem no grupo da sidebar, não
+// numa página de listagem.
 const breadcrumb = computed(() => [
-  { label: 'Agenda', to: '/agenda', icon: 'i-lucide-calendar' },
+  { label: 'Turmas', icon: 'i-lucide-presentation' },
   { label: 'Detalhes', to: `/classes/${props.classId}` },
   { label: 'Atividade' },
 ])

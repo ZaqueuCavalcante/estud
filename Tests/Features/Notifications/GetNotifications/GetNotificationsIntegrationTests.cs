@@ -41,14 +41,13 @@ public partial class IntegrationTests
     {
         // Arrange
         var manager = await _back.LoggedAsDirector();
-        var teacherEmail = DataGen.Email;
-        await manager.CreateTeacher(DataGen.UserName, teacherEmail);
+        var teacher = await manager.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await manager.CreateNotification("Aviso importante", "Descrição do aviso.", UsersGroup.Teachers);
 
-        var teacher = await _back.LoginAs(teacherEmail);
+        var teacherClient = await _back.LoginAs(teacher.Email);
 
         // Act
-        var result = await teacher.GetNotifications();
+        var result = await teacherClient.GetNotifications();
 
         // Assert
         var notifications = result.Success;
@@ -64,15 +63,14 @@ public partial class IntegrationTests
     {
         // Arrange
         var manager = await _back.LoggedAsDirector();
-        var teacherEmail = DataGen.Email;
-        await manager.CreateTeacher(DataGen.UserName, teacherEmail);
+        var teacher = await manager.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await manager.CreateNotification(targetUsers: UsersGroup.Teachers);
 
-        var teacher = await _back.LoginAs(teacherEmail);
-        await teacher.MarkNotificationsAsViewed(markAll: true);
+        var teacherClient = await _back.LoginAs(teacher.Email);
+        await teacherClient.MarkNotificationsAsViewed(markAll: true);
 
         // Act
-        var result = await teacher.GetNotifications(unreadOnly: true).Success();
+        var result = await teacherClient.GetNotifications(unreadOnly: true).Success();
 
         // Assert
         result.Total.Should().Be(0);

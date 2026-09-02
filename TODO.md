@@ -12,7 +12,4 @@
 - Remover usos do GetDbContext
 
 
-- Professor pode adicionar nota a uma entrega de um aluno
-
-
 

@@ -837,21 +837,19 @@ public partial class IntegrationTests
         // Fotografia da ocupação antes de existir qualquer responsável.
         var occupancyBeforeParents = await directorClient.GetCampusOccupancy(campus.Id).Success();
 
-        var singleParentEmail = DataGen.Email;
-        await directorClient.CreateParent(DataGen.UserName, singleParentEmail,
+        var singleParent = await directorClient.CreateParent(DataGen.UserName, DataGen.Email,
         [
             new() { StudentId = onlyChild.Id, Relationship = ParentRelationship.Mother },
-        ]);
+        ]).Success();
 
-        var siblingsParentEmail = DataGen.Email;
-        await directorClient.CreateParent(DataGen.UserName, siblingsParentEmail,
+        var siblingsParent = await directorClient.CreateParent(DataGen.UserName, DataGen.Email,
         [
             new() { StudentId = firstSibling.Id, Relationship = ParentRelationship.Father },
             new() { StudentId = secondSibling.Id, Relationship = ParentRelationship.Father },
-        ]);
+        ]).Success();
 
-        var singleParentClient = await _back.LoginAs(singleParentEmail);
-        var siblingsParentClient = await _back.LoginAs(siblingsParentEmail);
+        var singleParentClient = await _back.LoginAs(singleParent.Email);
+        var siblingsParentClient = await _back.LoginAs(siblingsParent.Email);
 
         // Act
         var occupancy = await directorClient.GetCampusOccupancy(campus.Id).Success();
@@ -1250,13 +1248,12 @@ public partial class IntegrationTests
         var teacherEmails = new List<string>();
         foreach (var (assigned, index) in teacherDisciplines.Select((x, i) => (x, i)))
         {
-            var email = DataGen.Email;
-            var teacher = await directorClient.CreateTeacher(DataGen.UserName, email).Success();
+            var teacher = await directorClient.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
             await directorClient.AssignDisciplinesToTeacher(teacher.Id, assigned);
             // Os 6 primeiros no Agreste, os 4 últimos no Suassuna.
             await directorClient.AssignCampiToTeacher(teacher.Id, [index < 6 ? agreste.Id : suassuna.Id]);
             teacherIds.Add(teacher.Id);
-            teacherEmails.Add(email);
+            teacherEmails.Add(teacher.Email);
         }
 
         var days = new[] { Day.Monday, Day.Tuesday, Day.Wednesday, Day.Thursday, Day.Friday };
@@ -1326,17 +1323,16 @@ public partial class IntegrationTests
             ]);
         }
 
-        var siblingsParentEmail = DataGen.Email;
-        await directorClient.CreateParent(DataGen.UserName, siblingsParentEmail,
+        var siblingsParent = await directorClient.CreateParent(DataGen.UserName, DataGen.Email,
         [
             new() { StudentId = studentIds[0], Relationship = ParentRelationship.Father },
             new() { StudentId = studentIds[10], Relationship = ParentRelationship.Father },
-        ]);
+        ]).Success();
 
         var firstTeacherClient = await _back.LoginAs(teacherEmails[0]);
         var lastTeacherClient = await _back.LoginAs(teacherEmails[9]);
         var firstStudentClient = await _back.LoginAs(studentEmails[0]);
-        var siblingsParentClient = await _back.LoginAs(siblingsParentEmail);
+        var siblingsParentClient = await _back.LoginAs(siblingsParent.Email);
 
         // Act
         var agresteOccupancy = await directorClient.GetCampusOccupancy(agreste.Id).Success();

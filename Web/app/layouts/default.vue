@@ -7,7 +7,7 @@ const { can } = usePolicy()
 const { account } = useUserAccount()
 const { unreadCount } = useNotifications()
 const { isNotificationsSlideoverOpen } = useDashboard()
-const { classes: teacherClasses, fetchClasses: fetchTeacherClasses } = useTeacherClasses()
+const { classes: currentClasses, canSeeClasses, fetchClasses: fetchCurrentClasses } = useCurrentClasses()
 
 const { sidebarGroups, isLinkActive } = useSidebarNav()
 
@@ -21,12 +21,10 @@ const visibleGroups = computed<SidebarGroup[]>(() =>
     .filter(group => group.items.length > 0)
 )
 
-const canSeeTeacherClasses = can('GetTeacherCurrentClasses')
+watch(account, () => { fetchCurrentClasses() }, { immediate: true })
 
-watch(account, () => { fetchTeacherClasses() }, { immediate: true })
-
-const teacherClassesLinks = computed<NavigationMenuItem[]>(() =>
-  teacherClasses.value.map(({ id, name }) => {
+const currentClassesLinks = computed<NavigationMenuItem[]>(() =>
+  currentClasses.value.map(({ id, name }) => {
     const to = `/classes/${id}`
     return {
       label: name,
@@ -59,7 +57,7 @@ function toLink({ label, icon, to }: SidebarLink): NavigationMenuItem {
 // v-model o estado fica correto e ainda sobrevive ao reload.
 const collapsibleGroupIds = [
   ...sidebarGroups.filter(group => group.label).map(group => group.id),
-  TEACHER_CLASSES_GROUP_ID,
+  CURRENT_CLASSES_GROUP_ID,
 ]
 const openGroups = useLocalStorage<string[]>('estud-sidebar-open-groups', collapsibleGroupIds)
 
@@ -78,12 +76,12 @@ const links = computed<NavigationMenuItem[]>(() => {
       icon: group.icon,
       children: group.items.map(toLink),
     })),
-    ...(canSeeTeacherClasses.value
+    ...(canSeeClasses.value
       ? [{
-          value: TEACHER_CLASSES_GROUP_ID,
+          value: CURRENT_CLASSES_GROUP_ID,
           label: 'Turmas',
           icon: 'i-lucide-presentation',
-          children: teacherClassesLinks.value,
+          children: currentClassesLinks.value,
         }]
       : []),
   ]
@@ -112,11 +110,11 @@ const groups = computed(() => [
       onSelect: () => { open.value = false },
     })),
   })),
-  ...(canSeeTeacherClasses.value
+  ...(canSeeClasses.value
     ? [{
-        id: 'turmas',
+        id: CURRENT_CLASSES_GROUP_ID,
         label: 'Turmas',
-        items: teacherClassesLinks.value.map(({ label, to, onSelect }) => ({
+        items: currentClassesLinks.value.map(({ label, to, onSelect }) => ({
           label,
           to,
           onSelect,

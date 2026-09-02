@@ -41,10 +41,9 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
         var studentId = (await director.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
 
-        var parentEmail = DataGen.Email;
-        await director.CreateParent(DataGen.UserName, parentEmail, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]);
+        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();
 
-        var client = await _back.LoginAs(parentEmail);
+        var client = await _back.LoginAs(parent.Email);
 
         // Act
         var result = await client.GetParents();
@@ -128,12 +127,11 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
         var studentId = (await client.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
 
-        var email = DataGen.Email;
-        await client.CreateParent("Carlos Souza", email, [new() { StudentId = studentId, Relationship = ParentRelationship.Father }]);
+        var parent = await client.CreateParent("Carlos Souza", DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Father }]).Success();
         await client.CreateParent("Ana Lima", DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]);
 
         // Act
-        var result = await client.GetParents(email);
+        var result = await client.GetParents(parent.Email);
 
         // Assert
         var parents = result.Success;

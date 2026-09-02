@@ -5,13 +5,13 @@ public partial class IntegrationTests
     #region Authentication
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_not_get_agenda_when_not_authenticated()
+    public async Task Students_GetStudentAgenda_Should_not_get_agenda_when_not_authenticated()
     {
         // Arrange
         var client = _back.GetTestsClient();
 
         // Act
-        var result = await client.GetParentStudentAgenda(studentId: 1);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Unauthorized);
@@ -22,165 +22,29 @@ public partial class IntegrationTests
     #region Authorization
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_not_get_agenda_when_user_is_a_manager()
+    public async Task Students_GetStudentAgenda_Should_not_get_agenda_when_user_is_a_manager()
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.GetParentStudentAgenda(studentId: 1);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_not_get_agenda_when_user_is_a_teacher()
+    public async Task Students_GetStudentAgenda_Should_not_get_agenda_when_user_is_a_teacher()
     {
         // Arrange
         var client = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await client.GetParentStudentAgenda(studentId: 1);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
-    }
-
-    [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_not_get_agenda_when_user_is_a_student()
-    {
-        // Arrange
-        var director = await _back.LoggedAsDirector();
-        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        var client = await _back.LoginAs(student.Email);
-
-        // Act
-        var result = await client.GetParentStudentAgenda(student.Id);
-
-        // Assert
-        result.ShouldBeError(HttpStatusCode.Forbidden);
-    }
-
-    #endregion
-
-    #region Validation errors
-
-    [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_not_get_agenda_of_a_student_that_does_not_exist()
-    {
-        // Arrange
-        var director = await _back.LoggedAsDirector();
-        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
-
-        // Act
-        var result = await client.GetParentStudentAgenda(student.Id + 999_999);
-
-        // Assert
-        result.ShouldBeError(StudentNotFound.I);
-    }
-
-    [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_not_get_agenda_of_a_student_not_linked_to_the_parent()
-    {
-        // Arrange
-        var director = await _back.LoggedAsDirector();
-        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        var otherStudent = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
-
-        // Act
-        var result = await client.GetParentStudentAgenda(otherStudent.Id);
-
-        // Assert
-        result.ShouldBeError(StudentNotFound.I);
-    }
-
-    [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_not_get_agenda_when_the_link_is_revoked()
-    {
-        // Arrange
-        var director = await _back.LoggedAsDirector();
-        var @class = await director.ShortcutCreateStartedClass();
-        var studentId = @class.StudentIds[0];
-
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();
-        await director.RevokeParentStudentLink(parent.Id, studentId).Success();
-
-        var client = await _back.LoginAs(parent.Email);
-
-        // Act
-        var result = await client.GetParentStudentAgenda(studentId);
-
-        // Assert
-        result.ShouldBeError(StudentNotFound.I);
-    }
-
-    [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_not_get_agenda_when_the_link_was_revoked_by_the_student()
-    {
-        // Arrange
-        var director = await _back.LoggedAsDirector();
-        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email, birthdate: AdultBirthdate).Success();
-        await director.ShortcutCreateStartedClass(students: [student.Id]);
-
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success();
-
-        var studentClient = await _back.LoginAs(student.Email);
-        await studentClient.RevokeParentLink(parent.Id).Success();
-
-        var client = await _back.LoginAs(parent.Email);
-
-        // Act
-        var result = await client.GetParentStudentAgenda(student.Id);
-
-        // Assert
-        result.ShouldBeError(StudentNotFound.I);
-    }
-
-    [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_get_the_agenda_of_the_other_student_when_one_of_the_links_is_revoked()
-    {
-        // Arrange
-        var director = await _back.LoggedAsDirector();
-        var revokedClass = await director.ShortcutCreateStartedClass(disciplineName: "Geometria", day: Day.Monday);
-        var activeClass = await director.ShortcutCreateStartedClass(disciplineName: "Álgebra", day: Day.Wednesday);
-
-        var revokedStudentId = revokedClass.StudentIds[0];
-        var activeStudentId = activeClass.StudentIds[0];
-
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-        [
-            new() { StudentId = revokedStudentId, Relationship = ParentRelationship.Mother },
-            new() { StudentId = activeStudentId, Relationship = ParentRelationship.Mother },
-        ]).Success();
-        await director.RevokeParentStudentLink(parent.Id, revokedStudentId).Success();
-
-        var client = await _back.LoginAs(parent.Email);
-
-        // Act
-        var revokedResult = await client.GetParentStudentAgenda(revokedStudentId);
-        var activeResult = await client.GetParentStudentAgenda(activeStudentId);
-
-        // Assert
-        revokedResult.ShouldBeError(StudentNotFound.I);
-
-        activeResult.ShouldBeSuccess();
-        var days = activeResult.Success.Days;
-        days.Should().HaveCount(1);
-        days[0].Day.Should().Be(Day.Wednesday);
-        days[0].Disciplines[0].ClassId.Should().Be(activeClass.Id);
     }
 
     #endregion
@@ -188,19 +52,16 @@ public partial class IntegrationTests
     #region Happy path
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_get_empty_agenda_when_student_has_no_classes()
+    public async Task Students_GetStudentAgenda_Should_get_empty_agenda_when_student_has_no_classes()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.GetParentStudentAgenda(student.Id);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeSuccess();
@@ -208,20 +69,16 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_get_agenda_of_a_class_with_a_single_schedule()
+    public async Task Students_GetStudentAgenda_Should_get_agenda_of_a_class_with_a_single_schedule()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
         var @class = await director.ShortcutCreateStartedClass();
-        var studentId = @class.StudentIds[0];
 
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
+        var client = await _back.LoginAs(@class.StudentEmail);
 
         // Act
-        var result = await client.GetParentStudentAgenda(studentId);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeSuccess();
@@ -236,7 +93,7 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_order_the_disciplines_of_a_day_by_start_hour()
+    public async Task Students_GetStudentAgenda_Should_order_the_disciplines_of_a_day_by_start_hour()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -263,13 +120,10 @@ public partial class IntegrationTests
         await director.AssignStudentToClass(student.Id, nightClass.Id);
         await director.StartClass(nightClass.Id);
 
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.GetParentStudentAgenda(student.Id);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeSuccess();
@@ -285,22 +139,37 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_order_the_days_by_week_day_when_the_classes_are_created_out_of_order()
+    public async Task Students_GetStudentAgenda_Should_order_the_days_by_week_day_when_the_classes_are_created_out_of_order()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
+        var geometria = await director.CreateDiscipline("Geometria").Success();
+        var algebra = await director.CreateDiscipline("Álgebra").Success();
+        var period = await director.GetFirstAcademicPeriod();
+
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+        await director.AssignDisciplinesToTeacher(teacher.Id, [geometria.Id, algebra.Id]);
+
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
-        var fridayClass = await director.ShortcutCreateStartedClass(students: [student.Id], disciplineName: "Geometria", day: Day.Friday);
-        var mondayClass = await director.ShortcutCreateStartedClass(students: [student.Id], disciplineName: "Álgebra", day: Day.Monday);
+        var fridayClass = await director.CreateClass(geometria.Id, period.Id).Success();
+        await director.UpdateClassTeachers(fridayClass.Id, [teacher.Id]);
+        await director.UpdateClassSchedules(fridayClass.Id, [(Day.Friday, Hour.H07_00, Hour.H09_00, teacher.Id, null)]);
+        await director.ReleaseClassForEnrollment(fridayClass.Id);
+        await director.AssignStudentToClass(student.Id, fridayClass.Id);
+        await director.StartClass(fridayClass.Id);
 
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success();
+        var mondayClass = await director.CreateClass(algebra.Id, period.Id).Success();
+        await director.UpdateClassTeachers(mondayClass.Id, [teacher.Id]);
+        await director.UpdateClassSchedules(mondayClass.Id, [(Day.Monday, Hour.H07_00, Hour.H09_00, teacher.Id, null)]);
+        await director.ReleaseClassForEnrollment(mondayClass.Id);
+        await director.AssignStudentToClass(student.Id, mondayClass.Id);
+        await director.StartClass(mondayClass.Id);
 
-        var client = await _back.LoginAs(parent.Email);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.GetParentStudentAgenda(student.Id);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeSuccess();
@@ -312,7 +181,7 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_get_both_schedules_when_the_class_has_two_schedules_on_the_same_day()
+    public async Task Students_GetStudentAgenda_Should_get_both_schedules_when_the_class_has_two_schedules_on_the_same_day()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -335,13 +204,10 @@ public partial class IntegrationTests
         await director.AssignStudentToClass(student.Id, @class.Id);
         await director.StartClass(@class.Id);
 
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.GetParentStudentAgenda(student.Id);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeSuccess();
@@ -355,7 +221,7 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_get_two_classes_of_the_same_discipline_on_the_same_day()
+    public async Task Students_GetStudentAgenda_Should_get_two_classes_of_the_same_discipline_on_the_same_day()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -381,13 +247,10 @@ public partial class IntegrationTests
         await director.AssignStudentToClass(student.Id, nightClass.Id);
         await director.StartClass(nightClass.Id);
 
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.GetParentStudentAgenda(student.Id);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeSuccess();
@@ -399,7 +262,7 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_show_the_classroom_name_when_the_schedule_has_a_classroom_and_null_when_online()
+    public async Task Students_GetStudentAgenda_Should_show_the_classroom_name_when_the_schedule_has_a_classroom_and_null_when_online()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -424,13 +287,10 @@ public partial class IntegrationTests
         await director.AssignStudentToClass(student.Id, @class.Id);
         await director.StartClass(@class.Id);
 
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.GetParentStudentAgenda(student.Id);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeSuccess();
@@ -443,7 +303,7 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_get_the_schedules_without_a_teacher()
+    public async Task Students_GetStudentAgenda_Should_get_the_schedules_without_a_teacher()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -466,13 +326,10 @@ public partial class IntegrationTests
         await director.AssignStudentToClass(student.Id, @class.Id);
         await director.StartClass(@class.Id);
 
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.GetParentStudentAgenda(student.Id);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeSuccess();
@@ -484,7 +341,7 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_get_empty_agenda_when_the_class_is_on_enrollment()
+    public async Task Students_GetStudentAgenda_Should_get_empty_agenda_when_the_class_is_on_enrollment()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -502,13 +359,10 @@ public partial class IntegrationTests
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         await director.AssignStudentToClass(student.Id, @class.Id);
 
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.GetParentStudentAgenda(student.Id);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeSuccess();
@@ -516,12 +370,11 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_get_empty_agenda_when_the_class_is_finalized()
+    public async Task Students_GetStudentAgenda_Should_get_empty_agenda_when_the_class_is_finalized()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
         var @class = await director.ShortcutCreateStartedClass();
-        var studentId = @class.StudentIds[0];
 
         // TODO: use finalize class endpoint
         await using (var ctx = _back.GetDbContext())
@@ -531,13 +384,10 @@ public partial class IntegrationTests
             await ctx.SaveChangesAsync();
         }
 
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
+        var client = await _back.LoginAs(@class.StudentEmail);
 
         // Act
-        var result = await client.GetParentStudentAgenda(studentId);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeSuccess();
@@ -545,7 +395,7 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_get_only_the_started_class_when_the_student_is_also_in_a_not_started_one()
+    public async Task Students_GetStudentAgenda_Should_get_only_the_started_class_when_the_student_is_also_in_a_not_started_one()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -571,13 +421,10 @@ public partial class IntegrationTests
         await director.ReleaseClassForEnrollment(notStartedClass.Id);
         await director.AssignStudentToClass(student.Id, notStartedClass.Id);
 
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
+        var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.GetParentStudentAgenda(student.Id);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeSuccess();
@@ -590,7 +437,7 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_get_empty_agenda_when_the_student_is_no_longer_enrolled_in_the_class()
+    public async Task Students_GetStudentAgenda_Should_get_empty_agenda_when_the_student_is_no_longer_enrolled_in_the_class()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -605,13 +452,10 @@ public partial class IntegrationTests
             await ctx.SaveChangesAsync();
         }
 
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-            [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
+        var client = await _back.LoginAs(@class.StudentEmail);
 
         // Act
-        var result = await client.GetParentStudentAgenda(studentId);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeSuccess();
@@ -619,94 +463,44 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_get_a_separate_agenda_for_each_student_of_the_parent()
+    public async Task Students_GetStudentAgenda_Should_build_a_separate_agenda_for_each_student_of_two_classes()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
         var mondayClass = await director.ShortcutCreateStartedClass(disciplineName: "Geometria", day: Day.Monday);
         var wednesdayClass = await director.ShortcutCreateStartedClass(disciplineName: "Álgebra", day: Day.Wednesday);
 
-        var firstStudentId = mondayClass.StudentIds[0];
-        var secondStudentId = wednesdayClass.StudentIds[0];
-
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-        [
-            new() { StudentId = firstStudentId, Relationship = ParentRelationship.Mother },
-            new() { StudentId = secondStudentId, Relationship = ParentRelationship.Mother },
-        ]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
+        var mondayClient = await _back.LoginAs(mondayClass.StudentEmail);
+        var wednesdayClient = await _back.LoginAs(wednesdayClass.StudentEmail);
 
         // Act
-        var firstAgenda = await client.GetParentStudentAgenda(firstStudentId).Success();
-        var secondAgenda = await client.GetParentStudentAgenda(secondStudentId).Success();
+        var mondayAgenda = await mondayClient.GetStudentAgenda().Success();
+        var wednesdayAgenda = await wednesdayClient.GetStudentAgenda().Success();
 
         // Assert
-        firstAgenda.Days.Should().HaveCount(1);
-        firstAgenda.Days[0].Day.Should().Be(Day.Monday);
-        firstAgenda.Days[0].Disciplines.Should().HaveCount(1);
-        firstAgenda.Days[0].Disciplines[0].ClassId.Should().Be(mondayClass.Id);
-        firstAgenda.Days[0].Disciplines[0].Name.Should().Be("Geometria");
+        mondayAgenda.Days.Should().HaveCount(1);
+        mondayAgenda.Days[0].Day.Should().Be(Day.Monday);
+        mondayAgenda.Days[0].Disciplines[0].ClassId.Should().Be(mondayClass.Id);
 
-        secondAgenda.Days.Should().HaveCount(1);
-        secondAgenda.Days[0].Day.Should().Be(Day.Wednesday);
-        secondAgenda.Days[0].Disciplines.Should().HaveCount(1);
-        secondAgenda.Days[0].Disciplines[0].ClassId.Should().Be(wednesdayClass.Id);
-        secondAgenda.Days[0].Disciplines[0].Name.Should().Be("Álgebra");
+        wednesdayAgenda.Days.Should().HaveCount(1);
+        wednesdayAgenda.Days[0].Day.Should().Be(Day.Wednesday);
+        wednesdayAgenda.Days[0].Disciplines[0].ClassId.Should().Be(wednesdayClass.Id);
     }
 
     [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_get_the_same_agenda_for_two_students_of_the_parent_in_the_same_class()
+    public async Task Students_GetStudentAgenda_Should_not_get_the_classes_of_another_institution()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var @class = await director.ShortcutCreateStartedClass(studentsCount: 2);
-        var firstStudentId = @class.StudentIds[0];
-        var secondStudentId = @class.StudentIds[1];
+        var @class = await director.ShortcutCreateStartedClass();
 
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-        [
-            new() { StudentId = firstStudentId, Relationship = ParentRelationship.Mother },
-            new() { StudentId = secondStudentId, Relationship = ParentRelationship.Mother },
-        ]).Success();
+        var otherDirector = await _back.LoggedAsDirector();
+        await otherDirector.ShortcutCreateStartedClass(day: Day.Wednesday);
 
-        var client = await _back.LoginAs(parent.Email);
+        var client = await _back.LoginAs(@class.StudentEmail);
 
         // Act
-        var firstAgenda = await client.GetParentStudentAgenda(firstStudentId).Success();
-        var secondAgenda = await client.GetParentStudentAgenda(secondStudentId).Success();
-
-        // Assert
-        firstAgenda.Days.Should().HaveCount(1);
-        firstAgenda.Days[0].Day.Should().Be(Day.Monday);
-        firstAgenda.Days[0].Disciplines[0].ClassId.Should().Be(@class.Id);
-
-        secondAgenda.Days.Should().HaveCount(1);
-        secondAgenda.Days[0].Day.Should().Be(Day.Monday);
-        secondAgenda.Days[0].Disciplines[0].ClassId.Should().Be(@class.Id);
-    }
-
-    [Test]
-    public async Task Parents_GetParentStudentAgenda_Should_get_only_the_agenda_of_the_requested_student_when_the_parent_has_two_students()
-    {
-        // Arrange
-        var director = await _back.LoggedAsDirector();
-        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        var sibling = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-
-        var @class = await director.ShortcutCreateStartedClass(students: [student.Id], disciplineName: "Geometria", day: Day.Monday);
-        await director.ShortcutCreateStartedClass(students: [sibling.Id], disciplineName: "Álgebra", day: Day.Monday);
-
-        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
-        [
-            new() { StudentId = student.Id, Relationship = ParentRelationship.Mother },
-            new() { StudentId = sibling.Id, Relationship = ParentRelationship.Mother },
-        ]).Success();
-
-        var client = await _back.LoginAs(parent.Email);
-
-        // Act
-        var result = await client.GetParentStudentAgenda(student.Id);
+        var result = await client.GetStudentAgenda();
 
         // Assert
         result.ShouldBeSuccess();
@@ -715,7 +509,6 @@ public partial class IntegrationTests
         days[0].Day.Should().Be(Day.Monday);
         days[0].Disciplines.Should().HaveCount(1);
         days[0].Disciplines[0].ClassId.Should().Be(@class.Id);
-        days[0].Disciplines[0].Name.Should().Be("Geometria");
     }
 
     #endregion

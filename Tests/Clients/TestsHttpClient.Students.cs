@@ -11,6 +11,7 @@ using Estud.Back.Features.Students.CreateClassActivityWork;
 using Estud.Back.Features.Students.GetStudentClassActivity;
 using Estud.Back.Features.Students.GetStudentCourseDetails;
 using Estud.Back.Features.Students.ValidateEnrollmentProof;
+using Estud.Back.Features.Students.GetStudentCurrentClasses;
 using Estud.Back.Features.Students.GetStudentClassActivities;
 using Estud.Back.Features.Students.GetStudentAttendanceCalendar;
 using Estud.Back.Features.Students.EnrollStudentInCourseOffering;
@@ -144,5 +145,11 @@ public partial class TestsHttpClient
     {
         var response = await http.GetAsync("/students/agenda");
         return await response.Resolve<GetStudentAgendaOut>();
+    }
+
+    public async Task<OneOf<GetStudentCurrentClassesOut, ErrorOut>> GetStudentCurrentClasses()
+    {
+        var response = await http.GetAsync("/students/current-classes");
+        return await response.Resolve<GetStudentCurrentClassesOut>();
     }
 }

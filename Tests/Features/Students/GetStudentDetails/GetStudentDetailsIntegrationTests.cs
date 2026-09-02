@@ -91,8 +91,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var email = DataGen.Email;
-        var student = await client.CreateStudent("Ana Lima", email).Success();
+        var student = await client.CreateStudent("Ana Lima", DataGen.Email).Success();
 
         // Act
         var result = await client.GetStudentDetails(student.Id);
@@ -101,7 +100,7 @@ public partial class IntegrationTests
         var details = result.Success;
         details.Id.Should().Be(student.Id);
         details.Name.Should().Be("Ana Lima");
-        details.Email.Should().Be(email);
+        details.Email.Should().Be(student.Email);
         details.EnrollmentCode.Should().NotBeEmpty();
         details.Status.Should().Be(StudentStatus.Enrolled);
         details.Course.Should().BeNull();

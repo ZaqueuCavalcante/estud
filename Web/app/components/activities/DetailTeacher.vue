@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GetTeacherClassActivityOut } from '~/types/classes'
+import type { GetTeacherClassActivityOut, TeacherActivityWorkItem } from '~/types/classes'
 
 const props = defineProps<{ classId: string, activityId: string }>()
 
@@ -13,7 +13,7 @@ const breadcrumb = computed(() => [
   { label: 'Atividade' },
 ])
 
-const { data, status, error } = await useFetch<GetTeacherClassActivityOut>(
+const { data, status, error, refresh } = await useFetch<GetTeacherClassActivityOut>(
   `${config.public.backendUrl}/teachers/classes/${props.classId}/activities/${props.activityId}`,
   { credentials: 'include', server: false },
 )
@@ -26,6 +26,14 @@ const works = computed(() => {
     ponderedValue: work.value * weight / 100,
   }))
 })
+
+const noteModalOpen = ref(false)
+const selectedWork = ref<TeacherActivityWorkItem | null>(null)
+
+function openNoteModal(work: TeacherActivityWorkItem) {
+  selectedWork.value = work
+  noteModalOpen.value = true
+}
 </script>
 
 <template>
@@ -135,6 +143,14 @@ const works = computed(() => {
                   :color="classActivityWorkStatusColors[work.status] ?? 'neutral'"
                   variant="subtle"
                 />
+                <UButton
+                  :icon="work.status === 'Finalized' ? 'i-lucide-pencil' : 'i-lucide-award'"
+                  :label="work.status === 'Finalized' ? 'Editar nota' : 'Dar nota'"
+                  color="neutral"
+                  variant="subtle"
+                  size="xs"
+                  @click="() => { openNoteModal(work) }"
+                />
               </div>
             </div>
           </div>
@@ -145,6 +161,13 @@ const works = computed(() => {
             </p>
           </div>
         </section>
+
+        <ActivitiesAddNoteModal
+          v-model:open="noteModalOpen"
+          :activity-id="props.activityId"
+          :work="selectedWork"
+          @saved="() => { refresh() }"
+        />
       </div>
     </template>
   </UDashboardPanel>

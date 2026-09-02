@@ -85,12 +85,11 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var usedEmail = DataGen.Email;
-        await client.CreateTeacher("Carlos Souza", usedEmail);
+        var otherTeacher = await client.CreateTeacher("Carlos Souza", DataGen.Email).Success();
         var teacher = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
 
         // Act
-        var result = await client.UpdateTeacher(teacher.Id, name: "Ana Lima", email: usedEmail);
+        var result = await client.UpdateTeacher(teacher.Id, name: "Ana Lima", email: otherTeacher.Email);
 
         // Assert
         result.ShouldBeError(EmailAlreadyUsed.I);

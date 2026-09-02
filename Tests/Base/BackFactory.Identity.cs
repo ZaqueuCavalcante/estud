@@ -90,17 +90,16 @@ public static class BackFactoryIdentity
     {
         var directorClient = await factory.LoggedAsDirector();
 
-        var email = DataGen.Email;
-        var result = await directorClient.CreateTeacher(DataGen.UserName, email);
+        var teacher = await directorClient.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         await using var ctx = factory.GetDbContext();
-        var user = await ctx.Users.Where(u => u.Email == email).FirstAsync();
+        var user = await ctx.Users.Where(u => u.Email == teacher.Email).FirstAsync();
         var magicLink = new MagicLink(user);
         await ctx.SaveChangesAsync(magicLink);
 
         var client = factory.GetTestsClient();
 
-        var token = await factory.GetMagicLinkToken(email);
+        var token = await factory.GetMagicLinkToken(teacher.Email);
         await client.MagicLinkLogin(token!);
 
         var institutionId = await ctx.UserRoles.Where(x => x.UserId == user.Id).Select(x => x.InstitutionId).FirstAsync();

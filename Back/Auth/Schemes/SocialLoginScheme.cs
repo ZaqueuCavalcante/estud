@@ -40,7 +40,6 @@ public static class SocialLoginScheme
             {
                 OnRemoteFailure = HandleRemoteFailure,
                 OnTicketReceived = HandleTicketReceived,
-                OnRedirectToAuthorizationEndpoint = HandleRedirectToAuthorizationEndpoint,
             };
         });
 
@@ -52,16 +51,6 @@ public static class SocialLoginScheme
         var frontend = context.HttpContext.RequestServices.GetRequiredService<FrontendSettings>();
         context.Response.Redirect($"{frontend.Url}?social_login_error={nameof(SocialLoginFailed)}");
         context.HandleResponse();
-    }
-
-    private static Task HandleRedirectToAuthorizationEndpoint(RedirectContext<OAuthOptions> context)
-    {
-        if (context.Properties.Items.TryGetValue("login_hint", out var loginHint) && loginHint != null)
-        {
-            context.RedirectUri += $"&login_hint={Uri.EscapeDataString(loginHint)}";
-        }
-        context.Response.Redirect(context.RedirectUri);
-        return Task.CompletedTask;
     }
 
     private static async Task HandleTicketReceived(TicketReceivedContext context)

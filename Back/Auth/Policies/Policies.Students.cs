@@ -14,6 +14,7 @@ public static partial class Policies
     public const string GetStudentClass = nameof(GetStudentClass);
     public const string GetStudentAgenda = nameof(GetStudentAgenda);
     public const string GetStudentCourseDetails = nameof(GetStudentCourseDetails);
+    public const string GetStudentCurrentClasses = nameof(GetStudentCurrentClasses);
     public const string GetStudentAttendanceCalendar = nameof(GetStudentAttendanceCalendar);
 
     public const string GenerateEnrollmentProof = nameof(GenerateEnrollmentProof);
@@ -37,6 +38,7 @@ public static partial class Policies
             .AddEstudPolicy(GetStudentClass, UserType.Student)
             .AddEstudPolicy(GetStudentAgenda, UserType.Student)
             .AddEstudPolicy(GetStudentCourseDetails, UserType.Student)
+            .AddEstudPolicy(GetStudentCurrentClasses, UserType.Student)
             .AddEstudPolicy(GetStudentAttendanceCalendar, UserType.Student);
 
         builder

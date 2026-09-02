@@ -75,8 +75,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
 
-        var email = DataGen.Email;
-        await director.CreateTeacher(DataGen.UserName, email);
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         var otherTeacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
@@ -85,7 +84,7 @@ public partial class IntegrationTests
         var period = await director.GetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(teacher.Email);
 
         // Act
         var result = await client.GetTeacherClassActivities(@class.Id);
@@ -104,8 +103,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
 
-        var email = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
@@ -114,7 +112,7 @@ public partial class IntegrationTests
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(teacher.Email);
 
         // Act
         var result = await client.GetTeacherClassActivities(@class.Id);
@@ -129,8 +127,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
 
-        var email = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
@@ -139,7 +136,7 @@ public partial class IntegrationTests
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(teacher.Email);
 
         var dueDate = DateTime.UtcNow.AddDays(7).ToDateOnly();
         await client.CreateClassActivity(
@@ -181,8 +178,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
 
-        var email = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, email).Success();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
@@ -191,7 +187,7 @@ public partial class IntegrationTests
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
-        var client = await _back.LoginAs(email);
+        var client = await _back.LoginAs(teacher.Email);
 
         await client.CreateClassActivity(@class.Id, ClassNoteType.N3, type: ClassActivityType.Project, weight: 100);
         await client.CreateClassActivity(@class.Id, ClassNoteType.N1, type: ClassActivityType.Work, weight: 25);

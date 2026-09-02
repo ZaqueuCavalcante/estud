@@ -34,14 +34,14 @@ export const Permissions = {
   // Classes
   ManageClasses: 1000,
 
-  // Classrooms
-  ManageClassrooms: 1300,
-
   // Webhooks
   ManageWebhooks: 1100,
 
   // Notifications
   ManageNotifications: 1200,
+
+  // Classrooms
+  ManageClassrooms: 1300,
 
   // Calendar
   ManageCalendar: 1400,
@@ -170,6 +170,8 @@ export type PolicyName
     | 'StartClass'
     | 'GetTeacherClass'
     | 'GetStudentClass'
+    | 'GetTeacherCurrentClasses'
+    | 'GetStudentCurrentClasses'
   // Classrooms
     | 'AccessClassroomsPage'
     | 'GetClassroom'
@@ -197,8 +199,6 @@ export type PolicyName
     | 'GetInstitutionNotifications'
   // Agenda
     | 'AccessAgendaPage'
-  // TeacherClasses
-    | 'GetTeacherCurrentClasses'
   // Calendar
     | 'AccessCalendarPage'
     | 'GetCalendar'

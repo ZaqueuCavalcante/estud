@@ -39,14 +39,13 @@ public partial class IntegrationTests
     {
         // Arrange
         var manager = await _back.LoggedAsDirector();
-        var teacherEmail = DataGen.Email;
-        await manager.CreateTeacher(DataGen.UserName, teacherEmail);
+        var teacher = await manager.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await manager.CreateNotification(targetUsers: UsersGroup.Teachers);
 
-        var teacher = await _back.LoginAs(teacherEmail);
+        var teacherClient = await _back.LoginAs(teacher.Email);
 
         // Act
-        var result = await teacher.GetUnreadNotificationsCount();
+        var result = await teacherClient.GetUnreadNotificationsCount();
 
         // Assert
         result.Success.Count.Should().Be(1);

@@ -89,7 +89,11 @@ public class EnrollmentProofDocument(EnrollmentProof proof, string validationUrl
                         text.DefaultTextStyle(x => x.FontSize(9).FontColor(Colors.Grey.Darken1));
                         text.Span("Confira a validade deste comprovante em:");
                     });
-                    info.Item().Text(validationUrl).FontSize(9).FontColor(Colors.Blue.Medium);
+                    info.Item().Text(text =>
+                    {
+                        text.Hyperlink(validationUrl, validationUrl)
+                            .FontSize(9).FontColor(Colors.Blue.Medium).Underline();
+                    });
                 });
 
                 row.ConstantItem(88).Image(GenerateQrCode());

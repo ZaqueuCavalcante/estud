@@ -446,11 +446,17 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
     ],
   },
 
-  // TeacherClasses
+  // CurrentClasses
   GetTeacherCurrentClasses: {
     description: "Ver as turmas atuais do professor",
     requirements: [
       hasUserType(UserTypes.Teacher),
+    ],
+  },
+  GetStudentCurrentClasses: {
+    description: "Ver as turmas atuais do aluno",
+    requirements: [
+      hasUserType(UserTypes.Student),
     ],
   },
 

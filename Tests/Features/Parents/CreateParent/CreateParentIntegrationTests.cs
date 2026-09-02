@@ -59,11 +59,10 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
         var studentId = (await client.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
 
-        var email = DataGen.Email;
-        await client.CreateParent(DataGen.UserName, email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]);
+        var parent = await client.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();
 
         // Act
-        var result = await client.CreateParent(DataGen.UserName, email, [new() { StudentId = studentId, Relationship = ParentRelationship.Father }]);
+        var result = await client.CreateParent(DataGen.UserName, parent.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Father }]);
 
         // Assert
         result.ShouldBeError(EmailAlreadyUsed.I);
