@@ -35,6 +35,7 @@ public class Class
     public List<ClassLesson> Lessons { get; set; }
     public List<EstudTeacher> Teachers { get; set; }
     public List<EstudStudent> Students { get; set; }
+    public List<ClassActivity> Activities { get; set; }
 
     private Class() {}
 
@@ -55,6 +56,7 @@ public class Class
         Teachers = [];
         Students = [];
         Schedules = [];
+        Activities = [];
     }
 
     public void UpdateTeachers(List<EstudTeacher> teachers)

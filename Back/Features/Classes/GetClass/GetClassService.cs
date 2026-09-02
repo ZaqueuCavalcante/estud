@@ -7,11 +7,12 @@ public class GetClassService(EstudDbContext ctx) : IEstudService
         var institutionId = ctx.RequestUser.InstitutionId;
 
         var @class = await ctx.Classes.AsNoTracking()
-            .Include(c => c.Discipline)
-            .Include(c => c.Teachers)
             .Include(c => c.Period)
             .Include(c => c.Campus)
+            .Include(c => c.Teachers)
             .Include(c => c.Schedules)
+            .Include(c => c.Discipline)
+            .Include(c => c.Activities)
             .FirstOrDefaultAsync(c => c.Id == classId && c.InstitutionId == institutionId);
         if (@class == null) return ClassNotFound.I;
 
@@ -33,20 +34,26 @@ public class GetClassService(EstudDbContext ctx) : IEstudService
             .ToDictionaryAsync(c => c.Id, c => c.Name);
 
         var classStudents = await GetClassStudents(classId);
+        var classStudentsNotes = await GetClassStudentsNotes(classId);
 
-        // Mock: nota média aleatória, porém estáveis por aluno (seed = Id).
-        // TODO: calcular a partir das notas reais do aluno na turma.
         var students = classStudents
             .Select(s =>
             {
-                var random = new Random(s.Id);
+                decimal sum = 0;
+                var notes = classStudentsNotes.Where(x => x.Id == s.Id);
+                foreach (var note in notes)
+                {
+                    var weight = @class.Activities.First(x => x.Id == note.ActivityId).Weight;
+                    sum += note.Note * weight;
+                }
+
                 var attendances = s.Presences + s.Absences;
                 return new GetClassStudentOut
                 {
                     Id = s.Id,
                     Name = s.Name,
                     Status = s.Status,
-                    AverageGrade = Math.Round((decimal)(random.NextDouble() * 10), 1),
+                    AverageGrade = Math.Round(sum / 100M, 1),
                     AverageAttendance = attendances > 0 ? Math.Round((decimal)s.Presences / attendances * 100, 1) : 0,
                 };
             })
@@ -112,6 +119,30 @@ public class GetClassService(EstudDbContext ctx) : IEstudService
 
         return await ctx.Database
             .SqlQueryRaw<GetClassStudentDto>(sql, classId)
+            .AsNoTracking().ToListAsync();
+    }
+
+    private async Task<List<GetClassStudentNoteDto>> GetClassStudentsNotes(int classId)
+    {
+        const string sql = @"
+            SELECT
+                cs.student_id AS id,
+                ca.id         AS activity_id,
+                caw.note      AS note
+            FROM
+                estud.classes__students cs
+            INNER JOIN
+                estud.class_activities ca ON ca.class_id = cs.class_id
+            INNER JOIN
+            	estud.class_activity_works caw ON caw.class_activity_id = ca.id AND caw.student_id = cs.student_id
+            WHERE
+                cs.class_id = {0}
+            ORDER BY
+            	cs.student_id
+        ";
+
+        return await ctx.Database
+            .SqlQueryRaw<GetClassStudentNoteDto>(sql, classId)
             .AsNoTracking().ToListAsync();
     }
 }

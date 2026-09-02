@@ -8,3 +8,10 @@ public class GetClassStudentDto
     public int Presences { get; set; }
     public int Absences { get; set; }
 }
+
+public class GetClassStudentNoteDto
+{
+    public int Id { get; set; }
+    public int ActivityId { get; set; }
+    public decimal Note { get; set; }
+}

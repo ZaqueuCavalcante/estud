@@ -15,13 +15,6 @@ public class ClassDbConfig : IEntityTypeConfiguration<Class>
             .WithMany()
             .HasForeignKey(e => e.CampusId);
 
-        entity.HasMany(e => e.Teachers)
-            .WithMany()
-            .UsingEntity<ClassTeacher>(
-                right => right.HasOne<EstudTeacher>().WithMany().HasForeignKey(ct => ct.TeacherId),
-                left => left.HasOne<Class>().WithMany().HasForeignKey(ct => ct.ClassId)
-            );
-
         entity.HasOne(e => e.Discipline)
             .WithMany()
             .HasForeignKey(e => e.DisciplineId);
@@ -34,9 +27,20 @@ public class ClassDbConfig : IEntityTypeConfiguration<Class>
             .WithOne(l => l.Class)
             .HasForeignKey(l => l.ClassId);
 
+        entity.HasMany(e => e.Activities)
+            .WithOne()
+            .HasForeignKey(a => a.ClassId);
+
         entity.HasOne(e => e.Period)
             .WithMany()
             .HasPrincipalKey(p => new { p.Id, p.InstitutionId })
             .HasForeignKey(e => new { e.PeriodId, e.InstitutionId });
+
+        entity.HasMany(e => e.Teachers)
+            .WithMany()
+            .UsingEntity<ClassTeacher>(
+                right => right.HasOne<EstudTeacher>().WithMany().HasForeignKey(ct => ct.TeacherId),
+                left => left.HasOne<Class>().WithMany().HasForeignKey(ct => ct.ClassId)
+            );
     }
 }

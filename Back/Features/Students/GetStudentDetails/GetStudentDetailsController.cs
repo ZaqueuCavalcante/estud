@@ -7,7 +7,7 @@ public class GetStudentDetailsController(GetStudentDetailsService service) : Con
     /// Buscar detalhes do aluno
     /// </summary>
     /// <remarks>
-    /// Retorna os detalhes de um aluno da instituição do usuário logado, incluindo a oferta de curso atual e as turmas em que está matriculado.
+    /// Retorna os detalhes de um aluno, incluindo a oferta de curso atual e as turmas em que está matriculado.
     /// </remarks>
     [HttpGet("students/{studentId}/details")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]

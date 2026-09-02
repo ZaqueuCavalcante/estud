@@ -12,4 +12,10 @@
 - Remover usos do GetDbContext
 
 
+- ❌ GetStudentDetailsController (falta nota)
+
+
+- ❌ GetClassController (falta nota do aluno)
+- ❌ GetTeacherClassStudentsController (falta nota)
+
 

@@ -7,7 +7,7 @@ public class GetClassController(GetClassService service) : ControllerBase
     /// Buscar turma
     /// </summary>
     /// <remarks>
-    /// Retorna os detalhes de uma turma da instituição do usuário logado, incluindo horários e alunos matriculados.
+    /// Retorna os detalhes de uma turma, incluindo horários e alunos matriculados.
     /// </remarks>
     [HttpGet("classes/{classId}")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]
