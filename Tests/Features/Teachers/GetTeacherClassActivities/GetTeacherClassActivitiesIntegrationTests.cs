@@ -211,23 +211,9 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+        var @class = await director.ShortcutCreateStartedClass();
 
-        var discipline = await director.CreateDiscipline().Success();
-        await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
-
-        var period = await director.GetFirstAcademicPeriod();
-        var @class = await director.CreateClass(discipline.Id, period.Id).Success();
-        await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
-        await director.ReleaseClassForEnrollment(@class.Id);
-
-        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        await director.AssignStudentToClass(student.Id, @class.Id);
-
-        await director.StartClass(@class.Id).Success();
-
-        var client = await _back.LoginAs(teacher.Email);
+        var client = await _back.LoginAs(@class.TeacherEmail);
         await client.CreateClassActivity(@class.Id);
 
         // Act

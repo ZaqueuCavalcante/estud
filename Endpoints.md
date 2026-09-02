@@ -1,4 +1,4 @@
-﻿# Endpoints ✅
+﻿# Endpoints ✅ ❌
 
 ## Admin
 - ✅ GetDomainEventsController
@@ -127,8 +127,8 @@
 - ✅ GetPermissionsController
 - ✅ MagicLinkLoginController
 - ✅ CheckSocialLoginAvailabilityController
-- GoogleOneTapLoginController
-- SocialLoginChallengeController
+- ❌ GoogleOneTapLoginController
+- ❌ SocialLoginChallengeController
 
 ## Students
 - ✅ GetStudentController
@@ -143,9 +143,9 @@
 - ✅ GetStudentClassActivitiesController
 - ✅ GetStudentClassActivityController
 - ✅ CreateClassActivityWorkController
-- GetStudentAgendaController
-- GetStudentDetailsController
-- GetStudentAttendanceCalendarController
+- ❌ GetStudentAgendaController
+- ❌ GetStudentDetailsController
+- ❌ GetStudentAttendanceCalendarController
 
 ## Teachers
 - ✅ GetTeachersController
@@ -164,11 +164,11 @@
 - ✅ GetTeacherCurrentClassesController
 - ✅ GetTeacherPotentialCampiController
 - ✅ GetTeacherPotentialDisciplinesController
-- GetTeacherAgendaController
+- ❌ GetTeacherAgendaController
 
 ## Parents
 - ✅ GetParentsController
 - ✅ CreateParentController
 - ✅ GetParentDetailsController
 - ✅ GetParentStudentsController
-- GetParentStudentAgendaController (revisar endpoint, testes e front)
+- ❌ GetParentStudentAgendaController (revisar endpoint, testes e front)

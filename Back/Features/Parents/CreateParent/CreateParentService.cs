@@ -54,6 +54,6 @@ public class CreateParentService(EstudDbContext ctx, UserManager<EstudUser> user
 
         await userManager.CreateAsync(user, $"Estud@{Guid.NewGuid()}");
 
-        return new CreateParentOut { Id = parent.Id };
+        return new CreateParentOut { Id = parent.Id, Email = email };
     }
 }

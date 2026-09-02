@@ -1,0 +1,73 @@
+name: Mutation Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  mutation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    permissions:
+      contents: write
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.200
+
+      - name: Install native deps for PDF rendering
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig1
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Restore .NET tools
+        run: dotnet tool restore
+
+      - name: Run mutation tests
+        working-directory: Tests
+        run: dotnet stryker --output ./StrykerOutput
+
+      - name: Collect report
+        shell: bash
+        run: |
+          html=$(find Tests/StrykerOutput -name 'mutation-report.html' -printf '%T@ %p\n' | sort -rn | head -1 | cut -d' ' -f2-)
+          cp -r "$(dirname "$html")" mutation
+          mv mutation/mutation-report.html mutation/index.html
+          ls -lah mutation
+
+      - name: Upload mutation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report-${{ github.run_number }}
+          path: mutation
+          retention-days: 30
+
+      - name: Publish to https://zaqueucavalcante.github.io/estud/mutation
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: mutation
+          destination_dir: mutation
+          keep_files: true

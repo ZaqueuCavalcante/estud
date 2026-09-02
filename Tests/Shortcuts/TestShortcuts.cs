@@ -41,14 +41,16 @@ public static class TestShortcuts
         this TestsHttpClient client,
         List<int>? students = null,
         string disciplineName = "Geometria",
-        Day day = Day.Monday
+        Day day = Day.Monday,
+        int studentsCount = 1,
+        int? periodId = null
     ) {
         var discipline = await client.CreateDiscipline(disciplineName).Success();
         var teacher = await client.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await client.GetFirstAcademicPeriod();
-        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
+        periodId ??= (await client.GetFirstAcademicPeriod()).Id;
+        var @class = await client.CreateClass(discipline.Id, periodId.Value).Success();
         await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
         await client.UpdateClassSchedules(@class.Id, [(day, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
 
@@ -58,13 +60,19 @@ public static class TestShortcuts
 
         if (students is null)
         {
-            var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-            students = [student.Id];
-            result.StudentEmail = student.Email;
+            students = [];
+            for (var i = 0; i < studentsCount; i++)
+            {
+                var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+                students.Add(student.Id);
+                if (i == 0) result.StudentEmail = student.Email;
+            }
         }
 
         foreach (var studentId in students)
             await client.AssignStudentToClass(studentId, @class.Id);
+
+        result.StudentIds = students;
 
         await client.StartClass(@class.Id);
 

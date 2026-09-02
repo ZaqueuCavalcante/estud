@@ -3,10 +3,27 @@
     {
         "solution": "../Estud.slnx",
         "project": "Back.csproj",
+        "test-runner": "vstest",
+        "test-case-filter": "FullyQualifiedName~UnitTests",
         "mutation-level": "Complete",
-        "reporters": [ "html" ],
+        "coverage-analysis": "perTest",
+        "concurrency": 4,
+        "additional-timeout": 10000,
+        "break-on-initial-test-failure": true,
+        "reporters": [ "html", "progress" ],
+        "thresholds": { "high": 80, "low": 60, "break": 0 },
+        "mutate": [
+            "**/Domain/**/*.cs",
+            "**/Extensions/**/*.cs",
+            "**/Commands/*.cs",
+            "!**/Domain/Enums/**",
+            "!**/*Config.cs"
+        ],
         "ignore-methods": [
-            "*GetExamples*"
+            "*GetExamples*",
+            "*ToString*",
+            "*Dispose*",
+            "*Log*"
         ]
     }
 }

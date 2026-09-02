@@ -43,3 +43,6 @@ msbuild.wrn
 crash.log
 crash.*.log
 /tests.txt
+
+# Mutation testing
+/Tests/StrykerOutput

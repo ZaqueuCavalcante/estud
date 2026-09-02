@@ -16,5 +16,23 @@ reportgenerator -reports:"./TestResults/coverage.cobertura.xml" -targetdir:"./Te
 
 # Mutation
 
-cd tests
-dotnet stryker -o
+dotnet tool restore
+
+cd Tests
+dotnet stryker
+
+Hoje a config roda **só os unit tests** (`test-case-filter`), mutando `Domain/`,
+`Extensions/` e `Commands/` — os unit tests sao puros, entao nao sobem Postgres,
+Kestrel nem o banco compartilhado, e `concurrency` pode ser > 1.
+
+Pra colocar os testes de integracao de volta, em `stryker-config.json`:
+
+- tirar o `test-case-filter`
+- baixar `concurrency` pra **1** — `BackFactory` fixa a porta 5100,
+  `MocksFactory` a 5678 e o banco `estud-tests-db` tem nome fixo, entao dois
+  workers do Stryker disputam os tres
+- ampliar o `mutate` (ex: `**/Features/**/*Service.cs`)
+
+Um recorte pontual sobrescreve o `mutate` da config:
+
+dotnet stryker -m "**/Extensions/**/*.cs"

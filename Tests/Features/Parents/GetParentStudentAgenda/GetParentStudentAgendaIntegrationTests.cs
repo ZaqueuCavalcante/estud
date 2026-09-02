@@ -11,7 +11,7 @@ public partial class IntegrationTests
         var client = _back.GetTestsClient();
 
         // Act
-        var result = await client.GetParentStudentAgenda(1);
+        var result = await client.GetParentStudentAgenda(studentId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Unauthorized);
@@ -28,7 +28,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.GetParentStudentAgenda(1);
+        var result = await client.GetParentStudentAgenda(studentId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -39,13 +39,11 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var studentEmail = DataGen.Email;
-        var studentId = (await director.CreateStudent(DataGen.UserName, studentEmail).Success()).Id;
-
-        var client = await _back.LoginAs(studentEmail);
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.GetParentStudentAgenda(studentId);
+        var result = await client.GetParentStudentAgenda(student.Id);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -60,13 +58,11 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var linkedStudentId = (await director.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
+        var studentId = (await director.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
         var otherStudentId = (await director.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
 
-        var parentEmail = DataGen.Email;
-        await director.CreateParent(DataGen.UserName, parentEmail, [new() { StudentId = linkedStudentId, Relationship = ParentRelationship.Mother }]);
-
-        var client = await _back.LoginAs(parentEmail);
+        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();
+        var client = await _back.LoginAs(parent.Email);
 
         // Act
         var result = await client.GetParentStudentAgenda(otherStudentId);
@@ -82,17 +78,10 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
         var studentId = (await director.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
 
-        var parentEmail = DataGen.Email;
-        var parentId = (await director.CreateParent(DataGen.UserName, parentEmail, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success()).Id;
+        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();
+        await director.RevokeParentStudentLink(parent.Id, studentId).Success();
 
-        await using (var ctx = _back.GetDbContext())
-        {
-            var link = await ctx.ParentStudents.FirstAsync(x => x.ParentId == parentId);
-            link.Status = ParentStudentStatus.Revoked;
-            await ctx.SaveChangesAsync();
-        }
-
-        var client = await _back.LoginAs(parentEmail);
+        var client = await _back.LoginAs(parent.Email);
 
         // Act
         var result = await client.GetParentStudentAgenda(studentId);
@@ -106,22 +95,17 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var studentId = (await director.CreateStudent(DataGen.UserName, DataGen.Email).Success()).Id;
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email, birthdate: AdultBirthdate).Success();
 
-        var parentEmail = DataGen.Email;
-        var parentId = (await director.CreateParent(DataGen.UserName, parentEmail, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success()).Id;
+        var parent = await director.CreateParent(DataGen.UserName, DataGen.Email, [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]).Success();
 
-        await using (var ctx = _back.GetDbContext())
-        {
-            var link = await ctx.ParentStudents.FirstAsync(x => x.ParentId == parentId);
-            link.RevokedByStudent = true;
-            await ctx.SaveChangesAsync();
-        }
+        var studentClient = await _back.LoginAs(student.Email);
+        await studentClient.RevokeParentLink(parent.Id).Success();
 
-        var client = await _back.LoginAs(parentEmail);
+        var client = await _back.LoginAs(parent.Email);
 
         // Act
-        var result = await client.GetParentStudentAgenda(studentId);
+        var result = await client.GetParentStudentAgenda(student.Id);
 
         // Assert
         result.ShouldBeError(StudentNotFound.I);
@@ -155,29 +139,16 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-
-        var discipline = await director.CreateDiscipline().Success();
-        var period = await director.GetFirstAcademicPeriod();
-        var @class = await director.CreateClass(discipline.Id, period.Id).Success();
-
-        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
-        await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
-        await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
-        await director.ReleaseClassForEnrollment(@class.Id);
-
-        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        await director.AssignStudentToClass(student.Id, @class.Id);
-
-        await director.StartClass(@class.Id);
+        var @class = await director.ShortcutCreateStartedClass();
+        var studentId = @class.StudentIds[0];
 
         var parentEmail = DataGen.Email;
-        await director.CreateParent(DataGen.UserName, parentEmail, [new() { StudentId = student.Id, Relationship = ParentRelationship.Mother }]);
+        await director.CreateParent(DataGen.UserName, parentEmail, [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]);
 
         var client = await _back.LoginAs(parentEmail);
 
         // Act
-        var result = await client.GetParentStudentAgenda(student.Id);
+        var result = await client.GetParentStudentAgenda(studentId);
 
         // Assert
         result.ShouldBeSuccess();

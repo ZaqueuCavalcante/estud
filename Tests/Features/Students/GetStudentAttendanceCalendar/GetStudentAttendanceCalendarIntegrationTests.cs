@@ -95,30 +95,16 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
 
-        var teacherEmail = DataGen.Email;
-        var teacher = await director.CreateTeacher(DataGen.UserName, teacherEmail).Success();
-
-        var discipline = await director.CreateDiscipline().Success();
-        await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
-
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var year = today.Year;
 
         var periods = await director.GetAcademicPeriods().Success();
         var period = periods.Items.First(x => today >= x.StartAt && today <= x.EndAt);
 
-        var @class = await director.CreateClass(discipline.Id, period.Id).Success();
-        await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
-        await director.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
-
         await director.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2));
-        await director.ReleaseClassForEnrollment(@class.Id);
 
-        var studentEmail = DataGen.Email;
-        var student = await director.CreateStudent(DataGen.UserName, studentEmail).Success();
-        await director.AssignStudentToClass(student.Id, @class.Id);
-
-        await director.StartClass(@class.Id);
+        var @class = await director.ShortcutCreateStartedClass(periodId: period.Id);
+        var studentId = @class.StudentIds[0];
 
         // Aulas do aluno (segundas-feiras do período), em ordem cronológica
         List<(int Id, DateOnly Date)> lessons;
@@ -138,11 +124,11 @@ public partial class IntegrationTests
         var futureLesson = lessons.First(l => l.Date > today);
 
         // Professor lança a frequência das duas primeiras aulas
-        var teacherClient = await _back.LoginAs(teacherEmail);
-        await teacherClient.CreateLessonAttendance(presentLesson.Id, [student.Id]);   // presente
-        await teacherClient.CreateLessonAttendance(absentLesson.Id, []);              // ausente
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        await teacherClient.CreateLessonAttendance(presentLesson.Id, [studentId]);   // presente
+        await teacherClient.CreateLessonAttendance(absentLesson.Id, []);             // ausente
 
-        var client = await _back.LoginAs(studentEmail);
+        var client = await _back.LoginAs(@class.StudentEmail);
 
         // Act
         var calendar = await client.GetStudentAttendanceCalendar(year).Success();
