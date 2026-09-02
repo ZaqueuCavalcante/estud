@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9170559717937418" branch-rate="0.769319051262433" lines-covered="10404" lines-valid="11345" branches-covered="2011" branches-valid="2614" complexity="3932" version="0" timestamp="1788308555">
+<coverage line-rate="0.9166446382941228" branch-rate="0.7689364957918898" lines-covered="10403" lines-valid="11349" branches-covered="2010" branches-valid="2614" complexity="3933" version="0" timestamp="1788312681">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9187344913151365" branch-rate="0.7675404780262144" complexity="3902">
+    <package name="Back" line-rate="0.9183203401842664" branch-rate="0.7671549730146492" complexity="3903">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -10803,7 +10803,7 @@
             <line number="21" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Errors.ClassMustBeOnPreEnrollment" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Classes.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="Estud.Back.Errors.ClassMustBeOnPreEnrollment" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Classes.cs" line-rate="0.6666666666666666" branch-rate="1" complexity="2">
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -10811,14 +10811,14 @@
                 <line number="14" hits="2" branch="false" />
               </lines>
             </method>
-            <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".cctor" signature="()" line-rate="0" branch-rate="1" complexity="1">
               <lines>
-                <line number="12" hits="2" branch="false" />
+                <line number="12" hits="0" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="12" hits="2" branch="false" />
+            <line number="12" hits="0" branch="false" />
             <line number="13" hits="2" branch="false" />
             <line number="14" hits="2" branch="false" />
           </lines>
@@ -18283,19 +18283,19 @@
             <line number="20" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Features.Classes.ReleaseClassForEnrollment.ReleaseClassForEnrollmentService" filename="/home/runner/work/estud/estud/Back/Features/Classes/ReleaseClassForEnrollment/ReleaseClassForEnrollmentService.cs" line-rate="1" branch-rate="0.75" complexity="5">
+        <class name="Estud.Back.Features.Classes.ReleaseClassForEnrollment.ReleaseClassForEnrollmentService" filename="/home/runner/work/estud/estud/Back/Features/Classes/ReleaseClassForEnrollment/ReleaseClassForEnrollmentService.cs" line-rate="1" branch-rate="0.5" complexity="5">
           <methods>
             <method name=".ctor" signature="(Estud.Back.Database.EstudDbContext)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="3" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="Release" signature="()" line-rate="1" branch-rate="0.75" complexity="4">
+            <method name="Release" signature="()" line-rate="1" branch-rate="0.5" complexity="4">
               <lines>
                 <line number="7" hits="2" branch="false" />
                 <line number="9" hits="2" branch="false" />
                 <line number="10" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="12" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="12" hits="2" branch="true" condition-coverage="50% (1/2)" />
                 <line number="14" hits="2" branch="false" />
                 <line number="15" hits="2" branch="false" />
                 <line number="17" hits="2" branch="false" />
@@ -18308,7 +18308,7 @@
             <line number="7" hits="2" branch="false" />
             <line number="9" hits="2" branch="false" />
             <line number="10" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="12" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="12" hits="2" branch="true" condition-coverage="50% (1/2)" />
             <line number="14" hits="2" branch="false" />
             <line number="15" hits="2" branch="false" />
             <line number="17" hits="2" branch="false" />
@@ -27347,16 +27347,16 @@
           <methods>
             <method name="GetExamples" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="8" hits="2" branch="false" />
                 <line number="9" hits="2" branch="false" />
                 <line number="10" hits="2" branch="false" />
+                <line number="11" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="8" hits="2" branch="false" />
             <line number="9" hits="2" branch="false" />
             <line number="10" hits="2" branch="false" />
+            <line number="11" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Features.Parents.CreateParent.CreateParentService" filename="/home/runner/work/estud/estud/Back/Features/Parents/CreateParent/CreateParentService.cs" line-rate="1" branch-rate="1" complexity="22">
@@ -32451,7 +32451,7 @@
             <line number="10" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Features.Teachers.GetTeacherAgenda.GetTeacherAgendaService" filename="/home/runner/work/estud/estud/Back/Features/Teachers/GetTeacherAgenda/GetTeacherAgendaService.cs" line-rate="1" branch-rate="1" complexity="9">
+        <class name="Estud.Back.Features.Teachers.GetTeacherAgenda.GetTeacherAgendaService" filename="/home/runner/work/estud/estud/Back/Features/Teachers/GetTeacherAgenda/GetTeacherAgendaService.cs" line-rate="0.875" branch-rate="1" complexity="10">
           <methods>
             <method name=".ctor" signature="(Estud.Back.Database.EstudDbContext)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -32489,6 +32489,14 @@
                 <line number="41" hits="2" branch="false" />
               </lines>
             </method>
+            <method name="GetTeacherClasses" signature="()" line-rate="0" branch-rate="1" complexity="1">
+              <lines>
+                <line number="73" hits="0" branch="false" />
+                <line number="74" hits="0" branch="false" />
+                <line number="75" hits="0" branch="false" />
+                <line number="76" hits="0" branch="false" />
+              </lines>
+            </method>
           </methods>
           <lines>
             <line number="3" hits="2" branch="false" />
@@ -32519,6 +32527,10 @@
             <line number="37" hits="2" branch="false" />
             <line number="40" hits="2" branch="false" />
             <line number="41" hits="2" branch="false" />
+            <line number="73" hits="0" branch="false" />
+            <line number="74" hits="0" branch="false" />
+            <line number="75" hits="0" branch="false" />
+            <line number="76" hits="0" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Features.Teachers.GetTeacherClass.GetTeacherClassController" filename="/home/runner/work/estud/estud/Back/Features/Teachers/GetTeacherClass/GetTeacherClassController.cs" line-rate="1" branch-rate="1" complexity="2">
