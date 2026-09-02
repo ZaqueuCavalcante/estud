@@ -143,7 +143,7 @@
 - ✅ GetStudentClassActivitiesController
 - ✅ GetStudentClassActivityController
 - ✅ CreateClassActivityWorkController
-- ❌ GetStudentAgendaController
+- ✅ GetStudentAgendaController
 - ❌ GetStudentDetailsController
 - ❌ GetStudentAttendanceCalendarController
 
@@ -164,7 +164,7 @@
 - ✅ GetTeacherCurrentClassesController
 - ✅ GetTeacherPotentialCampiController
 - ✅ GetTeacherPotentialDisciplinesController
-- ❌ GetTeacherAgendaController
+- ✅ GetTeacherAgendaController
 
 ## Parents
 - ✅ GetParentsController

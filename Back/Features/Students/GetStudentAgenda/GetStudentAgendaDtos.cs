@@ -1,6 +1,6 @@
-namespace Estud.Back.Features.Teachers.GetTeacherAgenda;
+namespace Estud.Back.Features.Students.GetStudentAgenda;
 
-public class GetTeacherAgendaDto
+public class GetStudentAgendaDto
 {
     public int Id { get; set; }
     public string Discipline { get; set; }
