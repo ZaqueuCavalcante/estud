@@ -11,7 +11,7 @@ public partial class IntegrationTests
         var client = _back.GetTestsClient();
 
         // Act
-        var result = await client.GetClass(1);
+        var result = await client.GetClass(classId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Unauthorized);
@@ -28,7 +28,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await client.GetClass(1);
+        var result = await client.GetClass(classId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -45,7 +45,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.GetClass(999999);
+        var result = await client.GetClass(classId: 999999);
 
         // Assert
         result.ShouldBeError(ClassNotFound.I);
@@ -82,10 +82,10 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var discipline = await client.CreateDiscipline().Success();
         var period = await client.GetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
+        var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         await client.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2));

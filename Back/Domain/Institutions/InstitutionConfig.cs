@@ -15,13 +15,20 @@ public class InstitutionConfig
     /// </summary>
     public decimal FrequencyLimit { get; set; }
 
+    /// <summary>
+    /// Algoritmo usado para calcular a média final dos alunos nas turmas da instituição.
+    /// </summary>
+    public ClassGradeRule GradeRule { get; set; }
+
     public const decimal DefaultNoteLimit = 7.00M;
     public const decimal DefaultFrequencyLimit = 70.00M;
+    public const ClassGradeRule DefaultGradeRule = ClassGradeRule.BestTwoOfThree;
 
     public InstitutionConfig()
     {
         NoteLimit = DefaultNoteLimit;
         FrequencyLimit = DefaultFrequencyLimit;
+        GradeRule = DefaultGradeRule;
     }
 
     public InstitutionConfig(int institutionId) : this()
