@@ -12,7 +12,7 @@ export interface ClassStudentItem {
   id: number
   name: string
   status: string
-  averageGrade?: number // nota média do aluno na turma (de 0 a 10) — ainda mockada no backend
+  averageGrade?: number // nota média do aluno na turma (de 0 a 10)
   averageAttendance: number // frequência média do aluno na turma (de 0% a 100%)
 }
 
@@ -33,6 +33,7 @@ export interface GetClassOut {
   workload: number
   status: string
   averageAttendance: number // frequência média da turma (de 0% a 100%)
+  averageGrade: number // nota média da turma (de 0 a 10)
   schedules: ClassSchedule[]
   students: ClassStudentItem[]
 }

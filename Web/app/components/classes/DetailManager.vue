@@ -120,9 +120,7 @@ const occupancyRingClass = computed(() => {
   return 'text-success'
 })
 
-// Mock: ainda não há endpoint para nota média da turma.
-const averageGrade = ref(7.8)
-
+const averageGrade = computed(() => data.value?.averageGrade ?? 0)
 const averageAttendance = computed(() => data.value?.averageAttendance ?? 0)
 
 const noteLimit = computed(() => institutionConfig.value?.noteLimit ?? 7)
@@ -377,6 +375,13 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
               </div>
             </template>
           </DataTable>
+
+          <ClassesStudentsPerformanceChart
+            class="mt-2"
+            :students="data.students"
+            :note-limit="noteLimit"
+            :frequency-limit="frequencyLimit"
+          />
         </section>
 
         <ClassesAssignStudentModal

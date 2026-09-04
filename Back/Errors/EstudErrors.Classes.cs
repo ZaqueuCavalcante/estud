@@ -119,6 +119,13 @@ public class InvalidClassActivityWeight : EstudError
     public override string Message { get; set; } = "Peso da atividade inválido.";
 }
 
+public class NoteTypeNotUsedByInstitution : EstudError
+{
+    public static readonly NoteTypeNotUsedByInstitution I = new();
+    public override string Code { get; set; } = nameof(NoteTypeNotUsedByInstitution);
+    public override string Message { get; set; } = "Tipo de nota não utilizado pela instituição.";
+}
+
 public class InvalidStudentClassNote : EstudError
 {
     public static readonly InvalidStudentClassNote I = new();

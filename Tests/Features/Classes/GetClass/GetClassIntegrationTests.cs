@@ -231,6 +231,7 @@ public partial class IntegrationTests
         var details = result.Success;
         details.Students.First(s => s.Id == ana.Id).AverageGrade.Should().Be(4.0M);
         details.Students.First(s => s.Id == bruno.Id).AverageGrade.Should().Be(2.5M);
+        details.AverageGrade.Should().Be(3.3M);
     }
 
     [Test]
@@ -310,7 +311,9 @@ public partial class IntegrationTests
         var result = await director.GetClass(@class.Id);
 
         // Assert
-        result.Success.Students.Should().AllSatisfy(s => s.AverageGrade.Should().Be(0M));
+        var details = result.Success;
+        details.Students.Should().AllSatisfy(s => s.AverageGrade.Should().Be(0M));
+        details.AverageGrade.Should().Be(0M);
     }
 
     #endregion

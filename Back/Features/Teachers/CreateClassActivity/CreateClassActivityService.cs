@@ -16,6 +16,12 @@ public class CreateClassActivityService(EstudDbContext ctx) : IEstudService
         var assigned = await ctx.ClassTeachers.AnyAsync(ct => ct.ClassId == classId && ct.TeacherId == teacherId);
         if (!assigned) return TeacherNotAssignedToClass.I;
 
+        var gradeRule = await ctx.InstitutionConfigs.AsNoTracking()
+            .Where(c => c.InstitutionId == institutionId)
+            .Select(c => c.GradeRule)
+            .FirstAsync();
+        if (!gradeRule.NoteTypes.Contains(data.Note)) return NoteTypeNotUsedByInstitution.I;
+
         var students = await ctx.ClassStudents.AsNoTracking()
             .Where(cs => cs.ClassId == classId && cs.Status == StudentClassStatus.Matriculado)
             .Select(cs => cs.StudentId).ToListAsync();

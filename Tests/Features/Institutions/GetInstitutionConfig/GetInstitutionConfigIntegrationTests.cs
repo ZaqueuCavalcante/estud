@@ -52,6 +52,7 @@ public partial class IntegrationTests
         config.Id.Should().NotBe(0);
         config.NoteLimit.Should().Be(7.00M);
         config.FrequencyLimit.Should().Be(70.00M);
+        config.GradeRule.Should().Be(ClassGradeRule.BestTwoOfThree);
     }
 
     [Test]
@@ -59,7 +60,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        await client.SetupInstitutionConfig(6.00M, 75.00M);
+        await client.SetupInstitutionConfig(6.00M, 75.00M, ClassGradeRule.AverageOrThird);
 
         // Act
         var result = await client.GetInstitutionConfig();
@@ -68,6 +69,7 @@ public partial class IntegrationTests
         var config = result.Success;
         config.NoteLimit.Should().Be(6.00M);
         config.FrequencyLimit.Should().Be(75.00M);
+        config.GradeRule.Should().Be(ClassGradeRule.AverageOrThird);
     }
 
     #endregion

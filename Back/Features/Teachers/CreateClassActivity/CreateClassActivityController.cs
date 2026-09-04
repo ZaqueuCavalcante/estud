@@ -25,5 +25,6 @@ internal class ResponseExamples : ExamplesProvider<CreateClassActivityOut>;
 internal class ErrorsExamples : ErrorExamplesProvider<
     ClassNotFound,
     TeacherNotAssignedToClass,
+    NoteTypeNotUsedByInstitution,
     InvalidClassActivityWeight
 >;

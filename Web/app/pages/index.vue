@@ -61,7 +61,7 @@ const features = [
       <UPageSection
         id="features"
         :ui="{ container: 'py-1 sm:py-1 lg:py-1' }"
-        title="Tudo que sua instituição precisa"
+        title="Tudo que você precisa, num lugar só"
         description="Uma plataforma completa para gestão acadêmica, do primeiro acesso ao diploma."
       >
         <UPageGrid>
@@ -81,8 +81,8 @@ const features = [
       </UPageSection>
 
       <UPageCTA
-        title="Pronto para transformar sua instituição?"
-        description="Junte-se a centenas de gestores que já usam o Estud."
+        title="Pronto para simplificar a gestão acadêmica?"
+        description="Junte-se a centenas de gestores que já usam o Estud!"
         variant="naked"
         :ui="{ container: 'py-10 sm:py-14 lg:py-16' }"
         :links="[

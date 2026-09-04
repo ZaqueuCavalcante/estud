@@ -72,6 +72,19 @@ public partial class IntegrationTests
         result.ShouldBeError(InvalidFrequencyLimit.I);
     }
 
+    [Test]
+    public async Task Institutions_SetupInstitutionConfig_Should_not_setup_institution_config_with_unknown_grade_rule()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        // Act
+        var result = await client.SetupInstitutionConfig(gradeRule: (ClassGradeRule)69);
+
+        // Assert
+        result.ShouldBeError(InvalidClassGradeRule.I);
+    }
+
     #endregion
 
     #region Happy path
@@ -87,6 +100,7 @@ public partial class IntegrationTests
         var config = result.Success;
         config.NoteLimit.Should().Be(7.00M);
         config.FrequencyLimit.Should().Be(70.00M);
+        config.GradeRule.Should().Be(ClassGradeRule.BestTwoOfThree);
     }
 
     [Test]
@@ -96,17 +110,51 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.SetupInstitutionConfig(8.50M, 85.00M);
+        var result = await client.SetupInstitutionConfig(8.50M, 85.00M, ClassGradeRule.AverageOfThree);
 
         // Assert
         var config = result.Success;
         config.NoteLimit.Should().Be(8.50M);
         config.FrequencyLimit.Should().Be(85.00M);
+        config.GradeRule.Should().Be(ClassGradeRule.AverageOfThree);
 
         var saved = await client.GetInstitutionConfig().Success();
         saved.Id.Should().Be(config.Id);
         saved.NoteLimit.Should().Be(8.50M);
         saved.FrequencyLimit.Should().Be(85.00M);
+        saved.GradeRule.Should().Be(ClassGradeRule.AverageOfThree);
+    }
+
+    [TestCase(ClassGradeRule.BestTwoOfThree)]
+    [TestCase(ClassGradeRule.AverageOfTwo)]
+    [TestCase(ClassGradeRule.AverageOfThree)]
+    [TestCase(ClassGradeRule.AverageOrThird)]
+    public async Task Institutions_SetupInstitutionConfig_Should_setup_every_grade_rule(ClassGradeRule gradeRule)
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        // Act
+        var result = await client.SetupInstitutionConfig(gradeRule: gradeRule);
+
+        // Assert
+        result.Success.GradeRule.Should().Be(gradeRule);
+    }
+
+    [Test]
+    public async Task Institutions_SetupInstitutionConfig_Should_change_the_note_types_used_by_the_institution()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+        var teacherClient = await _back.LoginAs(teacher.Email);
+
+        // Act
+        await director.SetupInstitutionConfig(gradeRule: ClassGradeRule.AverageOfTwo);
+
+        // Assert
+        var noteTypes = await teacherClient.GetInstitutionNoteTypes().Success();
+        noteTypes.NoteTypes.Should().Equal(ClassNoteType.N1, ClassNoteType.N2);
     }
 
     #endregion

@@ -2,6 +2,7 @@
 import * as z from 'zod'
 import { DateFormatter, getLocalTimeZone, type CalendarDate } from '@internationalized/date'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import type { GetInstitutionNoteTypesOut } from '~/types/configs'
 
 const props = defineProps<{ classId: number | string }>()
 
@@ -22,11 +23,16 @@ const dueDate = ref<CalendarDate | undefined>()
 const dueDateOpen = ref(false)
 
 // ── Options ───────────────────────────────────────────────────
-const noteOptions = [
-  { label: 'N1', value: 'N1' },
-  { label: 'N2', value: 'N2' },
-  { label: 'N3', value: 'N3' },
-]
+const { data: noteTypesData } = await useFetch<GetInstitutionNoteTypesOut>(
+  `${config.public.backendUrl}/institutions/note-types`,
+  { credentials: 'include', server: false },
+)
+
+const noteOptions = computed(() =>
+  (noteTypesData.value?.noteTypes ?? []).map(note => ({ label: note, value: note })),
+)
+
+const defaultNote = computed(() => noteOptions.value[0]?.value)
 
 const typeOptions = [
   { label: 'Prova', value: 'Exam' },
@@ -84,7 +90,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>
 
 const formState = reactive<Partial<Schema>>({
-  note: 'N1',
+  note: undefined,
   title: '',
   description: '',
   type: undefined,
@@ -99,7 +105,7 @@ watch(dueDate, (val) => {
 })
 
 function resetForm() {
-  formState.note = 'N1'
+  formState.note = defaultNote.value
   formState.title = ''
   formState.description = ''
   formState.type = undefined
@@ -109,6 +115,10 @@ function resetForm() {
   formState.dueHour = undefined
   dueDate.value = undefined
 }
+
+watch(defaultNote, (note) => {
+  if (!formState.note) formState.note = note
+}, { immediate: true })
 
 watch(open, (val) => {
   if (!val) resetForm()

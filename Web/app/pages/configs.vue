@@ -13,6 +13,10 @@ const { data, status, refresh } = await useFetch<InstitutionConfig>(`${config.pu
 function formatNumber(value: number): string {
   return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
+
+const gradeRuleLabel = computed(() =>
+  data.value ? classGradeRules[data.value.gradeRule]?.label : undefined,
+)
 </script>
 
 <template>
@@ -62,6 +66,14 @@ function formatNumber(value: number): string {
                 <span class="text-xs text-muted mt-1.5">Frequência mínima</span>
                 <span class="text-xs text-dimmed mt-1 text-center">Abaixo disso o aluno é reprovado por falta.</span>
               </div>
+            </div>
+
+            <div class="border-t border-default p-4">
+              <span class="text-xs text-muted">Cálculo da média final</span>
+              <p class="text-sm font-medium text-highlighted mt-1 mb-3">
+                {{ gradeRuleLabel ?? data.gradeRule }}
+              </p>
+              <ConfigsGradeRuleExplanation :rule="data.gradeRule" flat />
             </div>
           </div>
         </template>

@@ -78,7 +78,6 @@ const classColumns: TableColumn<StudentClassItem>[] = [
     header: 'Nota média',
     cell: ({ row }) => {
       const grade = row.original.averageGrade
-      if (grade == null) return h('span', { class: 'text-muted' }, '—')
       const color = grade < noteLimit.value ? 'text-error' : 'text-success'
       return h('span', { class: `font-medium ${color}` }, grade.toFixed(1).replace('.', ','))
     },

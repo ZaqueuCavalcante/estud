@@ -117,6 +117,54 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Teachers_CreateClassActivity_Should_not_create_activity_with_note_type_not_used_by_the_institution()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+
+        var discipline = await director.CreateDiscipline().Success();
+        await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
+        var period = await director.GetFirstAcademicPeriod();
+        var @class = await director.CreateClass(discipline.Id, period.Id).Success();
+        await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
+
+        await director.SetupInstitutionConfig(gradeRule: ClassGradeRule.AverageOfTwo);
+
+        var client = await _back.LoginAs(teacher.Email);
+
+        // Act
+        var result = await client.CreateClassActivity(@class.Id, ClassNoteType.N3);
+
+        // Assert
+        result.ShouldBeError(NoteTypeNotUsedByInstitution.I);
+    }
+
+    [Test]
+    public async Task Teachers_CreateClassActivity_Should_not_create_activity_with_unknown_note_type()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+
+        var discipline = await director.CreateDiscipline().Success();
+        await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
+        var period = await director.GetFirstAcademicPeriod();
+        var @class = await director.CreateClass(discipline.Id, period.Id).Success();
+        await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
+
+        var client = await _back.LoginAs(teacher.Email);
+
+        // Act
+        var result = await client.CreateClassActivity(@class.Id, (ClassNoteType)69);
+
+        // Assert
+        result.ShouldBeError(NoteTypeNotUsedByInstitution.I);
+    }
+
+    [Test]
     public async Task Teachers_CreateClassActivity_Should_not_create_activity_when_note_weights_sum_exceeds_100()
     {
         // Arrange
@@ -215,6 +263,61 @@ public partial class IntegrationTests
         // Assert
         var activities = await client.GetTeacherClassActivities(@class.Id).Success();
         activities.Activities.Should().HaveCount(5);
+    }
+
+    [TestCase(ClassNoteType.N1)]
+    [TestCase(ClassNoteType.N2)]
+    public async Task Teachers_CreateClassActivity_Should_create_activity_with_the_note_types_used_by_the_institution(ClassNoteType note)
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+
+        var discipline = await director.CreateDiscipline().Success();
+        await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
+        var period = await director.GetFirstAcademicPeriod();
+        var @class = await director.CreateClass(discipline.Id, period.Id).Success();
+        await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
+
+        await director.SetupInstitutionConfig(gradeRule: ClassGradeRule.AverageOfTwo);
+
+        var client = await _back.LoginAs(teacher.Email);
+
+        // Act
+        var result = await client.CreateClassActivity(@class.Id, note);
+
+        // Assert
+        var activity = await client.GetTeacherClassActivity(@class.Id, result.Success.Id).Success();
+        activity.Note.Should().Be(note);
+    }
+
+    [TestCase(ClassGradeRule.BestTwoOfThree)]
+    [TestCase(ClassGradeRule.AverageOfThree)]
+    [TestCase(ClassGradeRule.AverageOrThird)]
+    public async Task Teachers_CreateClassActivity_Should_create_activity_with_the_third_note_when_the_institution_uses_it(ClassGradeRule rule)
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+
+        var discipline = await director.CreateDiscipline().Success();
+        await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
+        var period = await director.GetFirstAcademicPeriod();
+        var @class = await director.CreateClass(discipline.Id, period.Id).Success();
+        await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
+
+        await director.SetupInstitutionConfig(gradeRule: rule);
+
+        var client = await _back.LoginAs(teacher.Email);
+
+        // Act
+        var result = await client.CreateClassActivity(@class.Id, ClassNoteType.N3);
+
+        // Assert
+        var activity = await client.GetTeacherClassActivity(@class.Id, result.Success.Id).Success();
+        activity.Note.Should().Be(ClassNoteType.N3);
     }
 
     [Test]

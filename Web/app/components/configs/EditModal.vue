@@ -19,6 +19,7 @@ const schema = z.object({
   frequencyLimit: z.coerce.number({ error: 'Frequência mínima obrigatória' })
     .min(0, 'Deve ser no mínimo 0%')
     .max(100, 'Deve ser no máximo 100%'),
+  gradeRule: z.string({ error: 'Campo obrigatório' }).min(1, 'Campo obrigatório'),
 })
 
 type Schema = z.output<typeof schema>
@@ -26,6 +27,7 @@ type Schema = z.output<typeof schema>
 const formState = reactive<Partial<Schema>>({
   noteLimit: undefined,
   frequencyLimit: undefined,
+  gradeRule: undefined,
 })
 
 // ── Number inputs ─────────────────────────────────────────────
@@ -85,6 +87,7 @@ watch(open, (val) => {
   if (val && props.config) {
     formState.noteLimit = props.config.noteLimit
     formState.frequencyLimit = props.config.frequencyLimit
+    formState.gradeRule = props.config.gradeRule
     noteDisplay.value = format(props.config.noteLimit)
     frequencyDisplay.value = format(props.config.frequencyLimit)
   }
@@ -154,6 +157,21 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             @keydown="onNumberKeydown"
             @input="onFrequencyInput"
           />
+        </UFormField>
+
+        <UFormField
+          label="Cálculo da média final"
+          name="gradeRule"
+          description="Como a média final do aluno na turma é calculada a partir das notas."
+        >
+          <USelect
+            v-model="formState.gradeRule"
+            :items="classGradeRuleOptions"
+            value-key="value"
+            class="w-full"
+            placeholder="Selecione"
+          />
+          <ConfigsGradeRuleExplanation :rule="formState.gradeRule" class="mt-2" />
         </UFormField>
 
         <div class="flex justify-end gap-2 pt-2">

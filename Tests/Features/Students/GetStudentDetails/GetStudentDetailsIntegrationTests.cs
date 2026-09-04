@@ -248,5 +248,26 @@ public partial class IntegrationTests
         details.AverageAttendance.Should().Be(0M);
     }
 
+    [Test]
+    public async Task Students_GetStudentDetails_Should_get_average_grade_of_each_class()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var @class = await director.ShortcutCreateStartedClass([student.Id]);
+        var teacher = await _back.LoginAs(@class.TeacherEmail);
+
+        var activity = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 100).Success();
+        await teacher.AddStudentActivityNote(@class.Id, activity.Id, student.Id, 8M);
+
+        // Act
+        var result = await director.GetStudentDetails(student.Id);
+
+        // Assert
+        var details = result.Success;
+        details.AverageGrade.Should().Be(4M);
+        details.Classes.Should().ContainSingle().Which.AverageGrade.Should().Be(4M);
+    }
+
     #endregion
 }

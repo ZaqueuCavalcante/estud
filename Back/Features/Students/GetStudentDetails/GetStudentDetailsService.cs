@@ -1,3 +1,5 @@
+using Estud.Back.Domain.Classes;
+
 namespace Estud.Back.Features.Students.GetStudentDetails;
 
 public class GetStudentDetailsService(EstudDbContext ctx) : IEstudService
@@ -5,6 +7,7 @@ public class GetStudentDetailsService(EstudDbContext ctx) : IEstudService
     public async Task<OneOf<GetStudentDetailsOut, EstudError>> Get(int studentId)
     {
         var institutionId = ctx.RequestUser.InstitutionId;
+        var config = await ctx.InstitutionConfigs.AsNoTracking().FirstAsync(x => x.InstitutionId == institutionId);
 
         var student = await ctx.Students.AsNoTracking()
             .Include(s => s.User)
@@ -14,25 +17,20 @@ public class GetStudentDetailsService(EstudDbContext ctx) : IEstudService
         var course = await GetCourse(studentId);
         var classes = await GetClasses(studentId, institutionId);
         var attendances = (await GetAttendances(studentId)).ToDictionary(a => a.ClassId);
-
-        // Mock: nota média aleatória, porém estável por aluno (seed = Id),
-        // igual à exibida no detalhe da turma.
-        // TODO: calcular a partir das notas reais do aluno.
-        var random = new Random(student.Id);
-        var averageGrade = Math.Round((decimal)(random.NextDouble() * 10), 1);
+        var works = await GetWorks(studentId);
 
         foreach (var @class in classes)
         {
-            @class.AverageGrade = averageGrade;
+            @class.AverageGrade = Round(config.GradeRule.Average(works.GetValueOrDefault(@class.Id, [])));
             @class.AverageAttendance = attendances.TryGetValue(@class.Id, out var attendance)
                 ? Percent(attendance.Presences, attendance.Presences + attendance.Absences)
                 : 0;
         }
 
-        var startedClassIds = classes
-            .Where(c => c.Status == ClassStatus.Started)
-            .Select(c => c.Id)
-            .ToHashSet();
+        var startedClasses = classes.Where(c => c.Status == ClassStatus.Started).ToList();
+        var averageGrade = startedClasses.Count > 0 ? Round(startedClasses.Average(c => c.AverageGrade)) : 0;
+
+        var startedClassIds = startedClasses.Select(c => c.Id).ToHashSet();
         var started = attendances.Values.Where(a => startedClassIds.Contains(a.ClassId)).ToList();
         var averageAttendance = Percent(
             started.Sum(a => a.Presences),
@@ -56,8 +54,37 @@ public class GetStudentDetailsService(EstudDbContext ctx) : IEstudService
         };
     }
 
+    private static decimal Round(decimal value) => Math.Round(value, 1, MidpointRounding.AwayFromZero);
+
     private static decimal Percent(int presences, int attendances) =>
-        attendances > 0 ? Math.Round((decimal)presences / attendances * 100, 1, MidpointRounding.AwayFromZero) : 0;
+        attendances > 0 ? Round((decimal)presences / attendances * 100) : 0;
+
+    private async Task<Dictionary<int, List<(ClassNoteType NoteType, int Weight, decimal Note)>>> GetWorks(int studentId)
+    {
+        const string sql = @"
+            SELECT
+                cs.class_id              AS class_id,
+                ca.note                  AS note_type,
+                ca.weight                AS weight,
+                COALESCE(caw.note, 0)    AS note
+            FROM
+                estud.classes__students cs
+            INNER JOIN
+                estud.class_activities ca ON ca.class_id = cs.class_id
+            LEFT JOIN
+                estud.class_activity_works caw ON caw.class_activity_id = ca.id AND caw.student_id = cs.student_id
+            WHERE
+                cs.student_id = {0}
+        ";
+
+        var works = await ctx.Database
+            .SqlQueryRaw<GetStudentClassWorkDto>(sql, studentId)
+            .AsNoTracking().ToListAsync();
+
+        return works
+            .GroupBy(w => w.ClassId)
+            .ToDictionary(g => g.Key, g => g.Select(w => (w.NoteType, w.Weight, w.Note)).ToList());
+    }
 
     private async Task<List<GetStudentClassAttendanceDto>> GetAttendances(int studentId)
     {

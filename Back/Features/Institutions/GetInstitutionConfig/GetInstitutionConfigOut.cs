@@ -14,6 +14,11 @@ public class GetInstitutionConfigOut : IApiDto<GetInstitutionConfigOut>
     /// </summary>
     public decimal FrequencyLimit { get; set; }
 
+    /// <summary>
+    /// Algoritmo usado para calcular a média final dos alunos nas turmas da instituição
+    /// </summary>
+    public ClassGradeRule GradeRule { get; set; }
+
     public static IEnumerable<(string, GetInstitutionConfigOut)> GetExamples() =>
     [
         ("Padrão",
@@ -22,6 +27,7 @@ public class GetInstitutionConfigOut : IApiDto<GetInstitutionConfigOut>
             Id = 1,
             NoteLimit = 7.00M,
             FrequencyLimit = 70.00M,
+            GradeRule = ClassGradeRule.BestTwoOfThree,
         }),
     ];
 }

@@ -11,6 +11,7 @@ public static class GetInstitutionConfigMapper
             return new()
             {
                 Id = config.Id,
+                GradeRule = config.GradeRule,
                 NoteLimit = config.NoteLimit,
                 FrequencyLimit = config.FrequencyLimit,
             };

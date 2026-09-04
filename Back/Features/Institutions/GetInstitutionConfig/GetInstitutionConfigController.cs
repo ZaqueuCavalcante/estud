@@ -7,7 +7,8 @@ public class GetInstitutionConfigController(GetInstitutionConfigService service)
     /// Configurações da instituição
     /// </summary>
     /// <remarks>
-    /// Retorna a nota e a frequência mínimas para aprovação nas disciplinas da instituição do usuário logado.
+    /// Retorna a nota e a frequência mínimas para aprovação nas disciplinas da instituição do usuário
+    /// logado, além da regra usada para calcular a média final dos alunos nas turmas.
     /// </remarks>
     [HttpGet("institutions/config")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]

@@ -36,9 +36,10 @@ public class InstitutionConfig
         InstitutionId = institutionId;
     }
 
-    public void Setup(decimal noteLimit, decimal frequencyLimit)
+    public void Setup(decimal noteLimit, decimal frequencyLimit, ClassGradeRule gradeRule)
     {
         NoteLimit = noteLimit;
         FrequencyLimit = frequencyLimit;
+        GradeRule = gradeRule;
     }
 }

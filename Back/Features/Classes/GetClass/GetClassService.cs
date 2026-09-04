@@ -61,6 +61,10 @@ public class GetClassService(EstudDbContext ctx) : IEstudService
             ? Math.Round((decimal)classStudents.Sum(s => s.Presences) / totalAttendances * 100, 1, MidpointRounding.AwayFromZero)
             : 0;
 
+        var averageGrade = students.Count > 0
+            ? Math.Round(students.Average(s => s.AverageGrade), 1, MidpointRounding.AwayFromZero)
+            : 0;
+
         return new GetClassOut
         {
             Id = @class.Id,
@@ -73,6 +77,7 @@ public class GetClassService(EstudDbContext ctx) : IEstudService
             Workload = @class.Workload,
             Status = @class.Status,
             AverageAttendance = averageAttendance,
+            AverageGrade = averageGrade,
             Teachers = @class.Teachers
                 .OrderBy(t => t.Name)
                 .Select(t => new GetClassTeacherOut { Id = t.Id, Name = t.Name })

@@ -9,6 +9,8 @@ public class SetupInstitutionConfigService(EstudDbContext ctx) : IEstudService
             RuleFor(x => x.NoteLimit).InclusiveBetween(0.00M, 10.00M).WithError(InvalidNoteLimit.I);
 
             RuleFor(x => x.FrequencyLimit).InclusiveBetween(0.00M, 100.00M).WithError(InvalidFrequencyLimit.I);
+
+            RuleFor(x => x.GradeRule).IsInEnum().WithError(InvalidClassGradeRule.I);
         }
     }
     private static readonly Validator V = new();
@@ -20,7 +22,7 @@ public class SetupInstitutionConfigService(EstudDbContext ctx) : IEstudService
         var institutionId = ctx.RequestUser.InstitutionId;
 
         var config = await ctx.InstitutionConfigs.FirstAsync(x => x.InstitutionId == institutionId);
-        config.Setup(data.NoteLimit, data.FrequencyLimit);
+        config.Setup(data.NoteLimit, data.FrequencyLimit, data.GradeRule);
 
         await ctx.SaveChangesAsync();
 
