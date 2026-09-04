@@ -22,6 +22,19 @@ public static class TestShortcuts
         return lessons.Lessons.Select(x => x.Id).ToList();
     }
 
+    public static async Task AddStudentActivityNote(
+        this TestsHttpClient client,
+        int classId,
+        int activityId,
+        int studentId,
+        decimal note
+    ) {
+        var activity = await client.GetTeacherClassActivity(classId, activityId).Success();
+        var work = activity.Works.First(w => w.StudentId == studentId);
+
+        await client.AddActivityNote(activityId, work.Id, note);
+    }
+
     public static async Task<List<int>> EnrollStudentsInClass(this TestsHttpClient client, int classId, int count)
     {
         await client.ReleaseClassForEnrollment(classId);

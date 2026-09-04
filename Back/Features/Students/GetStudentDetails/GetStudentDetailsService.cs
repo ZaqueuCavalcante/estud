@@ -57,7 +57,7 @@ public class GetStudentDetailsService(EstudDbContext ctx) : IEstudService
     }
 
     private static decimal Percent(int presences, int attendances) =>
-        attendances > 0 ? Math.Round((decimal)presences / attendances * 100, 1) : 0;
+        attendances > 0 ? Math.Round((decimal)presences / attendances * 100, 1, MidpointRounding.AwayFromZero) : 0;
 
     private async Task<List<GetStudentClassAttendanceDto>> GetAttendances(int studentId)
     {

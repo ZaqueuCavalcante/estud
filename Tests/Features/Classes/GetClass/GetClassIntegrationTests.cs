@@ -191,5 +191,127 @@ public partial class IntegrationTests
         details.AverageAttendance.Should().Be(0M);
     }
 
+    [Test]
+    public async Task Classes_GetClass_Should_get_partial_average_grade_when_only_one_activity_was_graded()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var @class = await director.ShortcutCreateStartedClass([student.Id]);
+        var teacher = await _back.LoginAs(@class.TeacherEmail);
+
+        var activity = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 50).Success();
+        await teacher.AddStudentActivityNote(@class.Id, activity.Id, student.Id, 9M);
+
+        // Act
+        var result = await director.GetClass(@class.Id);
+
+        // Assert
+        result.Success.Students.Single().AverageGrade.Should().Be(2.3M);
+    }
+
+    [Test]
+    public async Task Classes_GetClass_Should_get_a_different_average_grade_for_each_student()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var ana = await director.CreateStudent("Ana Beatriz", DataGen.Email).Success();
+        var bruno = await director.CreateStudent("Bruno Silva", DataGen.Email).Success();
+        var @class = await director.ShortcutCreateStartedClass([ana.Id, bruno.Id]);
+        var teacher = await _back.LoginAs(@class.TeacherEmail);
+
+        var activity = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 100).Success();
+        await teacher.AddStudentActivityNote(@class.Id, activity.Id, ana.Id, 8M);
+        await teacher.AddStudentActivityNote(@class.Id, activity.Id, bruno.Id, 5M);
+
+        // Act
+        var result = await director.GetClass(@class.Id);
+
+        // Assert
+        var details = result.Success;
+        details.Students.First(s => s.Id == ana.Id).AverageGrade.Should().Be(4.0M);
+        details.Students.First(s => s.Id == bruno.Id).AverageGrade.Should().Be(2.5M);
+    }
+
+    [Test]
+    public async Task Classes_GetClass_Should_get_average_grade_from_the_two_highest_notes()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var @class = await director.ShortcutCreateStartedClass([student.Id]);
+        var teacher = await _back.LoginAs(@class.TeacherEmail);
+
+        var n1 = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 100).Success();
+        var n2 = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N2, weight: 100).Success();
+        var n3 = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N3, weight: 100).Success();
+        await teacher.AddStudentActivityNote(@class.Id, n1.Id, student.Id, 9M);
+        await teacher.AddStudentActivityNote(@class.Id, n2.Id, student.Id, 4M);
+        await teacher.AddStudentActivityNote(@class.Id, n3.Id, student.Id, 7M);
+
+        // Act
+        var result = await director.GetClass(@class.Id);
+
+        // Assert
+        result.Success.Students.Single().AverageGrade.Should().Be(8M);
+    }
+
+    [Test]
+    public async Task Classes_GetClass_Should_add_up_the_weights_of_the_activities_of_the_same_note_type()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var @class = await director.ShortcutCreateStartedClass([student.Id]);
+        var teacher = await _back.LoginAs(@class.TeacherEmail);
+
+        var first = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 40).Success();
+        var second = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 60).Success();
+        await teacher.AddStudentActivityNote(@class.Id, first.Id, student.Id, 10M);
+        await teacher.AddStudentActivityNote(@class.Id, second.Id, student.Id, 5M);
+
+        // Act
+        var result = await director.GetClass(@class.Id);
+
+        // Assert
+        result.Success.Students.Single().AverageGrade.Should().Be(3.5M);
+    }
+
+    [Test]
+    public async Task Classes_GetClass_Should_count_an_uncorrected_activity_as_zero()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var @class = await director.ShortcutCreateStartedClass([student.Id]);
+        var teacher = await _back.LoginAs(@class.TeacherEmail);
+
+        var n1 = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 50).Success();
+        await teacher.CreateClassActivity(@class.Id, ClassNoteType.N2, weight: 100);
+        await teacher.AddStudentActivityNote(@class.Id, n1.Id, student.Id, 8M);
+
+        // Act
+        var result = await director.GetClass(@class.Id);
+
+        // Assert
+        result.Success.Students.Single().AverageGrade.Should().Be(2M);
+    }
+
+    [Test]
+    public async Task Classes_GetClass_Should_get_zeroed_average_grades_when_the_class_has_no_activity()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var ana = await director.CreateStudent("Ana Beatriz", DataGen.Email).Success();
+        var bruno = await director.CreateStudent("Bruno Silva", DataGen.Email).Success();
+        var @class = await director.ShortcutCreateStartedClass([ana.Id, bruno.Id]);
+
+        // Act
+        var result = await director.GetClass(@class.Id);
+
+        // Assert
+        result.Success.Students.Should().AllSatisfy(s => s.AverageGrade.Should().Be(0M));
+    }
+
     #endregion
 }

@@ -30,7 +30,9 @@ public class GetTeacherClassStudentsService(EstudDbContext ctx) : IEstudService
                     Name = s.Name,
                     Status = s.Status,
                     AverageGrade = Math.Round((decimal)(random.NextDouble() * 10), 1),
-                    AverageAttendance = attendances > 0 ? Math.Round((decimal)s.Presences / attendances * 100, 1) : 0,
+                    AverageAttendance = attendances > 0
+                        ? Math.Round((decimal)s.Presences / attendances * 100, 1, MidpointRounding.AwayFromZero)
+                        : 0,
                 };
             })
             .ToList();

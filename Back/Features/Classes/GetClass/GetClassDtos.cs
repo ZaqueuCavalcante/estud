@@ -9,9 +9,10 @@ public class GetClassStudentDto
     public int Absences { get; set; }
 }
 
-public class GetClassStudentNoteDto
+public class GetClassStudentWorkDto
 {
     public int Id { get; set; }
-    public int ActivityId { get; set; }
+    public ClassNoteType NoteType { get; set; }
+    public int Weight { get; set; }
     public decimal Note { get; set; }
 }
