@@ -21,10 +21,6 @@ const { data, status, error } = await useFetch<GetParentDetailsOut>(
   { credentials: 'include', server: false },
 )
 
-const activeLinks = computed(() =>
-  data.value?.students.filter(s => s.linkStatus === 'Active' && !s.revokedByStudent).length ?? 0,
-)
-
 const studentColumns: TableColumn<ParentStudentItem>[] = [
   {
     accessorKey: 'name',
@@ -119,48 +115,26 @@ const studentColumns: TableColumn<ParentStudentItem>[] = [
       </div>
 
       <div v-else class="flex flex-col gap-10 py-2">
-        <div class="flex items-start gap-4">
-          <UAvatar :alt="data.name" size="xl" />
-          <div class="flex flex-col gap-1">
-            <div class="flex flex-wrap items-center gap-2">
-              <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
-                {{ data.name }}
-              </h1>
-              <UBadge
-                :label="`${data.students.length} ${data.students.length === 1 ? 'aluno' : 'alunos'}`"
-                color="neutral"
-                variant="subtle"
-              />
-            </div>
-            <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-muted">
-              <span class="flex items-center gap-1.5">
-                <UIcon name="i-lucide-mail" class="size-4" />
-                {{ data.email }}
-              </span>
-              <span v-if="data.phoneNumber" class="flex items-center gap-1.5">
-                <UIcon name="i-lucide-phone" class="size-4" />
-                {{ data.phoneNumber }}
-              </span>
-              <span class="flex items-center gap-1.5">
-                <UIcon name="i-lucide-calendar" class="size-4" />
-                Desde {{ new Date(data.createdAt).toLocaleDateString('pt-BR') }}
-              </span>
-            </div>
+        <div class="flex flex-col gap-1">
+          <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
+            {{ data.name }}
+          </h1>
+          <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-muted">
+            <span class="flex items-center gap-1.5">
+              <UIcon name="i-lucide-mail" class="size-4" />
+              {{ data.email }}
+            </span>
+            <span v-if="data.phoneNumber" class="flex items-center gap-1.5">
+              <UIcon name="i-lucide-phone" class="size-4" />
+              {{ formatPhoneNumber(data.phoneNumber) }}
+            </span>
           </div>
         </div>
 
         <section class="flex flex-col gap-3">
-          <div class="flex items-center gap-2">
-            <h2 class="font-semibold text-highlighted">
-              Alunos vinculados
-            </h2>
-            <UBadge
-              v-if="data.students.length"
-              :label="`${activeLinks} ${activeLinks === 1 ? 'vínculo ativo' : 'vínculos ativos'}`"
-              color="neutral"
-              variant="subtle"
-            />
-          </div>
+          <h2 class="font-semibold text-highlighted">
+            Alunos vinculados
+          </h2>
 
           <DataTable :data="data.students" :columns="studentColumns">
             <template #empty>

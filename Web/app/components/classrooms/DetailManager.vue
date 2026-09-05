@@ -195,7 +195,7 @@ const classColumns: TableColumn<ClassroomScheduleItem>[] = [
             Agenda
           </h2>
 
-          <div v-if="data.schedules.length" class="flex flex-wrap gap-2">
+          <div v-if="data.schedules.length" class="flex flex-col sm:flex-row sm:flex-wrap gap-2">
             <NuxtLink
               v-for="(s, i) in data.schedules"
               :key="i"

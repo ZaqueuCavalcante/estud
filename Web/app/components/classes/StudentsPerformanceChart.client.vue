@@ -9,26 +9,42 @@ const props = defineProps<{
 }>()
 
 interface StudentPoint {
-  name: string
+  names: string[]
   grade: number
   attendance: number
   withinLimits: boolean
 }
 
+const TOOLTIP_NAMES_LIMIT = 3
+
 const chartRef = useTemplateRef<HTMLElement | null>('chartRef')
 const { width } = useElementSize(chartRef)
 
-const points = computed<StudentPoint[]>(() => props.students.map((student) => {
-  const grade = student.averageGrade ?? 0
-  const attendance = student.averageAttendance
+// Alunos com a mesma nota e a mesma frequência caem no mesmo pixel: viram um
+// ponto só, senão o hover pega apenas o último desenhado e os outros somem.
+const points = computed<StudentPoint[]>(() => {
+  const groups = new Map<string, StudentPoint>()
 
-  return {
-    name: student.name,
-    grade,
-    attendance,
-    withinLimits: grade >= props.noteLimit && attendance >= props.frequencyLimit,
+  for (const student of props.students) {
+    const grade = student.averageGrade
+    const attendance = student.averageAttendance
+    const group = groups.get(`${grade}|${attendance}`)
+
+    if (group) {
+      group.names.push(student.name)
+      continue
+    }
+
+    groups.set(`${grade}|${attendance}`, {
+      names: [student.name],
+      grade,
+      attendance,
+      withinLimits: grade >= props.noteLimit && attendance >= props.frequencyLimit,
+    })
   }
-}))
+
+  return [...groups.values()]
+})
 
 const formatGrade = (grade: number) => grade.toFixed(1).replace('.', ',')
 const formatPercent = (percent: number) => `${Math.round(percent)}%`
@@ -44,9 +60,20 @@ function tooltip(d: StudentPoint) {
   const root = document.createElement('div')
   root.className = 'flex flex-col gap-0.5'
 
-  const name = document.createElement('span')
-  name.className = 'font-medium'
-  name.textContent = d.name
+  for (const studentName of d.names.slice(0, TOOLTIP_NAMES_LIMIT)) {
+    const name = document.createElement('span')
+    name.className = 'font-medium'
+    name.textContent = studentName
+    root.append(name)
+  }
+
+  const remaining = d.names.length - TOOLTIP_NAMES_LIMIT
+  if (remaining > 0) {
+    const more = document.createElement('span')
+    more.className = 'text-xs opacity-70'
+    more.textContent = `+${remaining} ${remaining === 1 ? 'aluno' : 'alunos'}`
+    root.append(more)
+  }
 
   const grade = document.createElement('span')
   grade.className = 'text-xs opacity-70'
@@ -56,7 +83,7 @@ function tooltip(d: StudentPoint) {
   attendance.className = 'text-xs opacity-70'
   attendance.textContent = `Frequência ${formatPercent(d.attendance)}`
 
-  root.append(name, grade, attendance)
+  root.append(grade, attendance)
   return root
 }
 

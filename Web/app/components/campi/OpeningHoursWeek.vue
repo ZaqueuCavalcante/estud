@@ -114,6 +114,7 @@ const visibleDays = computed(() =>
 )
 
 const dayColumns = computed(() => `repeat(${visibleDays.value.length}, minmax(0, 1fr))`)
+const weekdayColumns = `repeat(${campusWeekDays.length}, minmax(0, 1fr))`
 
 function bandHeight(band: typeof campusShiftBands[number]) {
   return ((band.end - band.start) / 60) * HOUR_HEIGHT
@@ -348,7 +349,7 @@ function handleLabel(band: typeof campusShiftBands[number], edge: 'start' | 'end
   <div class="flex flex-col gap-3">
     <!-- No mobile as seis colunas ficam estreitas demais pra acertar um handle,
          então o editor mostra um dia por vez. -->
-    <div v-if="isMobile" class="flex flex-wrap gap-1">
+    <div v-if="isMobile" class="grid gap-1" :style="{ gridTemplateColumns: weekdayColumns }">
       <UButton
         v-for="day in campusWeekDays"
         :key="day.key"
@@ -356,7 +357,8 @@ function handleLabel(band: typeof campusShiftBands[number], edge: 'start' | 'end
         :color="day.key === selectedDayKey ? 'primary' : 'neutral'"
         :variant="day.key === selectedDayKey ? 'solid' : 'ghost'"
         size="xs"
-        class="shrink-0"
+        block
+        class="min-w-0 px-1"
         @click="() => { selectedDayKey = day.key }"
       >
         <template #trailing>
@@ -371,7 +373,7 @@ function handleLabel(band: typeof campusShiftBands[number], edge: 'start' | 'end
     <div class="flex" :class="drag ? 'select-none' : ''">
       <!-- Eixo de horas. Acompanha a altura das faixas ao lado, inclusive as
            divisas de 2px, senão as horas saem do lugar faixa a faixa. -->
-      <div class="w-14 shrink-0">
+      <div class="w-10 shrink-0">
         <div :style="{ height: `${HEADER_HEIGHT}px` }" />
         <div
           v-for="(band, bandIdx) in campusShiftBands"
@@ -383,7 +385,7 @@ function handleLabel(band: typeof campusShiftBands[number], edge: 'start' | 'end
           <div
             v-for="tick in axisTicks(band, bandIdx)"
             :key="tick.label"
-            class="absolute right-2 -translate-y-1/2 text-xs tabular-nums text-muted"
+            class="absolute right-1.5 -translate-y-1/2 text-xs tabular-nums text-muted"
             :style="{ top: `${tick.top}px` }"
           >
             {{ tick.label }}

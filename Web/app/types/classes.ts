@@ -12,7 +12,7 @@ export interface ClassStudentItem {
   id: number
   name: string
   status: string
-  averageGrade?: number // nota média do aluno na turma (de 0 a 10)
+  averageGrade: number // nota média do aluno na turma (de 0 a 10)
   averageAttendance: number // frequência média do aluno na turma (de 0% a 100%)
 }
 

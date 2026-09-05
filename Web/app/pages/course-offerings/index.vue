@@ -72,6 +72,7 @@ const columns: TableColumn<CourseOfferingItem>[] = [
   },
   {
     id: 'actions',
+    header: '',
     cell: ({ row }) => h('div', { class: 'flex gap-1' }, [
       h(UTooltip, { text: 'Ver detalhes' }, () => h(UButton, {
         icon: 'i-lucide-arrow-right',
@@ -98,8 +99,16 @@ const columns: TableColumn<CourseOfferingItem>[] = [
     </template>
 
     <template #body>
-      <div v-if="data?.items?.length" class="flex justify-start sm:justify-end pt-4">
+      <div v-if="data?.items?.length" class="flex items-center justify-between sm:justify-end gap-2 pt-4">
         <UButton icon="i-lucide-plus" label="Oferta" @click="() => { createModalOpen = true }" />
+        <UBadge
+          v-if="(data?.total ?? 0) > 0"
+          color="neutral"
+          variant="subtle"
+          class="h-8 px-3 sm:hidden"
+        >
+          {{ data?.total }} {{ data?.total === 1 ? 'oferta' : 'ofertas' }}
+        </UBadge>
       </div>
       <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">
         <template #empty>
@@ -113,8 +122,8 @@ const columns: TableColumn<CourseOfferingItem>[] = [
         </template>
       </DataTable>
 
-      <div v-if="(data?.total ?? 0) > 0" class="flex items-center justify-between gap-2 mt-4">
-        <UBadge color="neutral" variant="subtle" class="h-8 px-3">
+      <div v-if="(data?.total ?? 0) > 0" class="flex items-center justify-end sm:justify-between gap-2 mt-4">
+        <UBadge color="neutral" variant="subtle" class="h-8 px-3 max-sm:hidden">
           {{ data?.total }} {{ data?.total === 1 ? 'oferta encontrada' : 'ofertas encontradas' }}
         </UBadge>
 

@@ -1,3 +1,5 @@
+using Estud.Back.Domain.Classes;
+
 namespace Estud.Back.Features.Teachers.GetTeacherClassStudents;
 
 public class GetTeacherClassStudentsService(EstudDbContext ctx) : IEstudService
@@ -15,21 +17,22 @@ public class GetTeacherClassStudentsService(EstudDbContext ctx) : IEstudService
         var assigned = await ctx.ClassTeachers.AnyAsync(ct => ct.ClassId == classId && ct.TeacherId == teacherId);
         if (!assigned) return TeacherNotAssignedToClass.I;
 
-        var classStudents = await GetClassStudents(classId);
+        var config = await ctx.InstitutionConfigs.AsNoTracking().FirstAsync(x => x.InstitutionId == institutionId);
 
-        // Mock: nota média aleatória, porém estável por aluno (seed = Id).
-        // TODO: calcular a partir das notas reais do aluno na turma.
+        var classStudents = await GetClassStudents(classId);
+        var classStudentsWorks = await GetClassStudentsWorks(classId);
+
         var students = classStudents
             .Select(s =>
             {
-                var random = new Random(s.Id);
+                var works = classStudentsWorks.GetValueOrDefault(s.Id, []);
                 var attendances = s.Presences + s.Absences;
                 return new GetTeacherClassStudentsItemOut
                 {
                     Id = s.Id,
                     Name = s.Name,
                     Status = s.Status,
-                    AverageGrade = Math.Round((decimal)(random.NextDouble() * 10), 1),
+                    AverageGrade = Math.Round(config.GradeRule.Average(works), 1, MidpointRounding.AwayFromZero),
                     AverageAttendance = attendances > 0
                         ? Math.Round((decimal)s.Presences / attendances * 100, 1, MidpointRounding.AwayFromZero)
                         : 0,
@@ -66,5 +69,32 @@ public class GetTeacherClassStudentsService(EstudDbContext ctx) : IEstudService
         return await ctx.Database
             .SqlQueryRaw<GetTeacherClassStudentDto>(sql, classId)
             .AsNoTracking().ToListAsync();
+    }
+
+    private async Task<Dictionary<int, List<(ClassNoteType NoteType, int Weight, decimal Note)>>> GetClassStudentsWorks(int classId)
+    {
+        const string sql = @"
+            SELECT
+                cs.student_id            AS id,
+                ca.note                  AS note_type,
+                ca.weight                AS weight,
+                COALESCE(caw.note, 0)    AS note
+            FROM
+                estud.classes__students cs
+            INNER JOIN
+                estud.class_activities ca ON ca.class_id = cs.class_id
+            LEFT JOIN
+                estud.class_activity_works caw ON caw.class_activity_id = ca.id AND caw.student_id = cs.student_id
+            WHERE
+                cs.class_id = {0}
+        ";
+
+        var works = await ctx.Database
+            .SqlQueryRaw<GetTeacherClassStudentWorkDto>(sql, classId)
+            .AsNoTracking().ToListAsync();
+
+        return works
+            .GroupBy(w => w.Id)
+            .ToDictionary(g => g.Key, g => g.Select(w => (w.NoteType, w.Weight, w.Note)).ToList());
     }
 }

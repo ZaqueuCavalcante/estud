@@ -2,6 +2,8 @@
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 
+const props = defineProps<{ discipline?: { id: number, name: string } | null }>()
+
 const open = defineModel<boolean>('open', { default: false })
 const emit = defineEmits<{ created: [] }>()
 
@@ -26,9 +28,19 @@ const [{ data: disciplinesData }, { data: periodsData }, { data: campiData }] = 
   useFetch<GetCampiOut>(`${config.public.backendUrl}/campi`, { credentials: 'include', server: false }),
 ])
 
-const disciplineOptions = computed(() =>
-  (disciplinesData.value?.items ?? []).map(d => ({ label: d.name, value: d.id }))
-)
+// A lista vem paginada em 100: a disciplina que veio por prop pode estar fora
+// dela, e sem essa entrada o select abriria vazio mesmo já tendo o valor.
+const disciplineOptions = computed(() => {
+  const options = (disciplinesData.value?.items ?? []).map(d => ({ label: d.name, value: d.id }))
+  const preset = props.discipline
+
+  if (preset && !options.some(o => o.value === preset.id)) {
+    options.unshift({ label: preset.name, value: preset.id })
+  }
+
+  return options
+})
+
 const periodOptions = computed(() =>
   (periodsData.value?.items ?? []).map(p => ({ label: p.name, value: p.id }))
 )
@@ -74,21 +86,21 @@ const schema = z.object({
 type Schema = z.output<typeof schema>
 
 const formState = reactive<Partial<Schema>>({
-  disciplineId: undefined,
+  disciplineId: props.discipline?.id,
   campusId:     undefined,
   periodId:     undefined,
   vacancies:    undefined,
 })
 
 function resetForm() {
-  formState.disciplineId = undefined
+  formState.disciplineId = props.discipline?.id
   formState.campusId     = undefined
   formState.periodId     = undefined
   formState.vacancies    = undefined
   vacanciesDisplay.value = ''
 }
 
-watch(open, (val) => { if (!val) resetForm() })
+watch(open, () => { resetForm() })
 
 // ── Submit ────────────────────────────────────────────────────
 async function onSubmit(event: FormSubmitEvent<Schema>) {

@@ -75,6 +75,7 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
   },
   {
     id: 'actions',
+    header: '',
     cell: ({ row }) => h('div', { class: 'flex gap-1' }, [
       h(UTooltip, { text: 'Ver detalhes' }, () => h(UButton, {
         icon: 'i-lucide-arrow-right',
@@ -120,13 +121,22 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
             />
           </template>
         </UInput>
-        <UButton
-          v-if="data?.items?.length || filter"
-          class="self-start sm:self-auto"
-          icon="i-lucide-plus"
-          label="Grade"
-          to="/course-curriculums/new"
-        />
+        <div class="flex items-center justify-between gap-2 self-stretch sm:self-auto">
+          <UButton
+            v-if="data?.items?.length || filter"
+            icon="i-lucide-plus"
+            label="Grade"
+            to="/course-curriculums/new"
+          />
+          <UBadge
+            v-if="(data?.total ?? 0) > 0"
+            color="neutral"
+            variant="subtle"
+            class="h-8 px-3 sm:hidden"
+          >
+            {{ data?.total }} {{ data?.total === 1 ? 'grade' : 'grades' }}
+          </UBadge>
+        </div>
       </div>
       <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">
         <template #empty>
@@ -143,8 +153,8 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
         </template>
       </DataTable>
 
-      <div v-if="(data?.total ?? 0) > 0" class="flex items-center justify-between gap-2 mt-4">
-        <UBadge color="neutral" variant="subtle" class="h-8 px-3">
+      <div v-if="(data?.total ?? 0) > 0" class="flex items-center justify-end sm:justify-between gap-2 mt-4">
+        <UBadge color="neutral" variant="subtle" class="h-8 px-3 max-sm:hidden">
           {{ data?.total }} {{ data?.total === 1 ? 'grade encontrada' : 'grades encontradas' }}
         </UBadge>
 

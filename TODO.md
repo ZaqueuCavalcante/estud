@@ -11,8 +11,9 @@
 
 - Calcular nota parcial relativa e não apenas a média final?
 
+- ❌ GoogleOneTapLoginController
+- ❌ SocialLoginChallengeController
 
-
-- ❌ GetTeacherClassStudentsController (falta nota)
+---
 
 

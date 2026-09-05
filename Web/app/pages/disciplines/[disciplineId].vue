@@ -16,6 +16,7 @@ const { data, status, error, refresh } = await useFetch<GetDisciplineDetailsOut>
 )
 
 const editModalOpen = ref(false)
+const createClassModalOpen = ref(false)
 
 // O modal de edição espera o mesmo formato usado na listagem de disciplinas
 const disciplineRef = computed(() => data.value
@@ -149,16 +150,29 @@ const breadcrumb = [
         />
 
         <section v-if="activeTab === 'classes'" class="flex flex-col gap-4">
-          <p class="text-sm text-muted">
-            As turmas abertas nesta disciplina.
-          </p>
+          <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between gap-3">
+            <p class="text-sm text-muted">
+              As turmas abertas nesta disciplina.
+            </p>
+
+            <UButton
+              v-if="classes.length"
+              class="self-start sm:self-auto"
+              icon="i-lucide-plus"
+              label="Turma"
+              @click="() => { createClassModalOpen = true }"
+            />
+          </div>
 
           <DataTable :data="classes" :columns="classColumns">
             <template #empty>
-              <div class="flex items-center justify-center gap-2 py-6 text-sm text-muted">
-                <UIcon name="i-lucide-door-closed" class="size-4" />
-                Nenhuma turma nesta disciplina
-              </div>
+              <TableEmptyState
+                :loading="false"
+                icon="i-lucide-door-closed"
+                message="Nenhuma turma nesta disciplina"
+                button-label="Abrir turma"
+                @create="() => { createClassModalOpen = true }"
+              />
             </template>
           </DataTable>
         </section>
@@ -167,4 +181,10 @@ const breadcrumb = [
   </UDashboardPanel>
 
   <DisciplinesEditModal v-model:open="editModalOpen" :discipline="disciplineRef" @updated="refresh()" />
+
+  <ClassesCreateModal
+    v-model:open="createClassModalOpen"
+    :discipline="disciplineRef"
+    @created="refresh()"
+  />
 </template>

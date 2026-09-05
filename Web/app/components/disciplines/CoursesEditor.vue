@@ -195,12 +195,12 @@ async function save() {
 
 <template>
   <section class="flex flex-col gap-4">
-    <div class="flex flex-wrap items-center justify-between gap-3">
+    <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between gap-3">
       <p class="text-sm text-muted">
         Os cursos vinculados a esta disciplina.
       </p>
 
-      <div class="flex shrink-0 items-center gap-2">
+      <div class="flex shrink-0 items-center gap-2 self-start sm:self-auto">
         <template v-if="editing">
           <UButton
             label="Cancelar"

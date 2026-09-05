@@ -96,13 +96,13 @@
 ---------------------------------------------------------------------------------------------------
 
 ## Classes
+- ✅ GetClassController
 - ✅ StartClassController
 - ✅ GetClassesController
 - ✅ CreateClassController
 - ✅ UpdateClassTeachersController
 - ✅ UpdateClassSchedulesController
 - ✅ ReleaseClassForEnrollmentController
-- ❌ GetClassController (falta nota do aluno)
 
 ## Identity
 - ✅ GetSsoConfigurationController
@@ -146,7 +146,7 @@
 - ✅ GetStudentAgendaController
 - ✅ GetStudentAttendanceCalendarController
 - ✅ GetStudentCurrentClassesController
-- ❌ GetStudentDetailsController (falta nota)
+- ✅ GetStudentDetailsController
 
 ## Teachers
 - ✅ GetTeachersController
@@ -166,7 +166,7 @@
 - ✅ GetTeacherPotentialCampiController
 - ✅ GetTeacherPotentialDisciplinesController
 - ✅ GetTeacherAgendaController
-- ❌ GetTeacherClassStudentsController (falta nota)
+- ✅ GetTeacherClassStudentsController
 
 ## Parents
 - ✅ GetParentsController

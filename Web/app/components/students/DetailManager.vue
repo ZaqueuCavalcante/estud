@@ -149,28 +149,26 @@ const classColumns: TableColumn<StudentClassItem>[] = [
 
       <div v-else class="flex flex-col gap-10 py-2">
         <div class="flex flex-col gap-5">
-          <div class="flex items-start gap-4">
-            <UAvatar :alt="data.name" size="xl" />
-            <div class="flex flex-col gap-1">
-              <div class="flex flex-wrap items-center gap-2">
-                <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
-                  {{ data.name }}
-                </h1>
-                <UBadge
-                  :label="studentStatusLabels[data.status] ?? data.status"
-                  :color="studentStatusColors[data.status] ?? 'neutral'"
-                  variant="subtle"
-                />
-              </div>
-              <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-muted">
-                <span class="flex items-center gap-1.5">
-                  <UIcon name="i-lucide-mail" class="size-4" />
-                  {{ data.email }}
-                </span>
+          <div class="flex flex-col gap-1">
+            <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
+              {{ data.name }}
+            </h1>
+            <div class="flex flex-col gap-1 text-sm text-muted">
+              <span class="flex items-center gap-1.5">
+                <UIcon name="i-lucide-mail" class="size-4" />
+                {{ data.email }}
+              </span>
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                 <span class="flex items-center gap-1.5">
                   <UIcon name="i-lucide-hash" class="size-4" />
                   {{ data.enrollmentCode }}
                 </span>
+                <UBadge
+                  class="self-start"
+                  :label="studentStatusLabels[data.status] ?? data.status"
+                  :color="studentStatusColors[data.status] ?? 'neutral'"
+                  variant="subtle"
+                />
               </div>
             </div>
           </div>

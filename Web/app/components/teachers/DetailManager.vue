@@ -130,28 +130,25 @@ const classColumns: TableColumn<TeacherClassItem>[] = [
       </div>
 
       <div v-else class="flex flex-col gap-10 py-2">
-        <div class="flex items-start gap-4">
-          <UAvatar :alt="data.name" size="xl" />
-          <div class="flex flex-col gap-1">
-            <div class="flex items-center gap-1.5">
-              <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
-                {{ data.name }}
-              </h1>
-              <UTooltip text="Editar">
-                <UButton
-                  icon="i-lucide-pencil"
-                  color="neutral"
-                  variant="ghost"
-                  size="xs"
-                  @click="(e) => { (e.currentTarget as HTMLElement).blur(); editModalOpen = true }"
-                />
-              </UTooltip>
-            </div>
-            <span class="flex items-center gap-1.5 text-sm text-muted">
-              <UIcon name="i-lucide-mail" class="size-4" />
-              {{ data.email }}
-            </span>
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
+              {{ data.name }}
+            </h1>
+            <UTooltip text="Editar">
+              <UButton
+                icon="i-lucide-pencil"
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                @click="(e) => { (e.currentTarget as HTMLElement).blur(); editModalOpen = true }"
+              />
+            </UTooltip>
           </div>
+          <span class="flex items-center gap-1.5 text-sm text-muted">
+            <UIcon name="i-lucide-mail" class="size-4" />
+            {{ data.email }}
+          </span>
         </div>
 
         <section class="flex flex-col gap-3">

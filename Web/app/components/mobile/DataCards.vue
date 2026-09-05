@@ -107,7 +107,7 @@ function getHeaderLabel(cell: any): string {
 
           <!-- Actions footer -->
           <template v-if="row.getVisibleCells().some(isActionCell)">
-            <div class="data-cards-actions px-3 py-3 border-t border-default bg-elevated/50">
+            <div class="data-cards-actions border-t border-default bg-elevated/50">
               <template v-for="cell in row.getVisibleCells()" :key="cell.id">
                 <template v-if="isActionCell(cell)">
                   <FlexRender
@@ -150,6 +150,7 @@ function getHeaderLabel(cell: any): string {
 .data-cards-actions :deep(a) {
   width: 100%;
   justify-content: center;
+  padding: 0.75rem;
 }
 
 .data-cards-actions :deep(a > span) {

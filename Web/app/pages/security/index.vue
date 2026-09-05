@@ -48,6 +48,7 @@ const columns: TableColumn<RoleItem>[] = [
   },
   {
     id: 'actions',
+    header: '',
     meta: { class: { th: 'w-16', td: 'w-16' } },
     cell: ({ row }) => h(UTooltip, { text: 'Editar' }, () => h(UButton, {
       icon: 'i-lucide-pencil',
