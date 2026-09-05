@@ -5,8 +5,8 @@ public enum PermissionGroup
     [Description("Identity")]
     Identity = 0,
 
-    [Description("Users")]
-    Users = 1,
+    [Description("Institutions")]
+    Institutions = 1,
 
     [Description("Campi")]
     Campi = 2,
@@ -47,9 +47,6 @@ public enum PermissionGroup
     [Description("Calendar")]
     Calendar = 14,
 
-    [Description("Institutions")]
-    Institutions = 15,
-
     [Description("Parents")]
-    Parents = 16,
+    Parents = 15,
 }

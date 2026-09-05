@@ -308,7 +308,7 @@ public partial class IntegrationTests
         var client = await _back.LoginAs(email);
 
         // Act
-        var result = await client.CreateRole(name: "Gerente de Usuários", permissions: [EstudPermissions.ManageUsers.Id]);
+        var result = await client.CreateRole(name: "Gerente de Alunos", permissions: [EstudPermissions.ManageStudents.Id]);
 
         // Assert
         result.ShouldBeError(InvalidRolePermissions.I);

@@ -14,7 +14,6 @@ public static class EstudDefaultRoles
 		Permissions = [
 			EstudPermissions.ManageSso.Id,
 			EstudPermissions.ManageCampi.Id,
-			EstudPermissions.ManageUsers.Id,
 			EstudPermissions.ManageRoles.Id,
 			EstudPermissions.ManageClasses.Id,
             EstudPermissions.ManagePeriods.Id,

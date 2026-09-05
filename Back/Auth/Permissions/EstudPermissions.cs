@@ -27,12 +27,12 @@ public static class EstudPermissions
         [UserType.Manager]
     );
 
-    // Users
-    public static readonly EstudPermission ManageUsers = new(
-        PermissionGroup.Users,
+    // Institutions
+    public static readonly EstudPermission ManageInstitutionConfig = new(
+        PermissionGroup.Institutions,
         100,
-        "Gerenciar usuários.",
-        "Criar, editar e deletar usuários.",
+        "Gerenciar configurações da instituição.",
+        "Configurar nota e frequência mínimas para aprovação.",
         [UserType.Manager]
     );
 
@@ -150,15 +150,6 @@ public static class EstudPermissions
         1400,
         "Gerenciar calendário acadêmico.",
         "Criar e editar calendário acadêmico.",
-        [UserType.Manager]
-    );
-
-    // Institutions
-    public static readonly EstudPermission ManageInstitutionConfig = new(
-        PermissionGroup.Institutions,
-        1500,
-        "Gerenciar configurações da instituição.",
-        "Configurar nota e frequência mínimas para aprovação.",
         [UserType.Manager]
     );
 

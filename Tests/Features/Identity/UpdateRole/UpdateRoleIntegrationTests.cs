@@ -354,7 +354,7 @@ public partial class IntegrationTests
         var client = await _back.LoginAs(email);
 
         // Act
-        var result = await client.UpdateRole(limitedRoleId, name: "Gerente de Perfis", permissions: [EstudPermissions.ManageRoles.Id, EstudPermissions.ManageUsers.Id]);
+        var result = await client.UpdateRole(limitedRoleId, name: "Gerente de Perfis", permissions: [EstudPermissions.ManageRoles.Id, EstudPermissions.ManageStudents.Id]);
 
         // Assert
         result.ShouldBeError(InvalidRolePermissions.I);
