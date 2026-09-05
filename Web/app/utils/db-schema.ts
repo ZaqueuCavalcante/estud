@@ -151,6 +151,7 @@ export const dbSchema: DbTable[] = [
       { name: "due_hour", prop: "DueHour", type: "integer", clr: "Hour", nullable: false, enum: "Hour" },
     ],
     fks: [
+      { columns: ["class_id"], target: "classes", targetEntity: "Class", principal: [], nav: null, convention: false },
     ],
     indexes: [
     ],
@@ -1113,6 +1114,7 @@ export const dbSchema: DbTable[] = [
       { name: "status", prop: "Status", type: "integer", clr: "WebhookCallAttemptStatus", nullable: false, enum: "WebhookCallAttemptStatus" },
       { name: "status_code", prop: "StatusCode", type: "integer", clr: "int", nullable: false },
       { name: "response", prop: "Response", type: "text", clr: "string", nullable: false },
+      { name: "duration_ms", prop: "DurationMs", type: "integer", clr: "int", nullable: false },
       { name: "created_at", prop: "CreatedAt", type: "timestamp with time zone", clr: "DateTime", nullable: false },
     ],
     fks: [

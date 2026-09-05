@@ -14,6 +14,7 @@ public class WebhookCall : DomainEntity
     public int AttemptsCount { get; set; }
     public DateTime CreatedAt { get; set; }
     public List<WebhookCallAttempt> Attempts { get; set; }
+    public WebhookSubscription Subscription { get; set; }
 
     private WebhookCall() { }
 
@@ -31,17 +32,17 @@ public class WebhookCall : DomainEntity
         Status = WebhookCallStatus.Pending;
     }
 
-    public void Success(int statusCode, string response)
+    public void Success(int statusCode, string response, int durationMs)
     {
         AttemptsCount++;
         Status = WebhookCallStatus.Success;
-        Attempts.Add(new WebhookCallAttempt(Id, WebhookCallAttemptStatus.Success, statusCode, response));
+        Attempts.Add(new WebhookCallAttempt(Id, WebhookCallAttemptStatus.Success, statusCode, response, durationMs));
     }
 
-    public void Failed(int statusCode, string response)
+    public void Failed(int statusCode, string response, int durationMs)
     {
         Status = WebhookCallStatus.Error;
-        Attempts.Add(new WebhookCallAttempt(Id, WebhookCallAttemptStatus.Error, statusCode, response));
+        Attempts.Add(new WebhookCallAttempt(Id, WebhookCallAttemptStatus.Error, statusCode, response, durationMs));
 
         AttemptsCount++;
     }

@@ -123,18 +123,20 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           name="customHeaders"
           help="Enviados em todas as chamadas feitas para a URL. Útil para autenticação via header."
         >
-          <div class="flex flex-col gap-2 w-full">
+          <div class="flex flex-col gap-4 sm:gap-2 w-full">
             <div
               v-for="(header, idx) in formState.customHeaders"
               :key="idx"
-              class="flex items-start gap-2"
+              class="flex items-center gap-2"
             >
-              <UFormField :name="`customHeaders.${idx}.key`" class="flex-1">
-                <UInput v-model="header.key" class="w-full" placeholder="Ex: Estud-AuthToken" />
-              </UFormField>
-              <UFormField :name="`customHeaders.${idx}.value`" class="flex-1">
-                <UInput v-model="header.value" class="w-full" placeholder="Ex: 6r4g654rs6g4we6f4qw684f68qwf4" />
-              </UFormField>
+              <div class="flex-1 min-w-0 flex flex-col sm:flex-row gap-2">
+                <UFormField :name="`customHeaders.${idx}.key`" class="flex-1 min-w-0">
+                  <UInput v-model="header.key" class="w-full" placeholder="Ex: Estud-AuthToken" />
+                </UFormField>
+                <UFormField :name="`customHeaders.${idx}.value`" class="flex-1 min-w-0">
+                  <UInput v-model="header.value" class="w-full" placeholder="Ex: 6r4g654rs6g4we6f4qw684f68qwf4" />
+                </UFormField>
+              </div>
               <UTooltip text="Remover">
                 <UButton
                   icon="i-lucide-trash-2"

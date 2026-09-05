@@ -7,6 +7,13 @@ public class WebhookSubscriptionNotFound : EstudError
     public override string Message { get; set; } = "Inscrição de webhook não encontrada.";
 }
 
+public class WebhookCallNotFound : EstudError
+{
+    public static readonly WebhookCallNotFound I = new();
+    public override string Code { get; set; } = nameof(WebhookCallNotFound);
+    public override string Message { get; set; } = "Chamada de webhook não encontrada.";
+}
+
 public class InvalidWebhookName : EstudError
 {
     public static readonly InvalidWebhookName I = new();

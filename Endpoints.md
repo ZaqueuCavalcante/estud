@@ -1,4 +1,4 @@
-﻿# Endpoints
+# Endpoints
 
 ## Admin
 - ✅ GetDomainEventsController
@@ -79,6 +79,7 @@
 - ✅ UpdateEnrollmentPeriodController
 
 ## Webhooks
+- ✅ GetWebhookCallController
 - ✅ GetWebhookCallsController
 - ✅ GetWebhookSubscriptionController
 - ✅ GetWebhookSubscriptionsController

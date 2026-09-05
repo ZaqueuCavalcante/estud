@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using Estud.Back.Features.Webhooks.GetWebhookCall;
 using Estud.Back.Features.Webhooks.GetWebhookCalls;
 using Estud.Back.Features.Webhooks.GetWebhookSubscription;
 using Estud.Back.Features.Webhooks.GetWebhookSubscriptions;
@@ -48,6 +49,12 @@ public partial class TestsHttpClient
 
         var response = await http.GetAsync("webhooks/calls".AddQueryString(data));
         return await response.Resolve<GetWebhookCallsOut>();
+    }
+
+    public async Task<OneOf<GetWebhookCallOut, ErrorOut>> GetWebhookCall(int callId)
+    {
+        var response = await http.GetAsync($"webhooks/calls/{callId}");
+        return await response.Resolve<GetWebhookCallOut>();
     }
 
     public async Task<OneOf<UpdateWebhookSubscriptionOut, ErrorOut>> UpdateWebhookSubscription(

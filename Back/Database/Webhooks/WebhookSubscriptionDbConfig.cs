@@ -28,7 +28,7 @@ public class WebhookSubscriptionDbConfig : IEntityTypeConfiguration<WebhookSubsc
             .IsRequired();
 
         entity.HasMany(e => e.Calls)
-            .WithOne()
+            .WithOne(e => e.Subscription)
             .HasPrincipalKey(e => e.Id)
             .HasForeignKey(x => x.WebhookSubscriptionId);
     }

@@ -9,6 +9,8 @@
 - Ciclo de vida de uma turma
 - Remover usos do GetDbContext
 
+- Documentação dos eventos de Webhook? Onde fica? Scalar ou docs?
+
 - Calcular nota parcial relativa e não apenas a média final?
 
 - ❌ GoogleOneTapLoginController

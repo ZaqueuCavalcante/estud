@@ -4,6 +4,7 @@ namespace Estud.Back.Auth.Policies;
 
 public static partial class Policies
 {
+    public const string GetWebhookCall = nameof(GetWebhookCall);
     public const string GetWebhookCalls = nameof(GetWebhookCalls);
     public const string GetWebhookSubscription = nameof(GetWebhookSubscription);
     public const string GetWebhookSubscriptions = nameof(GetWebhookSubscriptions);
@@ -13,6 +14,7 @@ public static partial class Policies
     public static AuthorizationBuilder AddWebhooksPolicies(this AuthorizationBuilder builder)
     {
         builder
+            .AddEstudPolicy(GetWebhookCall, UserType.Manager, EstudPermissions.ManageWebhooks)
             .AddEstudPolicy(GetWebhookCalls, UserType.Manager, EstudPermissions.ManageWebhooks)
             .AddEstudPolicy(GetWebhookSubscription, UserType.Manager, EstudPermissions.ManageWebhooks)
             .AddEstudPolicy(GetWebhookSubscriptions, UserType.Manager, EstudPermissions.ManageWebhooks)

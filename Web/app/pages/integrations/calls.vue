@@ -1,27 +1,23 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
-
-interface WebhookCallItem {
-  id: number
-  eventType: string
-  status: string
-  attemptsCount: number
-  createdAt: string
-}
-
-interface GetWebhookCallsOut {
-  total: number
-  page: number
-  pageSize: number
-  items: WebhookCallItem[]
-}
+import type { GetWebhookCallsOut, WebhookCallItem } from '~/types/webhooks'
 
 const UBadge = resolveComponent('UBadge')
+const UButton = resolveComponent('UButton')
+const UTooltip = resolveComponent('UTooltip')
 
 const config = useRuntimeConfig()
 
 const page = ref(1)
 const pageSize = 20
+
+const detailsOpen = ref(false)
+const selectedCallId = ref<number | null>(null)
+
+function openDetails(item: WebhookCallItem) {
+  selectedCallId.value = item.id
+  detailsOpen.value = true
+}
 
 const { data, status } = await useFetch<GetWebhookCallsOut>(
   `${config.public.backendUrl}/webhooks/calls`,
@@ -31,25 +27,6 @@ const { data, status } = await useFetch<GetWebhookCallsOut>(
     query: { page, pageSize },
   },
 )
-
-const eventLabels: Record<string, string> = {
-  StudentCreated: 'Aluno criado',
-  ClassActivityCreated: 'Atividade publicada',
-}
-
-const statusLabels: Record<string, string> = {
-  Pending: 'Pendente',
-  Processing: 'Processando',
-  Success: 'Sucesso',
-  Error: 'Erro',
-}
-
-const statusColors: Record<string, 'neutral' | 'info' | 'success' | 'error'> = {
-  Pending: 'neutral',
-  Processing: 'info',
-  Success: 'success',
-  Error: 'error',
-}
 
 function formatDateTime(value: string) {
   return new Date(value).toLocaleString('pt-BR', {
@@ -63,21 +40,17 @@ function formatDateTime(value: string) {
 
 const columns: TableColumn<WebhookCallItem>[] = [
   {
-    accessorKey: 'id',
-    header: 'Id',
-  },
-  {
     accessorKey: 'eventType',
     header: 'Evento',
-    cell: ({ row }) => eventLabels[row.original.eventType] ?? row.original.eventType,
+    cell: ({ row }) => webhookEventLabels[row.original.eventType] ?? row.original.eventType,
   },
   {
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => h(
       UBadge,
-      { variant: 'subtle', color: statusColors[row.original.status] ?? 'neutral' },
-      () => statusLabels[row.original.status] ?? row.original.status,
+      { variant: 'subtle', color: webhookCallStatusColors[row.original.status] ?? 'neutral' },
+      () => webhookCallStatusLabels[row.original.status] ?? row.original.status,
     ),
   },
   {
@@ -88,6 +61,19 @@ const columns: TableColumn<WebhookCallItem>[] = [
     accessorKey: 'createdAt',
     header: 'Criada em',
     cell: ({ row }) => formatDateTime(row.original.createdAt),
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => h(UTooltip, { text: 'Detalhes' }, () => h(UButton, {
+      icon: 'i-lucide-eye',
+      color: 'neutral',
+      variant: 'ghost',
+      size: 'sm',
+      onClick: (e: MouseEvent) => {
+        (e.currentTarget as HTMLElement).blur()
+        openDetails(row.original)
+      },
+    })),
   },
 ]
 </script>
@@ -110,5 +96,7 @@ const columns: TableColumn<WebhookCallItem>[] = [
         :total="data?.total ?? 0"
       />
     </div>
+
+    <IntegrationsCallDetailsSlideover v-model:open="detailsOpen" :call-id="selectedCallId" />
   </div>
 </template>

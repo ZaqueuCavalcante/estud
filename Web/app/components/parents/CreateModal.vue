@@ -156,39 +156,41 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         </UFormField>
 
         <UFormField label="Alunos vinculados" name="students">
-          <div class="space-y-2">
+          <div class="space-y-4 sm:space-y-2">
             <div
               v-for="(row, index) in formState.students"
               :key="index"
-              class="flex items-start gap-2"
+              class="flex items-center gap-2"
             >
-              <UFormField :name="`students.${index}.studentId`" class="flex-1 min-w-0">
-                <USelectMenu
-                  v-model="row.studentId"
-                  :items="studentOptionsFor(index)"
-                  label-key="name"
-                  value-key="id"
-                  class="w-full"
-                  placeholder="Aluno"
-                  :loading="fetchLoading"
-                />
-              </UFormField>
+              <div class="flex-1 min-w-0 flex flex-col sm:flex-row gap-2">
+                <UFormField :name="`students.${index}.studentId`" class="flex-1 min-w-0">
+                  <USelectMenu
+                    v-model="row.studentId"
+                    :items="studentOptionsFor(index)"
+                    label-key="name"
+                    value-key="id"
+                    class="w-full"
+                    placeholder="Aluno"
+                    :loading="fetchLoading"
+                  />
+                </UFormField>
 
-              <UFormField :name="`students.${index}.relationship`" class="w-44">
-                <USelectMenu
-                  v-model="row.relationship"
-                  :items="relationshipOptions"
-                  value-key="value"
-                  class="w-full"
-                  placeholder="Parentesco"
-                  :search-input="false"
-                />
-              </UFormField>
+                <UFormField :name="`students.${index}.relationship`" class="w-full sm:w-44">
+                  <USelectMenu
+                    v-model="row.relationship"
+                    :items="relationshipOptions"
+                    value-key="value"
+                    class="w-full"
+                    placeholder="Parentesco"
+                    :search-input="false"
+                  />
+                </UFormField>
+              </div>
 
               <UButton
                 v-if="formState.students.length > 1"
                 icon="i-lucide-trash-2"
-                color="neutral"
+                color="error"
                 variant="ghost"
                 aria-label="Remover aluno"
                 @click="() => { removeRow(index) }"
