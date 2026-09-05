@@ -19,6 +19,7 @@ public class GetWebhookCallsOut : IApiDto<GetWebhookCallsOut>
                 new GetWebhookCallsItemOut
                 {
                     Id = 1,
+                    Uid = "01K5F2G8QX7VN3ZC4M9TB6HDRY",
                     EventType = WebhookEventType.StudentCreated,
                     Status = WebhookCallStatus.Success,
                     AttemptsCount = 1,
@@ -32,6 +33,7 @@ public class GetWebhookCallsOut : IApiDto<GetWebhookCallsOut>
 public class GetWebhookCallsItemOut
 {
     public int Id { get; set; }
+    public string Uid { get; set; }
     public WebhookEventType EventType { get; set; }
     public WebhookCallStatus Status { get; set; }
     public int AttemptsCount { get; set; }

@@ -106,11 +106,13 @@ public partial class IntegrationTests
         // Assert
         var call = result.Success;
         call.Id.Should().Be(callId);
+        call.Uid.Should().NotBeNullOrEmpty();
         call.EventType.Should().Be(WebhookEventType.StudentCreated);
         call.Status.Should().Be(WebhookCallStatus.Success);
         call.AttemptsCount.Should().Be(1);
         call.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(5));
         call.Payload.Should().Contain("StudentCreated");
+        call.Payload.Should().Contain(call.Uid);
 
         call.Subscription.Id.Should().Be(subscription.Id);
         call.Subscription.Name.Should().Be("Aluno criado");

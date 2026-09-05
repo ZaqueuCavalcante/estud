@@ -1,5 +1,6 @@
 export interface WebhookCallItem {
   id: number
+  uid: string
   eventType: string
   status: string
   attemptsCount: number
@@ -38,6 +39,7 @@ export interface WebhookCallAttempt {
 
 export interface GetWebhookCallOut {
   id: number
+  uid: string
   eventType: string
   status: string
   attemptsCount: number

@@ -110,6 +110,10 @@ function statusCodeColor(statusCode: number) {
               <dt class="text-muted">Criada em</dt>
               <dd class="text-highlighted">{{ formatDateTime(call.createdAt) }}</dd>
             </div>
+            <div class="flex flex-col gap-1 col-span-2">
+              <dt class="text-muted">Id do evento</dt>
+              <dd class="text-highlighted font-mono text-xs break-all">{{ call.uid }}</dd>
+            </div>
           </dl>
         </section>
 

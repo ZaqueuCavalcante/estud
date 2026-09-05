@@ -80,6 +80,7 @@ public partial class IntegrationTests
 
         var call = calls.Items.Single();
         call.Id.Should().BePositive();
+        call.Uid.Should().NotBeNullOrEmpty();
         call.EventType.Should().Be(WebhookEventType.StudentCreated);
         call.Status.Should().Be(WebhookCallStatus.Success);
         call.AttemptsCount.Should().Be(1);

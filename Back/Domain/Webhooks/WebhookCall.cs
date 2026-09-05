@@ -26,10 +26,10 @@ public class WebhookCall : DomainEntity
     {
         InstitutionId = institutionId;
         WebhookSubscriptionId = webhookSubscriptionId;
-        Payload = (new { EventType = eventType, Data = data }).Serialize();
         EventType = eventType;
         CreatedAt = DateTime.UtcNow;
         Status = WebhookCallStatus.Pending;
+        Payload = (new { Id = Uid, EventType = eventType, OccurredAt = CreatedAt, Data = data }).Serialize();
     }
 
     public void Success(int statusCode, string response, int durationMs)
