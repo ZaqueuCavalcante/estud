@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9194304566765064" branch-rate="0.7780269058295964" lines-covered="10590" lines-valid="11518" branches-covered="2082" branches-valid="2676" complexity="4013" version="0" timestamp="1788603366">
+<coverage line-rate="0.9200585147577661" branch-rate="0.7786885245901639" lines-covered="10692" lines-valid="11621" branches-covered="2090" branches-valid="2684" complexity="4030" version="0" timestamp="1788626861">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9210962730208606" branch-rate="0.776355421686747" complexity="3983">
+    <package name="Back" line-rate="0.9217128027681661" branch-rate="0.777027027027027" complexity="4000">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -1187,24 +1187,26 @@
           <methods>
             <method name="AddWebhooksPolicies" signature="(Microsoft.AspNetCore.Authorization.AuthorizationBuilder)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="15" hits="2" branch="false" />
                 <line number="16" hits="2" branch="false" />
                 <line number="17" hits="2" branch="false" />
                 <line number="18" hits="2" branch="false" />
                 <line number="19" hits="2" branch="false" />
                 <line number="20" hits="2" branch="false" />
+                <line number="21" hits="2" branch="false" />
                 <line number="22" hits="2" branch="false" />
+                <line number="24" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="15" hits="2" branch="false" />
             <line number="16" hits="2" branch="false" />
             <line number="17" hits="2" branch="false" />
             <line number="18" hits="2" branch="false" />
             <line number="19" hits="2" branch="false" />
             <line number="20" hits="2" branch="false" />
+            <line number="21" hits="2" branch="false" />
             <line number="22" hits="2" branch="false" />
+            <line number="24" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Auth.Roles.EstudDefaultRoles" filename="/home/runner/work/estud/estud/Back/Auth/Roles/EstudDefaultRoles.cs" line-rate="1" branch-rate="1" complexity="4">
@@ -9937,94 +9939,96 @@
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="18" hits="2" branch="false" />
+                <line number="19" hits="2" branch="false" />
               </lines>
             </method>
             <method name=".ctor" signature="(int, int, object, Estud.Back.Domain.Enums.WebhookEventType)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="20" hits="2" branch="false" />
                 <line number="21" hits="2" branch="false" />
                 <line number="22" hits="2" branch="false" />
                 <line number="23" hits="2" branch="false" />
                 <line number="24" hits="2" branch="false" />
-                <line number="26" hits="2" branch="false" />
+                <line number="25" hits="2" branch="false" />
                 <line number="27" hits="2" branch="false" />
                 <line number="28" hits="2" branch="false" />
                 <line number="29" hits="2" branch="false" />
                 <line number="30" hits="2" branch="false" />
                 <line number="31" hits="2" branch="false" />
                 <line number="32" hits="2" branch="false" />
+                <line number="33" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="Success" signature="(int, string)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="Success" signature="(int, string, int)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="36" hits="2" branch="false" />
                 <line number="37" hits="2" branch="false" />
                 <line number="38" hits="2" branch="false" />
                 <line number="39" hits="2" branch="false" />
+                <line number="40" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="Failed" signature="(int, string)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="Failed" signature="(int, string, int)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="43" hits="2" branch="false" />
                 <line number="44" hits="2" branch="false" />
-                <line number="46" hits="2" branch="false" />
+                <line number="45" hits="2" branch="false" />
                 <line number="47" hits="2" branch="false" />
+                <line number="48" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="18" hits="2" branch="false" />
-            <line number="20" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
             <line number="21" hits="2" branch="false" />
             <line number="22" hits="2" branch="false" />
             <line number="23" hits="2" branch="false" />
             <line number="24" hits="2" branch="false" />
-            <line number="26" hits="2" branch="false" />
+            <line number="25" hits="2" branch="false" />
             <line number="27" hits="2" branch="false" />
             <line number="28" hits="2" branch="false" />
             <line number="29" hits="2" branch="false" />
             <line number="30" hits="2" branch="false" />
             <line number="31" hits="2" branch="false" />
             <line number="32" hits="2" branch="false" />
-            <line number="36" hits="2" branch="false" />
+            <line number="33" hits="2" branch="false" />
             <line number="37" hits="2" branch="false" />
             <line number="38" hits="2" branch="false" />
             <line number="39" hits="2" branch="false" />
-            <line number="43" hits="2" branch="false" />
+            <line number="40" hits="2" branch="false" />
             <line number="44" hits="2" branch="false" />
-            <line number="46" hits="2" branch="false" />
+            <line number="45" hits="2" branch="false" />
             <line number="47" hits="2" branch="false" />
+            <line number="48" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Domain.Webhooks.WebhookCallAttempt" filename="/home/runner/work/estud/estud/Back/Domain/Webhooks/WebhookCallAttempt.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="15" hits="2" branch="false" />
+                <line number="16" hits="2" branch="false" />
               </lines>
             </method>
-            <method name=".ctor" signature="(int, Estud.Back.Domain.Enums.WebhookCallAttemptStatus, int, string)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(int, Estud.Back.Domain.Enums.WebhookCallAttemptStatus, int, string, int)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="17" hits="2" branch="false" />
-                <line number="19" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
                 <line number="20" hits="2" branch="false" />
                 <line number="21" hits="2" branch="false" />
                 <line number="22" hits="2" branch="false" />
                 <line number="23" hits="2" branch="false" />
                 <line number="24" hits="2" branch="false" />
+                <line number="25" hits="2" branch="false" />
+                <line number="26" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="15" hits="2" branch="false" />
-            <line number="17" hits="2" branch="false" />
-            <line number="19" hits="2" branch="false" />
+            <line number="16" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
             <line number="20" hits="2" branch="false" />
             <line number="21" hits="2" branch="false" />
             <line number="22" hits="2" branch="false" />
             <line number="23" hits="2" branch="false" />
             <line number="24" hits="2" branch="false" />
+            <line number="25" hits="2" branch="false" />
+            <line number="26" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Domain.Webhooks.WebhookCustomHeaders" filename="/home/runner/work/estud/estud/Back/Domain/Webhooks/WebhookCustomHeaders.cs" line-rate="1" branch-rate="0.7142857142857143" complexity="14">
@@ -12832,6 +12836,26 @@
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
+                <line number="41" hits="2" branch="false" />
+                <line number="42" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="40" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="40" hits="2" branch="false" />
+            <line number="41" hits="2" branch="false" />
+            <line number="42" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Errors.InvalidWebhookEvents" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Webhooks.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
                 <line number="34" hits="2" branch="false" />
                 <line number="35" hits="2" branch="false" />
               </lines>
@@ -12848,47 +12872,7 @@
             <line number="35" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Errors.InvalidWebhookEvents" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Webhooks.cs" line-rate="1" branch-rate="1" complexity="2">
-          <methods>
-            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
-              <lines>
-                <line number="27" hits="2" branch="false" />
-                <line number="28" hits="2" branch="false" />
-              </lines>
-            </method>
-            <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
-              <lines>
-                <line number="26" hits="2" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="26" hits="2" branch="false" />
-            <line number="27" hits="2" branch="false" />
-            <line number="28" hits="2" branch="false" />
-          </lines>
-        </class>
         <class name="Estud.Back.Errors.InvalidWebhookName" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Webhooks.cs" line-rate="1" branch-rate="1" complexity="2">
-          <methods>
-            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
-              <lines>
-                <line number="13" hits="2" branch="false" />
-                <line number="14" hits="2" branch="false" />
-              </lines>
-            </method>
-            <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
-              <lines>
-                <line number="12" hits="2" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="12" hits="2" branch="false" />
-            <line number="13" hits="2" branch="false" />
-            <line number="14" hits="2" branch="false" />
-          </lines>
-        </class>
-        <class name="Estud.Back.Errors.InvalidWebhookUrl" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Webhooks.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -12906,6 +12890,26 @@
             <line number="19" hits="2" branch="false" />
             <line number="20" hits="2" branch="false" />
             <line number="21" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Errors.InvalidWebhookUrl" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Webhooks.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="27" hits="2" branch="false" />
+                <line number="28" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="26" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="26" hits="2" branch="false" />
+            <line number="27" hits="2" branch="false" />
+            <line number="28" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Errors.MultipleOpeningHoursInShift" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Campus.cs" line-rate="1" branch-rate="1" complexity="2">
@@ -13706,6 +13710,26 @@
             <line number="9" hits="2" branch="false" />
             <line number="10" hits="2" branch="false" />
             <line number="11" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Errors.WebhookCallNotFound" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Webhooks.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="13" hits="2" branch="false" />
+                <line number="14" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="12" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="12" hits="2" branch="false" />
+            <line number="13" hits="2" branch="false" />
+            <line number="14" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Errors.WebhookSubscriptionNotFound" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Webhooks.cs" line-rate="1" branch-rate="1" complexity="2">
@@ -35160,72 +35184,78 @@
           <methods>
             <method name=".ctor" signature="(string)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="6" hits="2" branch="false" />
+                <line number="7" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="6" hits="2" branch="false" />
+            <line number="7" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Features.Webhooks.CallWebhooks.CallWebhookCommandHandler" filename="/home/runner/work/estud/estud/Back/Features/Webhooks/CallWebhooks/CallWebhookCommand.cs" line-rate="0.8695652173913043" branch-rate="1" complexity="5">
+        <class name="Estud.Back.Features.Webhooks.CallWebhooks.CallWebhookCommandHandler" filename="/home/runner/work/estud/estud/Back/Features/Webhooks/CallWebhooks/CallWebhookCommand.cs" line-rate="0.8461538461538461" branch-rate="1" complexity="5">
           <methods>
             <method name=".ctor" signature="(Estud.Back.Database.EstudDbContext, System.Net.Http.IHttpClientFactory)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="8" hits="2" branch="false" />
+                <line number="9" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="Handle" signature="()" line-rate="0.8636363636363636" branch-rate="1" complexity="4">
+            <method name="Handle" signature="()" line-rate="0.84" branch-rate="1" complexity="4">
               <lines>
-                <line number="12" hits="2" branch="false" />
                 <line number="13" hits="2" branch="false" />
                 <line number="14" hits="2" branch="false" />
-                <line number="16" hits="2" branch="false" />
+                <line number="15" hits="2" branch="false" />
                 <line number="17" hits="2" branch="false" />
                 <line number="18" hits="2" branch="false" />
                 <line number="19" hits="2" branch="false" />
-                <line number="21" hits="2" branch="false" />
+                <line number="20" hits="2" branch="false" />
                 <line number="22" hits="2" branch="false" />
-                <line number="23" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="25" hits="2" branch="false" />
-                <line number="30" hits="2" branch="false" />
-                <line number="31" hits="2" branch="false" />
-                <line number="32" hits="2" branch="false" />
-                <line number="34" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="36" hits="2" branch="false" />
-                <line number="40" hits="2" branch="false" />
-                <line number="42" hits="2" branch="false" />
-                <line number="43" hits="0" branch="false" />
-                <line number="45" hits="0" branch="false" />
-                <line number="46" hits="0" branch="false" />
+                <line number="23" hits="2" branch="false" />
+                <line number="24" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="26" hits="2" branch="false" />
+                <line number="29" hits="2" branch="false" />
+                <line number="33" hits="2" branch="false" />
+                <line number="34" hits="2" branch="false" />
+                <line number="35" hits="2" branch="false" />
+                <line number="37" hits="2" branch="false" />
+                <line number="39" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="41" hits="2" branch="false" />
+                <line number="45" hits="2" branch="false" />
                 <line number="47" hits="2" branch="false" />
+                <line number="48" hits="0" branch="false" />
+                <line number="50" hits="0" branch="false" />
+                <line number="51" hits="0" branch="false" />
+                <line number="52" hits="0" branch="false" />
+                <line number="53" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="8" hits="2" branch="false" />
-            <line number="12" hits="2" branch="false" />
+            <line number="9" hits="2" branch="false" />
             <line number="13" hits="2" branch="false" />
             <line number="14" hits="2" branch="false" />
-            <line number="16" hits="2" branch="false" />
+            <line number="15" hits="2" branch="false" />
             <line number="17" hits="2" branch="false" />
             <line number="18" hits="2" branch="false" />
             <line number="19" hits="2" branch="false" />
-            <line number="21" hits="2" branch="false" />
+            <line number="20" hits="2" branch="false" />
             <line number="22" hits="2" branch="false" />
-            <line number="23" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="25" hits="2" branch="false" />
-            <line number="30" hits="2" branch="false" />
-            <line number="31" hits="2" branch="false" />
-            <line number="32" hits="2" branch="false" />
-            <line number="34" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="36" hits="2" branch="false" />
-            <line number="40" hits="2" branch="false" />
-            <line number="42" hits="2" branch="false" />
-            <line number="43" hits="0" branch="false" />
-            <line number="45" hits="0" branch="false" />
-            <line number="46" hits="0" branch="false" />
+            <line number="23" hits="2" branch="false" />
+            <line number="24" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="26" hits="2" branch="false" />
+            <line number="29" hits="2" branch="false" />
+            <line number="33" hits="2" branch="false" />
+            <line number="34" hits="2" branch="false" />
+            <line number="35" hits="2" branch="false" />
+            <line number="37" hits="2" branch="false" />
+            <line number="39" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="41" hits="2" branch="false" />
+            <line number="45" hits="2" branch="false" />
             <line number="47" hits="2" branch="false" />
+            <line number="48" hits="0" branch="false" />
+            <line number="50" hits="0" branch="false" />
+            <line number="51" hits="0" branch="false" />
+            <line number="52" hits="0" branch="false" />
+            <line number="53" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Features.Webhooks.CreateWebhookSubscription.CreateWebhookSubscriptionController" filename="/home/runner/work/estud/estud/Back/Features/Webhooks/CreateWebhookSubscription/CreateWebhookSubscriptionController.cs" line-rate="1" branch-rate="1" complexity="2">
@@ -35394,6 +35424,262 @@
             <line number="17" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="19" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="20" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Webhooks.GetWebhookCall.GetWebhookCallController" filename="/home/runner/work/estud/estud/Back/Features/Webhooks/GetWebhookCall/GetWebhookCallController.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="(Estud.Back.Features.Webhooks.GetWebhookCall.GetWebhookCallService)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="4" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="Get" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="17" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
+                <line number="19" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="4" hits="2" branch="false" />
+            <line number="17" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Webhooks.GetWebhookCall.GetWebhookCallMapper" filename="/home/runner/work/estud/estud/Back/Features/Webhooks/GetWebhookCall/GetWebhookCallMapper.cs" line-rate="1" branch-rate="1" complexity="7">
+          <methods>
+            <method name="ToGetWebhookCallOut" signature="(Estud.Back.Domain.Webhooks.WebhookCall)" line-rate="1" branch-rate="1" complexity="6">
+              <lines>
+                <line number="11" hits="2" branch="true" condition-coverage="100% (6/6)" />
+                <line number="12" hits="2" branch="false" />
+                <line number="13" hits="2" branch="false" />
+                <line number="14" hits="2" branch="false" />
+                <line number="15" hits="2" branch="false" />
+                <line number="16" hits="2" branch="false" />
+                <line number="17" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
+                <line number="19" hits="2" branch="false" />
+                <line number="20" hits="2" branch="false" />
+                <line number="21" hits="2" branch="false" />
+                <line number="22" hits="2" branch="false" />
+                <line number="23" hits="2" branch="false" />
+                <line number="24" hits="2" branch="false" />
+                <line number="25" hits="2" branch="false" />
+                <line number="26" hits="2" branch="false" />
+                <line number="27" hits="2" branch="false" />
+                <line number="28" hits="2" branch="false" />
+                <line number="29" hits="2" branch="false" />
+                <line number="30" hits="2" branch="false" />
+                <line number="31" hits="2" branch="false" />
+                <line number="32" hits="2" branch="false" />
+                <line number="33" hits="2" branch="false" />
+                <line number="34" hits="2" branch="false" />
+                <line number="35" hits="2" branch="false" />
+                <line number="36" hits="2" branch="false" />
+                <line number="37" hits="2" branch="false" />
+                <line number="38" hits="2" branch="false" />
+                <line number="39" hits="2" branch="false" />
+                <line number="40" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="ToGetWebhookCallAttemptOut" signature="(Estud.Back.Domain.Webhooks.WebhookCallAttempt)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="48" hits="2" branch="false" />
+                <line number="49" hits="2" branch="false" />
+                <line number="50" hits="2" branch="false" />
+                <line number="51" hits="2" branch="false" />
+                <line number="52" hits="2" branch="false" />
+                <line number="53" hits="2" branch="false" />
+                <line number="54" hits="2" branch="false" />
+                <line number="55" hits="2" branch="false" />
+                <line number="56" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="11" hits="2" branch="true" condition-coverage="100% (6/6)" />
+            <line number="12" hits="2" branch="false" />
+            <line number="13" hits="2" branch="false" />
+            <line number="14" hits="2" branch="false" />
+            <line number="15" hits="2" branch="false" />
+            <line number="16" hits="2" branch="false" />
+            <line number="17" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
+            <line number="20" hits="2" branch="false" />
+            <line number="21" hits="2" branch="false" />
+            <line number="22" hits="2" branch="false" />
+            <line number="23" hits="2" branch="false" />
+            <line number="24" hits="2" branch="false" />
+            <line number="25" hits="2" branch="false" />
+            <line number="26" hits="2" branch="false" />
+            <line number="27" hits="2" branch="false" />
+            <line number="28" hits="2" branch="false" />
+            <line number="29" hits="2" branch="false" />
+            <line number="30" hits="2" branch="false" />
+            <line number="31" hits="2" branch="false" />
+            <line number="32" hits="2" branch="false" />
+            <line number="33" hits="2" branch="false" />
+            <line number="34" hits="2" branch="false" />
+            <line number="35" hits="2" branch="false" />
+            <line number="36" hits="2" branch="false" />
+            <line number="37" hits="2" branch="false" />
+            <line number="38" hits="2" branch="false" />
+            <line number="39" hits="2" branch="false" />
+            <line number="40" hits="2" branch="false" />
+            <line number="48" hits="2" branch="false" />
+            <line number="49" hits="2" branch="false" />
+            <line number="50" hits="2" branch="false" />
+            <line number="51" hits="2" branch="false" />
+            <line number="52" hits="2" branch="false" />
+            <line number="53" hits="2" branch="false" />
+            <line number="54" hits="2" branch="false" />
+            <line number="55" hits="2" branch="false" />
+            <line number="56" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Webhooks.GetWebhookCall.GetWebhookCallOut" filename="/home/runner/work/estud/estud/Back/Features/Webhooks/GetWebhookCall/GetWebhookCallOut.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name="GetExamples" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="16" hits="2" branch="false" />
+                <line number="17" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
+                <line number="19" hits="2" branch="false" />
+                <line number="20" hits="2" branch="false" />
+                <line number="21" hits="2" branch="false" />
+                <line number="22" hits="2" branch="false" />
+                <line number="23" hits="2" branch="false" />
+                <line number="24" hits="2" branch="false" />
+                <line number="25" hits="2" branch="false" />
+                <line number="26" hits="2" branch="false" />
+                <line number="27" hits="2" branch="false" />
+                <line number="28" hits="2" branch="false" />
+                <line number="29" hits="2" branch="false" />
+                <line number="30" hits="2" branch="false" />
+                <line number="31" hits="2" branch="false" />
+                <line number="32" hits="2" branch="false" />
+                <line number="33" hits="2" branch="false" />
+                <line number="34" hits="2" branch="false" />
+                <line number="35" hits="2" branch="false" />
+                <line number="36" hits="2" branch="false" />
+                <line number="37" hits="2" branch="false" />
+                <line number="38" hits="2" branch="false" />
+                <line number="39" hits="2" branch="false" />
+                <line number="40" hits="2" branch="false" />
+                <line number="41" hits="2" branch="false" />
+                <line number="42" hits="2" branch="false" />
+                <line number="43" hits="2" branch="false" />
+                <line number="44" hits="2" branch="false" />
+                <line number="45" hits="2" branch="false" />
+                <line number="46" hits="2" branch="false" />
+                <line number="47" hits="2" branch="false" />
+                <line number="48" hits="2" branch="false" />
+                <line number="49" hits="2" branch="false" />
+                <line number="50" hits="2" branch="false" />
+                <line number="51" hits="2" branch="false" />
+                <line number="52" hits="2" branch="false" />
+                <line number="53" hits="2" branch="false" />
+                <line number="54" hits="2" branch="false" />
+                <line number="55" hits="2" branch="false" />
+                <line number="56" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="13" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="13" hits="2" branch="false" />
+            <line number="16" hits="2" branch="false" />
+            <line number="17" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
+            <line number="20" hits="2" branch="false" />
+            <line number="21" hits="2" branch="false" />
+            <line number="22" hits="2" branch="false" />
+            <line number="23" hits="2" branch="false" />
+            <line number="24" hits="2" branch="false" />
+            <line number="25" hits="2" branch="false" />
+            <line number="26" hits="2" branch="false" />
+            <line number="27" hits="2" branch="false" />
+            <line number="28" hits="2" branch="false" />
+            <line number="29" hits="2" branch="false" />
+            <line number="30" hits="2" branch="false" />
+            <line number="31" hits="2" branch="false" />
+            <line number="32" hits="2" branch="false" />
+            <line number="33" hits="2" branch="false" />
+            <line number="34" hits="2" branch="false" />
+            <line number="35" hits="2" branch="false" />
+            <line number="36" hits="2" branch="false" />
+            <line number="37" hits="2" branch="false" />
+            <line number="38" hits="2" branch="false" />
+            <line number="39" hits="2" branch="false" />
+            <line number="40" hits="2" branch="false" />
+            <line number="41" hits="2" branch="false" />
+            <line number="42" hits="2" branch="false" />
+            <line number="43" hits="2" branch="false" />
+            <line number="44" hits="2" branch="false" />
+            <line number="45" hits="2" branch="false" />
+            <line number="46" hits="2" branch="false" />
+            <line number="47" hits="2" branch="false" />
+            <line number="48" hits="2" branch="false" />
+            <line number="49" hits="2" branch="false" />
+            <line number="50" hits="2" branch="false" />
+            <line number="51" hits="2" branch="false" />
+            <line number="52" hits="2" branch="false" />
+            <line number="53" hits="2" branch="false" />
+            <line number="54" hits="2" branch="false" />
+            <line number="55" hits="2" branch="false" />
+            <line number="56" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Webhooks.GetWebhookCall.GetWebhookCallRequestOut" filename="/home/runner/work/estud/estud/Back/Features/Webhooks/GetWebhookCall/GetWebhookCallOut.cs" line-rate="1" branch-rate="1" complexity="1">
+          <methods>
+            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="63" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="63" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Webhooks.GetWebhookCall.GetWebhookCallService" filename="/home/runner/work/estud/estud/Back/Features/Webhooks/GetWebhookCall/GetWebhookCallService.cs" line-rate="1" branch-rate="1" complexity="3">
+          <methods>
+            <method name=".ctor" signature="(Estud.Back.Database.EstudDbContext)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="3" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="Get" signature="()" line-rate="1" branch-rate="1" complexity="2">
+              <lines>
+                <line number="7" hits="2" branch="false" />
+                <line number="9" hits="2" branch="false" />
+                <line number="10" hits="2" branch="false" />
+                <line number="11" hits="2" branch="false" />
+                <line number="12" hits="2" branch="false" />
+                <line number="13" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="15" hits="2" branch="false" />
+                <line number="16" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="3" hits="2" branch="false" />
+            <line number="7" hits="2" branch="false" />
+            <line number="9" hits="2" branch="false" />
+            <line number="10" hits="2" branch="false" />
+            <line number="11" hits="2" branch="false" />
+            <line number="12" hits="2" branch="false" />
+            <line number="13" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="15" hits="2" branch="false" />
+            <line number="16" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Features.Webhooks.GetWebhookCalls.GetWebhookCallsController" filename="/home/runner/work/estud/estud/Back/Features/Webhooks/GetWebhookCalls/GetWebhookCallsController.cs" line-rate="1" branch-rate="1" complexity="2">
