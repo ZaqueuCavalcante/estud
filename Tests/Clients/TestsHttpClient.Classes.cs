@@ -80,4 +80,10 @@ public partial class TestsHttpClient
         var response = await http.PutAsync($"/classes/{classId}/start", null);
         return await response.Resolve<SuccessOut>();
     }
+
+    public async Task<OneOf<SuccessOut, ErrorOut>> FinalizeClass(int classId)
+    {
+        var response = await http.PutAsync($"/classes/{classId}/finalize", null);
+        return await response.Resolve<SuccessOut>();
+    }
 }

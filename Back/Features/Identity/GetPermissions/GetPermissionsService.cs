@@ -12,6 +12,8 @@ public class GetPermissionsService : IEstudService
             {
                 Id = p.Id,
                 Name = p.Name,
+                Group = p.Group,
+                Description = p.Description,
                 AllowedTypes = p.AllowedTypes,
             }),
         };

@@ -13,13 +13,10 @@
 
 - Calcular nota parcial relativa e não apenas a média final?
 
-- Crie um endpoint FinalizeClass que apenas finaliza a turma, apenas fazendo as validacoes basicas
-- Somente o gestor 
-- Vc deve refatorar testes que usam direto o DbContext pra usarem o endpoint
+- User index do Postgres para full text search
 
 - ❌ GoogleOneTapLoginController
 - ❌ SocialLoginChallengeController
 
----
 
 

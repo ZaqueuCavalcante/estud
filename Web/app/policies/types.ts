@@ -168,6 +168,7 @@ export type PolicyName
     | 'UpdateClassClassrooms'
     | 'ReleaseClassForEnrollment'
     | 'StartClass'
+    | 'FinalizeClass'
     | 'GetTeacherClass'
     | 'GetStudentClass'
     | 'GetTeacherCurrentClasses'

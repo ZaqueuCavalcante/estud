@@ -523,13 +523,7 @@ public partial class IntegrationTests
         var @class = await director.ShortcutCreateStartedClass();
         var studentId = @class.StudentIds[0];
 
-        // TODO: use finalize class endpoint
-        await using (var ctx = _back.GetDbContext())
-        {
-            var entity = await ctx.Classes.FirstAsync(c => c.Id == @class.Id);
-            entity.Status = ClassStatus.Finalized;
-            await ctx.SaveChangesAsync();
-        }
+        await director.FinalizeClass(@class.Id).Success();
 
         var parent = await director.CreateParent(DataGen.UserName, DataGen.Email,
             [new() { StudentId = studentId, Relationship = ParentRelationship.Mother }]).Success();

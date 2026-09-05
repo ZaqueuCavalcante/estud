@@ -70,17 +70,8 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var discipline = await client.CreateDiscipline().Success();
-        var period = await client.GetFirstAcademicPeriod();
-        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
-
-        // TODO: use finalize class endpoint
-        await using (var ctx = _back.GetDbContext())
-        {
-            var entity = await ctx.Classes.FirstAsync(c => c.Id == @class.Id);
-            entity.Status = ClassStatus.Finalized;
-            await ctx.SaveChangesAsync();
-        }
+        var @class = await client.ShortcutCreateStartedClass(students: []);
+        await client.FinalizeClass(@class.Id).Success();
 
         // Act
         var result = await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, null)]);
@@ -503,14 +494,9 @@ public partial class IntegrationTests
         var classA = await client.CreateClass(discipline.Id, period.Id).Success();
         await client.UpdateClassTeachers(classA.Id, [teacher.Id]);
         await client.UpdateClassSchedules(classA.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
-
-        // TODO: use finalize class endpoint
-        await using (var ctx = _back.GetDbContext())
-        {
-            var entity = await ctx.Classes.FirstAsync(c => c.Id == classA.Id);
-            entity.Status = ClassStatus.Finalized;
-            await ctx.SaveChangesAsync();
-        }
+        await client.ReleaseClassForEnrollment(classA.Id);
+        await client.StartClass(classA.Id).Success();
+        await client.FinalizeClass(classA.Id).Success();
 
         var classB = await client.CreateClass(discipline.Id, period.Id).Success();
         await client.UpdateClassTeachers(classB.Id, [teacher.Id]);
@@ -612,19 +598,18 @@ public partial class IntegrationTests
         var discipline = await client.CreateDiscipline().Success();
         var period = await client.GetFirstAcademicPeriod();
 
+        var teacher = await client.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+        await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
         var classA = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+        await client.UpdateClassTeachers(classA.Id, [teacher.Id]);
         await client.UpdateClassSchedules(classA.Id,
         [
             (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
         ]);
-
-        // TODO: use finalize class endpoint
-        await using (var ctx = _back.GetDbContext())
-        {
-            var entity = await ctx.Classes.FirstAsync(c => c.Id == classA.Id);
-            entity.Status = ClassStatus.Finalized;
-            await ctx.SaveChangesAsync();
-        }
+        await client.ReleaseClassForEnrollment(classA.Id);
+        await client.StartClass(classA.Id).Success();
+        await client.FinalizeClass(classA.Id).Success();
 
         var classB = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 

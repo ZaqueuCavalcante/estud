@@ -606,17 +606,17 @@ public partial class IntegrationTests
 
         var discipline = await client.CreateDiscipline().Success();
         var period = await client.GetFirstAcademicPeriod();
-        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
 
+        var teacher = await client.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+        await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+        await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
         await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, null, sala01.Id)]);
 
-        // Não existe endpoint de finalizar turma, então o status vai direto no banco.
-        await using (var ctx = _back.GetDbContext())
-        {
-            var entity = await ctx.Classes.FirstAsync(c => c.Id == @class.Id);
-            entity.Status = ClassStatus.Finalized;
-            await ctx.SaveChangesAsync();
-        }
+        await client.ReleaseClassForEnrollment(@class.Id);
+        await client.StartClass(@class.Id).Success();
+        await client.FinalizeClass(@class.Id).Success();
 
         // Act
         var result = await client.GetCampusOccupancy(campus.Id);

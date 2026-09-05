@@ -238,6 +238,13 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
       hasPermission(Permissions.ManageClasses),
     ],
   },
+  FinalizeClass: {
+    description: "Finalizar turmas",
+    requirements: [
+      hasUserType(UserTypes.Manager),
+      hasPermission(Permissions.ManageClasses),
+    ],
+  },
   GetTeacherClass: {
     description: "Ver os detalhes de uma turma que leciona",
     requirements: [

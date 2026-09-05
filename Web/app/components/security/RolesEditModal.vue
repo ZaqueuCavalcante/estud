@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import type { UserTypeName } from '~/composables/usePermissions'
 
 const open = defineModel<boolean>('open', { default: false })
 const props = defineProps<{ roleId: number | null }>()
@@ -12,43 +13,18 @@ const toast = useToast()
 const loading = ref(false)
 const fetching = ref(false)
 
-interface PermissionItem {
-  id: number
-  name: string
-  allowedTypes: string[]
-}
-
-interface GetPermissionsOut {
-  items: PermissionItem[]
-}
-
 interface GetRoleOut {
   id: number
   name: string
   description: string
-  baseType: string
+  baseType: UserTypeName
   permissions: number[]
 }
 
-const { data: permissionsData } = await useFetch<GetPermissionsOut>(
-  `${config.public.backendUrl}/identity/permissions`,
-  { credentials: 'include', server: false }
-)
-
-const baseTypeLabels: Record<string, string> = {
-  Manager: 'Gestor',
-  Teacher: 'Professor',
-  Student: 'Aluno',
-  Parent: 'Responsável',
-}
-
 // Tipo base é imutável: apenas exibido, nunca enviado no update
-const baseType = ref<string | null>(null)
+const baseType = ref<UserTypeName | null>(null)
 
-const baseTypeLabel = computed(() => {
-  if (baseType.value === null) return ''
-  return baseTypeLabels[baseType.value] ?? baseType.value
-})
+const baseTypeLabel = computed(() => baseType.value === null ? '' : userTypeLabels[baseType.value])
 
 const schema = z.object({
   name: z.string().min(1, 'Nome obrigatório').max(50, 'Máximo 50 caracteres'),
@@ -64,18 +40,8 @@ const formState = reactive<Partial<Schema>>({
   permissions: [],
 })
 
-const filteredPermissions = computed(() => {
-  if (baseType.value === null) return []
-  return (permissionsData.value?.items ?? []).filter(p =>
-    p.allowedTypes.includes(baseType.value!)
-  )
-})
-
-function togglePermission(id: number) {
-  const idx = formState.permissions!.indexOf(id)
-  if (idx === -1) formState.permissions!.push(id)
-  else formState.permissions!.splice(idx, 1)
-}
+const { permissionsFor } = usePermissions()
+const availablePermissions = permissionsFor(baseType)
 
 watch(open, async (val) => {
   if (val && props.roleId !== null) {
@@ -153,17 +119,14 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           </div>
         </UFormField>
 
-        <UFormField v-if="baseType !== null" label="Permissões" name="permissions">
-          <div class="flex flex-col gap-2 w-full">
-            <UCheckbox
-              v-for="perm in filteredPermissions"
-              :key="perm.id"
-              :label="perm.name"
-              :model-value="formState.permissions!.includes(perm.id)"
-              @update:model-value="togglePermission(perm.id)"
-            />
-          </div>
-        </UFormField>
+        <div v-if="baseType !== null" class="flex flex-col gap-2">
+          <p class="block text-sm font-medium text-default">Permissões</p>
+          <SecurityRolesPermissionsField
+            v-model="formState.permissions"
+            :permissions="availablePermissions"
+            :base-type="baseType"
+          />
+        </div>
 
         <div class="flex justify-end gap-2 pt-2">
           <UButton

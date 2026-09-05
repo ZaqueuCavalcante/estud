@@ -211,13 +211,7 @@ public partial class IntegrationTests
         await finalizedTeacher.CreateLessonAttendance(finalizedLessons[0].Id, [student.Id]);
         await finalizedTeacher.CreateLessonAttendance(finalizedLessons[1].Id, [student.Id]);
 
-        // Nenhum endpoint encerra uma turma, então o status vai direto no banco.
-        await using (var arrangeCtx = _back.GetDbContext())
-        {
-            var @class = await arrangeCtx.Classes.FirstAsync(c => c.Id == finalized.Id);
-            @class.Status = ClassStatus.Finalized;
-            await arrangeCtx.SaveChangesAsync();
-        }
+        await director.FinalizeClass(finalized.Id).Success();
 
         // Act
         var result = await director.GetStudentDetails(student.Id);
@@ -485,13 +479,7 @@ public partial class IntegrationTests
         await finalizedTeacher.AddStudentActivityNote(finalized.Id, finalizedN1.Id, student.Id, 10M);
         await finalizedTeacher.AddStudentActivityNote(finalized.Id, finalizedN2.Id, student.Id, 10M);
 
-        // Nenhum endpoint encerra uma turma, então o status vai direto no banco.
-        await using (var arrangeCtx = _back.GetDbContext())
-        {
-            var @class = await arrangeCtx.Classes.FirstAsync(c => c.Id == finalized.Id);
-            @class.Status = ClassStatus.Finalized;
-            await arrangeCtx.SaveChangesAsync();
-        }
+        await director.FinalizeClass(finalized.Id).Success();
 
         // Act
         var result = await director.GetStudentDetails(student.Id);

@@ -50,8 +50,13 @@ public partial class IntegrationTests
         // Assert
         var permissions = result.Success;
         permissions.Items.Should().HaveCount(EstudPermissions.Permissions.Count);
-        permissions.Items.Should().Contain(x => x.Id == EstudPermissions.ManageRoles.Id);
         permissions.Items.Should().OnlyContain(x => x.AllowedTypes.Count > 0);
+        permissions.Items.Should().OnlyContain(x => x.Description.HasValue());
+
+        var manageRoles = permissions.Items.Single(x => x.Id == EstudPermissions.ManageRoles.Id);
+        manageRoles.Name.Should().Be(EstudPermissions.ManageRoles.Name);
+        manageRoles.Description.Should().Be(EstudPermissions.ManageRoles.Description);
+        manageRoles.Group.Should().Be(PermissionGroup.Identity);
     }
 
     #endregion

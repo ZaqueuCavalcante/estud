@@ -21,6 +21,13 @@ public class ClassMustBeOnEnrollment : EstudError
     public override string Message { get; set; } = "A turma deve estar em matrícula.";
 }
 
+public class ClassMustBeStarted : EstudError
+{
+    public static readonly ClassMustBeStarted I = new();
+    public override string Code { get; set; } = nameof(ClassMustBeStarted);
+    public override string Message { get; set; } = "A turma deve estar iniciada.";
+}
+
 public class ClassAlreadyStarted : EstudError
 {
     public static readonly ClassAlreadyStarted I = new();

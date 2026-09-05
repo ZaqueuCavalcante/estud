@@ -376,13 +376,7 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
         var @class = await director.ShortcutCreateStartedClass();
 
-        // TODO: use finalize class endpoint
-        await using (var ctx = _back.GetDbContext())
-        {
-            var entity = await ctx.Classes.FirstAsync(c => c.Id == @class.Id);
-            entity.Status = ClassStatus.Finalized;
-            await ctx.SaveChangesAsync();
-        }
+        await director.FinalizeClass(@class.Id).Success();
 
         var client = await _back.LoginAs(@class.StudentEmail);
 
