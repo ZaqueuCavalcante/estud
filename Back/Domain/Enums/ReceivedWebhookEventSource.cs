@@ -5,6 +5,6 @@ namespace Estud.Back.Domain.Enums;
 /// </summary>
 public enum ReceivedWebhookEventSource
 {
-    [Description("PagarMe")]
-    PagarMe = 0,
+    [Description("Stripe")]
+    Stripe = 0,
 }

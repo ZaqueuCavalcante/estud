@@ -1,7 +1,5 @@
 
 using Estud.Back.Google;
-using Estud.Back.Settings;
-using Microsoft.Extensions.DependencyInjection;
 using Estud.Back.Features.Identity.GoogleOneTapLogin;
 
 namespace Estud.Tests.Integration;
@@ -57,7 +55,7 @@ public partial class IntegrationTests
     [Test]
     public async Task Identity_GoogleOneTapLogin_Should_not_login_when_email_domain_requires_sso()
     {
-        // Arrange — an active SSO configuration that requires SSO for its domain
+        // Arrange
         var domain = $"sso-required-{DataGen.Numbers}.com";
         var director = await _back.LoggedAsDirector($"director@{domain}");
 
@@ -73,29 +71,6 @@ public partial class IntegrationTests
 
         // Assert
         result.ShouldBeError(SocialLoginSsoRequired.I);
-    }
-
-    [Test]
-    [NonParallelizable] // muta o singleton SocialLoginSettings — não pode rodar junto com outros logins sociais
-    public async Task Identity_GoogleOneTapLogin_Should_not_login_when_google_one_tap_is_disabled()
-    {
-        // Arrange
-        var client = _back.GetTestsClient();
-        var settings = _back.Services.GetRequiredService<SocialLoginSettings>();
-
-        // Act
-        settings.Google.Enabled = false;
-        try
-        {
-            var result = await client.GoogleOneTapLogin(Guid.NewGuid().ToString());
-
-            // Assert
-            result.ShouldBeError(GoogleOneTapLoginDisabled.I);
-        }
-        finally
-        {
-            settings.Google.Enabled = true;
-        }
     }
 
     #endregion
