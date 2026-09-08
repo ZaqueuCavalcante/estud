@@ -18,6 +18,14 @@ public class GetClassesService(EstudDbContext ctx) : IEstudService
         var classesQuery = ctx.Classes.AsNoTracking()
             .Where(c => c.InstitutionId == institutionId);
 
+        if (query.Filter.HasValue())
+            classesQuery = classesQuery.Where(c =>
+                EF.Functions.ILike(c.Discipline.Name, $"%{query.Filter}%")
+                || EF.Functions.ILike(c.Discipline.Code, $"%{query.Filter}%"));
+
+        if (query.PeriodId is int periodId)
+            classesQuery = classesQuery.Where(c => c.PeriodId == periodId);
+
         // Sem período de matrícula aberto, turmas OnEnrollment aparecem como OnReview,
         // então o filtro precisa considerar o status exibido, e não o salvo no banco.
         if (query.Status is ClassStatus status)

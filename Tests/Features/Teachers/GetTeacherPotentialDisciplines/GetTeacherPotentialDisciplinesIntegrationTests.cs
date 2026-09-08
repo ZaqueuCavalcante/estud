@@ -94,6 +94,23 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Teachers_GetTeacherPotentialDisciplines_Should_get_the_code_of_each_discipline()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var calculo = await client.CreateDiscipline("Calculo").Success();
+        var teacher = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
+
+        // Act
+        var result = await client.GetTeacherPotentialDisciplines(teacher.Id);
+
+        // Assert
+        var found = result.Success.Items.Single(x => x.Id == calculo.Id);
+        found.Name.Should().Be("Calculo");
+        found.Code.Should().NotBeEmpty();
+    }
+
+    [Test]
     public async Task Teachers_GetTeacherPotentialDisciplines_Should_filter_potential_disciplines_by_name()
     {
         // Arrange

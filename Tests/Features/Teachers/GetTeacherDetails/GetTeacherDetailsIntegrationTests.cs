@@ -81,7 +81,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var teacher = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
-        var campus = await client.CreateCampus().Success();
+        var campus = await client.CreateCampus(name: "Agreste I", state: BrazilState.PE, city: "Caruaru").Success();
         var discipline = await client.CreateDiscipline().Success();
 
         await client.AssignCampiToTeacher(teacher.Id, [campus.Id]);
@@ -93,7 +93,13 @@ public partial class IntegrationTests
         // Assert
         var details = result.Success;
         details.Campi.Select(c => c.Id).Should().Equal(campus.Id);
+        details.Campi[0].Name.Should().Be("Agreste I");
+        details.Campi[0].State.Should().Be(BrazilState.PE);
+        details.Campi[0].City.Should().Be("Caruaru");
+
         details.Disciplines.Select(d => d.Id).Should().Equal(discipline.Id);
+        details.Disciplines[0].Name.Should().Be("Geometria");
+        details.Disciplines[0].Code.Should().NotBeEmpty();
     }
 
     [Test]

@@ -3,11 +3,14 @@ import type { ClassSchedule } from '~/types/classes'
 export interface TeacherCampusItem {
   id: number
   name: string
+  state: string
+  city: string
 }
 
 export interface TeacherDisciplineItem {
   id: number
   name: string
+  code: string
 }
 
 export interface TeacherClassItem {

@@ -17,7 +17,7 @@ public class GetTeacherPotentialDisciplinesService(EstudDbContext ctx) : IEstudS
 
         var items = await query
             .OrderBy(d => d.Name)
-            .Select(d => new GetTeacherPotentialDisciplineItemOut { Id = d.Id, Name = d.Name })
+            .Select(d => new GetTeacherPotentialDisciplineItemOut { Id = d.Id, Name = d.Name, Code = d.Code })
             .ToListAsync();
 
         return new GetTeacherPotentialDisciplinesOut { Items = items };

@@ -49,11 +49,15 @@ public partial class TestsHttpClient
 
     public async Task<OneOf<GetClassesOut, ErrorOut>> GetClasses(
         ClassStatus? status = null,
+        string? filter = null,
+        int? periodId = null,
         int? page = null,
         int? pageSize = null
     ) {
         var data = new GetClassesIn
         {
+            Filter = filter,
+            PeriodId = periodId,
             Status = status,
             Page = page ?? 1,
             PageSize = pageSize ?? 10,

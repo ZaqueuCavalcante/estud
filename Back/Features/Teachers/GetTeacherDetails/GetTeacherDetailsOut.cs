@@ -16,8 +16,8 @@ public class GetTeacherDetailsOut : IApiDto<GetTeacherDetailsOut>
             Id = 14,
             Name = "Ana Lima",
             Email = "ana.lima@estud.com",
-            Campi = [new GetTeacherDetailsCampusOut { Id = 1, Name = "Campus Maceió" }],
-            Disciplines = [new GetTeacherDetailsDisciplineOut { Id = 3, Name = "Banco de Dados" }],
+            Campi = [new GetTeacherDetailsCampusOut { Id = 1, Name = "Campus Maceió", State = BrazilState.AL, City = "Maceió" }],
+            Disciplines = [new GetTeacherDetailsDisciplineOut { Id = 3, Name = "Banco de Dados", Code = "A1B2C3D4" }],
             Classes =
             [
                 new GetTeacherDetailsClassOut
@@ -40,12 +40,15 @@ public class GetTeacherDetailsCampusOut
 {
     public int Id { get; set; }
     public string Name { get; set; }
+    public BrazilState State { get; set; }
+    public string City { get; set; }
 }
 
 public class GetTeacherDetailsDisciplineOut
 {
     public int Id { get; set; }
     public string Name { get; set; }
+    public string Code { get; set; }
 }
 
 public class GetTeacherDetailsClassOut

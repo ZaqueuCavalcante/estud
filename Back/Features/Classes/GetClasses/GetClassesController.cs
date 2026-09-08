@@ -7,7 +7,8 @@ public class GetClassesController(GetClassesService service) : ControllerBase
     /// Turmas
     /// </summary>
     /// <remarks>
-    /// Retorna a lista paginada de turmas da instituição do usuário logado.
+    /// Retorna a lista paginada de turmas da instituição do usuário logado,
+    /// podendo filtrar por nome ou código da disciplina, por período e por status.
     /// </remarks>
     [HttpGet("classes")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]

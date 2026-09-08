@@ -61,11 +61,11 @@ public class GetTeacherDetailsService(EstudDbContext ctx) : IEstudService
             Email = teacher.User!.Email!,
             Campi = teacher.Campi
                 .OrderBy(c => c.Name)
-                .Select(c => new GetTeacherDetailsCampusOut { Id = c.Id, Name = c.Name })
+                .Select(c => new GetTeacherDetailsCampusOut { Id = c.Id, Name = c.Name, State = c.State, City = c.City })
                 .ToList(),
             Disciplines = teacher.Disciplines
                 .OrderBy(d => d.Name)
-                .Select(d => new GetTeacherDetailsDisciplineOut { Id = d.Id, Name = d.Name })
+                .Select(d => new GetTeacherDetailsDisciplineOut { Id = d.Id, Name = d.Name, Code = d.Code })
                 .ToList(),
             Classes = classes,
         };

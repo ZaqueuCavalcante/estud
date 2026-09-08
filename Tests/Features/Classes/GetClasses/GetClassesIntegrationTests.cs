@@ -138,6 +138,69 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Classes_GetClasses_Should_return_classes_filtered_by_discipline_name()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var period = await client.GetFirstAcademicPeriod();
+        var database = await client.CreateDiscipline("Banco de Dados").Success();
+        var algorithms = await client.CreateDiscipline("Algoritmos").Success();
+        await client.CreateClass(database.Id, period.Id);
+        await client.CreateClass(algorithms.Id, period.Id);
+
+        // Act
+        var result = await client.GetClasses(filter: "banco");
+
+        // Assert
+        var classes = result.Success;
+        classes.Total.Should().Be(1);
+        classes.Items[0].Discipline.Should().Be("Banco de Dados");
+    }
+
+    [Test]
+    public async Task Classes_GetClasses_Should_return_classes_filtered_by_discipline_code()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var period = await client.GetFirstAcademicPeriod();
+        var database = await client.CreateDiscipline("Banco de Dados").Success();
+        var algorithms = await client.CreateDiscipline("Algoritmos").Success();
+        await client.CreateClass(database.Id, period.Id);
+        await client.CreateClass(algorithms.Id, period.Id);
+
+        var disciplines = await client.GetDisciplines(filter: "Banco de Dados").Success();
+        var code = disciplines.Items[0].Code;
+
+        // Act
+        var result = await client.GetClasses(filter: code);
+
+        // Assert
+        var classes = result.Success;
+        classes.Total.Should().Be(1);
+        classes.Items[0].Discipline.Should().Be("Banco de Dados");
+    }
+
+    [Test]
+    public async Task Classes_GetClasses_Should_return_classes_filtered_by_period()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var firstPeriod = await client.GetFirstAcademicPeriod();
+        var lastPeriod = await client.GetLastAcademicPeriod();
+        var discipline = await client.CreateDiscipline().Success();
+        await client.CreateClass(discipline.Id, firstPeriod.Id);
+
+        // Act
+        var fromFirstPeriod = await client.GetClasses(periodId: firstPeriod.Id).Success();
+        var fromLastPeriod = await client.GetClasses(periodId: lastPeriod.Id).Success();
+
+        // Assert
+        fromFirstPeriod.Total.Should().Be(1);
+        fromFirstPeriod.Items[0].Period.Should().Be(firstPeriod.Name);
+        fromLastPeriod.Total.Should().Be(0);
+    }
+
+    [Test]
     public async Task Classes_GetClasses_Should_return_only_the_first_10_classes_by_default()
     {
         // Arrange

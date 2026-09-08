@@ -94,6 +94,23 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Teachers_GetTeacherPotentialCampi_Should_get_the_city_and_state_of_each_campus()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var alpha = await client.CreateCampus(name: "Alpha", state: BrazilState.PE, city: "Caruaru").Success();
+        var teacher = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
+
+        // Act
+        var result = await client.GetTeacherPotentialCampi(teacher.Id);
+
+        // Assert
+        var found = result.Success.Items.Single(x => x.Id == alpha.Id);
+        found.State.Should().Be(BrazilState.PE);
+        found.City.Should().Be("Caruaru");
+    }
+
+    [Test]
     public async Task Teachers_GetTeacherPotentialCampi_Should_filter_potential_campi_by_name()
     {
         // Arrange
