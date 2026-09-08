@@ -46,3 +46,6 @@ crash.*.log
 
 # Mutation testing
 /Tests/StrykerOutput
+
+# Fontes baixadas pelo gen-campus-svg
+/Scripts/.fonts

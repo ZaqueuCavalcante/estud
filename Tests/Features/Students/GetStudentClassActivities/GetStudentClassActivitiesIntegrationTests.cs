@@ -215,5 +215,82 @@ public partial class IntegrationTests
         item.WorkLink.Should().Be("https://github.com/ZaqueuCavalcante/estud");
     }
 
+    [Test]
+    public async Task Students_GetStudentClassActivities_Should_get_activity_with_finalized_work()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await teacherClient.CreateClassActivity(@class.Id, weight: 40).Success();
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+        await client.CreateClassActivityWork(activity.Id, "https://github.com/ZaqueuCavalcante/estud");
+
+        await teacherClient.AddStudentActivityNote(@class.Id, activity.Id, @class.StudentIds[0], 8.5m);
+
+        // Act
+        var result = await client.GetStudentClassActivities(@class.Id);
+
+        // Assert
+        var item = result.Success.Activities.Should().ContainSingle().Subject;
+        item.Id.Should().Be(activity.Id);
+        item.Weight.Should().Be(40);
+        item.WorkStatus.Should().Be(ClassActivityWorkStatus.Finalized);
+        item.WorkLink.Should().Be("https://github.com/ZaqueuCavalcante/estud");
+        item.Value.Should().Be(8.5m);
+        item.PonderedValue.Should().Be(3.4m);
+    }
+
+    [Test]
+    public async Task Students_GetStudentClassActivities_Should_get_activities_ordered_by_note_and_creation()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N2, "N2 - Primeira", weight: 30);
+        await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N1, "N1 - Primeira", weight: 30);
+        await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N2, "N2 - Segunda", weight: 30);
+        await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N1, "N1 - Segunda", weight: 30);
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+
+        // Act
+        var result = await client.GetStudentClassActivities(@class.Id);
+
+        // Assert
+        result.Success.Activities.Select(a => a.Title).Should().Equal(
+            "N1 - Primeira", "N1 - Segunda", "N2 - Primeira", "N2 - Segunda"
+        );
+    }
+
+    [Test]
+    public async Task Students_GetStudentClassActivities_Should_get_only_the_notes_of_the_logged_student()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var otherStudent = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var @class = await director.ShortcutCreateStartedClass(students: [student.Id, otherStudent.Id]);
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await teacherClient.CreateClassActivity(@class.Id, weight: 20).Success();
+        await teacherClient.AddStudentActivityNote(@class.Id, activity.Id, student.Id, 9);
+        await teacherClient.AddStudentActivityNote(@class.Id, activity.Id, otherStudent.Id, 4);
+
+        var client = await _back.LoginAs(student.Email);
+
+        // Act
+        var result = await client.GetStudentClassActivities(@class.Id);
+
+        // Assert
+        var item = result.Success.Activities.Should().ContainSingle().Subject;
+        item.Value.Should().Be(9);
+        item.PonderedValue.Should().Be(1.8m);
+    }
+
     #endregion
 }

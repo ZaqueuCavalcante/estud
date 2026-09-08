@@ -26,17 +26,17 @@ const features = [
   {
     icon: 'i-lucide-bar-chart-2',
     title: 'Relatórios e Métricas',
-    description: 'Acompanhe indicadores de desempenho da instituição com dashboards claros e exportáveis.',
+    description: 'Acompanhe indicadores de desempenho da instituição com dashboards claros e objetivos.',
   },
   {
     icon: 'i-lucide-shield-check',
     title: 'Segurança e Controle',
-    description: 'Permissões por perfil (admin, professor, aluno) com autenticação segura e auditoria completa.',
+    description: 'Permissões por perfil de acesso, com autenticação segura e auditoria completa.',
   },
   {
     icon: 'i-lucide-zap',
     title: 'Rápido e Moderno',
-    description: 'Interface responsiva, modo escuro e desempenho otimizado para qualquer dispositivo.',
+    description: 'Interface responsiva otimizada para qualquer dispositivo.',
   },
 ]
 </script>

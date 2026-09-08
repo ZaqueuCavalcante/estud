@@ -3,13 +3,15 @@
 // É o mesmo desenho do `<LandingCampusPreview>`, redesenhado em SVG puro: o
 // markdown do GitHub não roda Vue nem CSS, e um PNG perderia nitidez em tela
 // retina. Os ícones vêm do Lucide (os mesmos do app), copiados aqui pra o
-// script não depender do node_modules do Web.
+// script não depender do node_modules do Web; o texto vem do Saira em contorno
+// (ver `saira.mjs`), que na primeira execução é baixado.
 //
 // Rodar depois de mexer no componente:  node Scripts/gen-campus-svg.mjs
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { loadSaira } from './saira.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const OUT_DIR = join(ROOT, '.github', 'assets')
@@ -60,15 +62,16 @@ const THEMES = {
     border: '#e4e4e7',
     borderAccented: '#d4d4d8',
     elevated: '#f4f4f5',
-    elevatedSoft: '#fbfbfb',
+    elevatedSoft: '#f9f9f9',
     primary: '#7d52f4',
     primarySoft: '#faf8ff',
-    primaryBorder: '#dccffc',
-    primaryFaded: '#d6c7fc',
+    primaryBorder: '#dacffc',
+    primaryFaded: '#d1c2fb',
+    blockRing: '#eaeaed',
     text: '#3f3f46',
     highlighted: '#18181b',
-    muted: '#71717a',
-    dimmed: '#a1a1aa',
+    muted: '#71717b',
+    dimmed: '#9f9fa9',
   },
   dark: {
     bg: '#18181b',
@@ -78,45 +81,50 @@ const THEMES = {
     elevated: '#27272a',
     elevatedSoft: '#1e1e21',
     primary: '#a07ff6',
-    primarySoft: '#1d1c23',
-    primaryBorder: '#3d3558',
-    primaryFaded: '#4c4170',
+    primarySoft: '#1d1c24',
+    primaryBorder: '#3e3559',
+    primaryFaded: '#483c68',
+    blockRing: '#27272a',
     text: '#e4e4e7',
     highlighted: '#ffffff',
-    muted: '#a1a1aa',
-    dimmed: '#71717a',
+    muted: '#9f9fa9',
+    dimmed: '#71717b',
   },
 }
 
-const FONT = "Saira, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+const saira = await loadSaira()
 
-const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+const textWidth = (s, size, weight = 400) => saira.width(s, size, weight)
 
-// Sem webfont (SVG lido como imagem não carrega nenhuma), a largura do texto
-// tem que ser estimada: é o que alinha as abas à direita e posiciona as linhas
-// tracejadas ao redor do título do turno. Os fatores são generosos de
-// propósito — errar pra mais só abre espaço, errar pra menos sobrepõe texto.
-const textWidth = (s, size, weight = 400) =>
-  s.length * size * (weight >= 600 ? 0.58 : weight >= 500 ? 0.55 : 0.52)
+// Cada glifo entra uma vez em `<defs>` e é reaproveitado por `<use>`. Em
+// contorno, repetir o desenho de cada letra multiplicaria o arquivo por quinze.
+const glyphDefs = new Map()
+
+function run(content, x, y, size, weight, fill) {
+  const scale = size / saira.unitsPerEm
+  const uses = saira.glyphs(content, weight).map(({ gid, x: at }) => {
+    const id = `g${weight}-${gid}`
+    if (!glyphDefs.has(id)) glyphDefs.set(id, saira.outlineOf(gid, weight))
+    return `<use href="#${id}" x="${round(at)}"/>`
+  })
+  if (!uses.length) return ''
+  return `<g fill="${fill}" transform="translate(${round(x)} ${round(y)}) scale(${round(scale, 5)} ${round(-scale, 5)})">${uses.join('')}</g>`
+}
 
 function text(content, x, y, opts = {}) {
-  const { size = 14, fill, weight = 400, anchor = 'start', tabular = false } = opts
-  const attrs = [
-    `x="${round(x)}"`,
-    `y="${round(y)}"`,
-    `font-size="${size}"`,
-    `fill="${fill}"`,
-    weight !== 400 ? `font-weight="${weight}"` : '',
-    anchor !== 'start' ? `text-anchor="${anchor}"` : '',
-    tabular ? 'font-variant-numeric="tabular-nums"' : '',
-  ].filter(Boolean).join(' ')
-  // O `tail` continua a mesma linha com outro tamanho e outra cor. Vai de
-  // tspan, e não de um segundo <text> posicionado: assim o espaçamento sai da
-  // métrica real da fonte em vez da estimativa.
-  const tail = opts.tail
-    ? `<tspan dx="6" font-size="${opts.tail.size}" font-weight="${opts.tail.weight ?? 400}" fill="${opts.tail.fill}">${esc(opts.tail.content)}</tspan>`
-    : ''
-  return `<text ${attrs}>${esc(content)}${tail}</text>`
+  const { size = 14, fill, weight = 400, anchor = 'start' } = opts
+  const width = textWidth(content, size, weight)
+  const left = anchor === 'middle' ? x - width / 2 : anchor === 'end' ? x - width : x
+
+  const parts = [run(content, left, y, size, weight, fill)]
+  // O `tail` continua a mesma linha com outro tamanho e outra cor, separado do
+  // começo por um espaço do tamanho do texto que vem antes.
+  if (opts.tail) {
+    const at = left + textWidth(`${content} `, size, weight)
+    const { content: tailContent, size: tailSize, weight: tailWeight = 400, fill: tailFill } = opts.tail
+    parts.push(run(tailContent, at, y, tailSize, tailWeight, tailFill))
+  }
+  return parts.join('')
 }
 
 function rect(x, y, w, h, { r = 0, fill = 'none', stroke = null, strokeWidth = 1 } = {}) {
@@ -158,7 +166,8 @@ function ring(percent, x, y, size, color) {
 // fatia quebrada vira um quadrado esmaecido em vez de sumir.
 function blocks(percent, x, y, size, t) {
   const p = Math.min(Math.max(percent, 0), 100)
-  const gap = size / 14
+  // `gap-1`: 4px em qualquer tamanho, não uma fração dele.
+  const gap = 4
   const cell = (size - gap) / 2
   const full = Math.floor(p / 25)
   const parts = []
@@ -168,6 +177,9 @@ function blocks(percent, x, y, size, t) {
     const state = i < full ? 'full' : (i === full && p % 25 > 0 ? 'partial' : 'empty')
     const fill = state === 'full' ? t.primary : state === 'partial' ? t.primaryFaded : t.elevated
     parts.push(rect(cx, cy, cell, cell, { r: cell * 0.22, fill }))
+    if (state === 'empty') {
+      parts.push(rect(cx + 0.5, cy + 0.5, cell - 1, cell - 1, { r: cell * 0.22, stroke: t.blockRing }))
+    }
   }
   return parts.join('')
 }
@@ -229,6 +241,7 @@ const peakStudents = peakCell && peakCell.openMinutes > 0
 const W = 1280
 const SIDEBAR_W = 208
 const NAVBAR_H = 64
+const NAV_ROW_H = 32
 const PAD_X = 24
 const PAD_Y = 20
 const X0 = SIDEBAR_W + PAD_X
@@ -266,37 +279,36 @@ function renderSidebar(t) {
   out.push(text('Estud', 48, 42, { size: 20, weight: 600, fill: t.highlighted }))
   out.push(icon('panel-left-close', 172, 22, 20, t.muted))
 
-  const rows = SIDEBAR.flatMap(group => [
-    { type: 'group', label: group.label, icon: group.icon },
-    ...group.items.map(([label, name]) => ({ type: 'item', label, icon: name })),
-  ])
+  let top = 64
+  for (const group of SIDEBAR) {
+    out.push(icon(group.icon, 18, top + 6, 20, t.dimmed))
+    out.push(text(group.label, 44, top + 21, { size: 14, weight: 500, fill: t.muted }))
+    out.push(icon('chevron-up', 170, top + 6, 20, t.muted))
+    top += NAV_ROW_H
 
-  rows.forEach((row, i) => {
-    const top = 72 + i * 32
-    const active = row.label === 'Campi'
-    const color = active ? t.primary : t.text
+    // A lista de filhos é recuada e tem a guia vertical que o `childList` do
+    // UNavigationMenu desenha (`ms-5 border-s`).
+    const childrenTop = top
+    for (const [label, name] of group.items) {
+      const active = label === 'Campi'
+      const color = active ? t.primary : t.muted
 
-    if (active) out.push(rect(32, top, 168, 32, { r: 6, fill: t.elevated }))
-
-    if (row.type === 'group') {
-      out.push(icon(row.icon, 20, top + 8, 16, t.text))
-      out.push(text(row.label, 44, top + 21, { size: 14, weight: 500, fill: t.text }))
-      out.push(icon('chevron-up', 176, top + 8, 16, t.dimmed))
+      if (active) out.push(rect(33, top + 1, 167, NAV_ROW_H - 2, { r: 6, fill: t.elevated }))
+      out.push(icon(name, 43, top + 6, 20, active ? t.primary : t.dimmed))
+      out.push(text(label, 69, top + 21, { size: 14, weight: 500, fill: color }))
+      top += NAV_ROW_H
     }
-    else {
-      out.push(icon(row.icon, 48, top + 8, 16, color))
-      out.push(text(row.label, 72, top + 21, { size: 14, fill: color, weight: active ? 500 : 400 }))
-    }
-  })
+    out.push(`<line x1="28.5" y1="${childrenTop}" x2="28.5" y2="${top}" stroke="${t.border}"/>`)
+  }
 
-  const footerTop = H - 56
-  out.push(icon('github', 20, footerTop - 72, 16, t.text))
-  out.push(text('Code', 44, footerTop - 59, { size: 14, fill: t.text }))
-  out.push(icon('book-open', 20, footerTop - 40, 16, t.text))
-  out.push(text('Documentação', 44, footerTop - 27, { size: 14, fill: t.text }))
+  const footerTop = H - 60
+  out.push(icon('github', 18, footerTop - 66, 20, t.dimmed))
+  out.push(text('Code', 44, footerTop - 51, { size: 14, weight: 500, fill: t.muted }))
+  out.push(icon('book-open', 18, footerTop - 34, 20, t.dimmed))
+  out.push(text('Documentação', 44, footerTop - 19, { size: 14, weight: 500, fill: t.muted }))
 
   out.push(`<line x1="0" y1="${footerTop}" x2="${SIDEBAR_W}" y2="${footerTop}" stroke="${t.border}"/>`)
-  out.push(text('Zaqueu Cavalcante', 16, footerTop + 26, { size: 14, weight: 500, fill: t.text }))
+  out.push(text('Zaqueu Cavalcante', 16, footerTop + 27, { size: 14, weight: 500, fill: t.text }))
   out.push(text('Diretor', 16, footerTop + 44, { size: 12, fill: t.muted }))
 
   return out.join('')
@@ -306,13 +318,13 @@ function renderNavbar(t, mode) {
   const out = []
   out.push(`<line x1="${SIDEBAR_W}" y1="${NAVBAR_H - 0.5}" x2="${W}" y2="${NAVBAR_H - 0.5}" stroke="${t.border}"/>`)
 
-  out.push(icon('map-pin', X0, 24, 16, t.muted))
-  out.push(text('Campi', X0 + 22, 37, { size: 14, fill: t.muted }))
-  const chevronX = X0 + 22 + textWidth('Campi', 14) + 6
-  out.push(icon('chevron-right', chevronX, 24, 16, t.dimmed))
-  out.push(text('Detalhes', chevronX + 22, 37, { size: 14, weight: 500, fill: t.primary }))
+  out.push(icon('map-pin', X0, 22, 20, t.muted))
+  out.push(text('Campi', X0 + 26, 37, { size: 14, weight: 500, fill: t.muted }))
+  const chevronX = X0 + 26 + textWidth('Campi', 14, 500) + 6
+  out.push(icon('chevron-right', chevronX, 22, 20, t.muted))
+  out.push(text('Detalhes', chevronX + 26, 37, { size: 14, weight: 600, fill: t.primary }))
 
-  out.push(icon(mode === 'dark' ? 'moon' : 'sun', W - 84, 22, 20, t.text))
+  out.push(icon(mode === 'dark' ? 'moon' : 'sun', W - 76, 22, 20, t.text))
   out.push(icon('bell', W - 44, 22, 20, t.text))
   return out.join('')
 }
@@ -329,16 +341,17 @@ function renderHeader(t) {
     { label: 'Ocupação', icon: 'layout-grid', active: true },
     { label: 'Horários', icon: 'clock' },
     { label: 'Salas', icon: 'door-open' },
-  ].map(tab => ({ ...tab, w: 16 + 6 + textWidth(tab.label, 14, 500) }))
+  ].map(tab => ({ ...tab, w: 20 + 6 + textWidth(tab.label, 14, 500) }))
 
-  const total = tabs.reduce((sum, tab) => sum + tab.w, 0) + 24 * (tabs.length - 1)
+  // Os itens ficam colados; o respiro entre eles é o `px-2.5` de cada um.
+  const total = tabs.reduce((sum, tab) => sum + tab.w + 20, 0)
   let x = X1 - total
   for (const tab of tabs) {
-    const color = tab.active ? t.primary : t.text
-    out.push(icon(tab.icon, x, HEADER_Y + 14, 16, color))
-    out.push(text(tab.label, x + 22, HEADER_Y + 27, { size: 14, weight: 500, fill: color }))
-    if (tab.active) out.push(rect(x, HEADER_Y + 42, tab.w, 2, { fill: t.primary }))
-    x += tab.w + 24
+    const color = tab.active ? t.primary : t.muted
+    out.push(icon(tab.icon, x + 10, HEADER_Y + 14, 20, tab.active ? t.primary : t.dimmed))
+    out.push(text(tab.label, x + 36, HEADER_Y + 29, { size: 14, weight: 500, fill: color }))
+    if (tab.active) out.push(rect(x + 10, HEADER_Y + 46, tab.w, 1, { r: 0.5, fill: t.primary }))
+    x += tab.w + 20
   }
   return out.join('')
 }
@@ -352,11 +365,11 @@ function renderStats(t) {
     out.push(rect(at(i), STATS_Y, w, STATS_H, { r: 12, fill: t.primarySoft, stroke: t.primaryBorder }))
   }
   out.push(ring(data.overallUsedMinutesRate, at(0) + 16, STATS_Y + 24, 48, t.primary))
-  out.push(text(formatRate(data.overallUsedMinutesRate), at(0) + 80, STATS_Y + 50, { size: 30, weight: 700, fill: t.primary, tabular: true }))
+  out.push(text(formatRate(data.overallUsedMinutesRate), at(0) + 80, STATS_Y + 50, { size: 30, weight: 700, fill: t.primary }))
   out.push(text('Tempo usado', at(0) + 80, STATS_Y + 70, { size: 12, weight: 500, fill: t.muted }))
 
   out.push(blocks(data.overallUsedCapacityRate, at(1) + 16, STATS_Y + 24, 48, t))
-  out.push(text(formatRate(data.overallUsedCapacityRate), at(1) + 80, STATS_Y + 50, { size: 30, weight: 700, fill: t.primary, tabular: true }))
+  out.push(text(formatRate(data.overallUsedCapacityRate), at(1) + 80, STATS_Y + 50, { size: 30, weight: 700, fill: t.primary }))
   out.push(text('Espaço alocado', at(1) + 80, STATS_Y + 70, { size: 12, weight: 500, fill: t.muted }))
 
   for (const i of [2, 3]) {
@@ -367,12 +380,11 @@ function renderStats(t) {
     size: 20,
     weight: 700,
     fill: t.primary,
-    tabular: true,
     tail: { content: peakStudents === 1 ? 'aluno' : 'alunos', size: 16, weight: 500, fill: t.muted },
   }))
   out.push(text('Horário de pico', at(2) + 16, STATS_Y + 78, { size: 12, fill: t.muted }))
 
-  out.push(text(String(data.totalClassrooms), at(3) + 16, STATS_Y + 44, { size: 24, weight: 700, fill: t.highlighted, tabular: true }))
+  out.push(text(String(data.totalClassrooms), at(3) + 16, STATS_Y + 44, { size: 24, weight: 700, fill: t.highlighted }))
   out.push(text('Salas no campus', at(3) + 16, STATS_Y + 70, { size: 12, fill: t.muted }))
   return out.join('')
 }
@@ -396,7 +408,7 @@ function renderMap(t) {
   visibleShifts.forEach((shift, i) => {
     const top = GRID_Y + 24 + i * (ROW_H + ROW_GAP)
     out.push(text(shift.label, CELLS_X - 12, top + 30, { size: 14, weight: 500, fill: t.highlighted, anchor: 'end' }))
-    out.push(text(shift.window, CELLS_X - 12, top + 46, { size: 11, fill: t.muted, anchor: 'end', tabular: true }))
+    out.push(text(shift.window, CELLS_X - 12, top + 46, { size: 11, fill: t.muted, anchor: 'end' }))
 
     visibleDays.forEach((day, j) => {
       const x = CELLS_X + j * (COL_W + COL_GAP)
@@ -432,12 +444,12 @@ function renderDrilldown(t) {
   const groupW = 170
   let x = cx - (groupW * 2 + 40) / 2
   out.push(ring(cell.usedMinutesRate, x, y, 48, cell.usedMinutesRate > 0 ? t.primary : t.dimmed))
-  out.push(text(formatRate(cell.usedMinutesRate), x + 60, y + 24, { size: 24, weight: 700, fill: t.primary, tabular: true }))
+  out.push(text(formatRate(cell.usedMinutesRate), x + 60, y + 24, { size: 24, weight: 700, fill: t.primary }))
   out.push(text('Tempo usado', x + 60, y + 42, { size: 12, fill: t.muted }))
 
   x += groupW + 40
   out.push(blocks(cell.usedCapacityRate, x, y, 48, t))
-  out.push(text(formatRate(cell.usedCapacityRate), x + 60, y + 24, { size: 24, weight: 700, fill: t.primary, tabular: true }))
+  out.push(text(formatRate(cell.usedCapacityRate), x + 60, y + 24, { size: 24, weight: 700, fill: t.primary }))
   out.push(text('Espaço alocado', x + 60, y + 42, { size: 12, fill: t.muted }))
 
   cell.classrooms.forEach((room, i) => {
@@ -472,8 +484,11 @@ function buildSvg(mode) {
     rect(0.5, 0.5, W - 1, H - 1, { r: 12, stroke: t.border }),
   ].join('\n')
 
+  const defs = [...glyphDefs].map(([id, d]) => `<path id="${id}" d="${d}"/>`).join('')
+
   return [
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="${FONT}" role="img" aria-label="Tela de ocupação de campus do Estud: mapa de uso das salas por dia e turno, com indicadores de tempo usado e espaço alocado">`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Tela de ocupação de campus do Estud: mapa de uso das salas por dia e turno, com indicadores de tempo usado e espaço alocado">`,
+    `<defs>${defs}</defs>`,
     body,
     '</svg>',
   ].join('\n')

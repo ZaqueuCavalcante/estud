@@ -213,5 +213,57 @@ public partial class IntegrationTests
         item.WorkLink.Should().Be("https://github.com/ZaqueuCavalcante/estud");
     }
 
+    [Test]
+    public async Task Students_GetStudentClassActivity_Should_get_activity_with_finalized_work()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await teacherClient.CreateClassActivity(@class.Id, weight: 40).Success();
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+        await client.CreateClassActivityWork(activity.Id, "https://github.com/ZaqueuCavalcante/estud");
+
+        await teacherClient.AddStudentActivityNote(@class.Id, activity.Id, @class.StudentIds[0], 8.5m);
+
+        // Act
+        var result = await client.GetStudentClassActivity(@class.Id, activity.Id);
+
+        // Assert
+        var item = result.Success;
+        item.Id.Should().Be(activity.Id);
+        item.Weight.Should().Be(40);
+        item.WorkStatus.Should().Be(ClassActivityWorkStatus.Finalized);
+        item.WorkLink.Should().Be("https://github.com/ZaqueuCavalcante/estud");
+        item.Value.Should().Be(8.5m);
+        item.PonderedValue.Should().Be(3.4m);
+    }
+
+    [Test]
+    public async Task Students_GetStudentClassActivity_Should_get_only_the_note_of_the_logged_student()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var otherStudent = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var @class = await director.ShortcutCreateStartedClass(students: [student.Id, otherStudent.Id]);
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await teacherClient.CreateClassActivity(@class.Id, weight: 20).Success();
+        await teacherClient.AddStudentActivityNote(@class.Id, activity.Id, student.Id, 9);
+        await teacherClient.AddStudentActivityNote(@class.Id, activity.Id, otherStudent.Id, 4);
+
+        var client = await _back.LoginAs(student.Email);
+
+        // Act
+        var result = await client.GetStudentClassActivity(@class.Id, activity.Id);
+
+        // Assert
+        result.Success.Value.Should().Be(9);
+        result.Success.PonderedValue.Should().Be(1.8m);
+    }
+
     #endregion
 }
