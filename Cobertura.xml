@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9249059185768046" branch-rate="0.7883617494440326" lines-covered="10814" lines-valid="11692" branches-covered="2127" branches-valid="2698" complexity="4048" version="0" timestamp="1788828924">
+<coverage line-rate="0.9272060078511691" branch-rate="0.7955719557195572" lines-covered="10865" lines-valid="11718" branches-covered="2156" branches-valid="2710" complexity="4059" version="0" timestamp="1788904470">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9261588833362054" branch-rate="0.787210172026926" complexity="4014">
+    <package name="Back" line-rate="0.9283252929014473" branch-rate="0.7936567164179105" complexity="4020">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -1400,7 +1400,7 @@
             <line number="61" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Auth.Schemes.SocialLoginScheme" filename="/home/runner/work/estud/estud/Back/Auth/Schemes/SocialLoginScheme.cs" line-rate="0.7241379310344828" branch-rate="0.4642857142857143" complexity="56">
+        <class name="Estud.Back.Auth.Schemes.SocialLoginScheme" filename="/home/runner/work/estud/estud/Back/Auth/Schemes/SocialLoginScheme.cs" line-rate="1" branch-rate="0.7142857142857143" complexity="56">
           <methods>
             <method name="AddSocialLoginSchemes" signature="(Microsoft.AspNetCore.Authentication.AuthenticationBuilder, Microsoft.Extensions.Configuration.IConfiguration)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -1433,63 +1433,63 @@
                 <line number="46" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="ExtractName" signature="(System.Security.Claims.ClaimsPrincipal)" line-rate="1" branch-rate="0.5" complexity="16">
+            <method name="ExtractName" signature="(System.Security.Claims.ClaimsPrincipal)" line-rate="1" branch-rate="0.875" complexity="16">
               <lines>
                 <line number="147" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="149" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="150" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="152" hits="2" branch="true" condition-coverage="25% (1/4)" />
-                <line number="154" hits="2" branch="true" condition-coverage="67% (4/6)" />
+                <line number="149" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="150" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="152" hits="2" branch="true" condition-coverage="100% (4/4)" />
+                <line number="154" hits="2" branch="true" condition-coverage="83% (5/6)" />
                 <line number="156" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="HandleRemoteFailure" signature="()" line-rate="0" branch-rate="1" complexity="1">
+            <method name="HandleRemoteFailure" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="51" hits="0" branch="false" />
-                <line number="52" hits="0" branch="false" />
-                <line number="53" hits="0" branch="false" />
-                <line number="54" hits="0" branch="false" />
+                <line number="51" hits="2" branch="false" />
+                <line number="52" hits="2" branch="false" />
+                <line number="53" hits="2" branch="false" />
+                <line number="54" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="HandleTicketReceived" signature="()" line-rate="0.6" branch-rate="0.42105263157894735" complexity="38">
+            <method name="HandleTicketReceived" signature="()" line-rate="1" branch-rate="0.631578947368421" complexity="38">
               <lines>
                 <line number="58" hits="2" branch="false" />
                 <line number="59" hits="2" branch="false" />
                 <line number="60" hits="2" branch="false" />
                 <line number="61" hits="2" branch="false" />
                 <line number="62" hits="2" branch="false" />
-                <line number="65" hits="2" branch="true" condition-coverage="30% (3/10)" />
-                <line number="67" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="69" hits="0" branch="false" />
-                <line number="70" hits="0" branch="false" />
-                <line number="71" hits="0" branch="false" />
+                <line number="65" hits="2" branch="true" condition-coverage="70% (7/10)" />
+                <line number="67" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="69" hits="2" branch="false" />
+                <line number="70" hits="2" branch="false" />
+                <line number="71" hits="2" branch="false" />
                 <line number="74" hits="2" branch="false" />
                 <line number="77" hits="2" branch="true" condition-coverage="50% (2/4)" />
-                <line number="78" hits="2" branch="true" condition-coverage="75% (3/4)" />
-                <line number="80" hits="0" branch="false" />
-                <line number="81" hits="0" branch="false" />
-                <line number="82" hits="0" branch="false" />
+                <line number="78" hits="2" branch="true" condition-coverage="100% (4/4)" />
+                <line number="80" hits="2" branch="false" />
+                <line number="81" hits="2" branch="false" />
+                <line number="82" hits="2" branch="false" />
                 <line number="86" hits="2" branch="false" />
-                <line number="88" hits="0" branch="false" />
-                <line number="89" hits="0" branch="false" />
-                <line number="90" hits="0" branch="false" />
+                <line number="88" hits="2" branch="false" />
+                <line number="89" hits="2" branch="false" />
+                <line number="90" hits="2" branch="false" />
                 <line number="94" hits="2" branch="false" />
                 <line number="95" hits="2" branch="true" condition-coverage="25% (3/12)" />
                 <line number="98" hits="2" branch="false" />
-                <line number="99" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="102" hits="0" branch="false" />
-                <line number="104" hits="0" branch="false" />
-                <line number="105" hits="0" branch="false" />
-                <line number="106" hits="0" branch="false" />
+                <line number="99" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="102" hits="2" branch="false" />
+                <line number="104" hits="2" branch="false" />
+                <line number="105" hits="2" branch="false" />
+                <line number="106" hits="2" branch="false" />
                 <line number="110" hits="2" branch="false" />
-                <line number="111" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="114" hits="0" branch="false" />
-                <line number="115" hits="0" branch="false" />
-                <line number="116" hits="0" branch="false" />
-                <line number="118" hits="0" branch="false" />
-                <line number="120" hits="0" branch="false" />
-                <line number="121" hits="0" branch="false" />
-                <line number="122" hits="0" branch="false" />
+                <line number="111" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="114" hits="2" branch="false" />
+                <line number="115" hits="2" branch="false" />
+                <line number="116" hits="2" branch="false" />
+                <line number="118" hits="2" branch="false" />
+                <line number="120" hits="2" branch="false" />
+                <line number="121" hits="2" branch="false" />
+                <line number="122" hits="2" branch="false" />
                 <line number="126" hits="2" branch="false" />
                 <line number="127" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="129" hits="2" branch="false" />
@@ -1534,47 +1534,47 @@
             <line number="43" hits="2" branch="false" />
             <line number="44" hits="2" branch="false" />
             <line number="46" hits="2" branch="false" />
-            <line number="51" hits="0" branch="false" />
-            <line number="52" hits="0" branch="false" />
-            <line number="53" hits="0" branch="false" />
-            <line number="54" hits="0" branch="false" />
+            <line number="51" hits="2" branch="false" />
+            <line number="52" hits="2" branch="false" />
+            <line number="53" hits="2" branch="false" />
+            <line number="54" hits="2" branch="false" />
             <line number="58" hits="2" branch="false" />
             <line number="59" hits="2" branch="false" />
             <line number="60" hits="2" branch="false" />
             <line number="61" hits="2" branch="false" />
             <line number="62" hits="2" branch="false" />
-            <line number="65" hits="2" branch="true" condition-coverage="30% (3/10)" />
-            <line number="67" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="69" hits="0" branch="false" />
-            <line number="70" hits="0" branch="false" />
-            <line number="71" hits="0" branch="false" />
+            <line number="65" hits="2" branch="true" condition-coverage="70% (7/10)" />
+            <line number="67" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="69" hits="2" branch="false" />
+            <line number="70" hits="2" branch="false" />
+            <line number="71" hits="2" branch="false" />
             <line number="74" hits="2" branch="false" />
             <line number="77" hits="2" branch="true" condition-coverage="50% (2/4)" />
-            <line number="78" hits="2" branch="true" condition-coverage="75% (3/4)" />
-            <line number="80" hits="0" branch="false" />
-            <line number="81" hits="0" branch="false" />
-            <line number="82" hits="0" branch="false" />
+            <line number="78" hits="2" branch="true" condition-coverage="100% (4/4)" />
+            <line number="80" hits="2" branch="false" />
+            <line number="81" hits="2" branch="false" />
+            <line number="82" hits="2" branch="false" />
             <line number="86" hits="2" branch="false" />
-            <line number="88" hits="0" branch="false" />
-            <line number="89" hits="0" branch="false" />
-            <line number="90" hits="0" branch="false" />
+            <line number="88" hits="2" branch="false" />
+            <line number="89" hits="2" branch="false" />
+            <line number="90" hits="2" branch="false" />
             <line number="94" hits="2" branch="false" />
             <line number="95" hits="2" branch="true" condition-coverage="25% (3/12)" />
             <line number="98" hits="2" branch="false" />
-            <line number="99" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="102" hits="0" branch="false" />
-            <line number="104" hits="0" branch="false" />
-            <line number="105" hits="0" branch="false" />
-            <line number="106" hits="0" branch="false" />
+            <line number="99" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="102" hits="2" branch="false" />
+            <line number="104" hits="2" branch="false" />
+            <line number="105" hits="2" branch="false" />
+            <line number="106" hits="2" branch="false" />
             <line number="110" hits="2" branch="false" />
-            <line number="111" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="114" hits="0" branch="false" />
-            <line number="115" hits="0" branch="false" />
-            <line number="116" hits="0" branch="false" />
-            <line number="118" hits="0" branch="false" />
-            <line number="120" hits="0" branch="false" />
-            <line number="121" hits="0" branch="false" />
-            <line number="122" hits="0" branch="false" />
+            <line number="111" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="114" hits="2" branch="false" />
+            <line number="115" hits="2" branch="false" />
+            <line number="116" hits="2" branch="false" />
+            <line number="118" hits="2" branch="false" />
+            <line number="120" hits="2" branch="false" />
+            <line number="121" hits="2" branch="false" />
+            <line number="122" hits="2" branch="false" />
             <line number="126" hits="2" branch="false" />
             <line number="127" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="129" hits="2" branch="false" />
@@ -1589,10 +1589,10 @@
             <line number="142" hits="2" branch="false" />
             <line number="143" hits="2" branch="false" />
             <line number="147" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="149" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="150" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="152" hits="2" branch="true" condition-coverage="25% (1/4)" />
-            <line number="154" hits="2" branch="true" condition-coverage="67% (4/6)" />
+            <line number="149" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="150" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="152" hits="2" branch="true" condition-coverage="100% (4/4)" />
+            <line number="154" hits="2" branch="true" condition-coverage="83% (5/6)" />
             <line number="156" hits="2" branch="false" />
           </lines>
         </class>
@@ -25570,44 +25570,48 @@
             <line number="7" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Features.Identity.SocialLoginChallenge.SocialLoginChallengeController" filename="/home/runner/work/estud/estud/Back/Features/Identity/SocialLoginChallenge/SocialLoginChallengeController.cs" line-rate="0.9230769230769231" branch-rate="0.5" complexity="5">
+        <class name="Estud.Back.Features.Identity.SocialLoginChallenge.SocialLoginChallengeController" filename="/home/runner/work/estud/estud/Back/Features/Identity/SocialLoginChallenge/SocialLoginChallengeController.cs" line-rate="1" branch-rate="1" complexity="11">
           <methods>
             <method name=".ctor" signature="(Estud.Back.Settings.FrontendSettings)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="7" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="Challenge" signature="(string)" line-rate="0.9166666666666666" branch-rate="0.5" complexity="4">
+            <method name="Challenge" signature="(string)" line-rate="1" branch-rate="1" complexity="10">
               <lines>
-                <line number="19" hits="2" branch="false" />
-                <line number="21" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="22" hits="2" branch="false" />
-                <line number="23" hits="2" branch="false" />
-                <line number="24" hits="0" branch="false" />
+                <line number="19" hits="2" branch="true" condition-coverage="100% (4/4)" />
+                <line number="20" hits="2" branch="false" />
+                <line number="21" hits="2" branch="false" />
+                <line number="23" hits="2" branch="true" condition-coverage="100% (4/4)" />
+                <line number="24" hits="2" branch="false" />
                 <line number="25" hits="2" branch="false" />
-                <line number="27" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="29" hits="2" branch="false" />
-                <line number="30" hits="2" branch="false" />
+                <line number="26" hits="2" branch="false" />
+                <line number="27" hits="2" branch="false" />
+                <line number="29" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="31" hits="2" branch="false" />
                 <line number="32" hits="2" branch="false" />
+                <line number="33" hits="2" branch="false" />
                 <line number="34" hits="2" branch="false" />
+                <line number="36" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
             <line number="7" hits="2" branch="false" />
-            <line number="19" hits="2" branch="false" />
-            <line number="21" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="22" hits="2" branch="false" />
-            <line number="23" hits="2" branch="false" />
-            <line number="24" hits="0" branch="false" />
+            <line number="19" hits="2" branch="true" condition-coverage="100% (4/4)" />
+            <line number="20" hits="2" branch="false" />
+            <line number="21" hits="2" branch="false" />
+            <line number="23" hits="2" branch="true" condition-coverage="100% (4/4)" />
+            <line number="24" hits="2" branch="false" />
             <line number="25" hits="2" branch="false" />
-            <line number="27" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="29" hits="2" branch="false" />
-            <line number="30" hits="2" branch="false" />
+            <line number="26" hits="2" branch="false" />
+            <line number="27" hits="2" branch="false" />
+            <line number="29" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="31" hits="2" branch="false" />
             <line number="32" hits="2" branch="false" />
+            <line number="33" hits="2" branch="false" />
             <line number="34" hits="2" branch="false" />
+            <line number="36" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Features.Identity.SsoChallenge.SsoChallengeController" filename="/home/runner/work/estud/estud/Back/Features/Identity/SsoChallenge/SsoChallengeController.cs" line-rate="0" branch-rate="0" complexity="3">
@@ -37619,7 +37623,7 @@
         </class>
       </classes>
     </package>
-    <package name="Mocks" line-rate="0.7558139534883721" branch-rate="0.9166666666666666" complexity="34">
+    <package name="Mocks" line-rate="0.8090909090909091" branch-rate="0.9666666666666667" complexity="39">
       <classes>
         <class name="Estud.Mocks.Configs.EntityFrameworkConfigs" filename="/home/runner/work/estud/estud/Mocks/Configs/EntityFrameworkConfigs.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -37791,63 +37795,105 @@
             <line number="17" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Mocks.SocialLogin.Google.Authorize.GoogleAuthorizeController" filename="/home/runner/work/estud/estud/Mocks/SocialLogin/Google/Authorize/GoogleAuthorizeController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="Estud.Mocks.SocialLogin.Google.Authorize.GoogleAuthorizeController" filename="/home/runner/work/estud/estud/Mocks/SocialLogin/Google/Authorize/GoogleAuthorizeController.cs" line-rate="1" branch-rate="1" complexity="6">
           <methods>
-            <method name="Authorize" signature="(string, string, string)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="Authorize" signature="(string, string, string, string, bool, string, bool, string, string, string)" line-rate="1" branch-rate="1" complexity="6">
               <lines>
-                <line number="20" hits="2" branch="false" />
-                <line number="22" hits="2" branch="false" />
-                <line number="24" hits="2" branch="false" />
-                <line number="25" hits="2" branch="false" />
-                <line number="26" hits="2" branch="false" />
-                <line number="27" hits="2" branch="false" />
-                <line number="28" hits="2" branch="false" />
+                <line number="28" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="30" hits="2" branch="false" />
+                <line number="31" hits="2" branch="false" />
+                <line number="32" hits="2" branch="false" />
+                <line number="33" hits="2" branch="false" />
+                <line number="34" hits="2" branch="false" />
+                <line number="37" hits="2" branch="false" />
+                <line number="39" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="41" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="42" hits="2" branch="false" />
+                <line number="43" hits="2" branch="false" />
+                <line number="44" hits="2" branch="false" />
+                <line number="45" hits="2" branch="false" />
+                <line number="46" hits="2" branch="false" />
+                <line number="47" hits="2" branch="false" />
+                <line number="48" hits="2" branch="false" />
+                <line number="51" hits="2" branch="false" />
+                <line number="52" hits="2" branch="false" />
+                <line number="53" hits="2" branch="false" />
+                <line number="54" hits="2" branch="false" />
+                <line number="55" hits="2" branch="false" />
+                <line number="57" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="20" hits="2" branch="false" />
-            <line number="22" hits="2" branch="false" />
-            <line number="24" hits="2" branch="false" />
-            <line number="25" hits="2" branch="false" />
-            <line number="26" hits="2" branch="false" />
-            <line number="27" hits="2" branch="false" />
-            <line number="28" hits="2" branch="false" />
+            <line number="28" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="30" hits="2" branch="false" />
+            <line number="31" hits="2" branch="false" />
+            <line number="32" hits="2" branch="false" />
+            <line number="33" hits="2" branch="false" />
+            <line number="34" hits="2" branch="false" />
+            <line number="37" hits="2" branch="false" />
+            <line number="39" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="41" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="42" hits="2" branch="false" />
+            <line number="43" hits="2" branch="false" />
+            <line number="44" hits="2" branch="false" />
+            <line number="45" hits="2" branch="false" />
+            <line number="46" hits="2" branch="false" />
+            <line number="47" hits="2" branch="false" />
+            <line number="48" hits="2" branch="false" />
+            <line number="51" hits="2" branch="false" />
+            <line number="52" hits="2" branch="false" />
+            <line number="53" hits="2" branch="false" />
+            <line number="54" hits="2" branch="false" />
+            <line number="55" hits="2" branch="false" />
+            <line number="57" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Mocks.SocialLogin.Google.GoogleMockUser" filename="/home/runner/work/estud/estud/Mocks/SocialLogin/Google/GoogleMockUsers.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name=".ctor" signature="(string, string)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(string, string, bool, string, string, string)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="5" hits="2" branch="false" />
+                <line number="6" hits="2" branch="false" />
+                <line number="7" hits="2" branch="false" />
+                <line number="8" hits="2" branch="false" />
+                <line number="9" hits="2" branch="false" />
+                <line number="10" hits="2" branch="false" />
+                <line number="11" hits="2" branch="false" />
+                <line number="12" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
             <line number="5" hits="2" branch="false" />
+            <line number="6" hits="2" branch="false" />
+            <line number="7" hits="2" branch="false" />
+            <line number="8" hits="2" branch="false" />
+            <line number="9" hits="2" branch="false" />
+            <line number="10" hits="2" branch="false" />
+            <line number="11" hits="2" branch="false" />
+            <line number="12" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Mocks.SocialLogin.Google.GoogleMockUsers" filename="/home/runner/work/estud/estud/Mocks/SocialLogin/Google/GoogleMockUsers.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="13" hits="2" branch="false" />
-                <line number="14" hits="2" branch="false" />
+                <line number="20" hits="2" branch="false" />
+                <line number="21" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="13" hits="2" branch="false" />
-            <line number="14" hits="2" branch="false" />
+            <line number="20" hits="2" branch="false" />
+            <line number="21" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Mocks.SocialLogin.Google.Token.GoogleTokenController" filename="/home/runner/work/estud/estud/Mocks/SocialLogin/Google/Token/GoogleTokenController.cs" line-rate="1" branch-rate="0.5" complexity="2">
+        <class name="Estud.Mocks.SocialLogin.Google.Token.GoogleTokenController" filename="/home/runner/work/estud/estud/Mocks/SocialLogin/Google/Token/GoogleTokenController.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
-            <method name="Token" signature="(string)" line-rate="1" branch-rate="0.5" complexity="2">
+            <method name="Token" signature="(string)" line-rate="1" branch-rate="1" complexity="2">
               <lines>
-                <line number="15" hits="2" branch="true" condition-coverage="50% (1/2)" />
+                <line number="15" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="17" hits="2" branch="false" />
                 <line number="19" hits="2" branch="false" />
                 <line number="21" hits="2" branch="false" />
@@ -37860,7 +37906,7 @@
             </method>
           </methods>
           <lines>
-            <line number="15" hits="2" branch="true" condition-coverage="50% (1/2)" />
+            <line number="15" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="17" hits="2" branch="false" />
             <line number="19" hits="2" branch="false" />
             <line number="21" hits="2" branch="false" />
@@ -37883,6 +37929,9 @@
                 <line number="22" hits="2" branch="false" />
                 <line number="23" hits="2" branch="false" />
                 <line number="24" hits="2" branch="false" />
+                <line number="25" hits="2" branch="false" />
+                <line number="26" hits="2" branch="false" />
+                <line number="27" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
@@ -37895,6 +37944,9 @@
             <line number="22" hits="2" branch="false" />
             <line number="23" hits="2" branch="false" />
             <line number="24" hits="2" branch="false" />
+            <line number="25" hits="2" branch="false" />
+            <line number="26" hits="2" branch="false" />
+            <line number="27" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Mocks.Webhooks.WebhookTargetController" filename="/home/runner/work/estud/estud/Mocks/Webhooks/WebhookTargetController.cs" line-rate="1" branch-rate="1" complexity="5">
