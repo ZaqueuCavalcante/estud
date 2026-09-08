@@ -12,20 +12,20 @@ Cadastre sua instituição de ensino em https://estud.com.br e começe a usar o 
   <img alt="Tela de ocupação de campus do Estud: mapa de uso das salas por dia e turno, com indicadores de tempo usado e espaço alocado" src=".github/assets/campus-light.svg">
 </picture>
 
-## Gestor
+### Gestor
 
 - Organize e entenda todos os dados da sua instituição de ensino
 - Otimize a alocação de tempo e de espaço nas salas do seu campus
 - Saiba a frequência e o desempenho das suas turmas e alunos
 
-## Professor
+### Professor
 
 - Agenda, turmas, alunos e atividades organizados
 
-## Aluno
+### Aluno
 
 - Agenda, turmas e atividades organizadas
 
-## Responsável
+### Responsável
 
 - Filhos, agendas, turmas e atividades organizadas

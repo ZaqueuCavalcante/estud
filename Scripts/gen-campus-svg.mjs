@@ -264,7 +264,10 @@ const CARDS_Y = DRILL_Y + 104
 const CARD_W = (CONTENT_W - 24) / 3
 const CARD_H = 196
 const CARD_GAP = 12
-const CARD_ROWS = Math.ceil(data.classrooms.length / 3)
+// A imagem para na primeira linha de salas: o painel real rola, o README não, e
+// as seis deixariam uma tira alta demais no meio do texto.
+const MAX_CARDS = 3
+const CARD_ROWS = Math.ceil(Math.min(data.classrooms.length, MAX_CARDS) / 3)
 const H = CARDS_Y + CARD_ROWS * CARD_H + (CARD_ROWS - 1) * CARD_GAP + PAD_Y
 
 function renderSidebar(t) {
@@ -276,7 +279,7 @@ function renderSidebar(t) {
   out.push(`<line x1="${SIDEBAR_W - 0.5}" y1="0" x2="${SIDEBAR_W - 0.5}" y2="${H}" stroke="${t.border}"/>`)
 
   out.push(`<g transform="translate(16 20) scale(1)">${ESTUD_ICON}</g>`)
-  out.push(text('Estud', 48, 42, { size: 20, weight: 600, fill: t.highlighted }))
+  out.push(text('Estud', 48, 39, { size: 20, weight: 600, fill: t.highlighted }))
   out.push(icon('panel-left-close', 172, 22, 20, t.muted))
 
   let top = 64
@@ -452,7 +455,7 @@ function renderDrilldown(t) {
   out.push(text(formatRate(cell.usedCapacityRate), x + 60, y + 24, { size: 24, weight: 700, fill: t.primary }))
   out.push(text('Espaço alocado', x + 60, y + 42, { size: 12, fill: t.muted }))
 
-  cell.classrooms.forEach((room, i) => {
+  cell.classrooms.slice(0, MAX_CARDS).forEach((room, i) => {
     const rx = X0 + (i % 3) * (CARD_W + CARD_GAP)
     const ry = CARDS_Y + Math.floor(i / 3) * (CARD_H + CARD_GAP)
     const color = room.usedMinutesRate > 0 ? t.primary : t.dimmed
