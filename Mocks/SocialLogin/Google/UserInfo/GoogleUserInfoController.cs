@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Estud.Mocks.SocialLogin.Google.UserInfo;
 
 /// <summary>
-/// Mock Google OAuth UserInfo endpoint.
-/// Returns user claims based on the access token session state.
+/// Mock Google OAuth userinfo endpoint.
+/// Returns the claims of the user bound to the access token.
 /// </summary>
 [ApiController]
 public class GoogleUserInfoController : ControllerBase
@@ -12,6 +12,15 @@ public class GoogleUserInfoController : ControllerBase
     [HttpGet("social-login/google/userinfo")]
     public IActionResult UserInfo()
     {
-        return Ok();
+        var accessToken = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+
+        if (!GoogleMockUsers.ByAccessToken.TryGetValue(accessToken, out var user)) return Unauthorized();
+
+        return Ok(new
+        {
+            sub = user.Subject,
+            email = user.Email,
+            email_verified = true,
+        });
     }
 }

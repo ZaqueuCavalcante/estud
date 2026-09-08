@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Estud.Mocks.SocialLogin.Google.Authorize;
 
@@ -11,8 +12,21 @@ namespace Estud.Mocks.SocialLogin.Google.Authorize;
 public class GoogleAuthorizeController : ControllerBase
 {
     [HttpGet("social-login/google/authorize")]
-    public IActionResult Authorize()
+    public IActionResult Authorize(
+        [FromQuery(Name = "redirect_uri")] string redirectUri,
+        [FromQuery(Name = "login_hint")] string loginHint,
+        [FromQuery] string state)
     {
-        return Redirect("");
+        var code = Guid.NewGuid().ToString("N");
+
+        GoogleMockUsers.ByCode[code] = new GoogleMockUser(loginHint, Guid.NewGuid().ToString());
+
+        var callback = QueryHelpers.AddQueryString(redirectUri, new Dictionary<string, string?>
+        {
+            ["code"] = code,
+            ["state"] = state,
+        });
+
+        return Redirect(callback);
     }
 }

@@ -176,7 +176,7 @@ public partial class IntegrationTests
         var teacherClient = await _back.LoginAs(teacher.Email);
         var dueDate = DateTime.UtcNow.AddDays(7).ToDateOnly();
 
-        await teacherClient.CreateClassActivity(
+        var activity = await teacherClient.CreateClassActivity(
             @class.Id,
             title: "Modelagem de Banco de Dados",
             description: "Modele um banco de dados para um sistema de gerenciamento de biblioteca.",
@@ -200,6 +200,7 @@ public partial class IntegrationTests
         payload.RootElement.GetProperty("EventType").GetString().Should().Be(nameof(WebhookEventType.ClassActivityCreated));
 
         var data = payload.RootElement.GetProperty("Data");
+        data.GetProperty("Id").GetInt32().Should().Be(activity.Id);
         data.GetProperty("ClassId").GetInt32().Should().Be(@class.Id);
         data.GetProperty("Title").GetString().Should().Be("Modelagem de Banco de Dados");
         data.GetProperty("Description").GetString().Should().Be("Modele um banco de dados para um sistema de gerenciamento de biblioteca.");

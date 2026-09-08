@@ -122,13 +122,11 @@ const meta = computed(() => {
         </div>
       </div>
 
-      <UCard>
-        <template #header>
-          <div class="flex items-center justify-between gap-4">
-            <span class="font-semibold text-highlighted">Grade curricular</span>
-            <span class="text-sm text-muted">{{ summary.concluded }} de {{ summary.total }} concluídas</span>
-          </div>
-        </template>
+      <div>
+        <div class="flex items-center justify-between gap-4 mb-4">
+          <span class="font-semibold text-highlighted">Grade curricular</span>
+          <span class="text-sm text-muted">{{ summary.concluded }} de {{ summary.total }} concluídas</span>
+        </div>
 
         <!-- Progresso geral -->
         <div class="mb-6">
@@ -175,7 +173,7 @@ const meta = computed(() => {
             A grade deste curso ainda não possui disciplinas cadastradas.
           </p>
         </div>
-      </UCard>
+      </div>
     </template>
   </div>
 </template>

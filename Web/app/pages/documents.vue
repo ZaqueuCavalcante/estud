@@ -112,7 +112,7 @@ const columns: TableColumn<EnrollmentProofItem>[] = [
     <template #body>
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-4">
         <p class="text-sm text-muted">
-          Comprovantes de matrícula emitidos. Cada um tem um código de verificação que permite conferir sua autenticidade online.
+          Comprovantes de matrícula emitidos.
         </p>
         <UButton
           v-if="data?.items?.length"

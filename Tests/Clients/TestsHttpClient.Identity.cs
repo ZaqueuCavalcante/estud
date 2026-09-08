@@ -181,6 +181,36 @@ public partial class TestsHttpClient
         return await response.Resolve<GoogleOneTapLoginOut>();
     }
 
+    public async Task<HttpResponseMessage> GoogleSocialLogin(string email)
+    {
+        var challenge = await http.GetAsync("identity/social-login/challenge/Google");
+
+        var authorizeUrl = $"{await RedirectTo(challenge)}&login_hint={Uri.EscapeDataString(email)}";
+
+        using var google = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false });
+        var authorize = await google.GetAsync(authorizeUrl);
+
+        var callback = new HttpRequestMessage(HttpMethod.Get, await RedirectTo(authorize));
+
+        // O cookie de correlação do OAuth é Secure e o client de testes fala http,
+        // então o CookieContainer o guarda mas nunca o reenvia — o browser real, em https, reenviaria.
+        if (challenge.Headers.TryGetValues("Set-Cookie", out var cookies))
+        {
+            foreach (var cookie in cookies) callback.Headers.Add("Cookie", cookie.Split(';')[0]);
+        }
+
+        return await http.SendAsync(callback);
+    }
+
+    private static async Task<Uri> RedirectTo(HttpResponseMessage response)
+    {
+        if (response.Headers.Location != null) return response.Headers.Location;
+
+        var body = await response.Content.ReadAsStringAsync();
+
+        throw new InvalidOperationException($"Expected a redirect from {response.RequestMessage?.RequestUri}, got {(int)response.StatusCode}: {body}");
+    }
+
     public async Task<OneOf<CheckSsoAvailabilityOut, ErrorOut>> CheckSsoAvailability(string email = "usuario@empresa.com.br")
     {
         var data = new CheckSsoAvailabilityIn { Email = email };

@@ -10,7 +10,7 @@ public class ClassActivityCreatedDomainEventHandler(EstudDbContext ctx) : IDomai
     {
         var activity = await ctx.ClassActivities.AsNoTracking()
             .Where(x => x.Uid == evt.Uid)
-            .Select(x => new { x.Id, x.Uid, x.Title, x.Description, x.ActivityType, x.DueDate })
+            .Select(x => new { x.Id, x.ClassId, x.Title, x.Description, x.ActivityType, x.DueDate })
             .FirstAsync();
 
         ctx.AddCommand(institutionId, new CreateNewClassActivityNotificationCommand(activity.Id));
@@ -23,8 +23,9 @@ public class ClassActivityCreatedDomainEventHandler(EstudDbContext ctx) : IDomai
         {
             var data = new
             {
+                activity.Id,
                 activity.Title,
-                Id = activity.Uid,
+                activity.ClassId,
                 activity.Description,
                 Type = activity.ActivityType,
                 DueDate = activity.DueDate.ToString("yyyy-MM-dd"),

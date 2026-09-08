@@ -36,9 +36,13 @@ public class BackFactory : WebApplicationFactory<Back::Program>
         });
     }
 
-    public TestsHttpClient GetTestsClient()
+    public TestsHttpClient GetTestsClient(bool followRedirects = true)
     {
-        var client = CreateClient();
+        // WebApplicationFactoryClientOptions.AllowAutoRedirect só desliga o RedirectHandler dela;
+        // sobre Kestrel quem segue os redirects é o HttpClientHandler interno, que ela não expõe.
+        var client = followRedirects ? CreateClient()
+            : new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { BaseAddress = ClientOptions.BaseAddress };
+
         client.Timeout = TimeSpan.FromHours(1);
         return new TestsHttpClient(client);
     }

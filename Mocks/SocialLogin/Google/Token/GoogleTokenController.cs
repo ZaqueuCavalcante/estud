@@ -10,8 +10,19 @@ namespace Estud.Mocks.SocialLogin.Google.Token;
 public class GoogleTokenController : ControllerBase
 {
     [HttpPost("social-login/google/token")]
-    public IActionResult Token()
+    public IActionResult Token([FromForm] string code)
     {
-        return Ok();
+        if (!GoogleMockUsers.ByCode.TryRemove(code, out var user)) return BadRequest(new { error = "invalid_grant" });
+
+        var accessToken = Guid.NewGuid().ToString("N");
+
+        GoogleMockUsers.ByAccessToken[accessToken] = user;
+
+        return Ok(new
+        {
+            expires_in = 3600,
+            token_type = "Bearer",
+            access_token = accessToken,
+        });
     }
 }
