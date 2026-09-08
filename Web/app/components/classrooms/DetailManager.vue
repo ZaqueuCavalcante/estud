@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { TableColumn } from '@nuxt/ui'
+import type { NavigationMenuItem, TableColumn } from '@nuxt/ui'
+import type { AgendaDay } from '~/types/agenda'
 import type { ClassroomScheduleItem, GetClassroomOut } from '~/types/classrooms'
 
 const UBadge = resolveComponent('UBadge')
@@ -51,6 +52,32 @@ const usageLabel = computed(() => `${weeklyHours.value.toFixed(1).replace('.', '
 const usageRingClass = computed(() => (usagePercent.value > 100 ? 'text-warning' : 'text-primary'))
 
 const classesRingClass = computed(() => (classesCount.value > 0 ? 'text-info' : 'text-muted'))
+
+const activeTab = ref('agenda')
+
+const tabs = computed(() => [[
+  { label: 'Agenda', icon: 'i-lucide-calendar-days', active: activeTab.value === 'agenda', onSelect: () => { activeTab.value = 'agenda' } },
+  { label: 'Turmas', icon: 'i-lucide-presentation', active: activeTab.value === 'classes', onSelect: () => { activeTab.value = 'classes' } },
+]] satisfies NavigationMenuItem[][])
+
+const agendaDays = computed<AgendaDay[]>(() => {
+  const byDay = new Map<string, AgendaDay>()
+  for (const s of data.value?.schedules ?? []) {
+    let day = byDay.get(s.day)
+    if (!day) {
+      day = { day: s.day, disciplines: [] }
+      byDay.set(s.day, day)
+    }
+    day.disciplines.push({
+      classId: s.classId || null,
+      name: s.discipline || 'Turma',
+      classroomName: data.value?.name ?? null,
+      start: s.startAt,
+      end: s.endAt,
+    })
+  }
+  return [...byDay.values()]
+})
 
 // Uma turma pode ocupar a sala em vários horários — a tabela lista turmas, não horários.
 const allocatedClasses = computed(() => {
@@ -136,7 +163,7 @@ const classColumns: TableColumn<ClassroomScheduleItem>[] = [
         <UButton icon="i-lucide-arrow-left" label="Voltar" to="/campi" />
       </div>
 
-      <div v-else class="flex flex-col gap-10 py-2">
+      <div v-else class="flex flex-col gap-6 py-2">
         <div class="flex flex-col gap-5">
           <div class="flex flex-col gap-1">
             <div class="flex items-center gap-1.5">
@@ -188,40 +215,19 @@ const classColumns: TableColumn<ClassroomScheduleItem>[] = [
               :color-class="classesRingClass"
             />
           </div>
+
+          <UNavigationMenu :items="tabs" highlight class="-mx-1" />
         </div>
 
-        <section class="flex flex-col gap-3">
-          <h2 class="font-semibold text-highlighted">
-            Agenda
-          </h2>
-
-          <div v-if="data.schedules.length" class="flex flex-col sm:flex-row sm:flex-wrap gap-2">
-            <NuxtLink
-              v-for="(s, i) in data.schedules"
-              :key="i"
-              :to="`/classes/${s.classId}`"
-              class="flex flex-col gap-0.5 rounded-lg border border-default bg-elevated/40 px-3 py-2 transition-colors hover:bg-elevated"
-            >
-              <span class="text-sm font-medium text-highlighted">
-                {{ s.discipline || 'Turma' }}
-              </span>
-              <span class="flex items-center gap-1 text-xs text-muted">
-                <UIcon name="i-lucide-clock" class="size-3.5" />
-                {{ formatClassSchedule(s) }}
-              </span>
-            </NuxtLink>
-          </div>
+        <section v-if="activeTab === 'agenda'" class="flex flex-col gap-3">
+          <AgendaWeek v-if="data.schedules.length" :days="agendaDays" />
           <div v-else class="flex items-center gap-2 text-sm text-muted">
             <UIcon name="i-lucide-calendar-x" class="size-4" />
             Nenhuma turma alocada nesta sala
           </div>
         </section>
 
-        <section class="flex flex-col gap-3">
-          <h2 class="font-semibold text-highlighted">
-            Turmas
-          </h2>
-
+        <section v-else class="flex flex-col gap-3">
           <DataTable :data="allocatedClasses" :columns="classColumns">
             <template #empty>
               <TableEmptyState
