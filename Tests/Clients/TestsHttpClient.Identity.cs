@@ -181,11 +181,41 @@ public partial class TestsHttpClient
         return await response.Resolve<GoogleOneTapLoginOut>();
     }
 
-    public async Task<HttpResponseMessage> GoogleSocialLogin(string email)
+    public async Task<HttpResponseMessage> SocialLoginChallenge(string provider)
     {
-        var challenge = await http.GetAsync("identity/social-login/challenge/Google");
+        return await http.GetAsync($"identity/social-login/challenge/{provider}");
+    }
 
-        var authorizeUrl = $"{await RedirectTo(challenge)}&login_hint={Uri.EscapeDataString(email)}";
+    public async Task<HttpResponseMessage> GoogleSocialLogin(
+        string email,
+        string? subject = null,
+        bool emailVerified = true,
+        string? name = null,
+        string? givenName = null,
+        string? familyName = null,
+        string? providerError = null,
+        bool invalidCode = false,
+        bool withCorrelationCookie = true
+    ) {
+        var challenge = await SocialLoginChallenge("Google");
+
+        var mockParams = new Dictionary<string, string?>
+        {
+            ["login_hint"] = email,
+            ["mock_subject"] = subject,
+            ["mock_email_verified"] = emailVerified ? "true" : "false",
+            ["mock_name"] = name,
+            ["mock_given_name"] = givenName,
+            ["mock_family_name"] = familyName,
+            ["mock_error"] = providerError,
+            ["mock_invalid_code"] = invalidCode ? "true" : null,
+        };
+
+        var query = mockParams
+            .Where(x => x.Value != null)
+            .Select(x => $"{x.Key}={Uri.EscapeDataString(x.Value!)}");
+
+        var authorizeUrl = $"{await RedirectTo(challenge)}&{string.Join('&', query)}";
 
         using var google = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false });
         var authorize = await google.GetAsync(authorizeUrl);
@@ -194,7 +224,7 @@ public partial class TestsHttpClient
 
         // O cookie de correlação do OAuth é Secure e o client de testes fala http,
         // então o CookieContainer o guarda mas nunca o reenvia — o browser real, em https, reenviaria.
-        if (challenge.Headers.TryGetValues("Set-Cookie", out var cookies))
+        if (withCorrelationCookie && challenge.Headers.TryGetValues("Set-Cookie", out var cookies))
         {
             foreach (var cookie in cookies) callback.Headers.Add("Cookie", cookie.Split(';')[0]);
         }

@@ -7,12 +7,11 @@
 
 - Keycloak Testcontainer nos testes de SSO
 - Ciclo de vida de uma turma
-- Remover usos do GetDbContext
 
-- Calcular nota parcial relativa e não apenas a média final?
+- Posthog
+- OpenTelemetry
 
 - ❌ SsoOidcScheme
-- ❌ SocialLoginChallengeController
 
----
+
 

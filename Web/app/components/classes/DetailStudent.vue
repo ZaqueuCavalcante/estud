@@ -23,6 +23,7 @@ const { data: activitiesData } = await useFetch<GetStudentClassActivitiesOut>(
 )
 
 const activities = computed(() => activitiesData.value?.activities ?? [])
+const notes = computed(() => groupStudentActivitiesByNote(activities.value))
 </script>
 
 <template>
@@ -112,6 +113,21 @@ const activities = computed(() => activitiesData.value?.activities ?? [])
           <div v-else class="flex items-center gap-2 text-sm text-muted">
             <UIcon name="i-lucide-clock" class="size-4" />
             Nenhum horário cadastrado
+          </div>
+        </section>
+
+        <section v-if="notes.length" class="flex flex-col gap-3">
+          <h2 class="font-semibold text-highlighted">
+            Desempenho
+          </h2>
+
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <ClassesStudentNoteChart
+              v-for="group in notes"
+              :key="group.note"
+              :note="group.note"
+              :activities="group.activities"
+            />
           </div>
         </section>
 

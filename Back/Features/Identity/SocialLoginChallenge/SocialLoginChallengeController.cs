@@ -16,7 +16,9 @@ public class SocialLoginChallengeController(FrontendSettings frontendSettings) :
     [HttpGet("identity/social-login/challenge/{provider}")]
     public IActionResult Challenge(string provider)
     {
-        Enum.TryParse(provider, ignoreCase: true, out SocialLoginProvider loginProvider);
+        SocialLoginProvider? loginProvider = Enum.TryParse(provider, ignoreCase: true, out SocialLoginProvider parsed) && Enum.IsDefined(parsed)
+            ? parsed
+            : null;
 
         var schemeName = loginProvider switch
         {

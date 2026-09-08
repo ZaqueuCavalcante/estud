@@ -11,6 +11,7 @@ public abstract class IntegrationTestBase
 {
     protected BackFactory _back = null!;
     protected MocksFactory _mocks = null!;
+    public const string FrontUrl = "http://localhost:3000";
 
     [OneTimeSetUp]
     public async Task OneTimeSetUp()

@@ -2,7 +2,14 @@ using System.Collections.Concurrent;
 
 namespace Estud.Mocks.SocialLogin.Google;
 
-public record GoogleMockUser(string Email, string Subject);
+public record GoogleMockUser(
+    string? Email,
+    string Subject,
+    bool EmailVerified = true,
+    string? Name = null,
+    string? GivenName = null,
+    string? FamilyName = null
+);
 
 /// <summary>
 /// Estado por fluxo de login, para que testes em paralelo não disputem um usuário global.

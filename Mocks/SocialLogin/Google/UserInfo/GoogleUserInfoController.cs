@@ -18,9 +18,12 @@ public class GoogleUserInfoController : ControllerBase
 
         return Ok(new
         {
+            name = user.Name,
             sub = user.Subject,
             email = user.Email,
-            email_verified = true,
+            given_name = user.GivenName,
+            family_name = user.FamilyName,
+            email_verified = user.EmailVerified,
         });
     }
 }

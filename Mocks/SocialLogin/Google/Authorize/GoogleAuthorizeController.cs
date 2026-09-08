@@ -1,3 +1,4 @@
+using Estud.Back.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 
@@ -14,12 +15,38 @@ public class GoogleAuthorizeController : ControllerBase
     [HttpGet("social-login/google/authorize")]
     public IActionResult Authorize(
         [FromQuery(Name = "redirect_uri")] string redirectUri,
-        [FromQuery(Name = "login_hint")] string loginHint,
-        [FromQuery] string state)
+        [FromQuery(Name = "login_hint")] string? loginHint,
+        [FromQuery] string state,
+        [FromQuery(Name = "mock_error")] string? error = null,
+        [FromQuery(Name = "mock_invalid_code")] bool invalidCode = false,
+        [FromQuery(Name = "mock_subject")] string? subject = null,
+        [FromQuery(Name = "mock_email_verified")] bool emailVerified = true,
+        [FromQuery(Name = "mock_name")] string? name = null,
+        [FromQuery(Name = "mock_given_name")] string? givenName = null,
+        [FromQuery(Name = "mock_family_name")] string? familyName = null)
     {
+        if (error.HasValue())
+        {
+            return Redirect(QueryHelpers.AddQueryString(redirectUri, new Dictionary<string, string?>
+            {
+                ["error"] = error,
+                ["state"] = state,
+            }));
+        }
+
         var code = Guid.NewGuid().ToString("N");
 
-        GoogleMockUsers.ByCode[code] = new GoogleMockUser(loginHint, Guid.NewGuid().ToString());
+        if (!invalidCode)
+        {
+            GoogleMockUsers.ByCode[code] = new GoogleMockUser(
+                loginHint,
+                subject ?? Guid.NewGuid().ToString(),
+                emailVerified,
+                name,
+                givenName,
+                familyName
+            );
+        }
 
         var callback = QueryHelpers.AddQueryString(redirectUri, new Dictionary<string, string?>
         {
