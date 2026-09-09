@@ -17,7 +17,7 @@ public class SsoChallengeController(SsoChallengeService service, FrontendSetting
     public async Task<IActionResult> Challenge([FromQuery] string? email = null)
     {
         var result = await service.GetScheme(email);
-        if (result.IsError) return Redirect($"{frontendSettings.Url}?sso_error={result.Error.Code}");
+        if (result.IsError) return Redirect($"{frontendSettings.BuildUrl("/login")}?sso_error={result.Error.Code}");
 
         var properties = new AuthenticationProperties
         {

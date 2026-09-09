@@ -27,6 +27,8 @@ builder.AddOpenTelemetryConfigs();
 
 var app = builder.Build();
 
+app.UseSsoSchemes();
+
 app.UseCustomForwardedHeaders();
 app.UseHttpsConfigs();
 

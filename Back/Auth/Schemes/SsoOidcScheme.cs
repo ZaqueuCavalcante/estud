@@ -37,7 +37,7 @@ public static class SsoOidcScheme
                 id,
                 authority,
                 client_id,
-                external_id,
+                public_id,
                 client_secret,
                 updated_at
             FROM
@@ -86,7 +86,7 @@ public static class SsoOidcScheme
         var frontendSettings = context.HttpContext.RequestServices.GetRequiredService<FrontendSettings>();
         var ctx = context.HttpContext.RequestServices.GetRequiredService<EstudDbContext>();
 
-        context.Response.Redirect($"{frontendSettings.Url}?sso_error={nameof(SsoAuthenticationFailed)}");
+        context.Response.Redirect($"{frontendSettings.BuildUrl("/login")}?sso_error={nameof(SsoAuthenticationFailed)}");
         context.HandleResponse();
     }
 
@@ -103,7 +103,7 @@ public static class SsoOidcScheme
 
         if (email.IsEmpty())
         {
-            context.Response.Redirect($"{frontendSettings.Url}?sso_error={nameof(SsoAuthenticationFailed)}");
+            context.Response.Redirect($"{frontendSettings.BuildUrl("/login")}?sso_error={nameof(SsoAuthenticationFailed)}");
             context.HandleResponse();
             return;
         }
@@ -121,7 +121,7 @@ public static class SsoOidcScheme
 
         if (ssoConfig == null || ssoConfig.AllowedDomains.All(d => d.Domain != domain))
         {
-            context.Response.Redirect($"{frontendSettings.Url}?sso_error={nameof(SsoNotConfiguredForDomain)}");
+            context.Response.Redirect($"{frontendSettings.BuildUrl("/login")}?sso_error={nameof(SsoNotConfiguredForDomain)}");
             context.HandleResponse();
             return;
         }
@@ -132,7 +132,7 @@ public static class SsoOidcScheme
         var user = await ctx.Users.FirstOrDefaultAsync(u => u.Email == email && u.InstitutionId == institutionId);
         if (user == null)
         {
-            context.Response.Redirect($"{frontendSettings.Url}?sso_error={nameof(SsoLoginUserNotFound)}");
+            context.Response.Redirect($"{frontendSettings.BuildUrl("/login")}?sso_error={nameof(SsoLoginUserNotFound)}");
             context.HandleResponse();
             return;
         }

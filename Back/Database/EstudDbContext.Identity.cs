@@ -47,7 +47,7 @@ public partial class EstudDbContext
         const string sql = @"
             SELECT
                 id,
-                external_id,
+                public_id,
                 authority,
                 client_id,
                 client_secret,

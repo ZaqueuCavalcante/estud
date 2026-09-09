@@ -15,4 +15,9 @@ public static class AuthenticationConfigs
             .AddSocialTempCookieScheme()
             .AddSocialLoginSchemes(builder.Configuration);
     }
+
+    public static void UseSsoSchemes(this WebApplication app)
+    {
+        app.RegisterActiveSsoSchemes();
+    }
 }

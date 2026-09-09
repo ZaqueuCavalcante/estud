@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import type { CheckSsoAvailabilityResponse, SsoProviderType } from '~/types'
 
 definePageMeta({
   layout: false
 })
 
 const toast = useToast()
+const route = useRoute()
 const router = useRouter()
 const config = useRuntimeConfig()
 const { fetchUser } = useAuth()
@@ -35,11 +37,73 @@ type Schema = z.output<typeof schema>
 const state = reactive<Partial<Schema>>({ email: '', password: '' })
 const loading = ref(false)
 
+const ssoProviderLabels: Record<SsoProviderType, string> = {
+  AzureAd: 'Azure AD',
+  GoogleWorkspace: 'Google Workspace',
+  Okta: 'Okta',
+  Auth0: 'Auth0',
+  CustomOidc: 'SSO'
+}
+
+const ssoErrorMessages: Record<string, string> = {
+  InvalidEmail: 'Email inválido.',
+  SsoNotConfiguredForDomain: 'Não há SSO configurado para o domínio deste email.',
+  SsoAuthenticationFailed: 'Não foi possível concluir o login pelo provedor de identidade.',
+  SsoLoginUserNotFound: 'Nenhum usuário cadastrado para este email na instituição.'
+}
+
+const sso = ref<CheckSsoAvailabilityResponse | null>(null)
+const ssoCheckedEmail = ref('')
+const ssoRedirectLoading = ref(false)
+const ssoLabel = computed(() => {
+  const provider = sso.value?.providerType
+  return provider ? `Entrar com ${ssoProviderLabels[provider]}` : 'Entrar com SSO'
+})
+
 onMounted(async () => {
+  const ssoError = route.query.sso_error
+  if (typeof ssoError === 'string') {
+    toast.add({
+      title: 'Erro no login via SSO',
+      description: ssoErrorMessages[ssoError] || 'Não foi possível entrar via SSO.',
+      icon: 'i-lucide-x',
+      color: 'error'
+    })
+    router.replace({ query: {} })
+  }
+
   if (!isMobile.value) return
   if (!socialLogin.value?.googleEnabled || !socialLogin.value.googleClientId) return
   await initOneTap(socialLogin.value.googleClientId)
 })
+
+async function checkSso() {
+  const email = state.email?.trim()
+
+  if (!email || !z.string().email().safeParse(email).success) {
+    sso.value = null
+    ssoCheckedEmail.value = ''
+    return
+  }
+
+  if (email === ssoCheckedEmail.value) return
+  ssoCheckedEmail.value = email
+
+  try {
+    sso.value = await $fetch<CheckSsoAvailabilityResponse>(
+      `${config.public.backendUrl}/identity/sso/check-availability`,
+      { method: 'POST', body: { email } }
+    )
+  } catch {
+    sso.value = null
+  }
+}
+
+function loginWithSso() {
+  ssoRedirectLoading.value = true
+  const url = `${config.public.backendUrl}/identity/sso/challenge?email=${encodeURIComponent(state.email!)}`
+  requestAnimationFrame(() => { window.location.href = url })
+}
 
 function loginWithGoogle() {
   googleRedirectLoading.value = true
@@ -72,6 +136,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
     if (errorData?.code === 'LoginTwoFactorEnforced') {
       router.push('/login/setup-2fa')
+      return
+    }
+
+    if (errorData?.code === 'SsoLoginRequired') {
+      await checkSso()
+      loginWithSso()
       return
     }
 
@@ -130,11 +200,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                 autocomplete="username"
                 size="lg"
                 class="w-full"
-                :disabled="googleRedirectLoading"
+                :disabled="googleRedirectLoading || ssoRedirectLoading"
+                @blur="() => { checkSso() }"
               />
             </UFormField>
 
-            <UFormField label="Senha" name="password" required>
+            <UFormField v-if="!sso?.ssoRequired" label="Senha" name="password" required>
               <template #hint>
                 <NuxtLink
                   to="/forgot-password"
@@ -153,35 +224,51 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                 autocomplete="current-password"
                 size="lg"
                 class="w-full"
-                :disabled="googleRedirectLoading"
+                :disabled="googleRedirectLoading || ssoRedirectLoading"
               />
             </UFormField>
 
             <UButton
+              v-if="!sso?.ssoRequired"
               data-testid="login-button"
               type="submit"
               label="Entrar"
               size="lg"
               block
               :loading="loading"
-              :disabled="googleRedirectLoading"
+              :disabled="googleRedirectLoading || ssoRedirectLoading"
             />
           </UForm>
 
-          <div v-if="socialLogin?.googleEnabled" class="flex items-center gap-3 my-2">
+          <UButton
+            v-if="sso?.ssoEnabled"
+            data-testid="sso-login-button"
+            :label="ssoLabel"
+            icon="i-lucide-key-round"
+            color="neutral"
+            :variant="sso.ssoRequired ? 'solid' : 'outline'"
+            size="lg"
+            block
+            :loading="ssoRedirectLoading"
+            :disabled="googleRedirectLoading"
+            @click="() => { loginWithSso() }"
+          />
+
+          <div v-if="socialLogin?.googleEnabled && !sso?.ssoRequired" class="flex items-center gap-3 my-2">
             <div class="flex-1 border-t border-gray-300 dark:border-gray-600" />
             <span class="text-sm text-gray-500">ou</span>
             <div class="flex-1 border-t border-gray-300 dark:border-gray-600" />
           </div>
 
           <UButton
-            v-if="socialLogin?.googleEnabled"
+            v-if="socialLogin?.googleEnabled && !sso?.ssoRequired"
             color="neutral"
             variant="outline"
             size="lg"
             block
             :loading="googleLoading"
-            @click="loginWithGoogle"
+            :disabled="ssoRedirectLoading"
+            @click="() => { loginWithGoogle() }"
           >
             <template #leading>
               <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
