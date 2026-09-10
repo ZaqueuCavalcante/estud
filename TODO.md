@@ -6,6 +6,6 @@
 - Keycloak Testcontainer nos testes de SSO
 
 
-
+DROP ConfiguredSsoWithDirector
 
 

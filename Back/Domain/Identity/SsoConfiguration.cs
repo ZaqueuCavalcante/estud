@@ -34,7 +34,8 @@ public class SsoConfiguration
         string authority,
         string clientId,
         string clientSecret,
-        List<string> allowedDomains)
+        List<string> allowedDomains,
+        bool requireSso)
     {
         InstitutionId = orgId;
         PublicId = Guid.NewGuid();
@@ -43,7 +44,7 @@ public class SsoConfiguration
         ClientId = clientId;
         ClientSecret = clientSecret;
         IsActive = true;
-        RequireSso = false;
+        RequireSso = requireSso;
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = CreatedAt;
 

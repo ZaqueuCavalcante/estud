@@ -157,6 +157,73 @@ public partial class IntegrationTests
         second.InstitutionId.Should().Be(first.InstitutionId);
     }
 
+    [Test]
+    public async Task Identity_SsoLogin_Should_confirm_the_email_when_the_identity_provider_verified_it()
+    {
+        // Arrange
+        var (_, domain, director) = await ConfiguredSsoWithDirector();
+
+        var teacherEmail = $"professor.{DataGen.Numbers}@{domain}";
+        await director.CreateTeacher(DataGen.UserName, teacherEmail).Success();
+
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(teacherEmail, emailVerified: true);
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/home");
+
+        var account = await client.GetUserAccount().Success();
+        var userId = account.Id;
+
+        await using var ctx = _back.GetDbContext();
+        var user = await ctx.Users.AsNoTracking().FirstAsync(u => u.Id == userId);
+        user.EmailConfirmed.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_not_confirm_the_email_when_the_identity_provider_did_not_verify_it()
+    {
+        // Arrange
+        var (_, domain, director) = await ConfiguredSsoWithDirector();
+
+        var teacherEmail = $"professor.{DataGen.Numbers}@{domain}";
+        await director.CreateTeacher(DataGen.UserName, teacherEmail).Success();
+
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(teacherEmail, emailVerified: false);
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/home");
+
+        var account = await client.GetUserAccount().Success();
+        var userId = account.Id;
+
+        await using var ctx = _back.GetDbContext();
+        var user = await ctx.Users.AsNoTracking().FirstAsync(u => u.Id == userId);
+        user.EmailConfirmed.Should().BeFalse();
+    }
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_login_when_the_identity_provider_returns_the_email_in_another_case()
+    {
+        // Arrange
+        var (email, _) = await ConfiguredSso();
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(email, idpEmail: email.ToUpperInvariant());
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/home");
+
+        var account = await client.GetUserAccount().Success();
+        account.Email.Should().Be(email);
+    }
+
     #endregion
 
     #region Security

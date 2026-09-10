@@ -150,7 +150,8 @@ public partial class TestsHttpClient
         SsoProviderType providerType = SsoProviderType.AzureAd,
         string authority = "https://login.microsoftonline.com/tenant-id/v2.0",
         string clientId = "00000000-0000-0000-0000-000000000000",
-        string clientSecret = "client-secret-value"
+        string clientSecret = "client-secret-value",
+        bool requireSso = false
     ) {
         var data = new CreateSsoConfigurationIn
         {
@@ -158,6 +159,7 @@ public partial class TestsHttpClient
             Authority = authority,
             ClientId = clientId,
             ClientSecret = clientSecret,
+            RequireSso = requireSso,
         };
         var response = await http.PostAsJsonAsync("identity/sso/configurations", data);
         return await response.Resolve<CreateSsoConfigurationOut>();

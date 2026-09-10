@@ -1,9 +1,7 @@
-using QRCoder;
 using System.Text;
 using Newtonsoft.Json;
 using System.Reflection;
 using System.Globalization;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Primitives;
@@ -91,42 +89,9 @@ public static class StringExtensions
             return Regex.IsMatch(value, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
         }
 
-        public string GenerateQrCodeBase64(string email)
-        {
-            const string provider = "Estud";
-
-            using var qrGenerator = new QRCodeGenerator();
-            using var qrCodeData = qrGenerator.CreateQrCode(
-                $"otpauth://totp/{provider}:{email}?secret={value}&issuer={provider}",
-                QRCodeGenerator.ECCLevel.Q
-            );
-
-            var qrCode = new PngByteQRCode(qrCodeData);
-
-            var bytes = qrCode.GetGraphic(20);
-
-            return string.Format("data:image/png;base64,{0}", Convert.ToBase64String(bytes));
-        }
-
         public string AddQueryString(object obj)
         {
             return QueryHelpers.AddQueryString(value, ConvertObjectToDictionary(obj));
-        }
-
-        public string ParseJsonString()
-        {
-            if (value.IsEmpty()) return "";
-
-            try
-            {
-                return JToken
-                    .Parse(value)
-                    .ToString(Formatting.Indented);
-            }
-            catch
-            {
-                return value;
-            }
         }
 
         public string GetSqlSpanName()
@@ -146,11 +111,6 @@ public static class StringExtensions
             if (!insert && !update && !delete && select) builder.Append("SELECT");
 
             return builder.ToString().Trim();
-        }
-
-        public int ToInt()
-        {
-            return int.TryParse(value, out int integer) ? integer : 0;
         }
 
         public string ToNormalizedName()
@@ -174,11 +134,6 @@ public static class StringExtensions
 
     extension(int value)
     {
-        public string Format()
-        {
-            return value.ToString("N0", CultureInfo.CreateSpecificCulture("pt-BR"));
-        }
-
         public string MinutesToString()
         {
             var hours = value / 60;
@@ -190,16 +145,6 @@ public static class StringExtensions
 
             return $"{hours}h e {minutes}min";
         }
-
-        public string ToThousandSeparated()
-        {
-            return value.ToString("N0", CultureInfo.CreateSpecificCulture("pt-BR"));
-        }
-
-        public string ToTwo()
-        {
-            return value < 10 ? $"0{value}" : value.ToString();
-        }
     }
 
     extension(object obj)
@@ -207,28 +152,6 @@ public static class StringExtensions
         public string Serialize()
         {
             return JsonConvert.SerializeObject(obj, _settings);
-        }
-    }
-
-    extension(DateTime date)
-    {
-        public string ToMinuteString()
-        {
-            if (date == DateTime.MinValue)
-                return "-";
-
-            return date.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
-        }
-    }
-
-    extension(DateTime? date)
-    {
-        public string ToMinuteString()
-        {
-            if (date == null)
-                return "-";
-
-            return date.Value.ToMinuteString();
         }
     }
 

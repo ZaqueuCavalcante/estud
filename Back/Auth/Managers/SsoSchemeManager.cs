@@ -46,12 +46,6 @@ public class SsoSchemeManager(
         _schemeTimestamps.TryRemove(schemeName, out _);
     }
 
-    public void UpdateScheme(SsoConfiguration config)
-    {
-        RemoveScheme(config.PublicId);
-        RegisterScheme(config);
-    }
-
     public bool IsStale(string schemeName, DateTime dbUpdatedAt)
     {
         return !_schemeTimestamps.TryGetValue(schemeName, out var cached) || cached < dbUpdatedAt;

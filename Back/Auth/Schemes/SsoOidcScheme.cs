@@ -80,6 +80,8 @@ public static class SsoOidcScheme
         options.Scope.Add("email");
         options.Scope.Add("profile");
 
+        options.ClaimActions.MapUniqueJsonKey("email_verified", "email_verified");
+
         options.Events = new OpenIdConnectEvents
         {
             OnRemoteFailure = HandleRemoteFailure,
@@ -116,7 +118,8 @@ public static class SsoOidcScheme
             return;
         }
 
-        var domain = email!.Split('@').Last().ToLowerInvariant();
+        email = email!.ToLowerInvariant();
+        var domain = email.Split('@').Last();
 
         // The config comes from the scheme that authenticated, never from the email the IdP returned:
         // resolving it by domain would let any IdP pick which institution it signs into.
@@ -147,9 +150,10 @@ public static class SsoOidcScheme
 
         // Set EmailConfirmed if the IdP confirmed the email is verified
         var emailVerifiedClaim = context.Principal?.FindFirst("email_verified")?.Value;
-        if (emailVerifiedClaim is "true" or "True")
+        if (emailVerifiedClaim is "true" or "True" && !user.EmailConfirmed)
         {
             user.EmailConfirmed = true;
+            await ctx.SaveChangesAsync();
         }
 
         // Generate JWT and set cookie

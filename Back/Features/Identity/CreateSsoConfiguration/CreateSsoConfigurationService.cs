@@ -44,7 +44,8 @@ public class CreateSsoConfigurationService(EstudDbContext ctx, SsoEncryptionMana
             data.Authority.TrimEnd('/'),
             data.ClientId.Trim(),
             encryption.Encrypt(data.ClientSecret),
-            [domain]);
+            [domain],
+            data.RequireSso);
 
         await ctx.SaveChangesAsync(config);
 

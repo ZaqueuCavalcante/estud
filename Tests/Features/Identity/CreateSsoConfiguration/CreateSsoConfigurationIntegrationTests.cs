@@ -1,3 +1,4 @@
+using Estud.Back.Features.Identity.EmailPasswordLogin;
 using Estud.Back.Features.Identity.CreateSsoConfiguration;
 
 namespace Estud.Tests.Integration;
@@ -188,6 +189,41 @@ public partial class IntegrationTests
         // Assert
         var config = result.Success;
         config.Id.Should().NotBeEmpty();
+    }
+
+    [Test]
+    public async Task Identity_CreateSsoConfiguration_Should_create_sso_configuration_requiring_sso()
+    {
+        // Arrange
+        var domain = $"sso-create-required-{DataGen.Numbers}.com";
+        var client = await _back.LoggedAsDirector($"director@{domain}");
+
+        // Act
+        var result = await client.CreateSsoConfiguration(requireSso: true);
+
+        // Assert
+        result.Success.Id.Should().NotBeEmpty();
+
+        var config = await client.GetSsoConfiguration().Success();
+        config.RequireSso.Should().BeTrue();
+
+        var availability = await client.CheckSsoAvailability($"usuario@{domain}").Success();
+        availability.SsoRequired.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task Identity_CreateSsoConfiguration_Should_block_password_login_when_created_requiring_sso()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector($"director@sso-create-required-{DataGen.Numbers}.com");
+        await client.CreateSsoConfiguration(requireSso: true).Success();
+        await client.Logout();
+
+        // Act
+        var result = await client.EmailPasswordLogin(client.User.Email, "My@nEw@strong@P4ssword");
+
+        // Assert
+        result.ShouldBeError(SsoLoginRequired.I);
     }
 
     #endregion

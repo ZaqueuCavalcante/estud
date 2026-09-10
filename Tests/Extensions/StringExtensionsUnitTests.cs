@@ -106,17 +106,6 @@ public class StringExtensionsUnitTests
         result.Should().BeFalse();
     }
 
-    [Test]
-    [TestCaseSource(nameof(MinutesForFormat))]
-    public void StringExtensions_Should_format_minutes_as_string(int minutes, string text)
-    {
-        // Arrange / Act
-        var result = minutes.MinutesToString();
-
-        // Assert
-        result.Should().Be(text);
-    }
-
     private static IEnumerable<object[]> CamelCaseNames()
     {
         foreach (var (camel, snake) in new List<(string, string)>()
