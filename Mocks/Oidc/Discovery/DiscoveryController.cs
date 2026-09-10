@@ -11,7 +11,7 @@ public class DiscoveryController : ControllerBase
     [HttpGet("oidc/.well-known/openid-configuration")]
     public IActionResult Discovery()
     {
-        var baseUrl = $"{Request.Scheme}://{Request.Host}";
+        var baseUrl = $"{Request.Scheme}://{Request.Host}/oidc";
 
         return Ok(new
         {

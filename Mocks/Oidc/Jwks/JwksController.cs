@@ -12,6 +12,6 @@ public class JwksController : ControllerBase
     [HttpGet("oidc/.well-known/jwks")]
     public IActionResult Jwks()
     {
-        return Ok();
+        return Ok(new { keys = new[] { OidcMockKeys.PublicJwk() } });
     }
 }

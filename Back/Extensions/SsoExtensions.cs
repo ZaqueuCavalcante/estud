@@ -15,8 +15,8 @@ public static partial class SsoExtensions
             if (!Uri.TryCreate(value, UriKind.Absolute, out var uri))
                 return InvalidSsoAuthority.I;
 
-            // Must be HTTPS
-            if (uri.Scheme != Uri.UriSchemeHttps)
+            // Must be HTTPS — exceto loopback em dev/testes, onde o IdP de mock fala http.
+            if (uri.Scheme != Uri.UriSchemeHttps && !(uri.IsLoopback && EnvironmentExtensions.IsDevelopmentOrTesting()))
                 return SsoAuthorityMustBeHttps.I;
 
             // Block URLs with userinfo (SSRF bypass: https://evil.com@169.254.169.254/)

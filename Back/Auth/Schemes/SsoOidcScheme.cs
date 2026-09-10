@@ -67,6 +67,14 @@ public static class SsoOidcScheme
         options.SignInScheme = SsoTempScheme.Name;
         options.CallbackPath = $"/identity/sso/callback/{config.PublicId}";
 
+        options.RequireHttpsMetadata = !EnvironmentExtensions.IsDevelopmentOrTesting();
+
+        options.NonceCookie.SameSite = SameSiteMode.None;
+        options.NonceCookie.SecurePolicy = CookieSecurePolicy.Always;
+
+        options.CorrelationCookie.SameSite = SameSiteMode.None;
+        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+
         options.Scope.Clear();
         options.Scope.Add("openid");
         options.Scope.Add("email");

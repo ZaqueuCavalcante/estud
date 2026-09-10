@@ -87,16 +87,28 @@ async function checkSso() {
   }
 
   if (email === ssoCheckedEmail.value) return
-  ssoCheckedEmail.value = email
 
   try {
-    sso.value = await $fetch<CheckSsoAvailabilityResponse>(
+    const result = await $fetch<CheckSsoAvailabilityResponse>(
       `${config.public.backendUrl}/identity/sso/check-availability`,
       { method: 'POST', body: { email } }
     )
+
+    // Uma resposta que chega depois do usuário já ter trocado o email descreve outro domínio.
+    if (state.email?.trim() !== email) return
+
+    sso.value = result
+    ssoCheckedEmail.value = email
   } catch {
-    sso.value = null
+    if (state.email?.trim() === email) sso.value = null
   }
+}
+
+function onEmailEnter(event: KeyboardEvent) {
+  if (!sso.value?.ssoRequired) return
+
+  event.preventDefault()
+  loginWithSso()
 }
 
 function loginWithSso() {
@@ -202,6 +214,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                 class="w-full"
                 :disabled="googleRedirectLoading || ssoRedirectLoading"
                 @blur="() => { checkSso() }"
+                @keydown.enter="(e: KeyboardEvent) => { onEmailEnter(e) }"
               />
             </UFormField>
 

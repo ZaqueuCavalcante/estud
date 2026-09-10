@@ -168,6 +168,53 @@ public partial class TestsHttpClient
         return await http.GetAsync($"identity/sso/challenge?email={Uri.EscapeDataString(email ?? "")}");
     }
 
+    public async Task<HttpResponseMessage> SsoLogin(
+        string email,
+        string? subject = null,
+        string? idpEmail = null,
+        bool noEmail = false,
+        bool emailVerified = true,
+        string? name = null,
+        string? userInfoSubject = null,
+        string? providerError = null,
+        bool invalidCode = false,
+        bool withCorrelationCookie = true
+    ) {
+        var challenge = await SsoChallenge(email);
+
+        var mockParams = new Dictionary<string, string?>
+        {
+            ["mock_subject"] = subject,
+            ["mock_email"] = idpEmail,
+            ["mock_no_email"] = noEmail ? "true" : null,
+            ["mock_email_verified"] = emailVerified ? "true" : "false",
+            ["mock_name"] = name,
+            ["mock_userinfo_subject"] = userInfoSubject,
+            ["mock_error"] = providerError,
+            ["mock_invalid_code"] = invalidCode ? "true" : null,
+        };
+
+        var query = mockParams
+            .Where(x => x.Value != null)
+            .Select(x => $"{x.Key}={Uri.EscapeDataString(x.Value!)}");
+
+        var authorizeUrl = $"{await RedirectTo(challenge)}&{string.Join('&', query)}";
+
+        using var idp = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false });
+        var authorize = await idp.GetAsync(authorizeUrl);
+
+        var callback = new HttpRequestMessage(HttpMethod.Get, await RedirectTo(authorize));
+
+        // Os cookies de correlação e de nonce do OIDC são Secure e o client de testes fala http,
+        // então o CookieContainer os guarda mas nunca os reenvia — o browser real, em https, reenviaria.
+        if (withCorrelationCookie && challenge.Headers.TryGetValues("Set-Cookie", out var cookies))
+        {
+            foreach (var cookie in cookies) callback.Headers.Add("Cookie", cookie.Split(';')[0]);
+        }
+
+        return await http.SendAsync(callback);
+    }
+
     public async Task<OneOf<CheckSocialLoginAvailabilityOut, ErrorOut>> CheckSocialLoginAvailability()
     {
         var response = await http.GetAsync("identity/social-login/check-availability");

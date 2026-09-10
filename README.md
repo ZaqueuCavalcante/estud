@@ -29,3 +29,7 @@ Cadastre sua instituição de ensino em https://estud.com.br e começe a usar o 
 ### Responsável
 
 - Filhos, agendas, turmas e atividades organizadas
+
+## Pontos de Extensão
+
+- Módulos financeiro, biblioteca, almoxarifado...

@@ -7,6 +7,7 @@ extern alias Mocks;
 public class MocksFactory : WebApplicationFactory<Mocks::Program>
 {
     public const string Url = "http://localhost:5678";
+    public const string OidcAuthority = $"{Url}/oidc";
 
     public MocksFactory() : base()
     {

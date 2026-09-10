@@ -12,6 +12,16 @@ public class UserInfoController : ControllerBase
     [HttpGet("oidc/connect/userinfo")]
     public IActionResult UserInfo()
     {
-        return Ok();
+        var accessToken = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+
+        if (!OidcMockUsers.ByAccessToken.TryGetValue(accessToken, out var user)) return Unauthorized();
+
+        return Ok(new
+        {
+            name = user.Name,
+            email = user.Email,
+            sub = user.UserInfoSubject ?? user.Subject,
+            email_verified = user.EmailVerified,
+        });
     }
 }

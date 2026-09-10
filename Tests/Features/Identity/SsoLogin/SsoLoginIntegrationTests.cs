@@ -1,0 +1,237 @@
+using Estud.Tests.Integration.Clients;
+
+namespace Estud.Tests.Integration;
+
+public partial class IntegrationTests
+{
+    #region Validation errors
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_not_login_when_the_identity_provider_does_not_return_the_email()
+    {
+        // Arrange
+        var (email, _) = await ConfiguredSso();
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(email, noEmail: true);
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/login?sso_error={nameof(SsoAuthenticationFailed)}");
+
+        var status = await client.GetAuthStatus();
+        status.ShouldBeError(HttpStatusCode.Unauthorized);
+    }
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_not_login_when_the_identity_provider_returns_an_error()
+    {
+        // Arrange
+        var (email, _) = await ConfiguredSso();
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(email, providerError: "access_denied");
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/login?sso_error={nameof(SsoAuthenticationFailed)}");
+
+        var status = await client.GetAuthStatus();
+        status.ShouldBeError(HttpStatusCode.Unauthorized);
+    }
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_not_login_when_the_authorization_code_is_invalid()
+    {
+        // Arrange
+        var (email, _) = await ConfiguredSso();
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(email, invalidCode: true);
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/login?sso_error={nameof(SsoAuthenticationFailed)}");
+
+        var status = await client.GetAuthStatus();
+        status.ShouldBeError(HttpStatusCode.Unauthorized);
+    }
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_not_login_without_the_correlation_cookie()
+    {
+        // Arrange
+        var (email, _) = await ConfiguredSso();
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(email, withCorrelationCookie: false);
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/login?sso_error={nameof(SsoAuthenticationFailed)}");
+
+        var status = await client.GetAuthStatus();
+        status.ShouldBeError(HttpStatusCode.Unauthorized);
+    }
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_not_login_when_the_user_does_not_exist_in_the_institution()
+    {
+        // Arrange
+        var (_, domain) = await ConfiguredSso();
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin($"nao-existe@{domain}");
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/login?sso_error={nameof(SsoLoginUserNotFound)}");
+
+        var status = await client.GetAuthStatus();
+        status.ShouldBeError(HttpStatusCode.Unauthorized);
+    }
+
+    #endregion
+
+    #region Happy path
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_login_the_user_who_configured_the_sso()
+    {
+        // Arrange
+        var (email, _) = await ConfiguredSso();
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(email);
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/home");
+
+        var account = await client.GetUserAccount().Success();
+        account.Email.Should().Be(email);
+    }
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_login_another_user_of_the_same_institution()
+    {
+        // Arrange
+        var (_, domain, director) = await ConfiguredSsoWithDirector();
+
+        var teacherEmail = $"professor.{DataGen.Numbers}@{domain}";
+        await director.CreateTeacher(DataGen.UserName, teacherEmail).Success();
+
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(teacherEmail);
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/home");
+
+        var account = await client.GetUserAccount().Success();
+        account.Email.Should().Be(teacherEmail);
+        account.InstitutionId.Should().Be(director.User.InstitutionId);
+    }
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_login_the_same_user_on_a_second_login()
+    {
+        // Arrange
+        var (email, _) = await ConfiguredSso();
+
+        var firstClient = _back.GetTestsClient(followRedirects: false);
+        await firstClient.SsoLogin(email);
+        var first = await firstClient.GetUserAccount().Success();
+
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(email);
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/home");
+
+        var second = await client.GetUserAccount().Success();
+        second.Id.Should().Be(first.Id);
+        second.InstitutionId.Should().Be(first.InstitutionId);
+    }
+
+    #endregion
+
+    #region Security
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_not_login_when_the_identity_provider_returns_an_email_from_another_domain()
+    {
+        // Arrange — o IdP autentica, mas devolve um e-mail fora dos domínios da configuração
+        var (email, _) = await ConfiguredSso();
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(email, idpEmail: $"invasor@outro-dominio-{DataGen.Numbers}.com");
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/login?sso_error={nameof(SsoNotConfiguredForDomain)}");
+
+        var status = await client.GetAuthStatus();
+        status.ShouldBeError(HttpStatusCode.Unauthorized);
+    }
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_not_login_when_the_userinfo_subject_does_not_match_the_id_token()
+    {
+        // Arrange
+        var (email, _) = await ConfiguredSso();
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(email, subject: "sub-do-id-token", userInfoSubject: "outro-sub");
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/login?sso_error={nameof(SsoAuthenticationFailed)}");
+
+        var status = await client.GetAuthStatus();
+        status.ShouldBeError(HttpStatusCode.Unauthorized);
+    }
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_not_login_a_user_of_another_institution_through_this_configuration()
+    {
+        // Arrange — outra instituição, com o seu próprio domínio e sem SSO configurado
+        var (email, _) = await ConfiguredSso();
+
+        var outsiderEmail = $"de-fora.{DataGen.Numbers}@instituicao-vizinha-{DataGen.Numbers}.com";
+        await _back.LoggedAsDirector(outsiderEmail);
+
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act — o challenge sai pelo scheme do domínio configurado, o IdP devolve o e-mail de fora
+        var callback = await client.SsoLogin(email, idpEmail: outsiderEmail);
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/login?sso_error={nameof(SsoNotConfiguredForDomain)}");
+
+        var status = await client.GetAuthStatus();
+        status.ShouldBeError(HttpStatusCode.Unauthorized);
+    }
+
+    #endregion
+
+    private async Task<(string Email, string Domain)> ConfiguredSso()
+    {
+        var (email, domain, _) = await ConfiguredSsoWithDirector();
+        return (email, domain);
+    }
+
+    private async Task<(string Email, string Domain, TestsHttpClient Director)> ConfiguredSsoWithDirector()
+    {
+        var domain = $"sso-login-{DataGen.Numbers}.com";
+        var email = $"director@{domain}";
+
+        var director = await _back.LoggedAsDirector(email);
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+
+        return (email, domain, director);
+    }
+}
