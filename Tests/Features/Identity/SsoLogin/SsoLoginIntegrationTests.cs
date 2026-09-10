@@ -1,5 +1,3 @@
-using Estud.Tests.Integration.Clients;
-
 namespace Estud.Tests.Integration;
 
 public partial class IntegrationTests
@@ -10,7 +8,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_not_login_when_the_identity_provider_does_not_return_the_email()
     {
         // Arrange
-        var (email, _) = await ConfiguredSso();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
         // Act
@@ -27,7 +27,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_not_login_when_the_identity_provider_returns_an_error()
     {
         // Arrange
-        var (email, _) = await ConfiguredSso();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
         // Act
@@ -44,7 +46,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_not_login_when_the_authorization_code_is_invalid()
     {
         // Arrange
-        var (email, _) = await ConfiguredSso();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
         // Act
@@ -61,7 +65,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_not_login_without_the_correlation_cookie()
     {
         // Arrange
-        var (email, _) = await ConfiguredSso();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
         // Act
@@ -78,7 +84,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_not_login_when_the_user_does_not_exist_in_the_institution()
     {
         // Arrange
-        var (_, domain) = await ConfiguredSso();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var domain = director.User.Email.GetEmailDomain();
         var client = _back.GetTestsClient(followRedirects: false);
 
         // Act
@@ -99,7 +107,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_login_the_user_who_configured_the_sso()
     {
         // Arrange
-        var (email, _) = await ConfiguredSso();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
         // Act
@@ -116,7 +126,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_login_another_user_of_the_same_institution()
     {
         // Arrange
-        var (_, domain, director) = await ConfiguredSsoWithDirector();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var domain = director.User.Email.GetEmailDomain();
 
         var teacherEmail = $"professor.{DataGen.Numbers}@{domain}";
         await director.CreateTeacher(DataGen.UserName, teacherEmail).Success();
@@ -138,7 +150,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_login_the_same_user_on_a_second_login()
     {
         // Arrange
-        var (email, _) = await ConfiguredSso();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var email = director.User.Email;
 
         var firstClient = _back.GetTestsClient(followRedirects: false);
         await firstClient.SsoLogin(email);
@@ -161,7 +175,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_confirm_the_email_when_the_identity_provider_verified_it()
     {
         // Arrange
-        var (_, domain, director) = await ConfiguredSsoWithDirector();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var domain = director.User.Email.GetEmailDomain();
 
         var teacherEmail = $"professor.{DataGen.Numbers}@{domain}";
         await director.CreateTeacher(DataGen.UserName, teacherEmail).Success();
@@ -186,7 +202,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_not_confirm_the_email_when_the_identity_provider_did_not_verify_it()
     {
         // Arrange
-        var (_, domain, director) = await ConfiguredSsoWithDirector();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var domain = director.User.Email.GetEmailDomain();
 
         var teacherEmail = $"professor.{DataGen.Numbers}@{domain}";
         await director.CreateTeacher(DataGen.UserName, teacherEmail).Success();
@@ -211,7 +229,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_login_when_the_identity_provider_returns_the_email_in_another_case()
     {
         // Arrange
-        var (email, _) = await ConfiguredSso();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
         // Act
@@ -232,7 +252,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_not_login_when_the_identity_provider_returns_an_email_from_another_domain()
     {
         // Arrange — o IdP autentica, mas devolve um e-mail fora dos domínios da configuração
-        var (email, _) = await ConfiguredSso();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
         // Act
@@ -249,7 +271,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_not_login_when_the_userinfo_subject_does_not_match_the_id_token()
     {
         // Arrange
-        var (email, _) = await ConfiguredSso();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
         // Act
@@ -266,7 +290,9 @@ public partial class IntegrationTests
     public async Task Identity_SsoLogin_Should_not_login_a_user_of_another_institution_through_this_configuration()
     {
         // Arrange — outra instituição, com o seu próprio domínio e sem SSO configurado
-        var (email, _) = await ConfiguredSso();
+        var director = await _back.LoggedAsDirector();
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var email = director.User.Email;
 
         var outsiderEmail = $"de-fora.{DataGen.Numbers}@instituicao-vizinha-{DataGen.Numbers}.com";
         await _back.LoggedAsDirector(outsiderEmail);
@@ -284,21 +310,4 @@ public partial class IntegrationTests
     }
 
     #endregion
-
-    private async Task<(string Email, string Domain)> ConfiguredSso()
-    {
-        var (email, domain, _) = await ConfiguredSsoWithDirector();
-        return (email, domain);
-    }
-
-    private async Task<(string Email, string Domain, TestsHttpClient Director)> ConfiguredSsoWithDirector()
-    {
-        var domain = $"sso-login-{DataGen.Numbers}.com";
-        var email = $"director@{domain}";
-
-        var director = await _back.LoggedAsDirector(email);
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
-
-        return (email, domain, director);
-    }
 }

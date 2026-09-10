@@ -85,6 +85,28 @@ public class StringExtensionsUnitTests
     }
 
     [Test]
+    [TestCaseSource(nameof(TextsWithoutEmailDomain))]
+    public void StringExtensions_Should_return_empty_email_domain_when_text_has_no_domain(string text)
+    {
+        // Arrange / Act
+        var result = text.GetEmailDomain();
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    [Test]
+    [TestCaseSource(nameof(EmailsWithDomain))]
+    public void StringExtensions_Should_get_email_domain(string email, string domain)
+    {
+        // Arrange / Act
+        var result = email.GetEmailDomain();
+
+        // Assert
+        result.Should().Be(domain);
+    }
+
+    [Test]
     [TestCaseSource(nameof(ValidPhoneNumbers))]
     public void StringExtensions_Should_return_true_when_phone_number_is_valid(string phoneNumber)
     {
@@ -234,6 +256,61 @@ public class StringExtensionsUnitTests
         foreach (var email in emails)
         {
             yield return [email];
+        }
+    }
+
+    private static IEnumerable<object[]> TextsWithoutEmailDomain()
+    {
+        List<string> texts = [
+            null!,
+            "",
+            " ",
+            "   ",
+            "\t",
+            "\n",
+            " \t\r\n ",
+            "zaqueugmail",
+            "email.example.com",
+            "example.com",
+            "Joe Smith",
+            "email#example.com",
+            "email＠example.com",
+            "@",
+            "@@",
+            "email@",
+            "email@example.com@",
+        ];
+        foreach (var text in texts)
+        {
+            yield return [text];
+        }
+    }
+
+    private static IEnumerable<object[]> EmailsWithDomain()
+    {
+        foreach (var (email, domain) in new List<(string, string)>()
+        {
+            ("email@example.com", "example.com"),
+            ("zaqueu@gmail.com", "gmail.com"),
+            ("director@estud.com.br", "estud.com.br"),
+            ("professor@sub.dominio.edu.br", "sub.dominio.edu.br"),
+            ("first.last+tag@example.com", "example.com"),
+            ("123.test@456.estud.com.br", "456.estud.com.br"),
+            ("email@localhost", "localhost"),
+            ("email@127.0.0.1", "127.0.0.1"),
+            ("email@[127.0.0.1]", "[127.0.0.1]"),
+            ("email@example", "example"),
+            ("@example.com", "example.com"),
+            ("Diretor@Empresa.COM", "Empresa.COM"),
+            ("email@example@other.com", "other.com"),
+            ("email@@example.com", "example.com"),
+            (" email@example.com ", "example.com "),
+            ("email@ example.com", " example.com"),
+            ("Joe Smith <email@example.com>", "example.com>"),
+            ("email@exämple.com", "exämple.com"),
+        })
+        {
+            yield return [email, domain];
         }
     }
 

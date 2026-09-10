@@ -77,10 +77,11 @@ public static class StringExtensions
             return startUnderscores + Regex.Replace(value, @"([a-z0-9])([A-Z])", "$1_$2").ToLower();
         }
 
-        public string ToBase64()
+        public string GetEmailDomain()
         {
-            var bytes = Encoding.UTF8.GetBytes(value);
-            return Convert.ToBase64String(bytes);
+            if (value.IsEmpty() || !value.Contains('@')) return "";
+
+            return value.Split('@').Last();
         }
 
         public bool IsValidEmail()
