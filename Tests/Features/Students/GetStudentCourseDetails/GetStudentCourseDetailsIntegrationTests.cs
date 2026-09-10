@@ -93,7 +93,7 @@ public partial class IntegrationTests
             new CreateCourseCurriculumDisciplineIn(databases.Id, 2, 4, 60),
         ]).Success();
 
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
         var offering = await director.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
 
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -154,7 +154,7 @@ public partial class IntegrationTests
             new CreateCourseCurriculumDisciplineIn(second.Id, 2, 4, 60),
         ]).Success();
 
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
         var offering = await director.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
 
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();

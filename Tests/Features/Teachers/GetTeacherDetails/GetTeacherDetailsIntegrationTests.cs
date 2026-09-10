@@ -108,7 +108,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var teacher = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
@@ -144,7 +144,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();

@@ -83,7 +83,7 @@ public partial class IntegrationTests
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
 
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.AssignStudentToClass(student.Id, @class.Id);
 

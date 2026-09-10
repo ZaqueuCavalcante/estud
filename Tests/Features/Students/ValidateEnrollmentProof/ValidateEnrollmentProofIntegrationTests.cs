@@ -30,7 +30,7 @@ public partial class IntegrationTests
         var campus = await director.CreateCampus().Success();
         var course = await director.CreateCourse().Success();
         var curriculum = await director.CreateCourseCurriculum(course.Id).Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
         var offering = await director.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
 
         var studentName = DataGen.UserName;

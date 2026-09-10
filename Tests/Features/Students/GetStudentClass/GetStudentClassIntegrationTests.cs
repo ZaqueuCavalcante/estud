@@ -73,7 +73,7 @@ public partial class IntegrationTests
         // Arrange
         var otherDirector = await _back.LoggedAsDirector();
         var discipline = await otherDirector.CreateDiscipline().Success();
-        var period = await otherDirector.GetFirstAcademicPeriod();
+        var period = await otherDirector.ShortcutGetFirstAcademicPeriod();
         var @class = await otherDirector.CreateClass(discipline.Id, period.Id).Success();
 
         var director = await _back.LoggedAsDirector();
@@ -95,7 +95,7 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
 
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
 
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
@@ -118,7 +118,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
         var @class = await director.ShortcutCreateStartedClass();
 
         var client = await _back.LoginAs(@class.StudentEmail);

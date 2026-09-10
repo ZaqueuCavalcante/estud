@@ -97,7 +97,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
 
         var ana = await director.CreateTeacher("Ana Lima", DataGen.Email).Success();
@@ -139,7 +139,7 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
         var geometria = await director.CreateDiscipline("Geometria").Success();
         var algebra = await director.CreateDiscipline("Álgebra").Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
 
         var teacher = await director.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [geometria.Id, algebra.Id]);
@@ -182,7 +182,7 @@ public partial class IntegrationTests
         var campus = await director.CreateCampus().Success();
         var classroom = await director.CreateClassroom(campus.Id, "Sala 07").Success();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
 
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
@@ -218,7 +218,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
 
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
@@ -243,7 +243,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
 
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
@@ -289,7 +289,7 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
         var geometria = await director.CreateDiscipline("Geometria").Success();
         var algebra = await director.CreateDiscipline("Álgebra").Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
 
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [geometria.Id, algebra.Id]);
@@ -326,7 +326,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
 
         var ana = await director.CreateTeacher("Ana Lima", DataGen.Email).Success();
         var chico = await director.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
@@ -355,7 +355,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
 
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
@@ -388,7 +388,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
 
         var ana = await director.CreateTeacher("Ana Lima", DataGen.Email).Success();
         var chico = await director.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
@@ -430,7 +430,7 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
         var geometria = await director.CreateDiscipline("Geometria").Success();
         var algebra = await director.CreateDiscipline("Álgebra").Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
 
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [geometria.Id, algebra.Id]);
@@ -467,7 +467,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
         var discipline = await director.CreateDiscipline().Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
 
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
@@ -504,7 +504,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
         var discipline = await director.CreateDiscipline("Geometria").Success();
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
 
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);

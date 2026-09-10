@@ -146,7 +146,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var course = await client.CreateCourse().Success();
         var curriculum = await client.CreateCourseCurriculum(course.Id, "Grade 2024").Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var offering = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
 
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();

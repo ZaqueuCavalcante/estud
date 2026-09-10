@@ -63,7 +63,7 @@ public partial class IntegrationTests
         var otherCampus = await otherClient.CreateCampus().Success();
         var otherCourse = await otherClient.CreateCourse().Success();
         var otherCurriculum = await otherClient.CreateCourseCurriculum(otherCourse.Id).Success();
-        var otherPeriod = await otherClient.GetFirstAcademicPeriod();
+        var otherPeriod = await otherClient.ShortcutGetFirstAcademicPeriod();
         var otherOffering = await otherClient
             .CreateCourseOffering(otherCampus.Id, otherCourse.Id, otherCurriculum.Id, otherPeriod.Id)
             .Success();
@@ -92,7 +92,7 @@ public partial class IntegrationTests
         List<CreateCourseCurriculumDisciplineIn> disciplines = [new(calculo.Id, 1, 4, 60)];
         var curriculum = await client.CreateCourseCurriculum(course.Id, "Grade 2024", disciplines).Success();
 
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var offering = await client
             .CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id, CourseSession.Morning)
             .Success();
@@ -124,7 +124,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var course = await client.CreateCourse().Success();
         var curriculum = await client.CreateCourseCurriculum(course.Id, "Grade 2024").Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var offering = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
 
         var maria = await client.CreateStudent("Maria Souza", DataGen.Email).Success();

@@ -129,7 +129,7 @@ public partial class IntegrationTests
         var discipline = await client.CreateDiscipline("Banco de Dados").Success();
         var otherDiscipline = await client.CreateDiscipline("Fisica").Success();
 
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var campus = await client.CreateCampus("Agreste I").Success();
 
         var @class = await client.CreateClass(discipline.Id, period.Id, vacancies: 40, campusId: campus.Id).Success();
@@ -156,7 +156,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);

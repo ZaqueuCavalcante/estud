@@ -93,7 +93,7 @@ public partial class IntegrationTests
         ]);
 
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id, campusId: agreste.Id).Success();
 
         await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H12_00, null, salaAgreste.Id)]);

@@ -59,7 +59,7 @@ public partial class IntegrationTests
         var @class = await director.ShortcutCreateStartedClass(students: []);
 
         var teacherClient = await _back.LoginAs(@class.TeacherEmail);
-        var lessons = await teacherClient.GetClassLessons(@class.Id);
+        var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
 
         var otherTeacher = await _back.LoggedAsTeacher();
 
@@ -79,7 +79,7 @@ public partial class IntegrationTests
         var otherTeacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         var teacherClient = await _back.LoginAs(@class.TeacherEmail);
-        var lessons = await teacherClient.GetClassLessons(@class.Id);
+        var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
 
         var client = await _back.LoginAs(otherTeacher.Email);
 
@@ -95,11 +95,11 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        var period = await director.GetLastAcademicPeriod();
+        var period = await director.ShortcutGetLastAcademicPeriod();
         var @class = await director.ShortcutCreateStartedClass(students: [], periodId: period.Id);
 
         var teacherClient = await _back.LoginAs(@class.TeacherEmail);
-        var lessons = await teacherClient.GetClassLessons(@class.Id);
+        var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
 
         // Act
         var result = await teacherClient.CreateLessonAttendance(lessons.Last(), presentStudents: []);
@@ -116,7 +116,7 @@ public partial class IntegrationTests
         var @class = await director.ShortcutCreateStartedClass(students: []);
 
         var teacherClient = await _back.LoginAs(@class.TeacherEmail);
-        var lessons = await teacherClient.GetClassLessons(@class.Id);
+        var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
 
         // Act
         var result = await teacherClient.CreateLessonAttendance(lessons.First(), [999999]);
@@ -134,7 +134,7 @@ public partial class IntegrationTests
         var student = @class.StudentIds[0];
 
         var teacherClient = await _back.LoginAs(@class.TeacherEmail);
-        var lessons = await teacherClient.GetClassLessons(@class.Id);
+        var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
 
         // Act
         var result = await teacherClient.CreateLessonAttendance(lessons.First(), [student, student]);
@@ -156,7 +156,7 @@ public partial class IntegrationTests
         var students = @class.StudentIds;
 
         var teacherClient = await _back.LoginAs(@class.TeacherEmail);
-        var lessons = await teacherClient.GetClassLessons(@class.Id);
+        var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
 
         // Act
         var result = await teacherClient.CreateLessonAttendance(lessons.First(), [students[0]]);
@@ -179,7 +179,7 @@ public partial class IntegrationTests
         var student = @class.StudentIds[0];
 
         var teacherClient = await _back.LoginAs(@class.TeacherEmail);
-        var lessons = await teacherClient.GetClassLessons(@class.Id);
+        var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
 
         // Nenhum endpoint agenda uma aula para hoje: a data sai do calendário do período
         // letivo, e hoje pode nem ser dia letivo. Por isso a data vai direto no banco.
@@ -211,7 +211,7 @@ public partial class IntegrationTests
         var @class = await director.ShortcutCreateStartedClass(students: []);
 
         var teacherClient = await _back.LoginAs(@class.TeacherEmail);
-        var lessons = await teacherClient.GetClassLessons(@class.Id);
+        var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
 
         // Act
         var result = await teacherClient.CreateLessonAttendance(lessons.First(), []);
@@ -234,7 +234,7 @@ public partial class IntegrationTests
         var students = @class.StudentIds;
 
         var teacherClient = await _back.LoginAs(@class.TeacherEmail);
-        var lessons = await teacherClient.GetClassLessons(@class.Id);
+        var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
         await teacherClient.CreateLessonAttendance(lessons.First(), [students[0]]);
 
         // Act

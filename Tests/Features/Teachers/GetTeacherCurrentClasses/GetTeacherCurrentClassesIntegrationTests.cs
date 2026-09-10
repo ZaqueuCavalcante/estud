@@ -49,7 +49,7 @@ public partial class IntegrationTests
         var algebra = await director.CreateDiscipline("Álgebra").Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [geometria.Id, algebra.Id]);
 
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
         var geometriaClass = await director.CreateClass(geometria.Id, period.Id).Success();
         var algebraClass = await director.CreateClass(algebra.Id, period.Id).Success();
 
@@ -87,7 +87,7 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
         await director.CreateClass(discipline.Id, period.Id);
 
         var client = await _back.LoginAs(teacher.Email);

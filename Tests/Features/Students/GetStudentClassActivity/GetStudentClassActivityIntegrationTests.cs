@@ -226,7 +226,7 @@ public partial class IntegrationTests
         var client = await _back.LoginAs(@class.StudentEmail);
         await client.CreateClassActivityWork(activity.Id, "https://github.com/ZaqueuCavalcante/estud");
 
-        await teacherClient.AddStudentActivityNote(@class.Id, activity.Id, @class.StudentIds[0], 8.5m);
+        await teacherClient.ShortcutAddStudentActivityNote(@class.Id, activity.Id, @class.StudentIds[0], 8.5m);
 
         // Act
         var result = await client.GetStudentClassActivity(@class.Id, activity.Id);
@@ -252,8 +252,8 @@ public partial class IntegrationTests
 
         var teacherClient = await _back.LoginAs(@class.TeacherEmail);
         var activity = await teacherClient.CreateClassActivity(@class.Id, weight: 20).Success();
-        await teacherClient.AddStudentActivityNote(@class.Id, activity.Id, student.Id, 9);
-        await teacherClient.AddStudentActivityNote(@class.Id, activity.Id, otherStudent.Id, 4);
+        await teacherClient.ShortcutAddStudentActivityNote(@class.Id, activity.Id, student.Id, 9);
+        await teacherClient.ShortcutAddStudentActivityNote(@class.Id, activity.Id, otherStudent.Id, 4);
 
         var client = await _back.LoginAs(student.Email);
 

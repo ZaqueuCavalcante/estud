@@ -61,7 +61,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var course = await client.CreateCourse().Success();
         var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
 
         await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id);
 
@@ -84,7 +84,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var course = await client.CreateCourse().Success();
         var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
 
         for (var i = 1; i <= 12; i++)
             await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id);
@@ -108,7 +108,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var course = await client.CreateCourse().Success();
         var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
 
         for (var i = 1; i <= 12; i++)
             await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id);

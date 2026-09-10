@@ -61,7 +61,7 @@ public partial class IntegrationTests
         var discipline = await director.CreateDiscipline().Success();
         await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
-        var period = await director.GetFirstAcademicPeriod();
+        var period = await director.ShortcutGetFirstAcademicPeriod();
         var @class = await director.CreateClass(discipline.Id, period.Id).Success();
         await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
 
@@ -111,7 +111,7 @@ public partial class IntegrationTests
         var students = @class.StudentIds;
 
         var client = await _back.LoginAs(@class.TeacherEmail);
-        var lessons = await client.GetClassLessons(@class.Id);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
         await client.CreateLessonAttendance(lessons.First(), [students[0]]);
 
         // Act

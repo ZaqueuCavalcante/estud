@@ -59,7 +59,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline("Banco de Dados").Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         await client.CreateClass(discipline.Id, period.Id);
 
         // Act
@@ -82,7 +82,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -102,7 +102,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -125,7 +125,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         await client.CreateClass(discipline.Id, period.Id);
 
         // Act
@@ -142,7 +142,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var database = await client.CreateDiscipline("Banco de Dados").Success();
         var algorithms = await client.CreateDiscipline("Algoritmos").Success();
         await client.CreateClass(database.Id, period.Id);
@@ -162,7 +162,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var database = await client.CreateDiscipline("Banco de Dados").Success();
         var algorithms = await client.CreateDiscipline("Algoritmos").Success();
         await client.CreateClass(database.Id, period.Id);
@@ -185,8 +185,8 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var firstPeriod = await client.GetFirstAcademicPeriod();
-        var lastPeriod = await client.GetLastAcademicPeriod();
+        var firstPeriod = await client.ShortcutGetFirstAcademicPeriod();
+        var lastPeriod = await client.ShortcutGetLastAcademicPeriod();
         var discipline = await client.CreateDiscipline().Success();
         await client.CreateClass(discipline.Id, firstPeriod.Id);
 
@@ -205,7 +205,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
 
         for (var i = 1; i <= 12; i++)
         {
@@ -231,7 +231,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
 
         for (var i = 1; i <= 12; i++)
         {

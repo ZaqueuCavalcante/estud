@@ -116,7 +116,7 @@ public partial class IntegrationTests
         var campus = await client.CreateCampus().Success();
         var course = await client.CreateCourse().Success();
         var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var offering = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
         await client.EnrollStudentInCourseOffering(student.Id, offering.Id);
 
@@ -137,7 +137,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var discipline = await client.CreateDiscipline().Success();
-        var period = await client.GetFirstAcademicPeriod();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
         var @class = await client.CreateClass(discipline.Id, period.Id).Success();
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -252,7 +252,7 @@ public partial class IntegrationTests
         var teacher = await _back.LoginAs(@class.TeacherEmail);
 
         var activity = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 100).Success();
-        await teacher.AddStudentActivityNote(@class.Id, activity.Id, student.Id, 8M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, activity.Id, student.Id, 8M);
 
         // Act
         var result = await director.GetStudentDetails(student.Id);
@@ -282,30 +282,30 @@ public partial class IntegrationTests
         var geometrySecond = await geometryTeacher.CreateClassActivity(geometry.Id, ClassNoteType.N1, weight: 60).Success();
         var geometryExam = await geometryTeacher.CreateClassActivity(geometry.Id, ClassNoteType.N2, weight: 100).Success();
 
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometryFirst.Id, ana.Id, 10M);
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometrySecond.Id, ana.Id, 5M);
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometryExam.Id, ana.Id, 8M);
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometryFirst.Id, bruno.Id, 6M);
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometrySecond.Id, bruno.Id, 6M);
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometryExam.Id, bruno.Id, 4M);
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometryFirst.Id, carla.Id, 8M);
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometrySecond.Id, carla.Id, 10M);
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometryExam.Id, carla.Id, 7M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometryFirst.Id, ana.Id, 10M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometrySecond.Id, ana.Id, 5M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometryExam.Id, ana.Id, 8M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometryFirst.Id, bruno.Id, 6M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometrySecond.Id, bruno.Id, 6M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometryExam.Id, bruno.Id, 4M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometryFirst.Id, carla.Id, 8M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometrySecond.Id, carla.Id, 10M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometryExam.Id, carla.Id, 7M);
 
         var algebraTeacher = await _back.LoginAs(algebra.TeacherEmail);
         var algebraWork = await algebraTeacher.CreateClassActivity(algebra.Id, ClassNoteType.N1, weight: 50).Success();
         var algebraExam = await algebraTeacher.CreateClassActivity(algebra.Id, ClassNoteType.N2, weight: 50).Success();
         var algebraRetake = await algebraTeacher.CreateClassActivity(algebra.Id, ClassNoteType.N3, weight: 100).Success();
 
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraWork.Id, ana.Id, 9M);
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraExam.Id, ana.Id, 8M);
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraRetake.Id, ana.Id, 6M);
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraWork.Id, daniel.Id, 6M);
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraExam.Id, daniel.Id, 10M);
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraRetake.Id, daniel.Id, 9M);
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraWork.Id, elisa.Id, 4M);
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraExam.Id, elisa.Id, 6M);
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraRetake.Id, elisa.Id, 5M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraWork.Id, ana.Id, 9M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraExam.Id, ana.Id, 8M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraRetake.Id, ana.Id, 6M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraWork.Id, daniel.Id, 6M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraExam.Id, daniel.Id, 10M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraRetake.Id, daniel.Id, 9M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraWork.Id, elisa.Id, 4M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraExam.Id, elisa.Id, 6M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraRetake.Id, elisa.Id, 5M);
 
         // Act
         var result = await director.GetStudentDetails(ana.Id);
@@ -334,15 +334,15 @@ public partial class IntegrationTests
         var presentation = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 30).Success();
         var exam = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N2, weight: 100).Success();
 
-        await teacher.AddStudentActivityNote(@class.Id, work.Id, ana.Id, 10M);
-        await teacher.AddStudentActivityNote(@class.Id, presentation.Id, ana.Id, 4M);
-        await teacher.AddStudentActivityNote(@class.Id, exam.Id, ana.Id, 6M);
-        await teacher.AddStudentActivityNote(@class.Id, work.Id, bruno.Id, 5M);
-        await teacher.AddStudentActivityNote(@class.Id, presentation.Id, bruno.Id, 10M);
-        await teacher.AddStudentActivityNote(@class.Id, exam.Id, bruno.Id, 9M);
-        await teacher.AddStudentActivityNote(@class.Id, work.Id, carla.Id, 8M);
-        await teacher.AddStudentActivityNote(@class.Id, presentation.Id, carla.Id, 4M);
-        await teacher.AddStudentActivityNote(@class.Id, exam.Id, carla.Id, 2M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, work.Id, ana.Id, 10M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, presentation.Id, ana.Id, 4M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, exam.Id, ana.Id, 6M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, work.Id, bruno.Id, 5M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, presentation.Id, bruno.Id, 10M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, exam.Id, bruno.Id, 9M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, work.Id, carla.Id, 8M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, presentation.Id, carla.Id, 4M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, exam.Id, carla.Id, 2M);
 
         // Act
         var anaDetails = await director.GetStudentDetails(ana.Id);
@@ -373,10 +373,10 @@ public partial class IntegrationTests
         var firstExam = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N2, weight: 25).Success();
         var secondExam = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N2, weight: 25).Success();
 
-        await teacher.AddStudentActivityNote(@class.Id, quiz.Id, student.Id, 10M);
-        await teacher.AddStudentActivityNote(@class.Id, work.Id, student.Id, 5M);
-        await teacher.AddStudentActivityNote(@class.Id, firstExam.Id, student.Id, 8M);
-        await teacher.AddStudentActivityNote(@class.Id, secondExam.Id, student.Id, 6M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, quiz.Id, student.Id, 10M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, work.Id, student.Id, 5M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, firstExam.Id, student.Id, 8M);
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, secondExam.Id, student.Id, 6M);
 
         // Act
         var result = await director.GetStudentDetails(student.Id);
@@ -402,15 +402,15 @@ public partial class IntegrationTests
         var geometryN1 = await geometryTeacher.CreateClassActivity(geometry.Id, ClassNoteType.N1, weight: 100).Success();
         var geometryN2 = await geometryTeacher.CreateClassActivity(geometry.Id, ClassNoteType.N2, weight: 100).Success();
         var geometryN3 = await geometryTeacher.CreateClassActivity(geometry.Id, ClassNoteType.N3, weight: 100).Success();
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometryN1.Id, student.Id, 9M);
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometryN2.Id, student.Id, 6M);
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometryN3.Id, student.Id, 3M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometryN1.Id, student.Id, 9M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometryN2.Id, student.Id, 6M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometryN3.Id, student.Id, 3M);
 
         var algebraTeacher = await _back.LoginAs(algebra.TeacherEmail);
         var algebraN1 = await algebraTeacher.CreateClassActivity(algebra.Id, ClassNoteType.N1, weight: 50).Success();
         var algebraN2 = await algebraTeacher.CreateClassActivity(algebra.Id, ClassNoteType.N2, weight: 100).Success();
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraN1.Id, student.Id, 10M);
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraN2.Id, student.Id, 5M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraN1.Id, student.Id, 10M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraN2.Id, student.Id, 5M);
 
         // Act
         var result = await director.GetStudentDetails(student.Id);
@@ -437,17 +437,17 @@ public partial class IntegrationTests
         var geometryN1 = await geometryTeacher.CreateClassActivity(geometry.Id, ClassNoteType.N1, weight: 100).Success();
         var geometryN2 = await geometryTeacher.CreateClassActivity(geometry.Id, ClassNoteType.N2, weight: 100).Success();
         var geometryN3 = await geometryTeacher.CreateClassActivity(geometry.Id, ClassNoteType.N3, weight: 100).Success();
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometryN1.Id, student.Id, 4M);
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometryN2.Id, student.Id, 5M);
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, geometryN3.Id, student.Id, 8M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometryN1.Id, student.Id, 4M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometryN2.Id, student.Id, 5M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, geometryN3.Id, student.Id, 8M);
 
         var algebraTeacher = await _back.LoginAs(algebra.TeacherEmail);
         var algebraN1 = await algebraTeacher.CreateClassActivity(algebra.Id, ClassNoteType.N1, weight: 100).Success();
         var algebraN2 = await algebraTeacher.CreateClassActivity(algebra.Id, ClassNoteType.N2, weight: 100).Success();
         var algebraN3 = await algebraTeacher.CreateClassActivity(algebra.Id, ClassNoteType.N3, weight: 100).Success();
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraN1.Id, student.Id, 10M);
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraN2.Id, student.Id, 8M);
-        await algebraTeacher.AddStudentActivityNote(algebra.Id, algebraN3.Id, student.Id, 6M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraN1.Id, student.Id, 10M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraN2.Id, student.Id, 8M);
+        await algebraTeacher.ShortcutAddStudentActivityNote(algebra.Id, algebraN3.Id, student.Id, 6M);
 
         // Act
         var result = await director.GetStudentDetails(student.Id);
@@ -471,13 +471,13 @@ public partial class IntegrationTests
 
         var startedTeacher = await _back.LoginAs(started.TeacherEmail);
         var startedActivity = await startedTeacher.CreateClassActivity(started.Id, ClassNoteType.N1, weight: 100).Success();
-        await startedTeacher.AddStudentActivityNote(started.Id, startedActivity.Id, student.Id, 8M);
+        await startedTeacher.ShortcutAddStudentActivityNote(started.Id, startedActivity.Id, student.Id, 8M);
 
         var finalizedTeacher = await _back.LoginAs(finalized.TeacherEmail);
         var finalizedN1 = await finalizedTeacher.CreateClassActivity(finalized.Id, ClassNoteType.N1, weight: 100).Success();
         var finalizedN2 = await finalizedTeacher.CreateClassActivity(finalized.Id, ClassNoteType.N2, weight: 100).Success();
-        await finalizedTeacher.AddStudentActivityNote(finalized.Id, finalizedN1.Id, student.Id, 10M);
-        await finalizedTeacher.AddStudentActivityNote(finalized.Id, finalizedN2.Id, student.Id, 10M);
+        await finalizedTeacher.ShortcutAddStudentActivityNote(finalized.Id, finalizedN1.Id, student.Id, 10M);
+        await finalizedTeacher.ShortcutAddStudentActivityNote(finalized.Id, finalizedN2.Id, student.Id, 10M);
 
         await director.FinalizeClass(finalized.Id).Success();
 
@@ -504,8 +504,8 @@ public partial class IntegrationTests
         var geometryTeacher = await _back.LoginAs(geometry.TeacherEmail);
         var n1 = await geometryTeacher.CreateClassActivity(geometry.Id, ClassNoteType.N1, weight: 100).Success();
         var n2 = await geometryTeacher.CreateClassActivity(geometry.Id, ClassNoteType.N2, weight: 100).Success();
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, n1.Id, student.Id, 9M);
-        await geometryTeacher.AddStudentActivityNote(geometry.Id, n2.Id, student.Id, 6M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, n1.Id, student.Id, 9M);
+        await geometryTeacher.ShortcutAddStudentActivityNote(geometry.Id, n2.Id, student.Id, 6M);
 
         // Act
         var result = await director.GetStudentDetails(student.Id);
