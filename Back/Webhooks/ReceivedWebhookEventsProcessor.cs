@@ -95,11 +95,11 @@ public class ReceivedWebhookEventsProcessor(IServiceScopeFactory serviceScopeFac
     /// See <see cref="ReceivedWebhookEventStatus"/> for status mapping
     /// </summary>
     private static readonly string Sql = @"
-        UPDATE web.received_webhook_events
+        UPDATE estud.received_webhook_events
         SET processor_id = {0}, status = 1
         WHERE ctid IN (
             SELECT ctid
-            FROM web.received_webhook_events
+            FROM estud.received_webhook_events
             WHERE processor_id IS NULL AND status = 0
             ORDER BY created_at
             FOR UPDATE SKIP LOCKED

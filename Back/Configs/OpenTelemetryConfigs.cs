@@ -7,12 +7,10 @@ namespace Estud.Back.Configs;
 
 public static class OpenTelemetryConfigs
 {
+    public const string ServiceName = nameof(Back);
     public const string CommandsProcessing = nameof(CommandsProcessing);
     public const string DomainEventsProcessing = nameof(DomainEventsProcessing);
-    public const string WebhookCallsProcessing = nameof(WebhookCallsProcessing);
     public const string WebhookEventsProcessing = nameof(WebhookEventsProcessing);
-
-    public const string ServiceName = nameof(Back);
 
     public static void AddOpenTelemetryConfigs(this WebApplicationBuilder builder)
     {
@@ -42,7 +40,7 @@ public static class OpenTelemetryConfigs
                     .AddNpgsql()
                     .AddHttpClientInstrumentation()
                     .AddAspNetCoreInstrumentation()
-                    .AddSource(CommandsProcessing, DomainEventsProcessing, WebhookCallsProcessing, WebhookEventsProcessing);
+                    .AddSource(CommandsProcessing, DomainEventsProcessing, WebhookEventsProcessing);
 
                 tracing
                     .SetSampler(new TraceIdRatioBasedSampler(settings.TracingSamplingRatio))
