@@ -1,9 +1,8 @@
 using System.Text.Json;
-using ILogger = Serilog.ILogger;
 
 namespace Estud.Back.Middlewares;
 
-public class ExceptionsMiddleware(RequestDelegate next, ILogger logger)
+public class ExceptionsMiddleware(RequestDelegate next, ILogger<ExceptionsMiddleware> logger)
 {
     public async Task Invoke(HttpContext context)
     {
@@ -25,7 +24,7 @@ public class ExceptionsMiddleware(RequestDelegate next, ILogger logger)
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = 500;
 
-        logger.Error("Internal Server Error -> {Message}", message);
+        logger.LogError(ex, "EstudInternalServerError - {Method} {Path}", context.Request.Method, context.Request.Path);
 
         return context.Response.WriteAsync(result);
     }
