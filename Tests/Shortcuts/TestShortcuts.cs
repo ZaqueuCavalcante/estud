@@ -1,10 +1,34 @@
 using Estud.Tests.Integration.Clients;
+using Estud.Back.Features.Identity.VerifySsoDomain;
 using Estud.Back.Features.Periods.GetAcademicPeriods;
+using Estud.Back.Features.Identity.CreateSsoConfiguration;
 
 namespace Estud.Tests.Shortcuts;
 
 public static class TestShortcuts
 {
+    public static async Task<CreateSsoConfigurationOut> ShortcutCreateVerifiedSsoConfiguration(
+        this TestsHttpClient client,
+        SsoProviderType providerType = SsoProviderType.AzureAd,
+        string authority = "https://login.microsoftonline.com/tenant-id/v2.0",
+        string clientId = "00000000-0000-0000-0000-000000000000",
+        bool requireSso = false,
+        string? domain = null
+    ) {
+        var config = await client.CreateSsoConfiguration(providerType, authority, clientId, requireSso: requireSso, domain: domain).Success();
+        await client.ShortcutVerifySsoDomain(config.Id);
+
+        return config;
+    }
+
+    public static async Task<VerifySsoDomainOut> ShortcutVerifySsoDomain(this TestsHttpClient client, Guid ssoConfigurationId)
+    {
+        var domain = (await client.GetSsoConfiguration().Success()).Domains.Single();
+        await MocksFactory.PublishDnsTxtRecords(domain.TxtRecordName, domain.TxtRecordValue);
+
+        return await client.VerifySsoDomain(ssoConfigurationId, domain.Domain).Success();
+    }
+
     public static async Task<GetAcademicPeriodsItemOut> ShortcutGetFirstAcademicPeriod(this TestsHttpClient client)
     {
         return (await client.GetAcademicPeriods().Success()).Items.First();

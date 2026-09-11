@@ -80,7 +80,7 @@ public partial class IntegrationTests : IntegrationTestBase
         var domain = $"sso-required-{DataGen.Numbers}.com";
         var client = await _back.LoggedAsDirector($"director@{domain}");
 
-        var config = await client.CreateSsoConfiguration().Success();
+        var config = await client.ShortcutCreateVerifiedSsoConfiguration();
         await client.UpdateSsoConfiguration(config.Id, requireSso: true);
 
         await client.Logout();
@@ -227,7 +227,7 @@ public partial class IntegrationTests : IntegrationTestBase
         var domain = $"sso-optional-{DataGen.Numbers}.com";
         var client = await _back.LoggedAsDirector($"director@{domain}");
 
-        var config = await client.CreateSsoConfiguration().Success();
+        var config = await client.ShortcutCreateVerifiedSsoConfiguration();
         await client.UpdateSsoConfiguration(config.Id, requireSso: false);
 
         await client.Logout();

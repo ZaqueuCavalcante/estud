@@ -59,6 +59,32 @@ public partial class IntegrationTests
         config.ClientId.Should().Be("00000000-0000-0000-0000-000000000000");
         config.IsActive.Should().BeTrue();
         config.RequireSso.Should().BeFalse();
+
+        var domain = config.Domains.Should().ContainSingle().Subject;
+        domain.Domain.Should().Be("sso-get-happy-path.com");
+        domain.Status.Should().Be(SsoDomainStatus.Pending);
+        domain.TxtRecordName.Should().Be("_estud-challenge.sso-get-happy-path.com");
+        domain.TxtRecordValue.Should().StartWith("estud-domain-verification=");
+    }
+
+    [Test]
+    public async Task Identity_GetSsoConfiguration_Should_get_sso_configuration_with_the_domain_verified()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var verified = await client.ShortcutCreateVerifiedSsoConfiguration();
+
+        // Act
+        var result = await client.GetSsoConfiguration();
+
+        // Assert
+        var config = result.Success;
+        config.Id.Should().Be(verified.Id);
+
+        var domain = config.Domains.Should().ContainSingle().Subject;
+        domain.Domain.Should().Be(client.User.Email.GetEmailDomain());
+        domain.Status.Should().Be(SsoDomainStatus.Verified);
+        domain.VerifiedAt.Should().NotBeNull();
     }
 
     [Test]

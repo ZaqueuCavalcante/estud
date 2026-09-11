@@ -9,6 +9,7 @@ using Estud.Back.Features.Identity.MagicLinkLogin;
 using Estud.Back.Features.Identity.SetupTwoFactor;
 using Estud.Back.Features.Identity.TwoFactorLogin;
 using Estud.Back.Features.Identity.GetTwoFactorKey;
+using Estud.Back.Features.Identity.VerifySsoDomain;
 using Estud.Back.Features.Identity.GoogleOneTapLogin;
 using Estud.Back.Features.Identity.EmailPasswordLogin;
 using Estud.Back.Features.Identity.GetSsoConfiguration;
@@ -151,7 +152,8 @@ public partial class TestsHttpClient
         string authority = "https://login.microsoftonline.com/tenant-id/v2.0",
         string clientId = "00000000-0000-0000-0000-000000000000",
         string clientSecret = "client-secret-value",
-        bool requireSso = false
+        bool requireSso = false,
+        string? domain = null
     ) {
         var data = new CreateSsoConfigurationIn
         {
@@ -159,6 +161,7 @@ public partial class TestsHttpClient
             Authority = authority,
             ClientId = clientId,
             ClientSecret = clientSecret,
+            Domain = domain ?? User?.Email.GetEmailDomain() ?? "",
             RequireSso = requireSso,
         };
         var response = await http.PostAsJsonAsync("identity/sso/configurations", data);
@@ -323,5 +326,12 @@ public partial class TestsHttpClient
         };
         var response = await http.PutAsJsonAsync($"identity/sso/configurations/{ssoConfigurationId}", data);
         return await response.Resolve<UpdateSsoConfigurationOut>();
+    }
+
+    public async Task<OneOf<VerifySsoDomainOut, ErrorOut>> VerifySsoDomain(Guid ssoConfigurationId, string domain)
+    {
+        var data = new VerifySsoDomainIn { Domain = domain };
+        var response = await http.PostAsJsonAsync($"identity/sso/configurations/{ssoConfigurationId}/domains/verify", data);
+        return await response.Resolve<VerifySsoDomainOut>();
     }
 }

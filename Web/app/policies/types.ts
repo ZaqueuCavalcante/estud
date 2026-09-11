@@ -186,6 +186,7 @@ export type PolicyName
     | 'AccessSsoPage'
     | 'CreateSsoConfiguration'
     | 'UpdateSsoConfiguration'
+    | 'VerifySsoDomain'
     | 'AccessTwoFactorEnforcementPage'
     | 'GetTwoFactorEnforcement'
     | 'SetTwoFactorEnforcement'

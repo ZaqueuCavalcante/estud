@@ -8,6 +8,8 @@ public class CreateSsoConfigurationController(CreateSsoConfigurationService serv
     /// </summary>
     /// <remarks>
     /// Cria uma nova configuração de Single Sign-On (SSO) para a instituição.
+    /// O domínio informado fica pendente até a instituição comprovar que o controla,
+    /// publicando no DNS o registro TXT retornado na configuração e chamando a verificação de domínio.
     /// </remarks>
     [HttpPost("identity/sso/configurations")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]
@@ -26,6 +28,7 @@ internal class ErrorsExamples : ErrorExamplesProvider<
     InvalidSsoAuthority,
     InvalidSsoClientId,
     InvalidSsoClientSecret,
+    InvalidSsoDomain,
     SsoAuthorityMustBeHttps,
     SsoAuthorityHasUserInfo,
     SsoAuthorityLocalhostNotAllowed,

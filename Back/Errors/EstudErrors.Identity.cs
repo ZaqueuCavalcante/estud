@@ -112,6 +112,41 @@ public class SsoNotConfiguredForDomain : EstudError
     public override string Message { get; set; } = "SSO não está configurado para este domínio.";
 }
 
+public class InvalidSsoDomain : EstudError
+{
+    public static readonly InvalidSsoDomain I = new();
+    public override string Code { get; set; } = nameof(InvalidSsoDomain);
+    public override string Message { get; set; } = "Domínio inválido.";
+}
+
+public class SsoDomainNotFound : EstudError
+{
+    public static readonly SsoDomainNotFound I = new();
+    public override string Code { get; set; } = nameof(SsoDomainNotFound);
+    public override string Message { get; set; } = "Domínio não encontrado nesta configuração SSO.";
+}
+
+public class SsoDomainVerifiedByAnotherInstitution : EstudError
+{
+    public static readonly SsoDomainVerifiedByAnotherInstitution I = new();
+    public override string Code { get; set; } = nameof(SsoDomainVerifiedByAnotherInstitution);
+    public override string Message { get; set; } = "Este domínio já foi verificado por outra instituição.";
+}
+
+public class SsoDomainVerificationRecordNotFound : EstudError
+{
+    public static readonly SsoDomainVerificationRecordNotFound I = new();
+    public override string Code { get; set; } = nameof(SsoDomainVerificationRecordNotFound);
+    public override string Message { get; set; } = "Registro TXT de verificação não encontrado no DNS do domínio. A propagação pode levar alguns minutos.";
+}
+
+public class SsoDomainDnsLookupFailed : EstudError
+{
+    public static readonly SsoDomainDnsLookupFailed I = new();
+    public override string Code { get; set; } = nameof(SsoDomainDnsLookupFailed);
+    public override string Message { get; set; } = "Não foi possível consultar o DNS do domínio. Tente novamente em alguns minutos.";
+}
+
 public class SsoAuthenticationFailed : EstudError
 {
     public static readonly SsoAuthenticationFailed I = new();

@@ -11,7 +11,7 @@ public class SsoChallengeService(EstudDbContext ctx) : IEstudService
         var domain = email!.Split('@').Last().ToLowerInvariant();
 
         var publicId = await ctx.WebSsoConfigurations
-            .Where(x => x.IsActive && x.AllowedDomains.Any(d => d.Domain == domain))
+            .Where(x => x.IsActive && x.AllowedDomains.Any(d => d.Domain == domain && d.Status == SsoDomainStatus.Verified))
             .Select(x => x.PublicId)
             .FirstOrDefaultAsync();
 

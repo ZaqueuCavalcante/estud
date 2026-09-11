@@ -93,7 +93,7 @@ const tables: TableRow[] = [
   { table: 'magic_links', entity: 'MagicLink', group: 'auth', dbSet: 'WebMagicLinks', note: 'Link de uso único enviado por e-mail para login sem senha.' },
   { table: 'reset_password_tokens', entity: 'ResetPasswordToken', group: 'auth', dbSet: 'ResetPasswordTokens', note: 'Token de recuperação de senha.' },
   { table: 'sso_configurations', entity: 'SsoConfiguration', group: 'auth', dbSet: 'WebSsoConfigurations', note: 'Configuração OIDC de SSO da instituição, com o segredo cifrado e a flag de SSO obrigatório.' },
-  { table: 'sso_allowed_domains', entity: 'SsoAllowedDomain', group: 'auth', dbSet: 'WebSsoAllowedDomains', note: 'Domínios de e-mail aceitos no SSO daquela configuração.' },
+  { table: 'sso_allowed_domains', entity: 'SsoAllowedDomain', group: 'auth', dbSet: 'WebSsoAllowedDomains', note: 'Domínios de e-mail do SSO daquela configuração. Só roteiam login depois de verificados via registro DNS TXT; o índice único vale apenas para os verificados.' },
   { table: 'user_social_logins', entity: 'UserSocialLogin', group: 'auth', dbSet: 'UserSocialLogins', note: 'Vínculo do usuário com um provedor social (Google), usado pelo One Tap e pelo fluxo OAuth.' },
   { table: 'data_protection_keys', entity: 'DataProtectionKey', group: 'auth', dbSet: 'DataProtectionKeys', note: 'Chaves do ASP.NET Data Protection. Ficam no banco para as instâncias compartilharem o mesmo anel de chaves.' },
 

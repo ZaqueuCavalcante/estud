@@ -1,6 +1,7 @@
 using Estud.Back.Emails;
 using Estud.Back.Google;
 using Estud.Back.Storage;
+using Estud.Back.Auth.Managers;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Estud.Back.Configs;
@@ -10,6 +11,8 @@ public static class ServicesConfigs
     public static void AddServicesConfigs(this WebApplicationBuilder builder)
     {
         builder.Services.AddServices(typeof(IEstudService));
+
+        builder.Services.AddScoped<DnsManager>();
 
         builder.Services.AddScoped<IEmailsService, EmailsService>();
         builder.Services.AddScoped<IGoogleService, GoogleService>();

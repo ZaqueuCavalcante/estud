@@ -370,6 +370,13 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
       hasPermission(Permissions.ManageSso),
     ],
   },
+  VerifySsoDomain: {
+    description: "Verificar a posse de domínios do SSO via DNS",
+    requirements: [
+      hasUserType(UserTypes.Manager),
+      hasPermission(Permissions.ManageSso),
+    ],
+  },
   AccessTwoFactorEnforcementPage: {
     description: "Acessar a aba de obrigatoriedade de 2FA",
     requirements: [

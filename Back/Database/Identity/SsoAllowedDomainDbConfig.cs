@@ -8,12 +8,18 @@ public class SsoAllowedDomainDbConfig : IEntityTypeConfiguration<SsoAllowedDomai
     {
         entity.ToTable("sso_allowed_domains", DbSchemas.Estud);
 
-        entity.HasKey(e => e.Domain);
-        entity.Property(e => e.Domain).ValueGeneratedNever();
+        entity.HasKey(e => e.Id);
 
-        entity.HasOne<SsoConfiguration>()
+        entity.HasOne(e => e.SsoConfiguration)
             .WithMany(c => c.AllowedDomains)
             .HasPrincipalKey(c => c.Id)
             .HasForeignKey(e => e.SsoConfigurationId);
+
+        entity.HasIndex(e => new { e.SsoConfigurationId, e.Domain })
+            .IsUnique();
+
+        entity.HasIndex(e => e.Domain)
+            .IsUnique()
+            .HasFilter($"status = {SsoDomainStatus.Verified.ToInt()}");
     }
 }

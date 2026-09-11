@@ -41,11 +41,31 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Identity_CheckSsoAvailability_Should_return_sso_not_enabled_while_domain_is_pending_verification()
+    {
+        // Arrange
+        var domain = $"sso-check-pending-{DataGen.Numbers}.com";
+        var director = await _back.LoggedAsDirector($"director@{domain}");
+        await director.CreateSsoConfiguration(requireSso: true).Success();
+
+        var client = _back.GetTestsClient();
+
+        // Act
+        var result = await client.CheckSsoAvailability($"someone@{domain}");
+
+        // Assert
+        var availability = result.Success;
+        availability.SsoEnabled.Should().BeFalse();
+        availability.SsoRequired.Should().BeFalse();
+        availability.ProviderType.Should().BeNull();
+    }
+
+    [Test]
     public async Task Identity_CheckSsoAvailability_Should_return_sso_enabled_when_domain_has_configuration()
     {
         // Arrange
         var director = await _back.LoggedAsDirector("director@sso-check-available.com");
-        await director.CreateSsoConfiguration(providerType: SsoProviderType.AzureAd);
+        await director.ShortcutCreateVerifiedSsoConfiguration(providerType: SsoProviderType.AzureAd);
 
         var client = _back.GetTestsClient();
 

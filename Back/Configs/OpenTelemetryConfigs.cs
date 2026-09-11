@@ -12,6 +12,8 @@ public static class OpenTelemetryConfigs
     public const string WebhookCallsProcessing = nameof(WebhookCallsProcessing);
     public const string WebhookEventsProcessing = nameof(WebhookEventsProcessing);
 
+    public const string ServiceName = nameof(Back);
+
     public static void AddOpenTelemetryConfigs(this WebApplicationBuilder builder)
     {
         var settings = builder.Configuration.OpenTelemetry;
@@ -20,7 +22,7 @@ public static class OpenTelemetryConfigs
 
         builder.Services
             .AddOpenTelemetry()
-            .ConfigureResource(resource => resource.AddService(nameof(Back)))
+            .ConfigureResource(resource => resource.AddService(ServiceName))
             .WithMetrics(metrics =>
             {
                 metrics
@@ -39,7 +41,8 @@ public static class OpenTelemetryConfigs
                 tracing
                     .AddNpgsql()
                     .AddHttpClientInstrumentation()
-                    .AddAspNetCoreInstrumentation();
+                    .AddAspNetCoreInstrumentation()
+                    .AddSource(CommandsProcessing, DomainEventsProcessing, WebhookCallsProcessing, WebhookEventsProcessing);
 
                 tracing
                     .SetSampler(new TraceIdRatioBasedSampler(settings.TracingSamplingRatio))

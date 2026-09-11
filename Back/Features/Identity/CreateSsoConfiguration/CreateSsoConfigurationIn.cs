@@ -6,6 +6,7 @@ public class CreateSsoConfigurationIn : IApiDto<CreateSsoConfigurationIn>
     public string Authority { get; set; }
     public string ClientId { get; set; }
     public string ClientSecret { get; set; }
+    public string Domain { get; set; }
 
     public bool RequireSso { get; set; }
 
@@ -18,6 +19,7 @@ public class CreateSsoConfigurationIn : IApiDto<CreateSsoConfigurationIn>
             Authority = "https://login.microsoftonline.com/tenant-id/v2.0",
             ClientId = "00000000-0000-0000-0000-000000000000",
             ClientSecret = "client-secret-value",
+            Domain = "universidade.edu.br",
             RequireSso = false,
         }),
     ];

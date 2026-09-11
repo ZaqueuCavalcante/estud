@@ -1,5 +1,15 @@
 export type SsoProviderType = 'AzureAd' | 'GoogleWorkspace' | 'Okta' | 'Auth0' | 'CustomOidc'
 
+export type SsoDomainStatus = 'Pending' | 'Verified'
+
+export interface GetSsoConfigurationDomainOut {
+  domain: string
+  status: SsoDomainStatus
+  verifiedAt: string | null
+  txtRecordName: string
+  txtRecordValue: string
+}
+
 export interface GetSsoConfigurationOut {
   id: string
   providerType: SsoProviderType
@@ -8,6 +18,13 @@ export interface GetSsoConfigurationOut {
   isActive: boolean
   requireSso: boolean
   createdAt: string
+  domains: GetSsoConfigurationDomainOut[]
+}
+
+export interface VerifySsoDomainOut {
+  domain: string
+  status: SsoDomainStatus
+  verifiedAt: string | null
 }
 
 export interface CheckSsoAvailabilityResponse {

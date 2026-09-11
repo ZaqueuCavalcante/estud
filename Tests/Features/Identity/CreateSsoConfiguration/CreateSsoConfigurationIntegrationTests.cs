@@ -139,6 +139,24 @@ public partial class IntegrationTests
     }
 
     [Test]
+    [TestCase("")]
+    [TestCase("sem-ponto")]
+    [TestCase("escola .edu.br")]
+    [TestCase("https://escola.edu.br")]
+    [TestCase("professor@escola.edu.br")]
+    public async Task Identity_CreateSsoConfiguration_Should_not_create_sso_configuration_with_invalid_domain(string domain)
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        // Act
+        var result = await client.CreateSsoConfiguration(domain: domain);
+
+        // Assert
+        result.ShouldBeError(InvalidSsoDomain.I);
+    }
+
+    [Test]
     [TestCase("gmail.com")]
     [TestCase("outlook.com")]
     [TestCase("hotmail.com")]
@@ -150,10 +168,10 @@ public partial class IntegrationTests
     public async Task Identity_CreateSsoConfiguration_Should_not_create_sso_configuration_with_public_email_domain(string domain)
     {
         // Arrange
-        var client = await _back.LoggedAsDirector($"{DataGen.Numbers}.director@{domain}");
+        var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.CreateSsoConfiguration();
+        var result = await client.CreateSsoConfiguration(domain: domain);
 
         // Assert
         result.ShouldBeError(SsoPublicDomainNotAllowed.I);
@@ -168,6 +186,24 @@ public partial class IntegrationTests
 
         // Act
         var result = await client.CreateSsoConfiguration();
+
+        // Assert
+        result.ShouldBeError(SsoDomainAlreadyConfigured.I);
+    }
+
+    [Test]
+    public async Task Identity_CreateSsoConfiguration_Should_not_create_sso_configuration_when_domain_is_verified_by_another_institution()
+    {
+        // Arrange
+        var domain = $"sso-verificado-{DataGen.Numbers}.com";
+
+        var owner = await _back.LoggedAsDirector();
+        await owner.ShortcutCreateVerifiedSsoConfiguration(domain: domain);
+
+        var client = await _back.LoggedAsDirector();
+
+        // Act
+        var result = await client.CreateSsoConfiguration(domain: domain);
 
         // Assert
         result.ShouldBeError(SsoDomainAlreadyConfigured.I);
@@ -192,6 +228,88 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Identity_CreateSsoConfiguration_Should_create_sso_configuration_for_a_domain_other_than_the_director_email_domain()
+    {
+        // Arrange
+        var domain = $"escola-{DataGen.Numbers}.edu.br";
+        var client = await _back.LoggedAsDirector($"{DataGen.Numbers}.diretor@gmail.com");
+
+        // Act
+        var result = await client.CreateSsoConfiguration(domain: domain);
+
+        // Assert
+        result.Success.Id.Should().NotBeEmpty();
+
+        var created = (await client.GetSsoConfiguration().Success()).Domains.Single();
+        created.Domain.Should().Be(domain);
+        created.Status.Should().Be(SsoDomainStatus.Pending);
+    }
+
+    [Test]
+    public async Task Identity_CreateSsoConfiguration_Should_create_sso_configuration_with_the_domain_normalized()
+    {
+        // Arrange
+        var domain = $"escola-{DataGen.Numbers}.edu.br";
+        var client = await _back.LoggedAsDirector();
+
+        // Act
+        var result = await client.CreateSsoConfiguration(domain: $"  @{domain.ToUpperInvariant()} ");
+
+        // Assert
+        result.Success.Id.Should().NotBeEmpty();
+
+        var created = (await client.GetSsoConfiguration().Success()).Domains.Single();
+        created.Domain.Should().Be(domain);
+        created.TxtRecordName.Should().Be($"_estud-challenge.{domain}");
+    }
+
+    [Test]
+    public async Task Identity_CreateSsoConfiguration_Should_create_sso_configuration_with_the_domain_pending_verification()
+    {
+        // Arrange
+        var domain = $"sso-create-pending-{DataGen.Numbers}.com";
+        var client = await _back.LoggedAsDirector($"director@{domain}");
+
+        // Act
+        var result = await client.CreateSsoConfiguration();
+
+        // Assert
+        result.Success.Id.Should().NotBeEmpty();
+
+        var created = (await client.GetSsoConfiguration().Success()).Domains.Single();
+        created.Domain.Should().Be(domain);
+        created.Status.Should().Be(SsoDomainStatus.Pending);
+        created.VerifiedAt.Should().BeNull();
+        created.TxtRecordName.Should().Be($"_estud-challenge.{domain}");
+        created.TxtRecordValue.Should().MatchRegex("^estud-domain-verification=[0-9a-f]{32}$");
+
+        var availability = await client.CheckSsoAvailability($"usuario@{domain}").Success();
+        availability.SsoEnabled.Should().BeFalse();
+    }
+
+    [Test]
+    public async Task Identity_CreateSsoConfiguration_Should_create_sso_configuration_when_domain_is_pending_in_another_institution()
+    {
+        // Arrange
+        var domain = $"sso-pendente-{DataGen.Numbers}.com";
+
+        var squatter = await _back.LoggedAsDirector($"squatter@{domain}");
+        await squatter.CreateSsoConfiguration().Success();
+
+        var client = await _back.LoggedAsDirector($"director@{domain}");
+
+        // Act
+        var result = await client.CreateSsoConfiguration();
+
+        // Assert
+        result.Success.Id.Should().NotBeEmpty();
+
+        var squatterToken = (await squatter.GetSsoConfiguration().Success()).Domains.Single().TxtRecordValue;
+        var token = (await client.GetSsoConfiguration().Success()).Domains.Single().TxtRecordValue;
+        token.Should().NotBe(squatterToken);
+    }
+
+    [Test]
     public async Task Identity_CreateSsoConfiguration_Should_create_sso_configuration_requiring_sso()
     {
         // Arrange
@@ -207,8 +325,25 @@ public partial class IntegrationTests
         var config = await client.GetSsoConfiguration().Success();
         config.RequireSso.Should().BeTrue();
 
+        await client.ShortcutVerifySsoDomain(config.Id);
+
         var availability = await client.CheckSsoAvailability($"usuario@{domain}").Success();
         availability.SsoRequired.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task Identity_CreateSsoConfiguration_Should_not_block_password_login_while_the_domain_is_pending()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector($"director@sso-create-required-{DataGen.Numbers}.com");
+        await client.CreateSsoConfiguration(requireSso: true).Success();
+        await client.Logout();
+
+        // Act
+        var result = await client.EmailPasswordLogin(client.User.Email, "My@nEw@strong@P4ssword");
+
+        // Assert
+        result.ShouldBeSuccess();
     }
 
     [Test]
@@ -216,7 +351,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var client = await _back.LoggedAsDirector($"director@sso-create-required-{DataGen.Numbers}.com");
-        await client.CreateSsoConfiguration(requireSso: true).Success();
+        await client.ShortcutCreateVerifiedSsoConfiguration(requireSso: true);
         await client.Logout();
 
         // Act

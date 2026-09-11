@@ -74,13 +74,15 @@ public partial class EstudDbContext
             WHERE
                 d.domain = @Domain
                     AND
+                d.status = @Status
+                    AND
                 c.is_active = true
                     AND
                 c.require_sso = true
         ";
 
         var domain = email.Split('@').Last().ToLowerInvariant();
-        return await Database.GetDbConnection().QuerySingleAsync<bool>(sql, new { domain });
+        return await Database.GetDbConnection().QuerySingleAsync<bool>(sql, new { domain, Status = SsoDomainStatus.Verified });
     }
 
     public async Task<string?> GetUserTwoFactorKeyAsync(int userId)

@@ -59,7 +59,7 @@ public partial class IntegrationTests
         var domain = $"sso-required-{DataGen.Numbers}.com";
         var director = await _back.LoggedAsDirector($"director@{domain}");
 
-        var config = await director.CreateSsoConfiguration().Success();
+        var config = await director.ShortcutCreateVerifiedSsoConfiguration();
         await director.UpdateSsoConfiguration(config.Id, requireSso: true);
 
         var client = _back.GetTestsClient();

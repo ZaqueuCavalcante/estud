@@ -35,13 +35,30 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Identity_SsoChallenge_Should_not_challenge_when_domain_is_pending_verification()
+    {
+        // Arrange
+        var domain = $"sso-pendente-{DataGen.Numbers}.com";
+        var director = await _back.LoggedAsDirector($"director@{domain}");
+        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var challenge = await client.SsoChallenge($"director@{domain}");
+
+        // Assert
+        challenge.Headers.Location?.ToString().Should().Be($"{FrontUrl}/login?sso_error={nameof(SsoNotConfiguredForDomain)}");
+    }
+
+    [Test]
     public async Task Identity_SsoChallenge_Should_not_challenge_when_sso_configuration_is_inactive()
     {
         // Arrange
         var domain = $"sso-inativo-{DataGen.Numbers}.com";
         var director = await _back.LoggedAsDirector($"director@{domain}");
 
-        var config = await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        var config = await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         await director.UpdateSsoConfiguration(config.Id, authority: MocksFactory.OidcAuthority, isActive: false);
 
         var client = _back.GetTestsClient(followRedirects: false);
@@ -65,9 +82,9 @@ public partial class IntegrationTests
         var email = $"director@{domain}";
         var director = await _back.LoggedAsDirector(email);
 
-        var config = await director.CreateSsoConfiguration(
+        var config = await director.ShortcutCreateVerifiedSsoConfiguration(
             authority: MocksFactory.OidcAuthority,
-            clientId: "estud-oidc-client").Success();
+            clientId: "estud-oidc-client");
 
         var client = _back.GetTestsClient(followRedirects: false);
 

@@ -32,11 +32,14 @@ public class CheckSsoAvailabilityService(EstudDbContext ctx) : IEstudService
             WHERE
                 d.domain = @Domain
                     AND
+                d.status = @Status
+                    AND
                 c.is_active = true
             LIMIT 1
         ";
 
-        var config = await ctx.Database.GetDbConnection().QueryFirstOrDefaultAsync<SsoConfigDto>(sql, new { Domain = domain });
+        var parameters = new { Domain = domain, Status = SsoDomainStatus.Verified };
+        var config = await ctx.Database.GetDbConnection().QueryFirstOrDefaultAsync<SsoConfigDto>(sql, parameters);
         if (config == null) return new CheckSsoAvailabilityOut { SsoEnabled = false };
 
         return new CheckSsoAvailabilityOut

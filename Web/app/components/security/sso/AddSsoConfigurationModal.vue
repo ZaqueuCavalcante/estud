@@ -36,6 +36,10 @@ const schema = z.object({
     .min(1, 'Client ID obrigatório'),
   clientSecret: z.string({ error: 'Client Secret obrigatório' })
     .min(1, 'Client Secret obrigatório'),
+  domain: z.string({ error: 'Domínio obrigatório' })
+    .trim()
+    .min(1, 'Domínio obrigatório')
+    .regex(/^@?[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i, 'Domínio inválido'),
   requireSso: z.boolean().default(false),
 })
 
@@ -46,6 +50,7 @@ const formState = reactive<Partial<Schema>>({
   authority: undefined,
   clientId: undefined,
   clientSecret: undefined,
+  domain: undefined,
   requireSso: false,
 })
 
@@ -54,6 +59,7 @@ function resetForm() {
   formState.authority = undefined
   formState.clientId = undefined
   formState.clientSecret = undefined
+  formState.domain = undefined
   formState.requireSso = false
 }
 
@@ -79,7 +85,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       body: event.data,
       credentials: 'include',
     })
-    toast.add({ title: 'Configuração SSO criada com sucesso', color: 'success' })
+    toast.add({
+      title: 'Configuração SSO criada',
+      description: 'Publique o registro TXT no DNS e verifique o domínio para ativar o SSO.',
+      color: 'success',
+    })
     open.value = false
     emit('created')
   } catch (err: unknown) {
@@ -105,13 +115,24 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         class="space-y-4"
         @submit="onSubmit"
       >
+        <UFormField
+          label="Domínio"
+          name="domain"
+        >
+          <UInput
+            v-model="formState.domain"
+            placeholder="universidade.edu.br"
+            class="w-full"
+            autofocus
+          />
+        </UFormField>
+
         <UFormField label="Provedor" name="providerType">
           <USelect
             v-model="formState.providerType as SsoProviderType"
             :items="providerOptions"
             placeholder="Selecione o provedor"
             class="w-full"
-            autofocus
           />
         </UFormField>
 

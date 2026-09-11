@@ -9,7 +9,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
@@ -28,7 +28,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
@@ -47,7 +47,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
@@ -66,7 +66,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
@@ -85,7 +85,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var domain = director.User.Email.GetEmailDomain();
         var client = _back.GetTestsClient(followRedirects: false);
 
@@ -108,7 +108,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
@@ -127,8 +127,32 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var domain = director.User.Email.GetEmailDomain();
+
+        var teacherEmail = $"professor.{DataGen.Numbers}@{domain}";
+        await director.CreateTeacher(DataGen.UserName, teacherEmail).Success();
+
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(teacherEmail);
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/home");
+
+        var account = await client.GetUserAccount().Success();
+        account.Email.Should().Be(teacherEmail);
+        account.InstitutionId.Should().Be(director.User.InstitutionId);
+    }
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_login_a_user_of_the_domain_informed_in_the_configuration()
+    {
+        // Arrange
+        var domain = $"escola-{DataGen.Numbers}.edu.br";
+        var director = await _back.LoggedAsDirector($"{DataGen.Numbers}.diretor@gmail.com");
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority, domain: domain);
 
         var teacherEmail = $"professor.{DataGen.Numbers}@{domain}";
         await director.CreateTeacher(DataGen.UserName, teacherEmail).Success();
@@ -151,7 +175,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var email = director.User.Email;
 
         var firstClient = _back.GetTestsClient(followRedirects: false);
@@ -176,7 +200,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var domain = director.User.Email.GetEmailDomain();
 
         var teacherEmail = $"professor.{DataGen.Numbers}@{domain}";
@@ -203,7 +227,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var domain = director.User.Email.GetEmailDomain();
 
         var teacherEmail = $"professor.{DataGen.Numbers}@{domain}";
@@ -230,7 +254,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
@@ -253,7 +277,7 @@ public partial class IntegrationTests
     {
         // Arrange — o IdP autentica, mas devolve um e-mail fora dos domínios da configuração
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
@@ -272,7 +296,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var email = director.User.Email;
         var client = _back.GetTestsClient(followRedirects: false);
 
@@ -291,7 +315,7 @@ public partial class IntegrationTests
     {
         // Arrange — outra instituição, com o seu próprio domínio e sem SSO configurado
         var director = await _back.LoggedAsDirector();
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
         var email = director.User.Email;
 
         var outsiderEmail = $"de-fora.{DataGen.Numbers}@instituicao-vizinha-{DataGen.Numbers}.com";

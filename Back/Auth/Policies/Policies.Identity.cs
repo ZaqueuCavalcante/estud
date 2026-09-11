@@ -15,6 +15,7 @@ public static partial class Policies
     public const string FilterInstitutionRoles = nameof(FilterInstitutionRoles);
     public const string GetAvailableInstitutionRoles = nameof(GetAvailableInstitutionRoles);
 
+    public const string VerifySsoDomain = nameof(VerifySsoDomain);
     public const string GetSsoConfiguration = nameof(GetSsoConfiguration);
     public const string GetSsoConfigurations = nameof(GetSsoConfigurations);
     public const string CreateSsoConfiguration = nameof(CreateSsoConfiguration);
@@ -44,6 +45,7 @@ public static partial class Policies
             .AddEstudPolicy(GetAvailableInstitutionRoles, UserType.Manager, EstudPermissions.ManageRoles);
 
         builder
+            .AddEstudPolicy(VerifySsoDomain, UserType.Manager, EstudPermissions.ManageSso)
             .AddEstudPolicy(GetSsoConfiguration, UserType.Manager, EstudPermissions.ManageSso)
             .AddEstudPolicy(GetSsoConfigurations, UserType.Manager, EstudPermissions.ManageSso)
             .AddEstudPolicy(CreateSsoConfiguration, UserType.Manager, EstudPermissions.ManageSso)
