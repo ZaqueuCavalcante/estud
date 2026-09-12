@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9373855120732723" branch-rate="0.8138373751783167" lines-covered="11258" lines-valid="12010" branches-covered="2282" branches-valid="2804" complexity="4175" version="0" timestamp="1789160783">
+<coverage line-rate="0.9372451102788182" branch-rate="0.8129445234708392" lines-covered="11261" lines-valid="12015" branches-covered="2286" branches-valid="2812" complexity="4179" version="0" timestamp="1789175552">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9364137346333192" branch-rate="0.8107714701601164" complexity="4099">
+    <package name="Back" line-rate="0.936271186440678" branch-rate="0.8098693759071117" complexity="4103">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -3016,62 +3016,68 @@
             <line number="38" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Configs.EntityFrameworkConfigs" filename="/home/runner/work/estud/estud/Back/Configs/EntityFrameworkConfigs.cs" line-rate="0.95" branch-rate="1" complexity="3">
+        <class name="Estud.Back.Configs.EntityFrameworkConfigs" filename="/home/runner/work/estud/estud/Back/Configs/EntityFrameworkConfigs.cs" line-rate="0.9565217391304348" branch-rate="1" complexity="3">
           <methods>
-            <method name="AddEntityFrameworkConfigs" signature="(Microsoft.AspNetCore.Builder.WebApplicationBuilder)" line-rate="0.9375" branch-rate="1" complexity="1">
+            <method name="AddEntityFrameworkConfigs" signature="(Microsoft.AspNetCore.Builder.WebApplicationBuilder)" line-rate="0.9473684210526315" branch-rate="1" complexity="1">
               <lines>
-                <line number="9" hits="2" branch="false" />
                 <line number="10" hits="2" branch="false" />
                 <line number="11" hits="2" branch="false" />
                 <line number="12" hits="2" branch="false" />
-                <line number="13" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="14" hits="2" branch="false" />
-                <line number="15" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="16" hits="2" branch="false" />
-                <line number="17" hits="0" branch="false" />
+                <line number="13" hits="2" branch="false" />
+                <line number="14" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="15" hits="2" branch="false" />
+                <line number="16" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="17" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="18" hits="2" branch="false" />
-                <line number="19" hits="2" branch="false" />
+                <line number="19" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="20" hits="2" branch="false" />
-                <line number="21" hits="2" branch="false" />
+                <line number="21" hits="0" branch="false" />
                 <line number="22" hits="2" branch="false" />
+                <line number="23" hits="2" branch="false" />
                 <line number="24" hits="2" branch="false" />
                 <line number="25" hits="2" branch="false" />
+                <line number="26" hits="2" branch="false" />
+                <line number="28" hits="2" branch="false" />
+                <line number="29" hits="2" branch="false" />
               </lines>
             </method>
             <method name="UseEnrichDbContext" signature="(Microsoft.AspNetCore.Builder.IApplicationBuilder)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="29" hits="2" branch="false" />
-                <line number="30" hits="2" branch="false" />
+                <line number="33" hits="2" branch="false" />
+                <line number="34" hits="2" branch="false" />
               </lines>
             </method>
             <method name="UseBackgroundProcessorsTrigger" signature="(Microsoft.AspNetCore.Builder.IApplicationBuilder)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="34" hits="2" branch="false" />
-                <line number="35" hits="2" branch="false" />
+                <line number="38" hits="2" branch="false" />
+                <line number="39" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="9" hits="2" branch="false" />
             <line number="10" hits="2" branch="false" />
             <line number="11" hits="2" branch="false" />
             <line number="12" hits="2" branch="false" />
-            <line number="13" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="14" hits="2" branch="false" />
-            <line number="15" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="16" hits="2" branch="false" />
-            <line number="17" hits="0" branch="false" />
+            <line number="13" hits="2" branch="false" />
+            <line number="14" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="15" hits="2" branch="false" />
+            <line number="16" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="17" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="18" hits="2" branch="false" />
-            <line number="19" hits="2" branch="false" />
+            <line number="19" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="20" hits="2" branch="false" />
-            <line number="21" hits="2" branch="false" />
+            <line number="21" hits="0" branch="false" />
             <line number="22" hits="2" branch="false" />
+            <line number="23" hits="2" branch="false" />
             <line number="24" hits="2" branch="false" />
             <line number="25" hits="2" branch="false" />
+            <line number="26" hits="2" branch="false" />
+            <line number="28" hits="2" branch="false" />
             <line number="29" hits="2" branch="false" />
-            <line number="30" hits="2" branch="false" />
+            <line number="33" hits="2" branch="false" />
             <line number="34" hits="2" branch="false" />
-            <line number="35" hits="2" branch="false" />
+            <line number="38" hits="2" branch="false" />
+            <line number="39" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Configs.HostConfigs" filename="/home/runner/work/estud/estud/Back/Configs/HostConfigs.cs" line-rate="0.5625" branch-rate="0.5" complexity="2">
@@ -37380,29 +37386,31 @@
             <line number="20" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Middlewares.ExceptionsMiddleware" filename="/home/runner/work/estud/estud/Back/Middlewares/ExceptionsMiddleware.cs" line-rate="0.25" branch-rate="0" complexity="6">
+        <class name="Estud.Back.Middlewares.ExceptionsMiddleware" filename="/home/runner/work/estud/estud/Back/Middlewares/ExceptionsMiddleware.cs" line-rate="0.2222222222222222" branch-rate="0" complexity="10">
           <methods>
-            <method name=".ctor" signature="(Microsoft.AspNetCore.Http.RequestDelegate, Serilog.ILogger)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(Microsoft.AspNetCore.Http.RequestDelegate, Microsoft.Extensions.Logging.ILogger&lt;Estud.Back.Middlewares.ExceptionsMiddleware&gt;)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="6" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="HandleExceptionAsync" signature="(Microsoft.AspNetCore.Http.HttpContext, System.Exception)" line-rate="0" branch-rate="0" complexity="2">
+            <method name="HandleExceptionAsync" signature="(Microsoft.AspNetCore.Http.HttpContext, System.Exception)" line-rate="0" branch-rate="0" complexity="6">
               <lines>
                 <line number="22" hits="0" branch="true" condition-coverage="0% (0/2)" />
                 <line number="23" hits="0" branch="false" />
                 <line number="25" hits="0" branch="false" />
                 <line number="26" hits="0" branch="false" />
                 <line number="28" hits="0" branch="false" />
-                <line number="30" hits="0" branch="false" />
+                <line number="30" hits="0" branch="true" condition-coverage="0% (0/2)" />
+                <line number="31" hits="0" branch="true" condition-coverage="0% (0/2)" />
+                <line number="33" hits="0" branch="false" />
               </lines>
             </method>
             <method name="GetFullExceptionMessage" signature="(System.Exception)" line-rate="0" branch-rate="0" complexity="2">
               <lines>
-                <line number="35" hits="0" branch="false" />
-                <line number="36" hits="0" branch="true" condition-coverage="0% (0/2)" />
                 <line number="38" hits="0" branch="false" />
-                <line number="40" hits="0" branch="false" />
+                <line number="39" hits="0" branch="true" condition-coverage="0% (0/2)" />
+                <line number="41" hits="0" branch="false" />
+                <line number="43" hits="0" branch="false" />
               </lines>
             </method>
             <method name="Invoke" signature="()" line-rate="0.6" branch-rate="1" complexity="1">
@@ -37427,11 +37435,13 @@
             <line number="25" hits="0" branch="false" />
             <line number="26" hits="0" branch="false" />
             <line number="28" hits="0" branch="false" />
-            <line number="30" hits="0" branch="false" />
-            <line number="35" hits="0" branch="false" />
-            <line number="36" hits="0" branch="true" condition-coverage="0% (0/2)" />
+            <line number="30" hits="0" branch="true" condition-coverage="0% (0/2)" />
+            <line number="31" hits="0" branch="true" condition-coverage="0% (0/2)" />
+            <line number="33" hits="0" branch="false" />
             <line number="38" hits="0" branch="false" />
-            <line number="40" hits="0" branch="false" />
+            <line number="39" hits="0" branch="true" condition-coverage="0% (0/2)" />
+            <line number="41" hits="0" branch="false" />
+            <line number="43" hits="0" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Settings.AuthSettings" filename="/home/runner/work/estud/estud/Back/Settings/AuthSettings.cs" line-rate="1" branch-rate="1" complexity="1">
