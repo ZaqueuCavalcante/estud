@@ -64,7 +64,7 @@ function resetForm() {
 }
 
 const providerAuthority: Partial<Record<string, string>> = {
-  GoogleWorkspace: 'https://accounts.google.com/o/oauth2/v2/auth',
+  GoogleWorkspace: 'https://accounts.google.com',
 }
 
 watch(() => formState.providerType, (provider) => {

@@ -14,6 +14,19 @@ input[type=number].no-spinners {
   -moz-appearance: textfield;
 }
 
+/* O fundo do autofill vem do user agent com !important, então é coberto por um box-shadow inset
+   (última camada, abaixo do ring do Tailwind). Transição não serve: o color-mode desliga todas na troca de tema. */
+input:autofill {
+  filter: none;
+  -webkit-text-fill-color: var(--ui-text-highlighted);
+  box-shadow:
+    var(--tw-inset-shadow, 0 0 #0000),
+    var(--tw-inset-ring-shadow, 0 0 #0000),
+    var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000),
+    inset 0 0 0 100vmax var(--ui-bg);
+}
+
 /* Google One Tap: the browser applies an opaque white canvas to iframes
    whose color-scheme differs from the parent. Setting color-scheme: light
    on the container matches the Google iframe's scheme, rendering it transparent. */

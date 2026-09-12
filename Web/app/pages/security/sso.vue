@@ -12,6 +12,10 @@ const { data: ssoConfig, status, refresh } = await useFetch<GetSsoConfigurationO
   { credentials: 'include', server: false },
 )
 
+const callbackUrl = computed(() => ssoConfig.value
+  ? `${config.public.backendUrl}/identity/sso/callback/${ssoConfig.value.id}`
+  : '')
+
 const providerLabels: Record<string, string> = {
   AzureAd: 'Azure AD',
   GoogleWorkspace: 'Google Workspace',
@@ -80,6 +84,21 @@ async function verifyDomain(domain: string) {
         <div class="flex flex-col gap-1 sm:flex-row sm:justify-between sm:items-center sm:gap-3 py-1">
           <span class="text-sm font-medium shrink-0">Client ID</span>
           <span class="text-sm text-muted font-mono break-all min-w-0 sm:text-right">{{ ssoConfig.clientId }}</span>
+        </div>
+        <USeparator />
+        <div class="flex flex-col gap-1 sm:flex-row sm:justify-between sm:items-center sm:gap-3 py-1">
+          <span class="text-sm font-medium shrink-0">Redirect URI</span>
+          <div class="flex items-center gap-2 min-w-0 sm:justify-end">
+            <code class="text-sm text-muted break-all min-w-0 sm:text-right">{{ callbackUrl }}</code>
+            <UButton
+              icon="i-lucide-copy"
+              color="neutral"
+              variant="ghost"
+              size="xs"
+              aria-label="Copiar Redirect URI"
+              @click="() => { copy(callbackUrl) }"
+            />
+          </div>
         </div>
         <USeparator />
         <div class="flex flex-col gap-1 sm:flex-row sm:justify-between sm:items-center sm:gap-3 py-1">

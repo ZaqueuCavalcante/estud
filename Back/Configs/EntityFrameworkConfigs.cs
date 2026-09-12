@@ -1,4 +1,5 @@
 using Npgsql;
+using System.Diagnostics;
 
 namespace Estud.Back.Configs;
 
@@ -12,6 +13,9 @@ public static class EntityFrameworkConfigs
 
             dataSourceBuilder.ConfigureTracing(x =>
             {
+                x.ConfigureBatchFilter(_ => Activity.Current is not null);
+                x.ConfigureCommandFilter(_ => Activity.Current is not null);
+
                 x.ConfigureCommandSpanNameProvider(provider =>
                 {
                     return provider.CommandText.GetSqlSpanName();

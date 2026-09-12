@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Diagnostics;
 
 namespace Estud.Back.Middlewares;
 
@@ -25,6 +26,9 @@ public class ExceptionsMiddleware(RequestDelegate next, ILogger<ExceptionsMiddle
         context.Response.StatusCode = 500;
 
         logger.LogError(ex, "EstudInternalServerError - {Method} {Path}", context.Request.Method, context.Request.Path);
+
+        Activity.Current?.SetStatus(ActivityStatusCode.Error, ex.Message);
+        Activity.Current?.AddException(ex);
 
         return context.Response.WriteAsync(result);
     }
