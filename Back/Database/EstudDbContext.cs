@@ -1,5 +1,6 @@
 using Npgsql;
 using System.Data.Common;
+using System.Diagnostics;
 using Estud.Back.Auth.Users;
 using Audit.EntityFramework;
 using Estud.Back.Domain.Identity;
@@ -98,5 +99,11 @@ public partial class EstudDbContext(DbContextOptions<EstudDbContext> options, Np
     {
         Add(entity);
         return await SaveChangesAsync();
+    }
+
+    public void Enrich(string operation)
+    {
+        Operation = operation;
+        ActivityId = Activity.Current?.Id ?? Guid.CreateVersion7().ToString();
     }
 }

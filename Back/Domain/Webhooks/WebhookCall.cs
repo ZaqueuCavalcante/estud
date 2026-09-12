@@ -29,7 +29,7 @@ public class WebhookCall : DomainEntity
         EventType = eventType;
         CreatedAt = DateTime.UtcNow;
         Status = WebhookCallStatus.Pending;
-        Payload = (new { Id = Uid, EventType = eventType, OccurredAt = CreatedAt, Data = data }).Serialize();
+        Payload = (new { Id = Uid, EventType = eventType, OccurredAt = CreatedAt, Data = data }).SerializeAsSnakeCase();
     }
 
     public void Success(int statusCode, string response, int durationMs)

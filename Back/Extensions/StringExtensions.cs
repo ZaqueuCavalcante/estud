@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Reflection;
 using System.Globalization;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Primitives;
 using Microsoft.AspNetCore.WebUtilities;
@@ -14,6 +15,12 @@ public static class StringExtensions
     private static JsonSerializerSettings _settings = new()
     {
         Converters = [new StringEnumConverter()],
+    };
+
+    private static JsonSerializerSettings _snakeCaseSettings = new()
+    {
+        Converters = [new StringEnumConverter()],
+        ContractResolver = new DefaultContractResolver { NamingStrategy = new SnakeCaseNamingStrategy() },
     };
 
     extension(string? text)
@@ -153,6 +160,11 @@ public static class StringExtensions
         public string Serialize()
         {
             return JsonConvert.SerializeObject(obj, _settings);
+        }
+
+        public string SerializeAsSnakeCase()
+        {
+            return JsonConvert.SerializeObject(obj, _snakeCaseSettings);
         }
     }
 

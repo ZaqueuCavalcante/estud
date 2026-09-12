@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace Estud.Back.Middlewares;
 
 public class EnrichBackDbContextMiddleware(RequestDelegate next)
@@ -13,8 +11,7 @@ public class EnrichBackDbContextMiddleware(RequestDelegate next)
             ctx.RequestUser.InstitutionId = request.User.InstitutionId;
         }
 
-        ctx.Operation = request.GetTargetControllerName();
-        ctx.ActivityId = Activity.Current?.Id ?? Guid.CreateVersion7().ToString();
+        ctx.Enrich(request.GetTargetControllerName());
 
         await next(request);
     }

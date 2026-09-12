@@ -23,7 +23,7 @@ public class GetWebhookCallOut : IApiDto<GetWebhookCallOut>
             Status = WebhookCallStatus.Success,
             AttemptsCount = 1,
             CreatedAt = DateTime.UtcNow,
-            Payload = """{"Id":"01K5F2G8QX7VN3ZC4M9TB6HDRY","EventType":"StudentCreated","OccurredAt":"2026-09-05T13:22:10Z","Data":{"Id":1,"Name":"João da Silva"}}""",
+            Payload = """{"id":"01K5F2G8QX7VN3ZC4M9TB6HDRY","event_type":"StudentCreated","occurred_at":"2026-09-05T13:22:10Z","data":{"name":"João da Silva","email":"joao.silva@email.com"}}""",
             Request = new GetWebhookCallRequestOut
             {
                 Method = "POST",
@@ -33,7 +33,7 @@ public class GetWebhookCallOut : IApiDto<GetWebhookCallOut>
                     ["Estud-AuthToken"] = "6r4g654rs6g4we6f4qw684f68qwf4",
                     ["Content-Type"] = "application/json; charset=utf-8",
                 },
-                Body = """{"Id":"01K5F2G8QX7VN3ZC4M9TB6HDRY","EventType":"StudentCreated","OccurredAt":"2026-09-05T13:22:10Z","Data":{"Id":1,"Name":"João da Silva"}}""",
+                Body = """{"id":"01K5F2G8QX7VN3ZC4M9TB6HDRY","event_type":"StudentCreated","occurred_at":"2026-09-05T13:22:10Z","data":{"name":"João da Silva","email":"joao.silva@email.com"}}""",
             },
             Subscription = new GetWebhookCallSubscriptionOut
             {
