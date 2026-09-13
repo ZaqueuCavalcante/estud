@@ -2,6 +2,7 @@
 
 [![Line coverage](https://zaqueucavalcante.github.io/estud/badge_linecoverage.svg)](https://zaqueucavalcante.github.io/estud)
 [![Branch coverage](https://zaqueucavalcante.github.io/estud/badge_branchcoverage.svg)](https://zaqueucavalcante.github.io/estud)
+[![Mutation score](https://zaqueucavalcante.github.io/estud/mutation/badge.svg)](https://zaqueucavalcante.github.io/estud/mutation)
 
 O **Estud** é um sistema open-source para gestão educacional, que pode ser usado por gestores, professores, alunos e responsáveis.
 

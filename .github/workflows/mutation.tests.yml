@@ -56,6 +56,21 @@ jobs:
           mv mutation/mutation-report.html mutation/index.html
           ls -lah mutation
 
+      - name: Generate mutation badge
+        shell: bash
+        run: |
+          score=$(jq -r '
+            [.files[].mutants[].status] as $s
+            | ($s | map(select(. == "Killed" or . == "Timeout")) | length) as $detected
+            | ($s | map(select(. == "Survived" or . == "NoCoverage")) | length) as $undetected
+            | if $detected + $undetected == 0 then 0 else ($detected * 10000 / ($detected + $undetected) | round) / 100 end
+          ' mutation/mutation-report.json)
+          high=$(jq '."stryker-config".thresholds.high' Tests/stryker-config.json)
+          low=$(jq '."stryker-config".thresholds.low' Tests/stryker-config.json)
+          color=$(awk -v s="$score" -v h="$high" -v l="$low" 'BEGIN { print (s >= h ? "brightgreen" : s >= l ? "orange" : "red") }')
+          curl -fsSL -o mutation/badge.svg "https://img.shields.io/badge/mutation_score-${score}%25-${color}"
+          rm mutation/mutation-report.json
+
       - name: Upload mutation report
         uses: actions/upload-artifact@v4
         with:
