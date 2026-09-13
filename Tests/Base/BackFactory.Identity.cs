@@ -15,7 +15,7 @@ public static class BackFactoryIdentity
         var user = await ctx.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email);
         if (user == null) return null;
 
-        var id = await ctx.WebMagicLinks
+        var id = await ctx.MagicLinks
             .Where(t => t.UserId == user.Id && t.UsedAt == null)
             .OrderByDescending(t => t.CreatedAt)
             .Select(t => t.Id)
@@ -26,7 +26,8 @@ public static class BackFactoryIdentity
 
     public static async Task SetPassword(this BackFactory factory, string email, string password)
     {
-        var scope = factory.Services.CreateScope();
+        using var scope = factory.Services.CreateScope();
+        scope.ServiceProvider.GetRequiredService<EstudDbContext>().Enrich($"Tests.{nameof(SetPassword)}");
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<EstudUser>>();
         var user = await userManager.FindByEmailAsync(email);
         var resetToken = await userManager.GeneratePasswordResetTokenAsync(user!);
@@ -93,6 +94,7 @@ public static class BackFactoryIdentity
         var teacher = await directorClient.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
         await using var ctx = factory.GetDbContext();
+        ctx.Enrich($"Tests.{nameof(LoggedAsTeacher)}");
         var user = await ctx.Users.Where(u => u.Email == teacher.Email).FirstAsync();
         var magicLink = new MagicLink(user);
         await ctx.SaveChangesAsync(magicLink);
@@ -111,6 +113,7 @@ public static class BackFactoryIdentity
     public static async Task<TestsHttpClient> LoginAs(this BackFactory factory, string email)
     {
         await using var ctx = factory.GetDbContext();
+        ctx.Enrich($"Tests.{nameof(LoginAs)}");
         var user = await ctx.Users.Where(u => u.Email == email).FirstAsync();
         var magicLink = new MagicLink(user);
         await ctx.SaveChangesAsync(magicLink);

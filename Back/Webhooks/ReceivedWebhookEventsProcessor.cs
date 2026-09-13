@@ -32,6 +32,7 @@ public class ReceivedWebhookEventsProcessor(IServiceScopeFactory serviceScopeFac
                 activity?.SetTag("webhook_event.id", evt.Id);
                 activity?.SetTag("webhook_event.type", evt.Type);
                 activity?.SetTag("webhook_event.source", evt.Source.ToString());
+                ctx.Enrich(evt.Type);
 
                 try
                 {

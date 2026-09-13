@@ -108,6 +108,8 @@ public static class SsoOidcScheme
         var signInService = services.GetRequiredService<SignInService>();
         var frontendSettings = services.GetRequiredService<FrontendSettings>();
 
+        ctx.Enrich("SsoLogin");
+
         // Extract email from OIDC claims
         var email = context.Principal?.FindFirst(ClaimTypes.Email)?.Value ?? context.Principal?.FindFirst("email")?.Value;
 
@@ -125,7 +127,7 @@ public static class SsoOidcScheme
         // resolving it by domain would let any IdP pick which institution it signs into.
         var publicId = Guid.Parse(context.Scheme.Name[Prefix.Length..]);
 
-        var ssoConfig = await ctx.WebSsoConfigurations
+        var ssoConfig = await ctx.SsoConfigurations
             .Include(x => x.AllowedDomains)
             .Where(x => x.PublicId == publicId && x.IsActive)
             .FirstOrDefaultAsync();

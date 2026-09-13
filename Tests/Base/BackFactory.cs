@@ -3,6 +3,7 @@ using Estud.Back.Emails;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Estud.Tests.Integration.Clients;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,10 +48,12 @@ public class BackFactory : WebApplicationFactory<Back::Program>
         return new TestsHttpClient(client);
     }
 
-    public EstudDbContext GetDbContext()
+    public EstudDbContext GetDbContext([CallerMemberName] string operation = "")
     {
         var scope = Services.CreateScope();
-        return scope.ServiceProvider.GetRequiredService<EstudDbContext>();
+        var ctx = scope.ServiceProvider.GetRequiredService<EstudDbContext>();
+        ctx.Enrich($"Tests.{operation}");
+        return ctx;
     }
 
     public ISchedulerFactory GetSchedulerFactory()

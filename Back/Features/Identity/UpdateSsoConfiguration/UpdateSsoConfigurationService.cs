@@ -23,7 +23,7 @@ public class UpdateSsoConfigurationService(EstudDbContext ctx, SsoEncryptionMana
         var authorityError = data.Authority.ValidateSsoAuthority();
         if (authorityError != null) return authorityError;
 
-        var config = await ctx.WebSsoConfigurations
+        var config = await ctx.SsoConfigurations
             .Where(x => x.PublicId == ssoConfigurationId && x.InstitutionId == ctx.RequestUser.InstitutionId)
             .FirstOrDefaultAsync();
 

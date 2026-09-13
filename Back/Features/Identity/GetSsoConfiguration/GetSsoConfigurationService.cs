@@ -4,7 +4,7 @@ public class GetSsoConfigurationService(EstudDbContext ctx) : IEstudService
 {
     public async Task<GetSsoConfigurationOut?> Get()
     {
-        var config = await ctx.WebSsoConfigurations.AsNoTracking()
+        var config = await ctx.SsoConfigurations.AsNoTracking()
             .Include(x => x.AllowedDomains)
             .Where(x => x.InstitutionId == ctx.RequestUser.InstitutionId)
             .FirstOrDefaultAsync();

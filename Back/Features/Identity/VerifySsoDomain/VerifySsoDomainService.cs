@@ -18,7 +18,7 @@ public class VerifySsoDomainService(EstudDbContext ctx, DnsManager dns) : IEstud
     {
         if (V.Run(data, out var error)) return error;
 
-        var config = await ctx.WebSsoConfigurations
+        var config = await ctx.SsoConfigurations
             .Include(x => x.AllowedDomains)
             .Where(x => x.PublicId == ssoConfigurationId && x.InstitutionId == ctx.RequestUser.InstitutionId)
             .FirstOrDefaultAsync();
@@ -31,7 +31,7 @@ public class VerifySsoDomainService(EstudDbContext ctx, DnsManager dns) : IEstud
 
         if (domain.Status == SsoDomainStatus.Verified) return domain.ToVerifySsoDomainOut();
 
-        var verifiedElsewhere = await ctx.WebSsoAllowedDomains
+        var verifiedElsewhere = await ctx.SsoAllowedDomains
             .AnyAsync(d => d.Domain == domain.Domain && d.Status == SsoDomainStatus.Verified);
         if (verifiedElsewhere) return SsoDomainVerifiedByAnotherInstitution.I;
 

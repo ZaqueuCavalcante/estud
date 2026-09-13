@@ -6,11 +6,11 @@ namespace Estud.Back.Database;
 
 public partial class EstudDbContext
 {
-    public DbSet<MagicLink> WebMagicLinks { get; set; }
+    public DbSet<MagicLink> MagicLinks { get; set; }
     public DbSet<ResetPasswordToken> ResetPasswordTokens { get; set; }
 
-    public DbSet<SsoConfiguration> WebSsoConfigurations { get; set; }
-    public DbSet<SsoAllowedDomain> WebSsoAllowedDomains { get; set; }
+    public DbSet<SsoConfiguration> SsoConfigurations { get; set; }
+    public DbSet<SsoAllowedDomain> SsoAllowedDomains { get; set; }
 
     public DbSet<UserSocialLogin> UserSocialLogins { get; set; }
 

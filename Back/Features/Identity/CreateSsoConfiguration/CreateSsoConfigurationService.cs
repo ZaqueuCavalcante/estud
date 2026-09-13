@@ -37,7 +37,7 @@ public class CreateSsoConfigurationService(EstudDbContext ctx, SsoEncryptionMana
         var domain = data.Domain.NormalizeSsoDomain()!;
         if (domain.IsPublicEmailDomain()) return SsoPublicDomainNotAllowed.I;
 
-        var domainTaken = await ctx.WebSsoAllowedDomains.AnyAsync(d => d.Domain == domain
+        var domainTaken = await ctx.SsoAllowedDomains.AnyAsync(d => d.Domain == domain
             && (d.Status == SsoDomainStatus.Verified || d.SsoConfiguration!.InstitutionId == institutionId));
         if (domainTaken) return SsoDomainAlreadyConfigured.I;
 

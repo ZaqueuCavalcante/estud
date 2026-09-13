@@ -19,7 +19,7 @@ public class MagicLinkLoginService(EstudDbContext ctx, SignInService signInServi
 
         if (!Guid.TryParse(data.Token, out var tokenId)) return InvalidMagicLink.I;
 
-        var magicLink = await ctx.WebMagicLinks.FirstOrDefaultAsync(t => t.Id == tokenId);
+        var magicLink = await ctx.MagicLinks.FirstOrDefaultAsync(t => t.Id == tokenId);
         if (magicLink == null) return InvalidMagicLink.I;
 
         if (magicLink.IsUsed()) return InvalidMagicLink.I;

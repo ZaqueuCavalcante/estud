@@ -67,7 +67,8 @@ public partial class IntegrationTests : IntegrationTestBase
 
         // Expire the token manually
         await using var ctx = _back.GetDbContext();
-        var magicLink = await ctx.WebMagicLinks.FirstAsync(t => t.Id == Guid.Parse(token));
+        ctx.Enrich($"Tests.UpdateMagicLinkExpiresAt");
+        var magicLink = await ctx.MagicLinks.FirstAsync(t => t.Id == Guid.Parse(token));
         magicLink.ExpiresAt = DateTime.UtcNow.AddHours(-1);
         await ctx.SaveChangesAsync();
 

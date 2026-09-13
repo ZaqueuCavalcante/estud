@@ -61,7 +61,7 @@ public static class SocialLoginScheme
         var frontendSettings = services.GetRequiredService<FrontendSettings>();
         var userManager = services.GetRequiredService<UserManager<EstudUser>>();
 
-        ctx.Enrich($"{nameof(SocialLoginScheme)}.{nameof(HandleTicketReceived)}");
+        ctx.Enrich("SocialLogin");
 
         // 1. Extract email from OAuth claims
         var email = context.Principal?.FindFirst(ClaimTypes.Email)?.Value ?? context.Principal?.FindFirst("email")?.Value;
