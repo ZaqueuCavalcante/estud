@@ -3,7 +3,7 @@
     {
         "solution": "../Estud.slnx",
         "project": "Back.csproj",
-        "test-runner": "vstest",
+        "test-runner": "mtp",
         "test-case-filter": "FullyQualifiedName~UnitTests",
         "mutation-level": "Complete",
         "coverage-analysis": "perTest",
