@@ -35,8 +35,6 @@ const classDetailPolicies: Record<UserType, PolicyName> = {
 }
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  if (import.meta.server) return
-
   const routePolicy = routePolicies[to.path]
   const isCampusDetail = to.path.startsWith('/campi/')
   const isClassDetail = to.path.startsWith('/classes/')
@@ -49,12 +47,24 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const isCourseOfferingDetail = to.path.startsWith('/course-offerings/')
   if (!routePolicy && !isClassDetail && !isClassroomDetail && !isCampusDetail && !isTeacherDetail && !isStudentDetail && !isDisciplineDetail && !isCourseDetail && !isCourseCurriculumRoute && !isCourseOfferingDetail) return
 
+  if (import.meta.server) {
+    if (!useCookie(BEARER_COOKIE).value) return navigateTo('/')
+    return
+  }
+
+  const config = useRuntimeConfig()
   const { account, fetchAccount } = useUserAccount()
 
   if (!account.value) {
     try {
       await fetchAccount()
     } catch {
+      // JWT ainda válido mas conta que não carrega (ex.: banco recriado): sem apagar o cookie,
+      // o redirect-if-logged mandaria de volta pra /home a cada F5 na landing.
+      await $fetch(`${config.public.backendUrl}/identity/logout`, {
+        method: 'POST',
+        credentials: 'include'
+      }).catch(() => {})
       return navigateTo('/')
     }
   }

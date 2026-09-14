@@ -3,6 +3,7 @@ import type { GetStudentCourseDetailsOut, StudentCourseDiscipline } from '~/type
 
 const { account } = useUserAccount()
 const config = useRuntimeConfig()
+const NuxtLink = resolveComponent('NuxtLink')
 
 const { data, status } = await useFetch<GetStudentCourseDetailsOut>(`${config.public.backendUrl}/students/course`, {
   credentials: 'include',
@@ -147,10 +148,13 @@ const meta = computed(() => {
             </div>
 
             <div class="grid gap-3 sm:grid-cols-2">
-              <div
+              <component
+                :is="disc.classId ? NuxtLink : 'div'"
                 v-for="disc in group.items"
                 :key="disc.id"
+                :to="disc.classId ? `/classes/${disc.classId}` : undefined"
                 class="flex items-start gap-3 rounded-lg p-3 ring ring-default bg-elevated/40"
+                :class="{ 'hover:bg-elevated transition-colors': disc.classId }"
               >
                 <span class="mt-1.5 size-2.5 shrink-0 rounded-full" :class="studentDisciplineStatusDot[disc.status] ?? 'bg-neutral-300 dark:bg-neutral-700'" />
                 <div class="min-w-0 flex-1">
@@ -165,7 +169,7 @@ const meta = computed(() => {
                 >
                   {{ studentDisciplineStatusLabels[disc.status] ?? disc.status }}
                 </UBadge>
-              </div>
+              </component>
             </div>
           </section>
 

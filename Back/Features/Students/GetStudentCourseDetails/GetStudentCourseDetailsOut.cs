@@ -34,6 +34,7 @@ public class GetStudentCourseDetailsOut : IApiDto<GetStudentCourseDetailsOut>
                     Credits = 4,
                     Workload = 60,
                     Status = StudentDisciplineStatus.Aprovada,
+                    ClassId = 10,
                 },
                 new GetStudentCourseDetailsDisciplineOut
                 {
@@ -43,6 +44,7 @@ public class GetStudentCourseDetailsOut : IApiDto<GetStudentCourseDetailsOut>
                     Credits = 4,
                     Workload = 60,
                     Status = StudentDisciplineStatus.Cursando,
+                    ClassId = 12,
                 },
                 new GetStudentCourseDetailsDisciplineOut
                 {
@@ -74,4 +76,9 @@ public class GetStudentCourseDetailsDisciplineOut
     /// Status da disciplina em relação ao aluno.
     /// </summary>
     public StudentDisciplineStatus Status { get; set; }
+
+    /// <summary>
+    /// Turma do aluno que definiu o status. Nula quando a disciplina não foi cursada.
+    /// </summary>
+    public int? ClassId { get; set; }
 }

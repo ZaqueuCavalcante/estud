@@ -543,6 +543,98 @@ public class ClassGradeUnitTests
 
     #endregion
 
+    #region Aproveitamento
+
+    [Test]
+    public void ClassGrade_Performance_Should_weigh_each_note_by_the_weight_of_its_activity()
+    {
+        // Arrange
+        List<(int Weight, decimal Note)> disputed = [(40, 8.0M), (50, 6.0M)];
+
+        // Act
+        var performance = ClassGrade.Performance(disputed);
+
+        // Assert — (8 × 40 + 6 × 50) / 90 = 68.888..., e não (8 + 6) / 20 = 70
+        performance.Should().Be(620M / 9M);
+    }
+
+    [Test]
+    public void ClassGrade_Performance_Should_consider_only_the_disputed_weight()
+    {
+        // Arrange — os outros 60 de peso ainda não foram disputados
+        List<(int Weight, decimal Note)> disputed = [(40, 8.0M)];
+
+        // Act
+        var performance = ClassGrade.Performance(disputed);
+
+        // Assert
+        performance.Should().Be(80M);
+    }
+
+    [Test]
+    public void ClassGrade_Performance_Should_count_a_disputed_work_with_zero_note()
+    {
+        // Arrange
+        List<(int Weight, decimal Note)> disputed = [(60, 10.0M), (40, 0.0M)];
+
+        // Act
+        var performance = ClassGrade.Performance(disputed);
+
+        // Assert
+        performance.Should().Be(60M);
+    }
+
+    [Test]
+    public void ClassGrade_Performance_Should_be_one_hundred_when_every_disputed_note_is_ten()
+    {
+        // Arrange
+        List<(int Weight, decimal Note)> disputed = [(20, 10.0M), (35, 10.0M)];
+
+        // Act
+        var performance = ClassGrade.Performance(disputed);
+
+        // Assert
+        performance.Should().Be(100M);
+    }
+
+    [Test]
+    public void ClassGrade_Performance_Should_be_null_when_nothing_was_disputed()
+    {
+        // Arrange
+        List<(int Weight, decimal Note)> disputed = [];
+
+        // Act
+        var performance = ClassGrade.Performance(disputed);
+
+        // Assert
+        performance.Should().BeNull();
+    }
+
+    [Test]
+    public void ClassGrade_Performance_Should_be_null_when_only_zero_weight_was_disputed()
+    {
+        // Arrange
+        List<(int Weight, decimal Note)> disputed = [(0, 7.0M)];
+
+        // Act
+        var performance = ClassGrade.Performance(disputed);
+
+        // Assert
+        performance.Should().BeNull();
+    }
+
+    [Test]
+    public void ClassGrade_Performance_Should_throw_when_the_works_are_null()
+    {
+        // Act
+        var act = () => ClassGrade.Performance(null!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    #endregion
+
     #region Entradas inválidas
 
     [Test]

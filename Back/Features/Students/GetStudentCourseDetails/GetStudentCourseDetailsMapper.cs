@@ -2,6 +2,14 @@ namespace Estud.Back.Features.Students.GetStudentCourseDetails;
 
 public static class GetStudentCourseDetailsMapper
 {
+    private static readonly StudentDisciplineStatus[] StatusPriority =
+    [
+        StudentDisciplineStatus.Aprovada,
+        StudentDisciplineStatus.Dispensada,
+        StudentDisciplineStatus.Cursando,
+        StudentDisciplineStatus.Reprovada,
+    ];
+
     extension(StudentClassStatus status)
     {
         public StudentDisciplineStatus ToStudentDisciplineStatus()
@@ -18,23 +26,26 @@ public static class GetStudentCourseDetailsMapper
         }
     }
 
-    extension(IEnumerable<StudentClassStatus> statuses)
+    extension(IEnumerable<(int ClassId, StudentClassStatus Status)> classes)
     {
         /// <summary>
         /// Um aluno pode ter cursado a mesma disciplina em várias turmas (ex: reprovou e refez).
         /// A prioridade escolhe o desfecho mais relevante: aprovação/dispensa (conclusão) primeiro,
-        /// depois "cursando", depois reprovação, e por fim "não cursada".
+        /// depois "cursando", depois reprovação, e por fim "não cursada" (sem turma).
+        /// Entre turmas com o mesmo desfecho, vale a mais recente.
         /// </summary>
-        public StudentDisciplineStatus ToBestStudentDisciplineStatus()
+        public (int? ClassId, StudentDisciplineStatus Status) ToBestStudentClass()
         {
-            var mapped = statuses.Select(s => s.ToStudentDisciplineStatus()).ToList();
+            var ranked = classes
+                .Select(c => (c.ClassId, Status: c.Status.ToStudentDisciplineStatus()))
+                .Where(c => StatusPriority.Contains(c.Status))
+                .OrderBy(c => Array.IndexOf(StatusPriority, c.Status))
+                .ThenByDescending(c => c.ClassId)
+                .ToList();
 
-            if (mapped.Contains(StudentDisciplineStatus.Aprovada)) return StudentDisciplineStatus.Aprovada;
-            if (mapped.Contains(StudentDisciplineStatus.Dispensada)) return StudentDisciplineStatus.Dispensada;
-            if (mapped.Contains(StudentDisciplineStatus.Cursando)) return StudentDisciplineStatus.Cursando;
-            if (mapped.Contains(StudentDisciplineStatus.Reprovada)) return StudentDisciplineStatus.Reprovada;
+            if (ranked.Count == 0) return (null, StudentDisciplineStatus.NaoCursada);
 
-            return StudentDisciplineStatus.NaoCursada;
+            return (ranked[0].ClassId, ranked[0].Status);
         }
     }
 }

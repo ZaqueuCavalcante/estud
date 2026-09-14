@@ -25,6 +25,7 @@ export interface StudentCourseDiscipline {
   credits: number
   workload: number
   status: string // 'NaoCursada' | 'Cursando' | 'Aprovada' | 'Dispensada' | 'Reprovada'
+  classId: number | null
 }
 
 export interface GetStudentCourseDetailsOut {

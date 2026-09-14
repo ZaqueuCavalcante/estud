@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { StudentClassActivityItem } from '~/types/classes'
 
-const props = defineProps<{ note: string, activities: StudentClassActivityItem[] }>()
+const props = defineProps<{ note: string, performance: number | null, activities: StudentClassActivityItem[] }>()
 
 const MAX_NOTE = 10
 const MAX_WEIGHT = 100
@@ -58,6 +58,7 @@ const bars = computed<Bar[]>(() => {
 })
 
 const earned = computed(() => props.activities.reduce((total, a) => total + a.ponderedValue, 0))
+const performanceLabel = computed(() => props.performance === null ? '—' : `${formatNote(props.performance)}%`)
 const tooltip = ref<{ x: number, y: number, bar: Bar } | null>(null)
 
 const tooltipStyle = computed(() => {
@@ -80,21 +81,32 @@ function formatNote(note: number) {
   return note.toFixed(2).replace(/0+$/, '').replace(/\.$/, '').replace('.', ',')
 }
 
+function workLabel(activity: StudentClassActivityItem) {
+  if (activity.workStatus === 'Finalized') {
+    return `Nota ${formatNote(activity.value)} · ${formatNote(activity.ponderedValue)} de ${formatNote(activity.weight / MAX_WEIGHT * MAX_NOTE)} pontos`
+  }
+  return `${classActivityWorkStatusLabels[activity.workStatus] ?? activity.workStatus} · sem nota`
+}
+
 function barLabel(bar: Bar) {
-  const note = bar.graded ? `nota ${formatNote(bar.activity.value)}` : 'sem nota'
-  return `${bar.activity.title} · peso ${bar.activity.weight}% · ${note}`
+  return `${bar.activity.title} · peso ${bar.activity.weight}% · ${workLabel(bar.activity)}`
 }
 </script>
 
 <template>
   <div class="flex flex-col gap-2 rounded-lg border border-default bg-elevated/40 p-4">
-    <div class="flex items-baseline justify-between gap-2">
+    <div class="flex items-start justify-between gap-2">
       <h3 class="font-medium text-highlighted">
         {{ note }}
       </h3>
-      <span class="text-sm text-muted">
-        <span class="font-medium text-highlighted">{{ formatNote(earned) }}</span> / {{ MAX_NOTE }}
-      </span>
+      <div class="flex flex-col items-end">
+        <span class="text-sm text-muted">
+          <span class="font-medium text-highlighted">{{ performanceLabel }}</span> de aproveitamento
+        </span>
+        <span class="text-xs text-dimmed">
+          {{ formatNote(earned) }} / {{ MAX_NOTE }} pontos
+        </span>
+      </div>
     </div>
 
     <div ref="chartRef" class="relative">
@@ -102,7 +114,7 @@ function barLabel(bar: Bar) {
         :width="width"
         :height="HEIGHT"
         role="img"
-        :aria-label="`Desempenho na ${note}: ${formatNote(earned)} de ${MAX_NOTE} pontos`"
+        :aria-label="`Desempenho na ${note}: ${performanceLabel} de aproveitamento, ${formatNote(earned)} de ${MAX_NOTE} pontos`"
         @mouseleave="() => { tooltip = null }"
       >
         <rect
@@ -133,6 +145,18 @@ function barLabel(bar: Bar) {
             </text>
           </template>
         </g>
+
+        <text
+          v-if="!bars.length"
+          :x="MARGIN.left + plotWidth / 2"
+          :y="MARGIN.top + plotHeight / 2"
+          text-anchor="middle"
+          dominant-baseline="middle"
+          fill="var(--ui-text-muted)"
+          class="text-xs"
+        >
+          Nenhuma atividade ainda
+        </text>
 
         <g
           v-for="bar in bars"
@@ -201,11 +225,8 @@ function barLabel(bar: Bar) {
         <span class="text-xs opacity-70">
           {{ classActivityTypeLabels[tooltip.bar.activity.type] ?? tooltip.bar.activity.type }} · peso {{ tooltip.bar.activity.weight }}%
         </span>
-        <span v-if="tooltip.bar.graded" class="text-xs opacity-70">
-          Nota {{ formatNote(tooltip.bar.activity.value) }} · {{ formatNote(tooltip.bar.activity.ponderedValue) }} de {{ formatNote(tooltip.bar.activity.weight / MAX_WEIGHT * MAX_NOTE) }} pontos
-        </span>
-        <span v-else class="text-xs opacity-70">
-          {{ classActivityWorkStatusLabels[tooltip.bar.activity.workStatus] ?? tooltip.bar.activity.workStatus }} · sem nota
+        <span class="text-xs opacity-70">
+          {{ workLabel(tooltip.bar.activity) }}
         </span>
         <span class="text-xs opacity-70">
           Entrega até {{ formatClassActivityDueDate(tooltip.bar.activity.dueDate, tooltip.bar.activity.dueHour) }}

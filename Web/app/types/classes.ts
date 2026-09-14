@@ -123,7 +123,13 @@ export interface StudentClassActivityItem {
   ponderedValue: number
 }
 
+export interface StudentClassNoteItem {
+  note: string // 'N1' | 'N2' | 'N3'
+  performance: number | null // aproveitamento na N (de 0% a 100%); null enquanto a N não tem atividade
+}
+
 export interface GetStudentClassActivitiesOut {
+  notes: StudentClassNoteItem[]
   activities: StudentClassActivityItem[]
 }
 

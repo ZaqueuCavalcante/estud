@@ -23,7 +23,7 @@ const { data: activitiesData } = await useFetch<GetStudentClassActivitiesOut>(
 )
 
 const activities = computed(() => activitiesData.value?.activities ?? [])
-const notes = computed(() => groupStudentActivitiesByNote(activities.value))
+const notes = computed(() => groupStudentActivitiesByNote(activitiesData.value?.notes ?? [], activities.value))
 </script>
 
 <template>
@@ -117,15 +117,21 @@ const notes = computed(() => groupStudentActivitiesByNote(activities.value))
         </section>
 
         <section v-if="notes.length" class="flex flex-col gap-3">
-          <h2 class="font-semibold text-highlighted">
-            Desempenho
-          </h2>
+          <div class="flex flex-col gap-1">
+            <h2 class="font-semibold text-highlighted">
+              Desempenho
+            </h2>
+            <p class="text-sm text-muted">
+              Cada coluna é uma atividade: a largura é o peso dela na nota e a altura é a sua nota.
+            </p>
+          </div>
 
-          <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div class="grid grid-cols-1 gap-4" :class="notes.length === 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-3'">
             <ClassesStudentNoteChart
               v-for="group in notes"
               :key="group.note"
               :note="group.note"
+              :performance="group.performance"
               :activities="group.activities"
             />
           </div>

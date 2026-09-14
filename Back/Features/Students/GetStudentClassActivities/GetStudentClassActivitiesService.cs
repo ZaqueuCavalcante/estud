@@ -1,3 +1,5 @@
+using Estud.Back.Domain.Classes;
+
 namespace Estud.Back.Features.Students.GetStudentClassActivities;
 
 public class GetStudentClassActivitiesService(EstudDbContext ctx) : IEstudService
@@ -14,6 +16,11 @@ public class GetStudentClassActivitiesService(EstudDbContext ctx) : IEstudServic
         var enrolled = await ctx.ClassStudents.AsNoTracking().AnyAsync(cs => cs.ClassId == classId && cs.StudentId == studentId);
         if (!enrolled) return StudentNotEnrolledInClass.I;
 
+        var gradeRule = await ctx.InstitutionConfigs.AsNoTracking()
+            .Where(c => c.InstitutionId == institutionId)
+            .Select(c => c.GradeRule)
+            .FirstAsync();
+
         var activities = await ctx.ClassActivities.AsNoTracking()
             .Where(a => a.ClassId == classId)
             .OrderBy(a => a.Note)
@@ -25,9 +32,29 @@ public class GetStudentClassActivitiesService(EstudDbContext ctx) : IEstudServic
             })
             .ToListAsync();
 
+        var items = activities.ConvertAll(x => x.Activity.ToGetStudentClassActivitiesItemOut(x.Work));
+
+        var notes = gradeRule.NoteTypes
+            .Union(items.Select(i => i.Note))
+            .Order()
+            .Select(note =>
+            {
+                var performance = ClassGrade.Performance(items
+                    .Where(i => i.Note == note)
+                    .Select(i => (i.Weight, i.Value)));
+
+                return new GetStudentClassActivitiesNoteOut
+                {
+                    Note = note,
+                    Performance = performance.HasValue ? Math.Round(performance.Value, 1, MidpointRounding.AwayFromZero) : null,
+                };
+            })
+            .ToList();
+
         return new GetStudentClassActivitiesOut
         {
-            Activities = activities.ConvertAll(x => x.Activity.ToGetStudentClassActivitiesItemOut(x.Work)),
+            Notes = notes,
+            Activities = items,
         };
     }
 }

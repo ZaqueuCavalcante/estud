@@ -124,11 +124,13 @@ public partial class IntegrationTests
         algorithmsItem.Credits.Should().Be(4);
         algorithmsItem.Workload.Should().Be(60);
         algorithmsItem.Status.Should().Be(StudentDisciplineStatus.Cursando);
+        algorithmsItem.ClassId.Should().Be(@class.Id);
 
         var databasesItem = details.Disciplines.Single(d => d.Id == databases.Id);
         databasesItem.Name.Should().Be("Banco de Dados");
         databasesItem.Period.Should().Be(2);
         databasesItem.Status.Should().Be(StudentDisciplineStatus.NaoCursada);
+        databasesItem.ClassId.Should().BeNull();
     }
 
     [Test]

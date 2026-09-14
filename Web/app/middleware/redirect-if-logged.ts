@@ -1,6 +1,3 @@
-// Nome do cookie httpOnly onde o backend guarda o JWT (ver JwtBearerScheme.Cookie no Back).
-const BEARER_COOKIE = 'X-Estud-BearerCookie'
-
 // Redireciona usuários já logados de / para /home, decidindo no servidor (SSR).
 //
 // O cookie de auth é httpOnly — invisível ao JS do browser —, mas o SSR do Nuxt enxerga

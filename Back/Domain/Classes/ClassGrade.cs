@@ -38,6 +38,21 @@ public static class ClassGrade
         }
     }
 
+    /// <summary>
+    /// Aproveitamento (de 0% a 100%): pontos ganhos sobre os pontos disputados até o momento.
+    /// Retorna null quando nenhum peso foi disputado ainda.
+    /// </summary>
+    public static decimal? Performance(IEnumerable<(int Weight, decimal Note)> disputed)
+    {
+        ArgumentNullException.ThrowIfNull(disputed);
+
+        var works = disputed.ToList();
+        var weight = works.Sum(w => w.Weight);
+        if (weight == 0) return null;
+
+        return works.Sum(w => w.Note * w.Weight) * 10 / weight;
+    }
+
     private static Dictionary<ClassNoteType, decimal> Notes(IEnumerable<(ClassNoteType NoteType, int Weight, decimal Note)> works)
     {
         ArgumentNullException.ThrowIfNull(works);

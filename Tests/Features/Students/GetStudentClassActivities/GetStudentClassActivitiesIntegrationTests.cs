@@ -292,5 +292,67 @@ public partial class IntegrationTests
         item.PonderedValue.Should().Be(1.8m);
     }
 
+    [Test]
+    public async Task Students_GetStudentClassActivities_Should_get_every_note_type_of_the_institution_without_performance_when_there_are_no_activities()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var student = await _back.LoginAs(@class.StudentEmail);
+
+        // Act
+        var result = await student.GetStudentClassActivities(@class.Id);
+
+        // Assert
+        var notes = result.Success.Notes;
+        notes.Select(n => n.Note).Should().Equal(ClassNoteType.N1, ClassNoteType.N2, ClassNoteType.N3);
+        notes.Should().OnlyContain(n => n.Performance == null);
+    }
+
+    [Test]
+    public async Task Students_GetStudentClassActivities_Should_get_performance_over_the_weight_of_the_activities_of_each_note()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var first = await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 40).Success();
+        var second = await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 30).Success();
+        await teacherClient.ShortcutAddStudentActivityNote(@class.Id, first.Id, @class.StudentIds[0], 8);
+        await teacherClient.ShortcutAddStudentActivityNote(@class.Id, second.Id, @class.StudentIds[0], 6);
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+
+        // Act
+        var result = await client.GetStudentClassActivities(@class.Id);
+
+        // Assert — (8 × 40 + 6 × 30) / 70 = 71.428..., e os 30 de peso sem atividade ficam de fora
+        result.Success.Notes.Single(n => n.Note == ClassNoteType.N1).Performance.Should().Be(71.4M);
+        result.Success.Notes.Single(n => n.Note == ClassNoteType.N2).Performance.Should().BeNull();
+    }
+
+    [Test]
+    public async Task Students_GetStudentClassActivities_Should_count_an_activity_without_note_as_zero_in_the_performance()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var graded = await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N2, weight: 60).Success();
+        await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N2, weight: 40);
+        await teacherClient.ShortcutAddStudentActivityNote(@class.Id, graded.Id, @class.StudentIds[0], 10);
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+
+        // Act
+        var result = await client.GetStudentClassActivities(@class.Id);
+
+        // Assert — (10 × 60 + 0 × 40) / 100
+        result.Success.Notes.Single(n => n.Note == ClassNoteType.N2).Performance.Should().Be(60M);
+    }
+
     #endregion
 }

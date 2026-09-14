@@ -44,24 +44,29 @@ public class GetStudentCourseDetailsService(EstudDbContext ctx) : IEstudService
             .Where(cs => cs.StudentId == studentId
                 && cs.Class!.InstitutionId == institutionId
                 && disciplineIds.Contains(cs.Class.DisciplineId))
-            .Select(cs => new { cs.Class!.DisciplineId, cs.Status })
+            .Select(cs => new { cs.ClassId, cs.Class!.DisciplineId, cs.Status })
             .ToListAsync();
 
-        var statusMap = classStatuses
+        var bestClassMap = classStatuses
             .GroupBy(x => x.DisciplineId)
-            .ToDictionary(g => g.Key, g => g.Select(x => x.Status).ToBestStudentDisciplineStatus());
+            .ToDictionary(g => g.Key, g => g.Select(x => (x.ClassId, x.Status)).ToBestStudentClass());
 
         var disciplines = links
             .OrderBy(l => l.Period)
             .ThenBy(l => nameMap.GetValueOrDefault(l.DisciplineId, string.Empty))
-            .Select(l => new GetStudentCourseDetailsDisciplineOut
+            .Select(l =>
             {
-                Id = l.DisciplineId,
-                Name = nameMap.GetValueOrDefault(l.DisciplineId, string.Empty),
-                Period = l.Period,
-                Credits = l.Credits,
-                Workload = l.Workload,
-                Status = statusMap.GetValueOrDefault(l.DisciplineId, StudentDisciplineStatus.NaoCursada),
+                var best = bestClassMap.GetValueOrDefault(l.DisciplineId, (null, StudentDisciplineStatus.NaoCursada));
+                return new GetStudentCourseDetailsDisciplineOut
+                {
+                    Id = l.DisciplineId,
+                    Name = nameMap.GetValueOrDefault(l.DisciplineId, string.Empty),
+                    Period = l.Period,
+                    Credits = l.Credits,
+                    Workload = l.Workload,
+                    Status = best.Status,
+                    ClassId = best.ClassId,
+                };
             })
             .ToList();
 

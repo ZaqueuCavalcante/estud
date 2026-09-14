@@ -1,4 +1,4 @@
-import type { ClassLessonItem, ClassSchedule, StudentClassActivityItem } from '~/types/classes'
+import type { ClassLessonItem, ClassSchedule, StudentClassActivityItem, StudentClassNoteItem } from '~/types/classes'
 
 type BadgeColor = 'neutral' | 'primary' | 'success' | 'warning' | 'error' | 'info'
 
@@ -127,19 +127,11 @@ export function isFutureClassLesson(lesson: ClassLessonItem) {
   return lesson.date > new Date().toISOString().slice(0, 10)
 }
 
-export function groupStudentActivitiesByNote(activities: StudentClassActivityItem[]) {
-  const groups = new Map<string, StudentClassActivityItem[]>()
-
-  for (const activity of activities) {
-    const group = groups.get(activity.note)
-    if (group) group.push(activity)
-    else groups.set(activity.note, [activity])
-  }
-
-  return [...groups]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([note, items]) => ({
-      note,
-      activities: items.sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
-    }))
+export function groupStudentActivitiesByNote(notes: StudentClassNoteItem[], activities: StudentClassActivityItem[]) {
+  return notes.map(note => ({
+    ...note,
+    activities: activities
+      .filter(a => a.note === note.note)
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
+  }))
 }
