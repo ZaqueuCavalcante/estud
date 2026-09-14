@@ -33,7 +33,7 @@ export interface CheckSsoAvailabilityResponse {
   providerType: SsoProviderType | null
 }
 
-export type RoleBaseType = 'Manager' | 'Teacher' | 'Student' | 'Parent'
+export type RoleBaseType = 'Manager' | 'Teacher' | 'Student'
 
 export interface TwoFactorEnforcementItem {
   roleId: number

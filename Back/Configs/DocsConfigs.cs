@@ -46,7 +46,6 @@ public static class DocsConfigs
                 if (group == "classes") return ["👩🏻‍🏫 Classes"];
                 if (group == "classrooms") return ["📈 Classrooms"];
                 if (group == "notifications") return ["🔔 Notifications"];
-                if (group == "parents") return ["👨‍👩‍👧 Parents"];
                 if (group == "institutions") return ["🏢 Institutions"];
                 return ["🧱 Cross"];
             });

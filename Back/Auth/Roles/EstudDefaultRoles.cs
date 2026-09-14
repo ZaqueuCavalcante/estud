@@ -18,7 +18,6 @@ public static class EstudDefaultRoles
 			EstudPermissions.ManageClasses.Id,
             EstudPermissions.ManagePeriods.Id,
 			EstudPermissions.ManageCourses.Id,
-            EstudPermissions.ManageParents.Id,
 			EstudPermissions.ManageTeachers.Id,
             EstudPermissions.ManageWebhooks.Id,
             EstudPermissions.ManageStudents.Id,
@@ -48,15 +47,6 @@ public static class EstudDefaultRoles
 		NormalizedName = "ALUNO",
 		Description = "Participa das aulas e é avaliado.",
 		BaseType = UserType.Student,
-		Permissions = [],
-	};
-
-	public static EstudRole Parent => new()
-    {
-		Name = "Responsável",
-		NormalizedName = "RESPONSAVEL",
-		Description = "Acompanha a vida escolar dos alunos vinculados.",
-		BaseType = UserType.Parent,
 		Permissions = [],
 	};
 }

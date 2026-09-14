@@ -257,8 +257,6 @@ public partial class IntegrationTests
     [Test]
     [TestCase("Diretor")]
     [TestCase("  Diretor  ")]
-    [TestCase("Responsável")]
-    [TestCase("Responsavel")]
     public async Task Identity_UpdateRole_Should_not_update_role_when_name_conflicts_with_a_default_role(string name)
     {
         // Arrange

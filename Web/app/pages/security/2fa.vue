@@ -15,7 +15,6 @@ const baseTypeLabels: Record<string, string> = {
   Manager: 'Gestor',
   Teacher: 'Professor',
   Student: 'Aluno',
-  Parent: 'Responsável',
 }
 
 async function toggleRole(role: TwoFactorEnforcementItem, required: boolean) {

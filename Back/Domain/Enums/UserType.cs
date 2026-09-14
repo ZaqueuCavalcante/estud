@@ -10,7 +10,4 @@ public enum UserType
 
     [Description("Aluno")]
     Student = 2,
-
-    [Description("Responsável")]
-    Parent = 3,
 }

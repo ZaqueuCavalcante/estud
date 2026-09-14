@@ -19,14 +19,13 @@ export interface SidebarGroup {
 export const CURRENT_CLASSES_GROUP_ID = 'turmas'
 
 // O primeiro grupo não tem título: pro Manager ele fica vazio (e é descartado),
-// e pros demais perfis (Professor, Aluno, Responsável) é a sidebar inteira —
+// e pros demais perfis (Professor, Aluno) é a sidebar inteira —
 // poucos itens, que não ganham nada em serem categorizados. A Home não está
 // aqui: o logo do Estud no topo já leva pra ela.
 export const sidebarGroups: SidebarGroup[] = [
   {
     id: 'geral',
     items: [
-      { label: 'Filhos',        icon: 'i-lucide-users-round',    to: '/children',           policy: 'AccessChildrenPage' },
       { label: 'Agenda',        icon: 'i-lucide-calendar-days',  to: '/agenda',             policy: 'AccessAgendaPage' },
       { label: 'Frequência',    icon: 'i-lucide-calendar-check', to: '/frequencies',        policy: 'AccessFrequenciesPage' },
       { label: 'Documentos',    icon: 'i-lucide-file-text',      to: '/documents',          policy: 'AccessDocumentsPage' },
@@ -61,7 +60,6 @@ export const sidebarGroups: SidebarGroup[] = [
     items: [
       { label: 'Alunos',        icon: 'i-lucide-graduation-cap', to: '/students',           policy: 'AccessStudentsPage' },
       { label: 'Professores',   icon: 'i-lucide-user-pen',       to: '/teachers',           policy: 'AccessTeachersPage' },
-      { label: 'Responsáveis',  icon: 'i-lucide-users',          to: '/parents',            policy: 'AccessParentsPage' },
     ],
   },
   {

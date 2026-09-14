@@ -643,46 +643,6 @@ export const dbSchema: DbTable[] = [
     ],
   },
   {
-    table: "parent_students",
-    entity: "ParentStudent",
-    file: "Back/Database/Parents/ParentStudentDbConfig.cs",
-    pk: ["id"],
-    columns: [
-      { name: "id", prop: "Id", type: "integer", clr: "int", nullable: false },
-      { name: "institution_id", prop: "InstitutionId", type: "integer", clr: "int", nullable: false },
-      { name: "parent_id", prop: "ParentId", type: "integer", clr: "int", nullable: false },
-      { name: "student_id", prop: "StudentId", type: "integer", clr: "int", nullable: false },
-      { name: "relationship", prop: "Relationship", type: "integer", clr: "ParentRelationship", nullable: false, enum: "ParentRelationship" },
-      { name: "status", prop: "Status", type: "integer", clr: "ParentStudentStatus", nullable: false, enum: "ParentStudentStatus" },
-      { name: "revoked_by_student", prop: "RevokedByStudent", type: "boolean", clr: "bool", nullable: false },
-      { name: "created_at", prop: "CreatedAt", type: "timestamp with time zone", clr: "DateTime", nullable: false },
-    ],
-    fks: [
-      { columns: ["parent_id"], target: "parents", targetEntity: "EstudParent", principal: [], nav: "Parent", convention: false },
-      { columns: ["student_id"], target: "students", targetEntity: "EstudStudent", principal: [], nav: "Student", convention: false },
-    ],
-    indexes: [
-      { columns: ["parent_id", "student_id"], unique: true },
-    ],
-  },
-  {
-    table: "parents",
-    entity: "EstudParent",
-    file: "Back/Database/Parents/EstudParentDbConfig.cs",
-    pk: ["id"],
-    columns: [
-      { name: "id", prop: "Id", type: "integer", clr: "int", nullable: false },
-      { name: "institution_id", prop: "InstitutionId", type: "integer", clr: "int", nullable: false },
-      { name: "user_id", prop: "UserId", type: "integer", clr: "int", nullable: false },
-      { name: "name", prop: "Name", type: "text", clr: "string", nullable: false },
-    ],
-    fks: [
-      { columns: ["institution_id", "user_id"], target: "users", targetEntity: "EstudUser", principal: ["institution_id", "id"], nav: "User", convention: false },
-    ],
-    indexes: [
-    ],
-  },
-  {
     table: "received_webhook_events",
     entity: "ReceivedWebhookEvent",
     file: "Back/Database/Webhooks/ReceivedWebhookEventDbConfig.cs",

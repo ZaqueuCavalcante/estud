@@ -7,6 +7,9 @@ export const Permissions = {
   ManageSso: 1,
   ManageTwoFactor: 2,
 
+  // Institutions
+  ManageInstitutionConfig: 100,
+
   // Campi
   ManageCampi: 200,
 
@@ -45,12 +48,6 @@ export const Permissions = {
 
   // Calendar
   ManageCalendar: 1400,
-
-  // Institutions
-  ManageInstitutionConfig: 1500,
-
-  // Parents
-  ManageParents: 1600,
 } as const
 
 export type PermissionId = typeof Permissions[keyof typeof Permissions]
@@ -62,7 +59,6 @@ export const UserTypes = {
   Manager: 'Manager',
   Teacher: 'Teacher',
   Student: 'Student',
-  Parent: 'Parent',
 } as const
 
 export type UserTypeValue = typeof UserTypes[keyof typeof UserTypes]
@@ -210,11 +206,6 @@ export type PolicyName
     | 'AccessConfigsPage'
     | 'GetInstitutionConfig'
     | 'SetupInstitutionConfig'
-  // Parents
-    | 'AccessParentsPage'
-    | 'CreateParent'
-  // Children
-    | 'AccessChildrenPage'
   // Frequencies
     | 'AccessFrequenciesPage'
   // Documents

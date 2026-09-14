@@ -63,7 +63,6 @@ public class Institution
         {
             Roles =
             [
-                EstudDefaultRoles.Parent,
                 EstudDefaultRoles.Student,
                 EstudDefaultRoles.Teacher,
                 EstudDefaultRoles.Director,

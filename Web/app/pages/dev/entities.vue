@@ -62,7 +62,7 @@ const groups: Record<GroupId, GroupInfo> = {
   people: {
     label: 'Pessoas & papéis',
     icon: 'i-lucide-users',
-    description: 'Aluno, professor, responsável e administrativo — cada papel com seus vínculos.',
+    description: 'Aluno, professor e administrativo — cada papel com seus vínculos.',
   },
   notifications: {
     label: 'Notificações',
@@ -82,7 +82,7 @@ const groups: Record<GroupId, GroupInfo> = {
 }
 
 const tables: TableRow[] = [
-  { table: 'users', entity: 'EstudUser', group: 'identity', dbSet: 'Users', note: 'Usuário do sistema. Um usuário pertence a uma instituição e pode acumular papéis (aluno, professor, responsável).' },
+  { table: 'users', entity: 'EstudUser', group: 'identity', dbSet: 'Users', note: 'Usuário do sistema. Um usuário pertence a uma instituição e pode acumular papéis (aluno, professor).' },
   { table: 'roles', entity: 'EstudRole', group: 'identity', dbSet: 'Roles', note: 'Perfil de acesso por instituição. Há papéis padrão em EstudDefaultRoles.' },
   { table: 'user_roles', entity: 'EstudUserRole', group: 'identity', dbSet: 'UserRoles', join: true, note: 'Vínculo usuário ↔ perfil.' },
   { table: 'user_claims', entity: 'EstudUserClaim', group: 'identity', dbSet: 'UserClaims', note: 'Claims atribuídas diretamente ao usuário.' },
@@ -131,8 +131,6 @@ const tables: TableRow[] = [
   { table: 'teachers', entity: 'EstudTeacher', group: 'people', dbSet: 'Teachers', note: 'Professor. O usuário também é criado junto, no CreateTeacher.' },
   { table: 'teachers_campi', entity: 'TeacherCampus', group: 'people', dbSet: 'TeachersCampi', join: true, note: 'Campi onde o professor pode lecionar.' },
   { table: 'teachers_disciplines', entity: 'TeacherDiscipline', group: 'people', dbSet: 'TeachersDisciplines', join: true, note: 'Disciplinas que o professor pode lecionar. Validado ao vincular a uma turma.' },
-  { table: 'parents', entity: 'EstudParent', group: 'people', dbSet: 'Parents', note: 'Responsável por um ou mais alunos.' },
-  { table: 'parent_students', entity: 'ParentStudent', group: 'people', dbSet: 'ParentStudents', join: true, note: 'Vínculo responsável ↔ aluno.' },
   { table: 'admin_users', entity: 'AdminUser', group: 'people', dbSet: 'AdminUsers', note: 'Usuário administrativo, fora do escopo de uma instituição.' },
 
   { table: 'notifications', entity: 'Notification', group: 'notifications', dbSet: 'Notifications', note: 'Conteúdo da notificação, criado no escopo da instituição.' },

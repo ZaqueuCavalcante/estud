@@ -31,7 +31,7 @@ public class EstudPermissionsIsAllowedForUnitTests
     [TestCase(0)]      // ManageRoles, primeiro id do enum de grupos
     [TestCase(100)]    // ManageInstitutionConfig
     [TestCase(1000)]   // ManageClasses, primeiro id de 4 dígitos
-    [TestCase(1600)]   // ManageParents, maior id declarado
+    [TestCase(1400)]   // ManageCalendar, maior id declarado
     public void EstudPermissions_IsAllowedFor_Should_allow_manager_on_boundary_ids(int permissionId)
     {
         var result = EstudPermissions.IsAllowedFor(permissionId, UserType.Manager);
@@ -55,7 +55,6 @@ public class EstudPermissionsIsAllowedForUnitTests
     [Test]
     [TestCase(UserType.Teacher)]
     [TestCase(UserType.Student)]
-    [TestCase(UserType.Parent)]
     public void EstudPermissions_IsAllowedFor_Should_not_allow_non_manager_types_on_any_permission(UserType userType)
     {
         var allowed = EstudPermissions.Permissions
@@ -75,8 +74,8 @@ public class EstudPermissionsIsAllowedForUnitTests
     [TestCase(3)]              // logo após ManageTwoFactor (2)
     [TestCase(99)]             // logo antes de ManageInstitutionConfig (100)
     [TestCase(101)]
-    [TestCase(1500)]           // buraco real entre Calendar (1400) e Parents (1600)
-    [TestCase(1601)]           // logo após o maior id declarado
+    [TestCase(1401)]           // logo após o maior id declarado
+    [TestCase(1500)]           // id do próximo grupo, ainda não declarado
     [TestCase(int.MaxValue)]
     [TestCase(int.MinValue)]
     public void EstudPermissions_IsAllowedFor_Should_not_allow_when_permission_does_not_exist(int permissionId)
@@ -101,7 +100,7 @@ public class EstudPermissionsIsAllowedForUnitTests
     #region Invalid user type
 
     [Test]
-    [TestCase((UserType)4)]    // primeiro valor fora do enum
+    [TestCase((UserType)3)]    // primeiro valor fora do enum
     [TestCase((UserType)99)]
     [TestCase((UserType)(-1))]
     [TestCase((UserType)int.MaxValue)]

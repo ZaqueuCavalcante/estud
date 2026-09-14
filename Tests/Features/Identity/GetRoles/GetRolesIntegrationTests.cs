@@ -49,7 +49,7 @@ public partial class IntegrationTests
 
         // Assert
         var roles = result.Success;
-        roles.Total.Should().Be(4);
+        roles.Total.Should().Be(3);
     }
 
     #endregion

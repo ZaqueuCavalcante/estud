@@ -166,7 +166,6 @@ public partial class IntegrationTests
     [Test]
     [TestCase(UserType.Teacher)]
     [TestCase(UserType.Student)]
-    [TestCase(UserType.Parent)]
     public async Task Identity_CreateRole_Should_not_create_role_with_manager_permissions_for_non_manager_base_types(UserType baseType)
     {
         // Arrange
@@ -248,8 +247,6 @@ public partial class IntegrationTests
     [TestCase("Diretor")]
     [TestCase("Professor")]
     [TestCase("Aluno")]
-    [TestCase("Responsável")]
-    [TestCase("Responsavel")]
     public async Task Identity_CreateRole_Should_not_create_role_when_name_conflicts_with_a_default_role(string name)
     {
         // Arrange
@@ -384,7 +381,6 @@ public partial class IntegrationTests
     [Test]
     [TestCase(UserType.Teacher)]
     [TestCase(UserType.Student)]
-    [TestCase(UserType.Parent)]
     public async Task Identity_CreateRole_Should_create_role_for_non_manager_base_types_without_permissions(UserType baseType)
     {
         // Arrange

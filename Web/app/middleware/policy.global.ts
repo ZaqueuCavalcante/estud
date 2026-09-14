@@ -13,7 +13,6 @@ const routePolicies: Record<string, PolicyName> = {
   '/integrations/calls': 'AccessIntegrationsPage',
   '/teachers': 'AccessTeachersPage',
   '/students': 'AccessStudentsPage',
-  '/parents': 'AccessParentsPage',
   '/disciplines': 'AccessDisciplinesPage',
   '/course-offerings': 'AccessCourseOfferingsPage',
   '/course-curriculums': 'AccessCourseCurriculumsPage',
@@ -23,7 +22,6 @@ const routePolicies: Record<string, PolicyName> = {
   '/documents': 'AccessDocumentsPage',
   '/calendar': 'AccessCalendarPage',
   '/configs': 'AccessConfigsPage',
-  '/children': 'AccessChildrenPage',
   '/admin/institutions': 'AccessAdminInstitutionsPage',
   '/admin/domain-events': 'AccessAdminDomainEventsPage',
 }
@@ -34,7 +32,6 @@ const classDetailPolicies: Record<UserType, PolicyName> = {
   Manager: 'AccessClassesPage',
   Teacher: 'GetTeacherClass',
   Student: 'GetStudentClass',
-  Parent: 'GetStudentClass', // responsável ainda não tem detalhe de turma; a policy exige Student e o redireciona pra /home
 }
 
 export default defineNuxtRouteMiddleware(async (to) => {

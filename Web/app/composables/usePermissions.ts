@@ -1,4 +1,4 @@
-export type UserTypeName = 'Manager' | 'Teacher' | 'Student' | 'Parent'
+export type UserTypeName = 'Manager' | 'Teacher' | 'Student'
 
 export interface PermissionItem {
   id: number
@@ -27,20 +27,19 @@ export const userTypeLabels: Record<UserTypeName, string> = {
   Manager: 'Gestor',
   Teacher: 'Professor',
   Student: 'Aluno',
-  Parent: 'Responsável',
 }
 
 // A ordem é a do enum `UserType` no backend: o índice de cada nome é o valor
 // que a API espera em `baseType`.
-export const userTypeNames: UserTypeName[] = ['Manager', 'Teacher', 'Student', 'Parent']
+export const userTypeNames: UserTypeName[] = ['Manager', 'Teacher', 'Student']
 
 export const baseTypeOptions = userTypeNames.map((name, value) => ({
   label: userTypeLabels[name],
   value,
 }))
 
-// O tipo base não é só um filtro da lista de permissões: as telas de professor,
-// aluno e responsável são liberadas por ele sozinho, sem nenhuma permissão.
+// O tipo base não é só um filtro da lista de permissões: as telas de professor
+// e aluno são liberadas por ele sozinho, sem nenhuma permissão.
 export const baseTypeAccess: Record<UserTypeName, BaseTypeAccess> = {
   Manager: {
     title: 'O tipo base Gestor não libera nada sozinho',
@@ -53,10 +52,6 @@ export const baseTypeAccess: Record<UserTypeName, BaseTypeAccess> = {
   Student: {
     title: 'O tipo base Aluno já libera as telas de aluno',
     description: 'Quem tem este perfil acessa a própria agenda, as turmas e o curso em que está matriculado, as atividades e entregas, a frequência e a declaração de matrícula.',
-  },
-  Parent: {
-    title: 'O tipo base Responsável já libera as telas de responsável',
-    description: 'Quem tem este perfil acessa a agenda e o acompanhamento dos alunos vinculados a ele.',
   },
 }
 
@@ -77,7 +72,7 @@ export const permissionCategories: PermissionCategory[] = [
   {
     label: 'Pessoas',
     icon: 'i-lucide-contact',
-    groups: ['Students', 'Teachers', 'Parents'],
+    groups: ['Students', 'Teachers'],
   },
   {
     label: 'Sistema',

@@ -187,7 +187,6 @@ const groups = computed(() => [
     <NotificationsSlideover />
 
     <div class="fixed top-4 right-6 z-50 flex items-center gap-3">
-      <ChildrenSelector />
       <ColorModeToggle />
       <UChip
         :text="unreadCount > 9 ? '+9' : unreadCount"

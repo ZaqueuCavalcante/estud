@@ -777,126 +777,6 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task ScheduleFunctional_Student_with_parent()
-    {
-        // Arrange
-        var directorClient = await _back.LoggedAsDirector();
-
-        var campus = await directorClient.CreateCampus(name: "Agreste I").Success();
-        var sala01 = await directorClient.CreateClassroom(campus.Id, name: "Sala 01").Success();
-        var sala02 = await directorClient.CreateClassroom(campus.Id, name: "Sala 02").Success();
-
-        var period = await directorClient.ShortcutGetFirstAcademicPeriod();
-
-        var course = await directorClient.CreateCourse(name: "ADS").Success();
-        var geometria = await directorClient.CreateDiscipline(name: "Geometria").Success();
-        var algoritmos = await directorClient.CreateDiscipline(name: "Algoritmos").Success();
-        await directorClient.AssignDisciplinesToCourse(course.Id, [geometria.Id, algoritmos.Id]);
-        var curriculum = await directorClient.CreateCourseCurriculum(course.Id, "Grade ADS 2024",
-        [
-            new(geometria.Id, 1, 4, 80),
-            new(algoritmos.Id, 1, 4, 80),
-        ]).Success();
-        var offering = await directorClient.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id, CourseSession.Morning).Success();
-
-        var teacherA = await directorClient.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
-        await directorClient.AssignDisciplinesToTeacher(teacherA.Id, [geometria.Id]);
-        await directorClient.AssignCampiToTeacher(teacherA.Id, [campus.Id]);
-
-        var teacherB = await directorClient.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
-        await directorClient.AssignDisciplinesToTeacher(teacherB.Id, [algoritmos.Id]);
-        await directorClient.AssignCampiToTeacher(teacherB.Id, [campus.Id]);
-
-        var geometriaClass = await directorClient.CreateClass(geometria.Id, period.Id, campusId: campus.Id).Success();
-        await directorClient.UpdateClassTeachers(geometriaClass.Id, [teacherA.Id]);
-        await directorClient.UpdateClassSchedules(geometriaClass.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacherA.Id, sala01.Id)]);
-        await directorClient.ReleaseClassForEnrollment(geometriaClass.Id);
-
-        var algoritmosClass = await directorClient.CreateClass(algoritmos.Id, period.Id, campusId: campus.Id).Success();
-        await directorClient.UpdateClassTeachers(algoritmosClass.Id, [teacherB.Id]);
-        await directorClient.UpdateClassSchedules(algoritmosClass.Id, [(Day.Wednesday, Hour.H19_00, Hour.H22_00, teacherB.Id, sala02.Id)]);
-        await directorClient.ReleaseClassForEnrollment(algoritmosClass.Id);
-
-        // Aluno com um responsável só.
-        var onlyChild = await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        await directorClient.EnrollStudentInCourseOffering(onlyChild.Id, offering.Id);
-        await directorClient.AssignStudentToClass(onlyChild.Id, geometriaClass.Id);
-
-        // Irmãos em turmas diferentes.
-        var firstSibling = await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        await directorClient.EnrollStudentInCourseOffering(firstSibling.Id, offering.Id);
-        await directorClient.AssignStudentToClass(firstSibling.Id, geometriaClass.Id);
-
-        var secondSibling = await directorClient.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        await directorClient.EnrollStudentInCourseOffering(secondSibling.Id, offering.Id);
-        await directorClient.AssignStudentToClass(secondSibling.Id, algoritmosClass.Id);
-
-        await directorClient.StartClass(geometriaClass.Id);
-        await directorClient.StartClass(algoritmosClass.Id);
-
-        // Fotografia da ocupação antes de existir qualquer responsável.
-        var occupancyBeforeParents = await directorClient.GetCampusOccupancy(campus.Id).Success();
-
-        var singleParent = await directorClient.CreateParent(DataGen.UserName, DataGen.Email,
-        [
-            new() { StudentId = onlyChild.Id, Relationship = ParentRelationship.Mother },
-        ]).Success();
-
-        var siblingsParent = await directorClient.CreateParent(DataGen.UserName, DataGen.Email,
-        [
-            new() { StudentId = firstSibling.Id, Relationship = ParentRelationship.Father },
-            new() { StudentId = secondSibling.Id, Relationship = ParentRelationship.Father },
-        ]).Success();
-
-        var singleParentClient = await _back.LoginAs(singleParent.Email);
-        var siblingsParentClient = await _back.LoginAs(siblingsParent.Email);
-
-        // Act
-        var occupancy = await directorClient.GetCampusOccupancy(campus.Id).Success();
-        var singleParentChildren = await singleParentClient.GetParentStudents().Success();
-        var siblingsParentChildren = await siblingsParentClient.GetParentStudents().Success();
-        var onlyChildAgenda = await singleParentClient.GetParentStudentAgenda(onlyChild.Id).Success();
-        var firstSiblingAgenda = await siblingsParentClient.GetParentStudentAgenda(firstSibling.Id).Success();
-        var secondSiblingAgenda = await siblingsParentClient.GetParentStudentAgenda(secondSibling.Id).Success();
-
-        // Assert — manager: o Parent não muda nenhum indicador.
-        occupancy.OverallUsedMinutesRate.Should().Be(occupancyBeforeParents.OverallUsedMinutesRate);
-        occupancy.Cells.Sum(c => c.UsedMinutes).Should().Be(360);
-
-        // Assert — parent: lista de filhos vinculados.
-        var onlyChildItem = singleParentChildren.Items.Should().ContainSingle().Which;
-        onlyChildItem.Id.Should().Be(onlyChild.Id);
-        onlyChildItem.Relationship.Should().Be(ParentRelationship.Mother);
-        onlyChildItem.EnrollmentCode.Should().NotBeEmpty();
-
-        siblingsParentChildren.Items.Should().HaveCount(2);
-        siblingsParentChildren.Items.Select(x => x.Id).Should().BeEquivalentTo(
-            new[] { firstSibling.Id, secondSibling.Id });
-
-        // Assert — parent: agenda de cada filho, com disciplina, horário e sala.
-        var onlyChildDay = onlyChildAgenda.Days.Should().ContainSingle().Which;
-        onlyChildDay.Day.Should().Be(Day.Monday);
-        onlyChildDay.Disciplines.Should().ContainSingle().Which.Name.Should().Be("Geometria");
-        onlyChildDay.Disciplines[0].ClassroomName.Should().Be("Sala 01");
-
-        // Irmãos em turmas diferentes: cada agenda é a da sua turma.
-        var firstSiblingDay = firstSiblingAgenda.Days.Should().ContainSingle().Which;
-        firstSiblingDay.Day.Should().Be(Day.Monday);
-        firstSiblingDay.Disciplines[0].ClassId.Should().Be(geometriaClass.Id);
-        firstSiblingDay.Disciplines[0].ClassroomName.Should().Be("Sala 01");
-
-        var secondSiblingDay = secondSiblingAgenda.Days.Should().ContainSingle().Which;
-        secondSiblingDay.Day.Should().Be(Day.Wednesday);
-        secondSiblingDay.Disciplines[0].ClassId.Should().Be(algoritmosClass.Id);
-        secondSiblingDay.Disciplines[0].Name.Should().Be("Algoritmos");
-        secondSiblingDay.Disciplines[0].ClassroomName.Should().Be("Sala 02");
-
-        // O calendário da instituição do filho ainda não é exposto ao Parent — a
-        // policy GetCalendar é só de Manager.
-        (await singleParentClient.GetCalendar(2024)).ShouldBeError(HttpStatusCode.Forbidden);
-    }
-
-    [Test]
     public async Task ScheduleFunctional_Enrollment_period()
     {
         // Arrange
@@ -1312,27 +1192,9 @@ public partial class IntegrationTests
             await directorClient.StartClass(classId);
         }
 
-        // Responsáveis cobrindo parte dos alunos: 4 com um filho e 1 com dois irmãos
-        // em turmas (e campi) diferentes — o aluno 0 está numa turma de ADS no Agreste
-        // e o aluno 10 numa de Pedagogia no Suassuna.
-        foreach (var index in Enumerable.Range(1, 4))
-        {
-            await directorClient.CreateParent(DataGen.UserName, DataGen.Email,
-            [
-                new() { StudentId = studentIds[index], Relationship = ParentRelationship.Mother },
-            ]);
-        }
-
-        var siblingsParent = await directorClient.CreateParent(DataGen.UserName, DataGen.Email,
-        [
-            new() { StudentId = studentIds[0], Relationship = ParentRelationship.Father },
-            new() { StudentId = studentIds[10], Relationship = ParentRelationship.Father },
-        ]).Success();
-
         var firstTeacherClient = await _back.LoginAs(teacherEmails[0]);
         var lastTeacherClient = await _back.LoginAs(teacherEmails[9]);
         var firstStudentClient = await _back.LoginAs(studentEmails[0]);
-        var siblingsParentClient = await _back.LoginAs(siblingsParent.Email);
 
         // Act
         var agresteOccupancy = await directorClient.GetCampusOccupancy(agreste.Id).Success();
@@ -1356,9 +1218,6 @@ public partial class IntegrationTests
         var firstTeacherAgenda = await firstTeacherClient.GetTeacherAgenda().Success();
         var lastTeacherAgenda = await lastTeacherClient.GetTeacherAgenda().Success();
         var firstStudentAgenda = await firstStudentClient.GetStudentAgenda().Success();
-        var siblings = await siblingsParentClient.GetParentStudents().Success();
-        var firstSiblingAgenda = await siblingsParentClient.GetParentStudentAgenda(studentIds[0]).Success();
-        var secondSiblingAgenda = await siblingsParentClient.GetParentStudentAgenda(studentIds[10]).Success();
 
         // Assert — o volume cadastrado.
         teachers.Total.Should().Be(10);
@@ -1454,13 +1313,5 @@ public partial class IntegrationTests
         firstStudentDay.Day.Should().Be(Day.Monday);
         firstStudentDay.Disciplines.Should().ContainSingle().Which.ClassId.Should().Be(classIds[0]);
         firstStudentDay.Disciplines[0].ClassroomName.Should().Be("Sala A1");
-
-        // Assert — parent: agenda de cada filho num lugar só, mesmo em campi diferentes.
-        siblings.Items.Should().HaveCount(2);
-        firstSiblingAgenda.Days.Should().ContainSingle().Which.Disciplines[0].ClassroomName.Should().Be("Sala A1");
-        var secondSiblingDay = secondSiblingAgenda.Days.Should().ContainSingle().Which;
-        secondSiblingDay.Day.Should().Be(Day.Monday);
-        secondSiblingDay.Disciplines[0].Name.Should().Be("Didática");
-        secondSiblingDay.Disciplines[0].ClassroomName.Should().Be("Sala B1");
     }
 }

@@ -456,7 +456,7 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
   AccessAgendaPage: {
     description: "Acessar a página de agenda",
     requirements: [
-      hasAnyUserType(UserTypes.Teacher, UserTypes.Student, UserTypes.Parent),
+      hasAnyUserType(UserTypes.Teacher, UserTypes.Student),
     ],
   },
 
@@ -524,30 +524,6 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
     requirements: [
       hasUserType(UserTypes.Manager),
       hasPermission(Permissions.ManageInstitutionConfig),
-    ],
-  },
-
-  // Parents
-  AccessParentsPage: {
-    description: "Acessar a página de responsáveis",
-    requirements: [
-      hasUserType(UserTypes.Manager),
-      hasPermission(Permissions.ManageParents),
-    ],
-  },
-  CreateParent: {
-    description: "Cadastrar novos responsáveis",
-    requirements: [
-      hasUserType(UserTypes.Manager),
-      hasPermission(Permissions.ManageParents),
-    ],
-  },
-
-  // Children
-  AccessChildrenPage: {
-    description: "Acessar a página de filhos",
-    requirements: [
-      hasUserType(UserTypes.Parent),
     ],
   },
 
