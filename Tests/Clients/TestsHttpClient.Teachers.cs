@@ -3,6 +3,7 @@ using Estud.Back.Features.Teachers.GetTeacher;
 using Estud.Back.Features.Teachers.GetTeachers;
 using Estud.Back.Features.Teachers.CreateTeacher;
 using Estud.Back.Features.Teachers.UpdateTeacher;
+using Estud.Back.Features.Teachers.GetTeacherHome;
 using Estud.Back.Features.Teachers.GetTeacherClass;
 using Estud.Back.Features.Teachers.AddActivityNote;
 using Estud.Back.Features.Teachers.GetTeacherAgenda;
@@ -92,6 +93,12 @@ public partial class TestsHttpClient
         if (name != null) url += $"?name={name}";
         var response = await http.GetAsync(url);
         return await response.Resolve<GetTeacherPotentialDisciplinesOut>();
+    }
+
+    public async Task<OneOf<GetTeacherHomeOut, ErrorOut>> GetTeacherHome()
+    {
+        var response = await http.GetAsync("/teachers/home");
+        return await response.Resolve<GetTeacherHomeOut>();
     }
 
     public async Task<OneOf<GetTeacherCurrentClassesOut, ErrorOut>> GetTeacherCurrentClasses()

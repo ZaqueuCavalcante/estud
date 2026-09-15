@@ -5,7 +5,6 @@ dotnet test --filter "FullyQualifiedName~UnitTests"
 dotnet test --filter "FullyQualifiedName!~UnitTests"
 dotnet test --filter "FullyQualifiedName~Dev_Should_create_initial_institution_data_for_easy_development_debugging"
 
-
 dotnet test --output Detailed
 dotnet test --filter "FullyQualifiedName~IntegrationTests"
 dotnet test --output Detailed --filter "FullyQualifiedName~IntegrationTests"

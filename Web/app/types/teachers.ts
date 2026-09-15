@@ -33,3 +33,20 @@ export interface GetTeacherDetailsOut {
   disciplines: TeacherDisciplineItem[]
   classes: TeacherClassItem[]
 }
+
+export interface TeacherHomeClassItem {
+  id: number
+  discipline: string
+  period: string
+  campus: string | null
+  status: string
+  students: number
+  lessons: number
+  finishedLessons: number
+}
+
+export interface GetTeacherHomeOut {
+  activeClasses: number
+  students: number
+  classes: TeacherHomeClassItem[]
+}
