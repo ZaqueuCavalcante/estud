@@ -149,5 +149,89 @@ public partial class IntegrationTests
         calls.Items.Should().HaveCount(1);
     }
 
+    [Test]
+    [TestCase(WebhookCallStatus.Success)]
+    [TestCase(WebhookCallStatus.Error)]
+    public async Task Webhooks_GetWebhookCalls_Should_get_only_webhook_calls_with_the_given_status(WebhookCallStatus status)
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        await client.CreateWebhookSubscription(
+            name: "Destino ok",
+            url: $"{MocksFactory.Url}/webhooks/target",
+            events: [WebhookEventType.StudentCreated]);
+        await client.CreateWebhookSubscription(
+            name: "Destino com erro",
+            url: $"{MocksFactory.Url}/webhooks/target/error",
+            events: [WebhookEventType.StudentCreated]);
+
+        await client.CreateStudent(DataGen.UserName, DataGen.Email);
+
+        await _back.AwaitDomainEventsProcessing();
+        await _back.AwaitCommandsProcessing();
+
+        // Act
+        var result = await client.GetWebhookCalls(status: status);
+
+        // Assert
+        var calls = result.Success;
+        calls.Total.Should().Be(1);
+        calls.Items.Should().ContainSingle().Which.Status.Should().Be(status);
+    }
+
+    [Test]
+    public async Task Webhooks_GetWebhookCalls_Should_get_webhook_calls_of_all_status_when_status_is_not_informed()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        await client.CreateWebhookSubscription(
+            name: "Destino ok",
+            url: $"{MocksFactory.Url}/webhooks/target",
+            events: [WebhookEventType.StudentCreated]);
+        await client.CreateWebhookSubscription(
+            name: "Destino com erro",
+            url: $"{MocksFactory.Url}/webhooks/target/error",
+            events: [WebhookEventType.StudentCreated]);
+
+        await client.CreateStudent(DataGen.UserName, DataGen.Email);
+
+        await _back.AwaitDomainEventsProcessing();
+        await _back.AwaitCommandsProcessing();
+
+        // Act
+        var result = await client.GetWebhookCalls();
+
+        // Assert
+        var calls = result.Success;
+        calls.Total.Should().Be(2);
+        calls.Items.Select(x => x.Status).Should().BeEquivalentTo([WebhookCallStatus.Success, WebhookCallStatus.Error]);
+    }
+
+    [Test]
+    public async Task Webhooks_GetWebhookCalls_Should_get_empty_list_when_no_webhook_call_has_the_given_status()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        await client.CreateWebhookSubscription(
+            url: $"{MocksFactory.Url}/webhooks/target",
+            events: [WebhookEventType.StudentCreated]);
+
+        await client.CreateStudent(DataGen.UserName, DataGen.Email);
+
+        await _back.AwaitDomainEventsProcessing();
+        await _back.AwaitCommandsProcessing();
+
+        // Act
+        var result = await client.GetWebhookCalls(status: WebhookCallStatus.Error);
+
+        // Assert
+        var calls = result.Success;
+        calls.Total.Should().Be(0);
+        calls.Items.Should().BeEmpty();
+    }
+
     #endregion
 }

@@ -3,22 +3,78 @@ import type { GetWebhookCallOut } from '~/types/webhooks'
 
 const open = defineModel<boolean>('open', { default: false })
 const props = defineProps<{ callId: number | null }>()
+const emit = defineEmits<{ changed: [] }>()
 
 const config = useRuntimeConfig()
+const toast = useToast()
+const { can } = usePolicy()
+const canRetry = can('RetryWebhookCall')
 
 const call = ref<GetWebhookCallOut | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
+const retrying = ref(false)
+const polling = ref(false)
+
+const POLL_INTERVAL_MS = 2000
+const POLL_MAX_ATTEMPTS = 10
+let pollTimer: ReturnType<typeof setTimeout> | undefined
+let pollRun = 0
+
+const showRetry = computed(() =>
+  canRetry.value
+  && !polling.value
+  && call.value?.status === 'Error'
+  && call.value.attempts[0]?.status === 'Error',
+)
+
+function isInProgress(value: GetWebhookCallOut | null) {
+  return value?.status === 'Pending' || value?.status === 'Processing'
+}
+
+function fetchCall(callId: number) {
+  return $fetch<GetWebhookCallOut>(
+    `${config.public.backendUrl}/webhooks/calls/${callId}`,
+    { credentials: 'include' },
+  )
+}
+
+function stopPolling() {
+  clearTimeout(pollTimer)
+  pollRun++
+  polling.value = false
+}
+
+function startPolling(callId: number) {
+  stopPolling()
+  const run = pollRun
+  let remaining = POLL_MAX_ATTEMPTS
+  polling.value = true
+
+  const tick = async () => {
+    const updated = await fetchCall(callId).catch(() => null)
+    if (run !== pollRun) return
+    if (updated) call.value = updated
+    remaining--
+
+    if (isInProgress(call.value) && remaining > 0) {
+      pollTimer = setTimeout(tick, POLL_INTERVAL_MS)
+      return
+    }
+
+    polling.value = false
+    emit('changed')
+  }
+
+  pollTimer = setTimeout(tick, POLL_INTERVAL_MS)
+}
 
 async function load(callId: number) {
   loading.value = true
   error.value = null
   call.value = null
   try {
-    call.value = await $fetch<GetWebhookCallOut>(
-      `${config.public.backendUrl}/webhooks/calls/${callId}`,
-      { credentials: 'include' },
-    )
+    call.value = await fetchCall(callId)
   } catch (err: unknown) {
     call.value = null
     error.value = (err as { data?: { message?: string } })?.data?.message
@@ -28,11 +84,41 @@ async function load(callId: number) {
   }
 }
 
+async function retry() {
+  if (!call.value) return
+  const callId = call.value.id
+  retrying.value = true
+  try {
+    await $fetch(`${config.public.backendUrl}/webhooks/calls/${callId}/retry`, {
+      method: 'POST',
+      credentials: 'include',
+    })
+  } catch (err: unknown) {
+    const msg = (err as { data?: { message?: string } })?.data?.message ?? 'Erro ao reprocessar a chamada.'
+    toast.add({ title: 'Erro', description: msg, color: 'error' })
+    retrying.value = false
+    return
+  }
+
+  toast.add({ title: 'Reprocessamento solicitado', color: 'success' })
+  emit('changed')
+
+  const updated = await fetchCall(callId).catch(() => null)
+  retrying.value = false
+  if (!open.value || props.callId !== callId) return
+
+  if (updated) call.value = updated
+  if (!updated || isInProgress(updated)) startPolling(callId)
+}
+
 watch([open, () => props.callId], ([isOpen, callId]) => {
+  stopPolling()
   if (!isOpen || !callId) return
-  if (call.value?.id === callId) return
+  if (call.value?.id === callId && !isInProgress(call.value)) return
   load(callId)
 }, { immediate: true })
+
+onBeforeUnmount(stopPolling)
 
 function formatDateTime(value: string) {
   return new Date(value).toLocaleString('pt-BR', {
@@ -144,7 +230,23 @@ function statusCodeColor(statusCode: number) {
         </section>
 
         <section class="flex flex-col gap-3">
-          <h3 class="text-sm font-semibold text-highlighted">Tentativas</h3>
+          <div class="flex items-center justify-between gap-3">
+            <h3 class="text-sm font-semibold text-highlighted">Tentativas</h3>
+            <span v-if="polling" class="flex items-center gap-2 text-xs text-muted">
+              <AppSpinner class="size-4" />
+              Aguardando nova tentativa
+            </span>
+            <UButton
+              v-if="showRetry"
+              label="Reprocessar"
+              icon="i-lucide-refresh-cw"
+              size="xs"
+              color="neutral"
+              variant="subtle"
+              :loading="retrying"
+              @click="retry"
+            />
+          </div>
 
           <p v-if="!call.attempts.length" class="text-sm text-muted">
             Nenhuma tentativa realizada até o momento.

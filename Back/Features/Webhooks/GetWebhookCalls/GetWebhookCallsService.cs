@@ -8,6 +8,9 @@ public class GetWebhookCallsService(EstudDbContext ctx) : IEstudService
 
         var query = ctx.WebhookCalls.AsNoTracking().Where(x => x.InstitutionId == institutionId);
 
+        if (data.Status is not null)
+            query = query.Where(x => x.Status == data.Status);
+
         var total = await query.CountAsync();
 
         var calls = await query

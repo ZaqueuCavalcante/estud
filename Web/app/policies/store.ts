@@ -435,6 +435,13 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
       hasPermission(Permissions.ManageWebhooks),
     ],
   },
+  RetryWebhookCall: {
+    description: "Reprocessar chamadas de webhook",
+    requirements: [
+      hasUserType(UserTypes.Manager),
+      hasPermission(Permissions.ManageWebhooks),
+    ],
+  },
 
   // Notifications
   AccessNotificationsPage: {

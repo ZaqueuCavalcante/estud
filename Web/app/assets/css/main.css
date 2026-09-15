@@ -34,6 +34,16 @@ input:autofill {
   color-scheme: light;
 }
 
+/* A barra overlay do navegador some com um fade que o CSS não controla; escondendo
+   fora do hover ela some no instante em que o mouse sai. */
+@utility scrollbar-on-hover {
+  scrollbar-width: none;
+
+  &:hover {
+    scrollbar-width: auto;
+  }
+}
+
 @theme static {
   --font-sans: 'Saira', sans-serif;
 

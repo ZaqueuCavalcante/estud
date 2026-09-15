@@ -46,4 +46,9 @@ public class WebhookCall : DomainEntity
 
         AttemptsCount++;
     }
+
+    public void Retry()
+    {
+        Status = WebhookCallStatus.Pending;
+    }
 }

@@ -192,6 +192,7 @@ export type PolicyName
     | 'GetWebhookSubscriptions'
     | 'CreateWebhookSubscription'
     | 'UpdateWebhookSubscription'
+    | 'RetryWebhookCall'
   // Notifications
     | 'AccessNotificationsPage'
     | 'GetInstitutionNotifications'

@@ -8,8 +8,22 @@ const UTooltip = resolveComponent('UTooltip')
 
 const config = useRuntimeConfig()
 
+const statuses = Object.entries(webhookCallStatusLabels).map(([value, label]) => ({ label, value }))
+
+const status = ref<string | undefined>(undefined)
+const appliedStatus = computed(() => status.value || undefined)
+const hasFilters = computed(() => !!appliedStatus.value)
+
 const page = ref(1)
 const pageSize = 20
+
+watch(appliedStatus, () => {
+  page.value = 1
+})
+
+function clearFilters() {
+  status.value = undefined
+}
 
 const detailsOpen = ref(false)
 const selectedCallId = ref<number | null>(null)
@@ -19,14 +33,16 @@ function openDetails(item: WebhookCallItem) {
   detailsOpen.value = true
 }
 
-const { data, status } = await useFetch<GetWebhookCallsOut>(
+const { data, status: fetchStatus, refresh } = await useFetch<GetWebhookCallsOut>(
   `${config.public.backendUrl}/webhooks/calls`,
   {
     credentials: 'include',
     server: false,
-    query: { page, pageSize },
+    query: { status: appliedStatus, page, pageSize },
   },
 )
+
+const loading = computed(() => fetchStatus.value === 'pending')
 
 function formatDateTime(value: string) {
   return new Date(value).toLocaleString('pt-BR', {
@@ -79,13 +95,28 @@ const columns: TableColumn<WebhookCallItem>[] = [
 </script>
 
 <template>
-  <div>
-    <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">
+  <div class="flex flex-col gap-4 sm:gap-6">
+    <USelectMenu
+      v-model="status"
+      :items="statuses"
+      value-key="value"
+      :search-input="false"
+      clear
+      class="w-full sm:w-40"
+      :ui="{ base: 'h-8 text-base/5' }"
+      placeholder="Status"
+    />
+
+    <DataTable :data="data?.items ?? []" :columns="columns" :loading="loading">
       <template #empty>
-        <div class="flex flex-col items-center justify-center gap-3 py-12 text-center">
-          <UIcon name="i-lucide-radio" class="size-8 text-muted" />
-          <p class="text-sm text-muted">Nenhuma chamada de webhook realizada</p>
-        </div>
+        <TableEmptyState
+          :loading="loading"
+          icon="i-lucide-radio"
+          message="Nenhuma chamada de webhook realizada"
+          :filtered="hasFilters"
+          not-found-message="Nenhuma chamada de webhook encontrada com o status selecionado"
+          @clear-filters="clearFilters"
+        />
       </template>
     </DataTable>
 
@@ -97,6 +128,10 @@ const columns: TableColumn<WebhookCallItem>[] = [
       />
     </div>
 
-    <IntegrationsCallDetailsSlideover v-model:open="detailsOpen" :call-id="selectedCallId" />
+    <IntegrationsCallDetailsSlideover
+      v-model:open="detailsOpen"
+      :call-id="selectedCallId"
+      @changed="() => { refresh() }"
+    />
   </div>
 </template>

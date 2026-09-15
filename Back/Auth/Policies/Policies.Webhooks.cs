@@ -6,6 +6,7 @@ public static partial class Policies
 {
     public const string GetWebhookCall = nameof(GetWebhookCall);
     public const string GetWebhookCalls = nameof(GetWebhookCalls);
+    public const string RetryWebhookCall = nameof(RetryWebhookCall);
     public const string GetWebhookSubscription = nameof(GetWebhookSubscription);
     public const string GetWebhookSubscriptions = nameof(GetWebhookSubscriptions);
     public const string CreateWebhookSubscription = nameof(CreateWebhookSubscription);
@@ -16,6 +17,7 @@ public static partial class Policies
         builder
             .AddEstudPolicy(GetWebhookCall, UserType.Manager, EstudPermissions.ManageWebhooks)
             .AddEstudPolicy(GetWebhookCalls, UserType.Manager, EstudPermissions.ManageWebhooks)
+            .AddEstudPolicy(RetryWebhookCall, UserType.Manager, EstudPermissions.ManageWebhooks)
             .AddEstudPolicy(GetWebhookSubscription, UserType.Manager, EstudPermissions.ManageWebhooks)
             .AddEstudPolicy(GetWebhookSubscriptions, UserType.Manager, EstudPermissions.ManageWebhooks)
             .AddEstudPolicy(CreateWebhookSubscription, UserType.Manager, EstudPermissions.ManageWebhooks)

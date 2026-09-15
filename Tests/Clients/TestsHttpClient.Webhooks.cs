@@ -39,12 +39,16 @@ public partial class TestsHttpClient
         return await response.Resolve<GetWebhookSubscriptionOut>();
     }
 
-    public async Task<OneOf<GetWebhookCallsOut, ErrorOut>> GetWebhookCalls(int page = 1, int pageSize = 20)
-    {
+    public async Task<OneOf<GetWebhookCallsOut, ErrorOut>> GetWebhookCalls(
+        int page = 1,
+        int pageSize = 20,
+        WebhookCallStatus? status = null
+    ) {
         var data = new GetWebhookCallsIn
         {
             Page = page,
             PageSize = pageSize,
+            Status = status,
         };
 
         var response = await http.GetAsync("webhooks/calls".AddQueryString(data));
@@ -55,6 +59,12 @@ public partial class TestsHttpClient
     {
         var response = await http.GetAsync($"webhooks/calls/{callId}");
         return await response.Resolve<GetWebhookCallOut>();
+    }
+
+    public async Task<OneOf<SuccessOut, ErrorOut>> RetryWebhookCall(int callId)
+    {
+        var response = await http.PostAsync($"webhooks/calls/{callId}/retry", null);
+        return await response.Resolve<SuccessOut>();
     }
 
     public async Task<OneOf<UpdateWebhookSubscriptionOut, ErrorOut>> UpdateWebhookSubscription(

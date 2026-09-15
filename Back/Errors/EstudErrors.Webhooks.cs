@@ -14,6 +14,13 @@ public class WebhookCallNotFound : EstudError
     public override string Message { get; set; } = "Chamada de webhook não encontrada.";
 }
 
+public class WebhookCallCannotBeRetried : EstudError
+{
+    public static readonly WebhookCallCannotBeRetried I = new();
+    public override string Code { get; set; } = nameof(WebhookCallCannotBeRetried);
+    public override string Message { get; set; } = "Apenas chamadas de webhook com erro podem ser reprocessadas.";
+}
+
 public class InvalidWebhookName : EstudError
 {
     public static readonly InvalidWebhookName I = new();
