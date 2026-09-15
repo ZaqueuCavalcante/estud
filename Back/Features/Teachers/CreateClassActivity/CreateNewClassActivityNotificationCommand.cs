@@ -26,11 +26,12 @@ public class CreateNewClassActivityNotificationCommandHandler(EstudDbContext ctx
             .Select(x => x.UserId)
             .ToListAsync();
 
-        var notification = new Notification(
+        var notification = Notification.NewClassActivity(
             @class.InstitutionId,
-            NotificationType.NewClassActivity,
-            "Nova atividade",
-            $"{@class.Discipline.Name}: {activity.Title}"
+            @class.Id,
+            command.ClassActivityId,
+            @class.Discipline.Name,
+            activity.Title
         );
         ctx.Add(notification);
 

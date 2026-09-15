@@ -1,3 +1,5 @@
+using Newtonsoft.Json.Linq;
+
 namespace Estud.Tests.Integration;
 
 public partial class IntegrationTests
@@ -354,11 +356,16 @@ public partial class IntegrationTests
         await _back.AwaitCommandsProcessing();
 
         // Assert
+        var activityId = result.Success.Id;
         foreach (var studentEmail in studentEmails)
         {
             var studentClient = await _back.LoginAs(studentEmail);
             var notifications = await studentClient.GetNotifications().Success();
-            notifications.Items.Should().ContainSingle(x => x.Title == "Nova atividade");
+            var notification = notifications.Items.Should().ContainSingle(x => x.Title == "Nova atividade").Subject;
+
+            var link = ((JObject)notification.Metadata!)["links"]![0]!;
+            link.Value<string>("label").Should().Be("Ver atividade");
+            link.Value<string>("to").Should().Be($"/classes/{@class.Id}/activities/{activityId}");
         }
     }
 
