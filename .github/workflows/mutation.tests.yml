@@ -36,6 +36,8 @@ jobs:
           html=$(find Tests/StrykerOutput -name 'mutation-report.html' -printf '%T@ %p\n' | sort -rn | head -1 | cut -d' ' -f2-)
           cp -r "$(dirname "$html")" mutation
           mv mutation/mutation-report.html mutation/index.html
+          cp .github/assets/stryker.svg mutation/favicon.svg
+          sed -i '0,/<head>/s|<head>|<head><link rel="icon" type="image/svg+xml" href="favicon.svg">|' mutation/index.html
           ls -lah mutation
 
       - name: Generate mutation badge
@@ -50,7 +52,10 @@ jobs:
           high=$(jq '."stryker-config".thresholds.high' Tests/stryker-config.json)
           low=$(jq '."stryker-config".thresholds.low' Tests/stryker-config.json)
           color=$(awk -v s="$score" -v h="$high" -v l="$low" 'BEGIN { print (s >= h ? "brightgreen" : s >= l ? "orange" : "red") }')
-          curl -fsSL -o mutation/badge.svg "https://img.shields.io/badge/Mutation_Score-${score}%25-${color}?logo=stryker&logoColor=whitesmoke"
+          logo=$(base64 -w0 .github/assets/stryker.svg)
+          curl -fsSL -G -o mutation/badge.svg \
+            --data-urlencode "logo=data:image/svg+xml;base64,${logo}" \
+            "https://img.shields.io/badge/Mutation_Score-${score}%25-${color}"
           rm mutation/mutation-report.json
 
       - name: Upload mutation report

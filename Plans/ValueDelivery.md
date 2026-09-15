@@ -52,7 +52,7 @@ Legenda: ✅ já existe · 🟡 existe pela metade · 🔲 pode trazer
 | ✅ | Atividades com prazo, peso e nota recebida; entrega por link | Sabe o que entregar e quanto valeu |
 | ✅ | Calendário de frequência dia a dia | Enxerga as próprias faltas |
 | ✅ | Comprovante de matrícula em PDF com validação pública | Estágio, transporte e meia-entrada sem ir à secretaria |
-| ✅ | Detalhes do curso: grade, disciplinas por período, créditos e carga horária | Entende o caminho do curso |
+| ✅ | Detalhes do curso: grade, disciplinas por período, créditos e carga horária | Entende sua jornada no curso |
 | ✅ | Notificações dentro do sistema | Comunicados da instituição |
 | 🟡 | Situação por disciplina no histórico | Hoje aparece sempre "Cursando" |
 | 🟡 | Coeficiente de rendimento (CR) | Hoje é sempre 0 |
