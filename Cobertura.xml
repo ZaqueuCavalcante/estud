@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9357672950609912" branch-rate="0.8101818181818182" lines-covered="10970" lines-valid="11723" branches-covered="2228" branches-valid="2750" complexity="4063" version="0" timestamp="1789473339">
+<coverage line-rate="0.9358439124137343" branch-rate="0.8101818181818182" lines-covered="10984" lines-valid="11737" branches-covered="2228" branches-valid="2750" complexity="4064" version="0" timestamp="1789503077">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9347410497045534" branch-rate="0.8069784706755754" complexity="3987">
+    <package name="Back" line-rate="0.9348203436903315" branch-rate="0.8069784706755754" complexity="3988">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -9319,7 +9319,7 @@
             <line number="44" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Domain.Notifications.Notification" filename="/home/runner/work/estud/estud/Back/Domain/Notifications/Notification.cs" line-rate="0.9655172413793104" branch-rate="1" complexity="5">
+        <class name="Estud.Back.Domain.Notifications.Notification" filename="/home/runner/work/estud/estud/Back/Domain/Notifications/Notification.cs" line-rate="0.9761904761904762" branch-rate="1" complexity="6">
           <methods>
             <method name=".ctor" signature="()" line-rate="0" branch-rate="1" complexity="1">
               <lines>
@@ -9366,6 +9366,23 @@
                 <line number="56" hits="2" branch="false" />
               </lines>
             </method>
+            <method name="NewClassActivity" signature="(int, int, int, string, string)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="66" hits="2" branch="false" />
+                <line number="67" hits="2" branch="false" />
+                <line number="68" hits="2" branch="false" />
+                <line number="69" hits="2" branch="false" />
+                <line number="70" hits="2" branch="false" />
+                <line number="71" hits="2" branch="false" />
+                <line number="72" hits="2" branch="false" />
+                <line number="73" hits="2" branch="false" />
+                <line number="74" hits="2" branch="false" />
+                <line number="75" hits="2" branch="false" />
+                <line number="76" hits="2" branch="false" />
+                <line number="77" hits="2" branch="false" />
+                <line number="78" hits="2" branch="false" />
+              </lines>
+            </method>
           </methods>
           <lines>
             <line number="15" hits="0" branch="false" />
@@ -9397,6 +9414,19 @@
             <line number="54" hits="2" branch="false" />
             <line number="55" hits="2" branch="false" />
             <line number="56" hits="2" branch="false" />
+            <line number="66" hits="2" branch="false" />
+            <line number="67" hits="2" branch="false" />
+            <line number="68" hits="2" branch="false" />
+            <line number="69" hits="2" branch="false" />
+            <line number="70" hits="2" branch="false" />
+            <line number="71" hits="2" branch="false" />
+            <line number="72" hits="2" branch="false" />
+            <line number="73" hits="2" branch="false" />
+            <line number="74" hits="2" branch="false" />
+            <line number="75" hits="2" branch="false" />
+            <line number="76" hits="2" branch="false" />
+            <line number="77" hits="2" branch="false" />
+            <line number="78" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Domain.Notifications.UserNotification" filename="/home/runner/work/estud/estud/Back/Domain/Notifications/UserNotification.cs" line-rate="1" branch-rate="1" complexity="3">
@@ -31931,9 +31961,10 @@
                 <line number="33" hits="2" branch="false" />
                 <line number="34" hits="2" branch="false" />
                 <line number="35" hits="2" branch="false" />
-                <line number="37" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="39" hits="2" branch="false" />
-                <line number="41" hits="2" branch="false" />
+                <line number="36" hits="2" branch="false" />
+                <line number="38" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="40" hits="2" branch="false" />
+                <line number="42" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
@@ -31959,9 +31990,10 @@
             <line number="33" hits="2" branch="false" />
             <line number="34" hits="2" branch="false" />
             <line number="35" hits="2" branch="false" />
-            <line number="37" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="39" hits="2" branch="false" />
-            <line number="41" hits="2" branch="false" />
+            <line number="36" hits="2" branch="false" />
+            <line number="38" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="40" hits="2" branch="false" />
+            <line number="42" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Features.Teachers.CreateLessonAttendance.CreateLessonAttendanceController" filename="/home/runner/work/estud/estud/Back/Features/Teachers/CreateLessonAttendance/CreateLessonAttendanceController.cs" line-rate="1" branch-rate="1" complexity="2">
