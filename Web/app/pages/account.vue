@@ -7,9 +7,9 @@ const links = [[{
   to: '/account',
   exact: true
 }, {
-  label: 'Segurança',
-  icon: 'i-lucide-shield',
-  to: '/account/security'
+  label: '2FA',
+  icon: 'i-lucide-smartphone',
+  to: '/account/2fa'
 }]
 ] satisfies NavigationMenuItem[][]
 </script>

@@ -93,9 +93,9 @@ function openNoteModal(work: TeacherActivityWorkItem) {
           <h2 class="font-semibold text-highlighted">
             Descrição
           </h2>
-          <p v-if="data.description" class="text-sm text-highlighted whitespace-pre-line">
-            {{ data.description }}
-          </p>
+          <div v-if="data.description" class="rounded-lg border border-default p-3">
+            <MarkdownContent :value="data.description" />
+          </div>
           <p v-else class="text-sm text-muted">
             Nenhuma descrição cadastrada
           </p>

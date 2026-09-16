@@ -124,8 +124,7 @@ Cloudflare já está na frente do domínio. A Railway não tem storage nativo.
 5. O front insere `![](publicUrl)` no markdown.
 6. O plano é salvo pelo `PUT teachers/lessons/{id}/plan` de sempre — **o endpoint do plano não muda**.
 
-O binário nunca passa pela API. A alternativa (upload via API com `IFormFile`) dá mais controle, mas
-joga toda a banda e a memória no backend.
+O binário NUNCA passa pela API.
 
 ### Estrutura do path
 

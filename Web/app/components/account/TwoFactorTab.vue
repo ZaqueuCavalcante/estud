@@ -82,7 +82,7 @@ function copyKey() {
       </div>
 
       <div v-else class="flex items-center gap-3 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20">
-        <UIcon name="i-lucide-shield-alert" class="text-amber-600 dark:text-amber-400 text-xl" />
+        <UIcon name="i-lucide-triangle-alert" class="text-amber-600 dark:text-amber-400 text-xl" />
         <span class="text-sm text-amber-700 dark:text-amber-300">
           Recomendamos ativar o 2FA para maior segurança.
         </span>
@@ -91,7 +91,7 @@ function copyKey() {
       <UButton
         v-if="!twoFactorEnabled"
         label="Ativar 2FA"
-        icon="i-lucide-shield-plus"
+        icon="i-lucide-check"
         class="w-fit ml-auto"
         @click="openSetupModal"
       />

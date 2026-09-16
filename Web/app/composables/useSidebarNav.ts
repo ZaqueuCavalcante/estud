@@ -67,7 +67,7 @@ export const sidebarGroups: SidebarGroup[] = [
     label: 'Sistema',
     icon: 'i-lucide-cog',
     items: [
-      { label: 'Segurança',     icon: 'i-lucide-shield',         to: '/security',           policy: 'AccessSecurityPage' },
+      { label: 'Segurança',     icon: 'i-lucide-shield-check',   to: '/security',           policy: 'AccessSecurityPage' },
       { label: 'Integrações',   icon: 'i-lucide-webhook',        to: '/integrations',       policy: 'AccessIntegrationsPage' },
       { label: 'Configurações', icon: 'i-lucide-settings',       to: '/configs',            policy: 'AccessConfigsPage' },
     ],

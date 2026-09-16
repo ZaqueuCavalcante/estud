@@ -109,8 +109,6 @@ watch(activeTab, (tab) => {
 const enrolledStudents = computed(() =>
   students.value.filter(s => s.status === 'Matriculado'),
 )
-
-const createActivityModalOpen = ref(false)
 </script>
 
 <template>
@@ -265,7 +263,7 @@ const createActivityModalOpen = ref(false)
                 icon="i-lucide-plus"
                 label="Atividade"
                 size="sm"
-                @click="() => { createActivityModalOpen = true }"
+                :to="`/classes/${props.classId}/activities/new`"
               />
             </div>
 
@@ -285,12 +283,6 @@ const createActivityModalOpen = ref(false)
             </div>
           </template>
         </section>
-
-        <ClassesCreateActivityModal
-          v-model:open="createActivityModalOpen"
-          :class-id="data.id"
-          @created="refreshActivities()"
-        />
       </div>
     </template>
   </UDashboardPanel>

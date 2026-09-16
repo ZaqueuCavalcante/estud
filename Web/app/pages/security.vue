@@ -12,7 +12,7 @@ const links = [[{
   to: '/security/sso',
 }, {
   label: '2FA',
-  icon: 'i-lucide-shield-check',
+  icon: 'i-lucide-smartphone',
   to: '/security/2fa',
 }]] satisfies NavigationMenuItem[][]
 </script>
