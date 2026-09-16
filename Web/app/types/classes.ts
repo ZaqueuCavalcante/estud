@@ -78,11 +78,26 @@ export interface ClassLessonItem {
   startAt: string // ex: "H19_00"
   endAt: string // ex: "H22_00"
   status: string // 'Pending' | 'Finalized'
+  plannedContent: string | null
   presentStudents: number[]
 }
 
 export interface GetTeacherClassLessonsOut {
   lessons: ClassLessonItem[]
+}
+
+export interface StudentClassLessonItem {
+  id: number
+  number: number
+  date: string // ex: "2026-07-20"
+  startAt: string // ex: "H19_00"
+  endAt: string // ex: "H22_00"
+  status: string // 'Pending' | 'Finalized'
+  plannedContent: string | null
+}
+
+export interface GetStudentClassLessonsOut {
+  lessons: StudentClassLessonItem[]
 }
 
 export interface ClassActivityItem {

@@ -12,6 +12,7 @@ public class ClassLesson
     public Hour StartAt { get; set; }
     public Hour EndAt { get; set; }
     public ClassLessonStatus Status { get; set; }
+    public string? PlannedContent { get; set; }
     public List<ClassLessonAttendance> Attendances { get; set; }
 
     public Class Class { get; set; }
@@ -36,5 +37,10 @@ public class ClassLesson
     public void Finish()
     {
         Status = ClassLessonStatus.Finalized;
+    }
+
+    public void UpdatePlan(string? content)
+    {
+        PlannedContent = content.IsEmpty() ? null : content!.Trim();
     }
 }

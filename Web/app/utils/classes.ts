@@ -117,7 +117,7 @@ export function formatClassLessonDate(date: string) {
   return `${day}/${month}/${year}`
 }
 
-export function formatClassLesson(lesson: ClassLessonItem) {
+export function formatClassLesson(lesson: Pick<ClassLessonItem, 'date' | 'startAt' | 'endAt'>) {
   return `${formatClassLessonDate(lesson.date)} · ${formatClassHour(lesson.startAt)} – ${formatClassHour(lesson.endAt)}`
 }
 

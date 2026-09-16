@@ -7,12 +7,14 @@ using Estud.Back.Features.Students.GetStudentAgenda;
 using Estud.Back.Features.Students.GetStudentDetails;
 using Estud.Back.Features.Students.GetEnrollmentProofs;
 using Estud.Back.Features.Students.AssignStudentToClass;
+using Estud.Back.Features.Students.GetStudentClassLessons;
 using Estud.Back.Features.Students.CreateClassActivityWork;
 using Estud.Back.Features.Students.GetStudentClassActivity;
 using Estud.Back.Features.Students.GetStudentCourseDetails;
 using Estud.Back.Features.Students.ValidateEnrollmentProof;
 using Estud.Back.Features.Students.GetStudentCurrentClasses;
 using Estud.Back.Features.Students.GetStudentClassActivities;
+using Estud.Back.Features.Students.GetStudentPendingActivities;
 using Estud.Back.Features.Students.GetStudentAttendanceCalendar;
 using Estud.Back.Features.Students.EnrollStudentInCourseOffering;
 
@@ -69,6 +71,12 @@ public partial class TestsHttpClient
     {
         var response = await http.GetAsync($"/students/classes/{classId}");
         return await response.Resolve<GetStudentClassOut>();
+    }
+
+    public async Task<OneOf<GetStudentClassLessonsOut, ErrorOut>> GetStudentClassLessons(int classId)
+    {
+        var response = await http.GetAsync($"/students/classes/{classId}/lessons");
+        return await response.Resolve<GetStudentClassLessonsOut>();
     }
 
     public async Task<OneOf<GetStudentAttendanceCalendarOut, ErrorOut>> GetStudentAttendanceCalendar(int? year = null)
@@ -151,5 +159,11 @@ public partial class TestsHttpClient
     {
         var response = await http.GetAsync("/students/current-classes");
         return await response.Resolve<GetStudentCurrentClassesOut>();
+    }
+
+    public async Task<OneOf<GetStudentPendingActivitiesOut, ErrorOut>> GetStudentPendingActivities()
+    {
+        var response = await http.GetAsync("/students/pending-activities");
+        return await response.Resolve<GetStudentPendingActivitiesOut>();
     }
 }

@@ -7,6 +7,7 @@ using Estud.Back.Features.Teachers.GetTeacherHome;
 using Estud.Back.Features.Teachers.GetTeacherClass;
 using Estud.Back.Features.Teachers.AddActivityNote;
 using Estud.Back.Features.Teachers.GetTeacherAgenda;
+using Estud.Back.Features.Teachers.UpdateLessonPlan;
 using Estud.Back.Features.Teachers.GetTeacherDetails;
 using Estud.Back.Features.Teachers.CreateClassActivity;
 using Estud.Back.Features.Teachers.AssignCampiToTeacher;
@@ -183,6 +184,15 @@ public partial class TestsHttpClient
     ) {
         var data = new CreateLessonAttendanceIn { PresentStudents = presentStudents };
         var response = await http.PutAsJsonAsync($"/teachers/lessons/{lessonId}/attendance", data);
+        return await response.Resolve<SuccessOut>();
+    }
+
+    public async Task<OneOf<SuccessOut, ErrorOut>> UpdateLessonPlan(
+        int lessonId,
+        string? plannedContent
+    ) {
+        var data = new UpdateLessonPlanIn { PlannedContent = plannedContent };
+        var response = await http.PutAsJsonAsync($"/teachers/lessons/{lessonId}/plan", data);
         return await response.Resolve<SuccessOut>();
     }
 

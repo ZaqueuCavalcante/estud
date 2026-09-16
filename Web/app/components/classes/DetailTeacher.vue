@@ -115,9 +115,16 @@ const createActivityModalOpen = ref(false)
 const attendanceModalOpen = ref(false)
 const selectedLesson = ref<ClassLessonItem | null>(null)
 
+const planModalOpen = ref(false)
+
 function openAttendance(lesson: ClassLessonItem) {
   selectedLesson.value = lesson
   attendanceModalOpen.value = true
+}
+
+function openPlan(lesson: ClassLessonItem) {
+  selectedLesson.value = lesson
+  planModalOpen.value = true
 }
 </script>
 
@@ -227,6 +234,12 @@ function openAttendance(lesson: ClassLessonItem) {
                 <div class="flex flex-col gap-1">
                   <span class="text-sm text-highlighted">Aula {{ lesson.number }}</span>
                   <span class="text-xs text-muted">{{ formatClassLesson(lesson) }}</span>
+                  <p v-if="lesson.plannedContent" class="line-clamp-2 whitespace-pre-line text-xs text-muted">
+                    {{ lesson.plannedContent }}
+                  </p>
+                  <p v-else class="text-xs text-dimmed">
+                    Sem planejamento
+                  </p>
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -241,6 +254,14 @@ function openAttendance(lesson: ClassLessonItem) {
                     :label="classLessonStatusLabels[lesson.status] ?? lesson.status"
                     :color="classLessonStatusColors[lesson.status] ?? 'neutral'"
                     variant="subtle"
+                  />
+                  <UButton
+                    :label="lesson.plannedContent ? 'Editar plano' : 'Planejar'"
+                    icon="i-lucide-notebook-pen"
+                    color="neutral"
+                    variant="subtle"
+                    size="sm"
+                    @click="() => { openPlan(lesson) }"
                   />
                   <UButton
                     :label="lesson.status === 'Finalized' ? 'Editar chamada' : 'Fazer chamada'"
@@ -303,6 +324,12 @@ function openAttendance(lesson: ClassLessonItem) {
           v-model:open="attendanceModalOpen"
           :lesson="selectedLesson"
           :students="enrolledStudents"
+          @saved="refreshLessons()"
+        />
+
+        <ClassesLessonPlanModal
+          v-model:open="planModalOpen"
+          :lesson="selectedLesson"
           @saved="refreshLessons()"
         />
       </div>

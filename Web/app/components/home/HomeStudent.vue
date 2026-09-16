@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GetStudentCourseDetailsOut, StudentCourseDiscipline } from '~/types/students'
+import type { GetStudentCourseDetailsOut, GetStudentPendingActivitiesOut, StudentCourseDiscipline } from '~/types/students'
 
 const { account } = useUserAccount()
 const config = useRuntimeConfig()
@@ -10,8 +10,36 @@ const { data, status } = await useFetch<GetStudentCourseDetailsOut>(`${config.pu
   server: false,
 })
 
+const { data: pendingActivities, status: pendingActivitiesStatus } = await useFetch<GetStudentPendingActivitiesOut>(`${config.public.backendUrl}/students/pending-activities`, {
+  credentials: 'include',
+  server: false,
+})
+
 const isLoading = computed(() => status.value === 'pending')
+const isLoadingPendingActivities = computed(() => pendingActivitiesStatus.value === 'pending')
 const hasCourse = computed(() => !!data.value)
+
+const pendingActivitiesCard = computed(() => {
+  const total = pendingActivities.value?.total ?? 0
+
+  if (total === 0) {
+    return {
+      icon: 'i-lucide-circle-check',
+      iconClass: 'text-success',
+      boxClass: 'bg-success/10 ring-success/20',
+      title: 'Nenhuma atividade pendente',
+      description: 'Você está em dia com as entregas.',
+    }
+  }
+
+  return {
+    icon: 'i-lucide-info',
+    iconClass: 'text-info',
+    boxClass: 'bg-info/10 ring-info/20',
+    title: total === 1 ? '1 atividade pendente' : `${total} atividades pendentes`,
+    description: 'Você ainda tem entregas a fazer nas suas turmas.',
+  }
+})
 
 const disciplines = computed<StudentCourseDiscipline[]>(() => data.value?.disciplines ?? [])
 
@@ -20,23 +48,13 @@ const concludedStatuses = ['Aprovada', 'Dispensada']
 const summary = computed(() => {
   const list = disciplines.value
   const concluded = list.filter(d => concludedStatuses.includes(d.status)).length
-  const doing = list.filter(d => d.status === 'Cursando').length
   const total = list.length
   return {
     total,
     concluded,
-    doing,
-    remaining: total - concluded - doing,
     progress: total ? Math.round((concluded / total) * 100) : 0,
   }
 })
-
-const stats = computed(() => [
-  { label: 'Progresso no curso', value: `${summary.value.progress}%`, icon: 'i-lucide-trending-up' },
-  { label: 'Concluídas', value: summary.value.concluded, icon: 'i-lucide-circle-check' },
-  { label: 'Cursando', value: summary.value.doing, icon: 'i-lucide-book-open' },
-  { label: 'A cursar', value: summary.value.remaining, icon: 'i-lucide-map-pin' },
-])
 
 // Disciplinas agrupadas por período (semestre) da grade, em ordem crescente
 const periods = computed(() => {
@@ -85,13 +103,19 @@ const meta = computed(() => {
       </div>
     </div>
 
-    <!-- Loading -->
-    <template v-if="isLoading">
-      <div class="grid grid-cols-2 xl:grid-cols-4 gap-3">
-        <USkeleton v-for="i in 4" :key="i" class="h-16 w-full" />
+    <USkeleton v-if="isLoadingPendingActivities" class="h-[72px] w-full" />
+    <div v-else class="flex items-center gap-3 rounded-lg p-4 ring ring-default bg-elevated/40">
+      <div class="flex items-center justify-center p-2 rounded-lg ring ring-inset shrink-0" :class="pendingActivitiesCard.boxClass">
+        <UIcon :name="pendingActivitiesCard.icon" class="size-5" :class="pendingActivitiesCard.iconClass" />
       </div>
-      <USkeleton class="h-64 w-full" />
-    </template>
+      <div class="min-w-0">
+        <p class="font-medium text-highlighted">{{ pendingActivitiesCard.title }}</p>
+        <p class="text-xs text-muted mt-0.5">{{ pendingActivitiesCard.description }}</p>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <USkeleton v-if="isLoading" class="h-64 w-full" />
 
     <!-- Sem matrícula em curso -->
     <UCard v-else-if="!hasCourse">
@@ -107,22 +131,6 @@ const meta = computed(() => {
     </UCard>
 
     <template v-else>
-      <div class="grid grid-cols-2 xl:grid-cols-4 gap-3">
-        <div
-          v-for="stat in stats"
-          :key="stat.label"
-          class="flex items-center gap-3 rounded-lg p-3 ring ring-default bg-elevated/40"
-        >
-          <div class="flex items-center justify-center p-2 rounded-lg bg-primary/10 ring ring-inset ring-primary/20 shrink-0">
-            <UIcon :name="stat.icon" class="size-4 text-primary" />
-          </div>
-          <div class="min-w-0">
-            <p class="text-xl font-semibold text-highlighted leading-none">{{ stat.value }}</p>
-            <p class="text-xs text-muted mt-1 truncate">{{ stat.label }}</p>
-          </div>
-        </div>
-      </div>
-
       <div>
         <div class="flex items-center justify-between gap-4 mb-4">
           <span class="font-semibold text-highlighted">Grade curricular</span>

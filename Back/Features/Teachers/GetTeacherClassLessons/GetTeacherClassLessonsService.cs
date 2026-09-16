@@ -26,6 +26,7 @@ public class GetTeacherClassLessonsService(EstudDbContext ctx) : IEstudService
                 StartAt = l.StartAt,
                 EndAt = l.EndAt,
                 Status = l.Status,
+                PlannedContent = l.PlannedContent,
                 PresentStudents = l.Attendances.Where(a => a.Present).Select(a => a.StudentId).ToList(),
             })
             .ToListAsync();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GetStudentClassActivitiesOut, GetStudentClassOut } from '~/types/classes'
+import type { GetStudentClassActivitiesOut, GetStudentClassLessonsOut, GetStudentClassOut } from '~/types/classes'
 
 const props = defineProps<{ classId: string }>()
 
@@ -22,8 +22,14 @@ const { data: activitiesData } = await useFetch<GetStudentClassActivitiesOut>(
   { credentials: 'include', server: false },
 )
 
+const { data: lessonsData } = await useFetch<GetStudentClassLessonsOut>(
+  `${config.public.backendUrl}/students/classes/${props.classId}/lessons`,
+  { credentials: 'include', server: false },
+)
+
 const activities = computed(() => activitiesData.value?.activities ?? [])
 const notes = computed(() => groupStudentActivitiesByNote(activitiesData.value?.notes ?? [], activities.value))
+const lessons = computed(() => lessonsData.value?.lessons ?? [])
 </script>
 
 <template>
@@ -154,6 +160,45 @@ const notes = computed(() => groupStudentActivitiesByNote(activitiesData.value?.
             <UIcon name="i-lucide-clipboard-list" class="size-10 text-muted" />
             <p class="text-sm text-muted">
               Nenhuma atividade cadastrada
+            </p>
+          </div>
+        </section>
+
+        <section class="flex flex-col gap-3">
+          <h2 class="font-semibold text-highlighted">
+            Aulas ({{ lessons.length }})
+          </h2>
+
+          <div v-if="lessons.length" class="flex flex-col divide-y divide-default">
+            <div
+              v-for="lesson in lessons"
+              :key="lesson.id"
+              class="flex flex-col gap-2 py-3"
+            >
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex flex-col gap-1">
+                  <span class="text-sm text-highlighted">Aula {{ lesson.number }}</span>
+                  <span class="text-xs text-muted">{{ formatClassLesson(lesson) }}</span>
+                </div>
+                <UBadge
+                  :label="classLessonStatusLabels[lesson.status] ?? lesson.status"
+                  :color="classLessonStatusColors[lesson.status] ?? 'neutral'"
+                  variant="subtle"
+                />
+              </div>
+
+              <p v-if="lesson.plannedContent" class="whitespace-pre-line text-sm text-muted">
+                {{ lesson.plannedContent }}
+              </p>
+              <p v-else class="text-sm text-dimmed">
+                Sem planejamento
+              </p>
+            </div>
+          </div>
+          <div v-else class="flex flex-col items-center gap-3 py-6">
+            <UIcon name="i-lucide-calendar-days" class="size-10 text-muted" />
+            <p class="text-sm text-muted">
+              Nenhuma aula cadastrada
             </p>
           </div>
         </section>

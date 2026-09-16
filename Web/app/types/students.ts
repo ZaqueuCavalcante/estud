@@ -50,3 +50,7 @@ export interface GetStudentDetailsOut {
   course: StudentCourse | null
   classes: StudentClassItem[]
 }
+
+export interface GetStudentPendingActivitiesOut {
+  total: number
+}

@@ -175,6 +175,13 @@ public class ClassLessonNotStarted : EstudError
     public override string Message { get; set; } = "Não é possível fazer a chamada de uma aula que ainda não aconteceu.";
 }
 
+public class InvalidClassLessonPlan : EstudError
+{
+    public static readonly InvalidClassLessonPlan I = new();
+    public override string Code { get; set; } = nameof(InvalidClassLessonPlan);
+    public override string Message { get; set; } = "Planejamento da aula inválido.";
+}
+
 public class InvalidStudentsList : EstudError
 {
     public static readonly InvalidStudentsList I = new();

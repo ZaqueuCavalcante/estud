@@ -1,12 +1,12 @@
-namespace Estud.Back.Features.Teachers.GetTeacherClassLessons;
+namespace Estud.Back.Features.Students.GetStudentClassLessons;
 
-public class GetTeacherClassLessonsOut : IApiDto<GetTeacherClassLessonsOut>
+public class GetStudentClassLessonsOut : IApiDto<GetStudentClassLessonsOut>
 {
-    public List<GetTeacherClassLessonsItemOut> Lessons { get; set; } = [];
+    public List<GetStudentClassLessonsItemOut> Lessons { get; set; } = [];
 
-    public static IEnumerable<(string, GetTeacherClassLessonsOut)> GetExamples() =>
+    public static IEnumerable<(string, GetStudentClassLessonsOut)> GetExamples() =>
     [
-        ("Exemplo", new GetTeacherClassLessonsOut
+        ("Exemplo", new GetStudentClassLessonsOut
         {
             Lessons =
             [
@@ -19,7 +19,6 @@ public class GetTeacherClassLessonsOut : IApiDto<GetTeacherClassLessonsOut>
                     EndAt = Hour.H22_00,
                     Status = ClassLessonStatus.Finalized,
                     PlannedContent = "Introdução a grafos: definições e representação por matriz de adjacência.",
-                    PresentStudents = [1, 2],
                 },
                 new()
                 {
@@ -30,14 +29,13 @@ public class GetTeacherClassLessonsOut : IApiDto<GetTeacherClassLessonsOut>
                     EndAt = Hour.H22_00,
                     Status = ClassLessonStatus.Pending,
                     PlannedContent = null,
-                    PresentStudents = [],
                 },
             ],
         }),
     ];
 }
 
-public class GetTeacherClassLessonsItemOut
+public class GetStudentClassLessonsItemOut
 {
     public int Id { get; set; }
     public int Number { get; set; }
@@ -46,5 +44,4 @@ public class GetTeacherClassLessonsItemOut
     public Hour EndAt { get; set; }
     public ClassLessonStatus Status { get; set; }
     public string? PlannedContent { get; set; }
-    public List<int> PresentStudents { get; set; } = [];
 }
