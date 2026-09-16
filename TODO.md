@@ -12,3 +12,4 @@
 
 - visão de opções/conflitos na hora de definir horários (professor e sala)
 
+- usar o R2 para upload de imagens e arquivos PDF
