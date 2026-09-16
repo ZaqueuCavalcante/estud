@@ -261,7 +261,7 @@ const diagrams: Diagram[] = [
       { id: 'controllers', label: 'Controllers + DTOs', sub: 'XML docs · IApiDto', group: 'app', x: 16, y: 40, w: 190, note: 'Cada action tem summary/remarks e cada DTO expõe exemplos nomeados.' },
       { id: 'swagger', label: 'Swashbuckle', sub: 'swagger.json', group: 'app', x: 250, y: 40, w: 190, note: 'Agrupa endpoints por tag, injeta exemplos de resposta e de erro.' },
       { id: 'scalar', label: 'Scalar', sub: '/api/docs', group: 'external', x: 484, y: 40, w: 190, note: 'Referência interativa da API.' },
-      { id: 'markdown', label: 'Markdown', sub: 'Web/content/docs', group: 'data', x: 16, y: 150, w: 190, note: 'Introdução, como começar, funcionalidades e segurança.' },
+      { id: 'markdown', label: 'Markdown', sub: 'Web/content/docs', group: 'data', x: 16, y: 150, w: 190, note: 'Introdução, funcionalidades e segurança.' },
       { id: 'content', label: '@nuxt/content', sub: 'Coleção docs', group: 'app', x: 250, y: 150, w: 190 },
       { id: 'docsPage', label: '/docs', sub: 'Documentação do produto', group: 'client', x: 484, y: 150, w: 190 },
       { id: 'serilog', label: 'Serilog', sub: 'Logs estruturados', group: 'app', x: 16, y: 260, w: 190, note: 'Hoje só o sink de console em produção. Os sinks de Seq/arquivo/OTLP estão referenciados mas não configurados.' },

@@ -13,32 +13,26 @@ useSeoMeta({
 const sections = [
   {
     title: 'Introdução',
-    description: 'Entenda o que é o Estud, seus conceitos fundamentais e casos de uso.',
-    to: '/docs/introducao',
+    description: 'Entenda o que é o Estud, crie sua conta e faça os cadastros iniciais.',
+    to: '/docs/introducao/o-que-e-estud',
     icon: 'i-lucide-book-open',
-  },
-  {
-    title: 'Como Começar',
-    description: 'Crie sua conta, configure sua instituição e importe seus dados.',
-    to: '/docs/como-comecar',
-    icon: 'i-lucide-rocket',
   },
   {
     title: 'Funcionalidades',
     description: 'Explore as ferramentas de gestão acadêmica disponíveis na plataforma.',
-    to: '/docs/funcionalidades',
+    to: '/docs/funcionalidades/instituicao',
     icon: 'i-lucide-layout-grid',
   },
   {
     title: 'Segurança',
     description: 'Autenticação em dois fatores, perfis de acesso e boas práticas.',
-    to: '/docs/seguranca',
-    icon: 'i-lucide-shield',
+    to: '/docs/seguranca/autenticacao',
+    icon: 'i-lucide-shield-check',
   },
   {
     title: 'Integrações',
     description: 'Conecte o Estud aos seus outros sistemas com webhooks.',
-    to: '/docs/integracoes',
+    to: '/docs/integracoes/webhooks',
     icon: 'i-lucide-webhook',
   },
 ]
@@ -51,7 +45,7 @@ const sections = [
         Documentação
       </h1>
       <p class="text-xl text-muted">
-        Tudo que você precisa para começar a usar e aproveitar ao máximo a plataforma <strong>Estud</strong>.
+        Tudo que você precisa para começar a usar e aproveitar ao máximo o <strong>Estud</strong>.
       </p>
     </div>
 

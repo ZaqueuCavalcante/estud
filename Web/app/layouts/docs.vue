@@ -23,7 +23,7 @@ const descriptions = computed(() => {
 })
 
 // O `index.md` de uma pasta entra na navegação como filho com o mesmo título
-// dela, e o prefixo sairia "Introdução > Introdução".
+// dela, e o prefixo repetiria o nome da seção duas vezes.
 function breadcrumb({ prefix, label }: { prefix?: string, label?: string }) {
   const parts = prefix?.replace(/ >$/, '').split(' > ') ?? []
   return parts.at(-1) === label ? parts.slice(0, -1) : parts
@@ -85,7 +85,7 @@ watch(() => route.path, () => {
       <UContainer>
         <UPage>
           <template #left>
-            <UPageAside class="overflow-x-hidden scrollbar-on-hover">
+            <UPageAside class="overflow-x-hidden scrollbar-on-hover pb-0">
               <UContentNavigation :navigation="navigation?.[0]?.children" highlight />
             </UPageAside>
           </template>
@@ -121,6 +121,7 @@ watch(() => route.path, () => {
       v-if="searchFiles"
       :files="searchFiles"
       :navigation="searchNavigation"
+      :fuse="{ resultLimit: searchFiles.length }"
       :fullscreen="isMobile"
       :color-mode="false"
       placeholder="Pesquisar na documentação"
