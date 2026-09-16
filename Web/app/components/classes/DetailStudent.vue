@@ -187,9 +187,7 @@ const lessons = computed(() => lessonsData.value?.lessons ?? [])
                 />
               </div>
 
-              <p v-if="lesson.plannedContent" class="whitespace-pre-line text-sm text-muted">
-                {{ lesson.plannedContent }}
-              </p>
+              <MarkdownContent v-if="lesson.plannedContent" :value="lesson.plannedContent" />
               <p v-else class="text-sm text-dimmed">
                 Sem planejamento
               </p>

@@ -6,7 +6,7 @@ public class UpdateLessonPlanService(EstudDbContext ctx) : IEstudService
     {
         public Validator()
         {
-            RuleFor(x => x.PlannedContent).MaximumLength(2000).WithError(InvalidClassLessonPlan.I);
+            RuleFor(x => x.PlannedContent).MaximumLength(10000).WithError(InvalidClassLessonPlan.I);
         }
     }
     private static readonly Validator V = new();

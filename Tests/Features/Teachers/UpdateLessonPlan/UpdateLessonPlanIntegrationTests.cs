@@ -117,7 +117,7 @@ public partial class IntegrationTests
         var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
 
         // Act
-        var result = await teacherClient.UpdateLessonPlan(lessons.First(), new string('a', 2001));
+        var result = await teacherClient.UpdateLessonPlan(lessons.First(), new string('a', 10001));
 
         // Assert
         result.ShouldBeError(InvalidClassLessonPlan.I);

@@ -123,7 +123,7 @@ export function formatClassLesson(lesson: Pick<ClassLessonItem, 'date' | 'startA
 
 // O backend compara a data da aula com hoje em UTC, então a UI usa a mesma
 // referência para nunca liberar uma chamada que a API vai recusar.
-export function isFutureClassLesson(lesson: ClassLessonItem) {
+export function isFutureClassLesson(lesson: Pick<ClassLessonItem, 'date'>) {
   return lesson.date > new Date().toISOString().slice(0, 10)
 }
 

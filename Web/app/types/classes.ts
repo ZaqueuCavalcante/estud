@@ -86,6 +86,25 @@ export interface GetTeacherClassLessonsOut {
   lessons: ClassLessonItem[]
 }
 
+export interface TeacherLessonStudentItem {
+  id: number
+  name: string
+  present: boolean
+}
+
+export interface GetTeacherClassLessonOut {
+  id: number
+  classId: number
+  discipline: string
+  number: number
+  date: string // ex: "2026-07-20"
+  startAt: string // ex: "H19_00"
+  endAt: string // ex: "H22_00"
+  status: string // 'Pending' | 'Finalized'
+  plannedContent: string | null
+  students: TeacherLessonStudentItem[]
+}
+
 export interface StudentClassLessonItem {
   id: number
   number: number

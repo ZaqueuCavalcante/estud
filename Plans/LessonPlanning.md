@@ -6,15 +6,20 @@ ficam para depois.
 
 ## Base já implementada
 
-O fluxo ponta a ponta está no repositório — texto simples, sem formatação:
+O fluxo ponta a ponta está no repositório, com markdown:
 
-- `PUT teachers/lessons/{lessonId}/plan` (`Back/Features/Teachers/UpdateLessonPlan/`) e
-  `GET students/classes/{classId}/lessons` (`Back/Features/Students/GetStudentClassLessons/`).
+- `PUT teachers/lessons/{lessonId}/plan` (`Back/Features/Teachers/UpdateLessonPlan/`),
+  `GET students/classes/{classId}/lessons` (`Back/Features/Students/GetStudentClassLessons/`) e
+  `GET teachers/classes/{classId}/lessons/{lessonId}`
+  (`Back/Features/Teachers/GetTeacherClassLesson/`).
 - `ClassLesson.PlannedContent` + `UpdatePlan()`, erro `InvalidClassLessonPlan`, policies novas,
   `PlannedContent` no out do `GetTeacherClassLessons`.
-- Testes de integração das duas features e helpers no `TestsHttpClient`.
-- Front: `LessonPlanModal.vue`, o planejamento na aba Aulas do `DetailTeacher.vue` e a seção
-  "Aulas" do `DetailStudent.vue`.
+- Testes de integração das features e helpers no `TestsHttpClient`.
+- Front: tela de detalhes da aula (`Web/app/components/lessons/DetailTeacher.vue`, rota
+  `/classes/{classId}/lessons/{lessonId}`) com as seções Planejamento (`lessons/PlanEditor.vue`) e
+  Chamada (`lessons/AttendanceEditor.vue`), cada uma com modo leitura e modo edição; a aba Aulas do
+  `classes/DetailTeacher.vue` só lista as aulas e leva pra essa tela; a seção "Aulas" do
+  `DetailStudent.vue` exibe o planejamento com `MarkdownContent.vue`.
 
 Falta rodar `dotnet build` / `dotnet test` para validar.
 
@@ -54,33 +59,28 @@ O `/docs` usa `ContentRenderer` + `queryCollection('docs')`, que é build-time: 
 - Edição: `UEditor` com `content-type="markdown"` (`EditorContentType = 'json' | 'html' | 'markdown'`),
   que entrega e recebe markdown como string.
 
-Dá para entregar em dois passos: primeiro só a exibição com `<MDC>` mantendo o `UTextarea` (o lado
-do aluno já fica pronto, o professor escreve markdown na mão), e depois trocar a entrada pelo
-`UEditor` — sem mexer em backend nem em contrato de API.
-
 ### Passos
 
-1. Declarar `@nuxtjs/mdc` no `Web/package.json`. Hoje ele só existe como dependência transitiva do
-   `@nuxt/content`, e depender disso quebra em qualquer upgrade do content.
-2. `DetailStudent.vue`: trocar o `<p whitespace-pre-line>` do planejamento por `<MDC>`.
-3. `DetailTeacher.vue`: a lista da aba Aulas usa `line-clamp-2`, que fica estranho com markdown
-   renderizado. Decidir entre manter um resumo em texto plano na lista e o markdown só no modal, ou
-   aplicar o clamp no container do `<MDC>`.
-4. `LessonPlanModal.vue`: trocar o `UTextarea` por `UEditor` + `UEditorToolbar`, com o `v-model` em
-   markdown.
-5. Segurança: markdown aceita HTML cru, e a sintaxe `::componente` do MDC permite embutir componente
-   Vue arbitrário. Desligar as duas na configuração do MDC. Não existe nenhum sanitizador no backend
-   hoje — o `Back.csproj` não tem Markdig, AntiXss nem equivalente.
-6. Limite de tamanho: os 2000 caracteres passam a contar markdown, não texto renderizado. Subir nos
-   dois lugares — `UpdateLessonPlanService.cs:9` (`MaximumLength`) e `LessonPlanModal.vue:17`
-   (zod `max`, mais o contador nas linhas 78-80).
-7. Testes de integração não mudam de forma: o campo continua string. Vale um caso com markdown para
-   garantir que nada é escapado ou reescrito no caminho.
+1. ~~Declarar `@nuxtjs/mdc` no `Web/package.json`.~~ Pendente: hoje ele só existe como dependência
+   transitiva do `@nuxt/content`, e depender disso quebra em qualquer upgrade do content. O
+   `pnpm install` precisa rodar do Windows — o `node_modules` do repositório tem bindings nativos de
+   `win32`, e do WSL o pnpm quer apagar e reinstalar tudo.
+2. ✅ `DetailStudent.vue`: o `<p whitespace-pre-line>` do planejamento virou `MarkdownContent.vue`.
+3. ✅ A aba Aulas do `classes/DetailTeacher.vue` não mostra mais o planejamento — cada aula tem um
+   botão que leva pra tela de detalhes, e o markdown renderizado vive lá.
+4. ✅ `lessons/PlanEditor.vue`: `UEditor` + `UEditorToolbar` com `v-model` em markdown, direto na
+   página no modo edição, no lugar do antigo `LessonPlanModal.vue`.
+5. ✅ Exibição: o `MarkdownContent.vue` usa o próprio `UEditor` com `:editable="false"`. O `<MDC>`
+   deixava o conteúdo em branco e o `parseMarkdown` quebrava no navegador (causa não investigada).
+   O editor só gera nós do schema do Tiptap, então HTML cru e `::componente` não viram markup. Não
+   existe nenhum sanitizador no backend hoje — o `Back.csproj` não tem Markdig, AntiXss nem equivalente.
+6. ✅ Limite de tamanho: de 2000 para 10000, no `UpdateLessonPlanService.cs` e no editor.
+7. ✅ Testes de integração: o `GetTeacherClassLesson` cobre o round-trip do markdown.
 
 ### Em aberto
 
-- Não foi verificado em runtime se o `<MDC>` fica registrado globalmente neste app, nem o `UEditor`
-  foi exercitado. Vale um espetinho numa página de teste antes de decidir.
+- Nada disso foi exercitado em runtime — `pnpm typecheck`, `pnpm lint` e `pnpm dev` só rodam do
+  Windows neste checkout.
 - A mesma decisão vale para descrição de atividade e notificações. Escolher uma vez resolve as três.
 
 ## 3. Upload de imagem no planejamento
@@ -196,10 +196,45 @@ O `IStorageService` vai precisar crescer: hoje só tem upload, faltaria `Delete`
 - Registrar o serviço real e manter o `FakeStorageService` em Testing e Development, seguindo o que o
   `ServicesConfigs` já faz com o `IEmailsService`.
 - CORS no bucket liberando `PUT` a partir do domínio do front.
+- A assinatura atual do `IStorageService` não comporta o que o fluxo precisa:
+  `CreatePreSignedUrlForUpload(StorageContainer, string path)` não recebe content-type nem
+  `Cache-Control`. Num PUT pré-assinado esses headers precisam entrar na assinatura, senão não dá
+  para fixar o mime nem o TTL no momento do upload. Some-se o `Delete` do ciclo de vida: a interface
+  vai mudar.
+
+### Cache e entrega na borda (Cloudflare)
+
+Só se aplica à opção 1 da decisão de acesso (bucket público). Nas opções 2 e 3 a imagem não passa
+pelo CDN público e esta subseção inteira deixa de valer.
+
+O egress do R2 já é zero, então **cache aqui não reduz custo** — não sobrou nada para reduzir. O
+ganho é latência, mais as operações Class B ($0,36/milhão) que no volume do Estud já eram zero.
+Ligar pela performance, não pela conta.
+
+- **Custom domain é obrigatório.** O `r2.dev` é rate-limited, documentado como "apenas para
+  desenvolvimento", e não suporta cache, WAF nem Access. Usar algo como `cdn.estud.com.br` — o zone
+  do `estud.com.br` já está no Cloudflare.
+- **Ao ligar o custom domain, desabilitar o `r2.dev`.** Com os dois ativos, o `r2.dev` continua
+  servindo o bucket por fora e vira bypass de WAF e Access.
+- **Imagem já é cacheada por padrão**: `jpg`, `jpeg`, `png`, `gif`, `webp` e `avif` estão na lista
+  default de extensões. Não precisa de Cache Rule só para ligar o cache.
+- **O TTL é que precisa de ajuste**: sem `Cache-Control` vindo da origem, o default é 120 minutos.
+  Como o nome do arquivo é um Ulid e o conteúdo nunca muda sob aquele nome, o objeto é imutável — dá
+  para gravar `Cache-Control: public, max-age=31536000, immutable` no upload sem risco de servir
+  versão velha. Não existe invalidação porque não existe atualização, só arquivo novo.
+- **Smart Tiered Cache** é a recomendação oficial para R2: escolhe sozinho o upper-tier mais próximo
+  do bucket, então o miss na borda não vai direto ao R2.
+
+**Image Transformations** cobre redimensionamento e conversão de formato sem pipeline próprio: o free
+plan dá 5.000 transformações únicas por mês, funciona com imagem remota (inclusive R2) via URL
+`/cdn-cgi/image/...`, e `format=auto` serve AVIF ou WebP conforme o browser. A cobrança é por
+transformação única por mês calendário, independente de quantas vezes for servida; acima das 5.000,
+$0,50 por mil. No volume modelado (~240 imagens/ano) é folga larga.
 
 ### Fora do escopo desta etapa
 
-- Redimensionar, comprimir ou gerar thumbnail.
+- Redimensionar ou comprimir por conta própria no backend — o Image Transformations resolve na borda,
+  e só entra em cena se a decisão de acesso for a opção 1.
 - Antivírus no arquivo enviado.
 - Reaproveitar o upload em descrição de atividade e notificações.
 
