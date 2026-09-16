@@ -2,6 +2,8 @@ using Audit.Core;
 using Estud.Back.Audit;
 using Audit.EntityFramework;
 using Estud.Back.Domain.Identity;
+using Estud.Back.Domain.Webhooks;
+using Estud.Back.Domain.Institutions;
 using AuditConfig = Audit.Core.Configuration;
 
 namespace Estud.Back.Configs;
@@ -12,8 +14,13 @@ public static class AuditConfigs
     {
         AuditConfig.Setup().UseEntityFramework(_ => _
             .AuditTypeExplicitMapper(_ => _
+                .Map<EstudRole, AuditTrail>()
                 .Map<EstudUser, AuditTrail>()
                 .Map<MagicLink, AuditTrail>()
+                .Map<SsoConfiguration, AuditTrail>()
+                .Map<SsoAllowedDomain, AuditTrail>()
+                .Map<InstitutionConfig, AuditTrail>()
+                .Map<WebhookSubscription, AuditTrail>()
                 .AuditEntityAction<AuditTrail>((evt, entry, trail) =>
                 {
                     if (evt.Environment.Exception != null) return false;
