@@ -115,6 +115,26 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Students_GetStudentPendingActivities_Should_not_get_exams()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacher = await _back.LoginAs(@class.TeacherEmail);
+        await teacher.CreateClassActivity(@class.Id, type: ClassActivityType.Exam, weight: 50);
+        await teacher.CreateClassActivity(@class.Id, type: ClassActivityType.Work, weight: 50);
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+
+        // Act
+        var result = await client.GetStudentPendingActivities();
+
+        // Assert
+        result.Success.Total.Should().Be(1);
+    }
+
+    [Test]
     public async Task Students_GetStudentPendingActivities_Should_not_get_activities_of_finalized_classes()
     {
         // Arrange

@@ -238,5 +238,28 @@ public partial class IntegrationTests
         activity.Works[0].Value.Should().Be(0);
     }
 
+    [Test]
+    public async Task Teachers_GetTeacherClassActivity_Should_get_exam_works_as_in_review_after_due_date()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await client.CreateClassActivity(
+            @class.Id,
+            type: ClassActivityType.Exam,
+            dueDate: DateTime.UtcNow.AddDays(-2).ToDateOnly()
+        ).Success();
+
+        // Act
+        var result = await client.GetTeacherClassActivity(@class.Id, activity.Id);
+
+        // Assert
+        var work = result.Success.Works.Single();
+        work.Status.Should().Be(ClassActivityWorkStatus.InReview);
+        work.Link.Should().BeNull();
+    }
+
     #endregion
 }

@@ -25,6 +25,7 @@ internal class ResponseExamples : ExamplesProvider<CreateClassActivityWorkOut>;
 internal class ErrorsExamples : ErrorExamplesProvider<
     InvalidClassActivityWorkLink,
     ClassActivityNotFound,
+    ClassActivityDoesNotAcceptWorks,
     StudentNotEnrolledInClass,
     ClassActivityWorkNotFound
 >;

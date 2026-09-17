@@ -12,6 +12,7 @@ public class GetStudentPendingActivitiesService(EstudDbContext ctx) : IEstudServ
             .Where(cs => cs.StudentId == studentId && cs.Status == StudentClassStatus.Matriculado
                 && cs.Class!.InstitutionId == institutionId && cs.Class.Status == ClassStatus.Started)
             .SelectMany(cs => cs.Class!.Activities)
+            .Where(a => a.ActivityType != ClassActivityType.Exam)
             .Where(a => a.Works.Any(w => w.StudentId == studentId && w.Status == ClassActivityWorkStatus.Pending))
             .CountAsync();
 

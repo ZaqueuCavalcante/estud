@@ -64,7 +64,7 @@ const createWorkModalOpen = ref(false)
             </span>
             <span class="flex items-center gap-1.5">
               <UIcon name="i-lucide-calendar-clock" class="size-4" />
-              Entrega até {{ formatClassActivityDueDate(data.dueDate, data.dueHour) }}
+              {{ classActivityDueLabel(data) }} {{ formatClassActivityDueDate(data.dueDate, data.dueHour) }}
             </span>
             <UBadge
               :label="classActivityStatusLabels[data.status] ?? data.status"
@@ -90,16 +90,16 @@ const createWorkModalOpen = ref(false)
           <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-2">
               <h2 class="font-semibold text-highlighted">
-                Minha entrega
+                {{ isExamActivity(data) ? 'Minha nota' : 'Minha entrega' }}
               </h2>
               <UBadge
-                :label="classActivityWorkStatusLabels[data.workStatus] ?? data.workStatus"
+                :label="classActivityWorkStatusLabel(data, data.workStatus)"
                 :color="classActivityWorkStatusColors[data.workStatus] ?? 'neutral'"
                 variant="subtle"
               />
             </div>
             <UButton
-              v-if="!data.workLink"
+              v-if="!data.workLink && !isExamActivity(data)"
               icon="i-lucide-plus"
               label="Entrega"
               size="sm"
@@ -118,6 +118,9 @@ const createWorkModalOpen = ref(false)
                 {{ data.workLink }}
               </ULink>
             </div>
+            <p v-else-if="isExamActivity(data)" class="text-sm text-muted">
+              {{ data.workStatus === 'Finalized' ? 'Nota lançada pelo professor' : 'A nota será lançada pelo professor' }}
+            </p>
             <p v-else class="text-sm text-muted">
               Você ainda não entregou esta atividade
             </p>

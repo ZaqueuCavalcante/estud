@@ -2,15 +2,15 @@
 
 - notas parciais
 - finalizar turma
+- profile photos
+- elaboração de horários
 - lista de alunos em risco
 - coeficiente de rendimento
-- elaboração de horários
 - backoffice (eventos, comandos, auditoria)
+- ajustar usos do DateTime.UtcNow e fusos horários
+- Colocar os nomes inteiros no breadcrumbs, apenas reduzir no mobile
 
 - visão de opções/conflitos na hora de definir horários (professor e sala)
-
-- usar o R2 para upload de imagens e arquivos PDF
-
 
 ## Current work
 
@@ -31,4 +31,12 @@
     - Ana vai em todas, 100% de frequência
     - Bia falta 1 dia, 70% de frequência
     - Carlos só foi dia, 25% de frequência
+
+
+
+altere o endpoint de matricular um aluno numa turma
+quando isso for feito e a turma ja tiver atividades, o sistema deve criar os vinculos do aluno com as atividades
+a mesma coisa deve acontecer pra frequencia na turma, vamos assumir que o aluno faltou todas as aulas que ja aconteceram
+assim o aluno ja sera matriculado e todos os dados vao constar como se ele estivesse na turma desde o inicio dela...
+
 

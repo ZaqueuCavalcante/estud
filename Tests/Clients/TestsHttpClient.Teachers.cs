@@ -11,6 +11,7 @@ using Estud.Back.Features.Teachers.UpdateLessonPlan;
 using Estud.Back.Features.Teachers.GetTeacherDetails;
 using Estud.Back.Features.Teachers.CreateClassActivity;
 using Estud.Back.Features.Teachers.AssignCampiToTeacher;
+using Estud.Back.Features.Teachers.CreateLessonPlanImage;
 using Estud.Back.Features.Teachers.GetTeacherClassLesson;
 using Estud.Back.Features.Teachers.CreateLessonAttendance;
 using Estud.Back.Features.Teachers.GetTeacherClassLessons;
@@ -201,6 +202,16 @@ public partial class TestsHttpClient
         var data = new UpdateLessonPlanIn { PlannedContent = plannedContent };
         var response = await http.PutAsJsonAsync($"/teachers/lessons/{lessonId}/plan", data);
         return await response.Resolve<SuccessOut>();
+    }
+
+    public async Task<OneOf<CreateLessonPlanImageOut, ErrorOut>> CreateLessonPlanImage(
+        int lessonId,
+        string contentType = "image/png",
+        long sizeInBytes = 245_000
+    ) {
+        var data = new CreateLessonPlanImageIn { ContentType = contentType, SizeInBytes = sizeInBytes };
+        var response = await http.PostAsJsonAsync($"/teachers/lessons/{lessonId}/plan/images", data);
+        return await response.Resolve<CreateLessonPlanImageOut>();
     }
 
     public async Task<OneOf<SuccessOut, ErrorOut>> UpdateTeacher(

@@ -161,6 +161,13 @@ public class InvalidClassActivityWorkLink : EstudError
     public override string Message { get; set; } = "Link da entrega inválido.";
 }
 
+public class ClassActivityDoesNotAcceptWorks : EstudError
+{
+    public static readonly ClassActivityDoesNotAcceptWorks I = new();
+    public override string Code { get; set; } = nameof(ClassActivityDoesNotAcceptWorks);
+    public override string Message { get; set; } = "Esta atividade não aceita entregas.";
+}
+
 public class ClassLessonNotFound : EstudError
 {
     public static readonly ClassLessonNotFound I = new();
@@ -180,6 +187,20 @@ public class InvalidClassLessonPlan : EstudError
     public static readonly InvalidClassLessonPlan I = new();
     public override string Code { get; set; } = nameof(InvalidClassLessonPlan);
     public override string Message { get; set; } = "Planejamento da aula inválido.";
+}
+
+public class InvalidLessonPlanImageContentType : EstudError
+{
+    public static readonly InvalidLessonPlanImageContentType I = new();
+    public override string Code { get; set; } = nameof(InvalidLessonPlanImageContentType);
+    public override string Message { get; set; } = "Formato de imagem inválido. Envie PNG, JPEG ou WebP.";
+}
+
+public class InvalidLessonPlanImageSize : EstudError
+{
+    public static readonly InvalidLessonPlanImageSize I = new();
+    public override string Code { get; set; } = nameof(InvalidLessonPlanImageSize);
+    public override string Message { get; set; } = "A imagem deve ter no máximo 5 MB.";
 }
 
 public class InvalidStudentsList : EstudError

@@ -65,6 +65,7 @@ export const classActivityStatusColors: Record<string, BadgeColor> = {
 export const classActivityWorkStatusLabels: Record<string, string> = {
   Pending: 'Pendente',
   Delivered: 'Entregue',
+  InReview: 'Em correção',
   Finalized: 'Finalizado',
 }
 
@@ -72,6 +73,20 @@ export const classActivityWorkStatusColors: Record<string, BadgeColor> = {
   Pending: 'neutral',
   Delivered: 'info',
   Finalized: 'success',
+  InReview: 'warning',
+}
+
+export function isExamActivity(activity: { type: string }) {
+  return activity.type === 'Exam'
+}
+
+export function classActivityWorkStatusLabel(activity: { type: string }, workStatus: string) {
+  if (isExamActivity(activity) && workStatus === 'Pending') return 'Agendada'
+  return classActivityWorkStatusLabels[workStatus] ?? workStatus
+}
+
+export function classActivityDueLabel(activity: { type: string }) {
+  return isExamActivity(activity) ? 'Prova em' : 'Entrega até'
 }
 
 const dayLabels: Record<string, string> = {

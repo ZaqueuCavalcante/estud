@@ -25,7 +25,7 @@ public static class GetTeacherClassActivityMapper
                 TotalWorks = activity.Works.Count,
                 Works = activity.Works
                     .OrderBy(w => w.Student.Name)
-                    .Select(w => w.ToGetTeacherClassActivityWorkOut())
+                    .Select(w => w.ToGetTeacherClassActivityWorkOut(activity))
                     .ToList(),
             };
         }
@@ -33,7 +33,7 @@ public static class GetTeacherClassActivityMapper
 
     extension(ClassActivityWork work)
     {
-        public GetTeacherClassActivityWorkOut ToGetTeacherClassActivityWorkOut()
+        public GetTeacherClassActivityWorkOut ToGetTeacherClassActivityWorkOut(ClassActivity activity)
         {
             return new()
             {
@@ -41,7 +41,7 @@ public static class GetTeacherClassActivityMapper
                 StudentId = work.StudentId,
                 Student = work.Student.Name,
                 Link = work.Link,
-                Status = work.Status,
+                Status = activity.GetWorkStatus(work),
                 Value = work.Note,
             };
         }

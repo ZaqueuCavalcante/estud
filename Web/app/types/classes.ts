@@ -105,6 +105,11 @@ export interface GetTeacherClassLessonOut {
   students: TeacherLessonStudentItem[]
 }
 
+export interface CreateLessonPlanImageOut {
+  uploadUrl: string
+  publicUrl: string
+}
+
 export interface StudentClassLessonItem {
   id: number
   number: number
@@ -151,7 +156,7 @@ export interface StudentClassActivityItem {
   createdAt: string
   dueDate: string // ex: "2026-07-20"
   dueHour: string // ex: "H19_00"
-  workStatus: string // 'Pending' | 'Delivered' | 'Finalized'
+  workStatus: string // 'Pending' | 'Delivered' | 'Finalized' | 'InReview'
   workLink: string | null
   value: number
   ponderedValue: number
@@ -171,7 +176,7 @@ export interface TeacherActivityWorkItem {
   id: number
   studentId: number
   student: string
-  status: string // 'Pending' | 'Delivered' | 'Finalized'
+  status: string // 'Pending' | 'Delivered' | 'Finalized' | 'InReview'
   link: string | null
   value: number
 }
@@ -205,7 +210,7 @@ export interface GetStudentClassActivityOut {
   createdAt: string
   dueDate: string // ex: "2026-07-20"
   dueHour: string // ex: "H19_00"
-  workStatus: string // 'Pending' | 'Delivered' | 'Finalized'
+  workStatus: string // 'Pending' | 'Delivered' | 'Finalized' | 'InReview'
   workLink: string | null
   value: number
   ponderedValue: number

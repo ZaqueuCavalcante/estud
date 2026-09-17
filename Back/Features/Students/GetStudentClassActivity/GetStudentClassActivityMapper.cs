@@ -21,7 +21,7 @@ public static class GetStudentClassActivityMapper
                 CreatedAt = activity.CreatedAt,
                 DueDate = activity.DueDate,
                 DueHour = activity.DueHour,
-                WorkStatus = work?.Status ?? ClassActivityWorkStatus.Pending,
+                WorkStatus = activity.GetWorkStatus(work),
                 WorkLink = work?.Link,
                 Value = work?.Note ?? 0,
                 PonderedValue = (work?.Note ?? 0) * activity.Weight / 100M,

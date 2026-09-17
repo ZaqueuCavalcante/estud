@@ -24,6 +24,7 @@ public class CreateClassActivityWorkService(EstudDbContext ctx) : IEstudService
             .Where(x => x.Id == classActivityId)
             .FirstOrDefaultAsync();
         if (classActivity == null) return new ClassActivityNotFound();
+        if (!classActivity.AcceptsWorks()) return ClassActivityDoesNotAcceptWorks.I;
 
         var classesIds = await ctx.ClassStudents.Where(x => x.StudentId == studentId)
             .Select(x => x.ClassId).ToListAsync();

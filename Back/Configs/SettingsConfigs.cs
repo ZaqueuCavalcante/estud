@@ -7,6 +7,7 @@ public static class SettingsConfigs
         builder.Services.AddSingleton<DnsSettings>();
         builder.Services.AddSingleton<AuthSettings>();
         builder.Services.AddSingleton<EmailSettings>();
+        builder.Services.AddSingleton<StorageSettings>();
         builder.Services.AddSingleton<FrontendSettings>();
         builder.Services.AddSingleton<SocialLoginSettings>();
         builder.Services.AddSingleton<RateLimitingSettings>();

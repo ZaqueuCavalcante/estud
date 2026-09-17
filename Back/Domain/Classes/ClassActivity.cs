@@ -68,4 +68,24 @@ public class ClassActivity : DomainEntity
 
         return new ClassActivity(classId, note, title, description, type, weight, dueDate, dueHour, students);
     }
+
+    public bool AcceptsWorks()
+    {
+        return ActivityType != ClassActivityType.Exam;
+    }
+
+    public bool IsPastDue()
+    {
+        var dueAtUtc = DueDate.ToDateTime(TimeOnly.MinValue).AddMinutes(DueHour.ToMinutes()).AddHours(3);
+        return DateTime.UtcNow >= dueAtUtc;
+    }
+
+    public ClassActivityWorkStatus GetWorkStatus(ClassActivityWork? work)
+    {
+        var status = work?.Status ?? ClassActivityWorkStatus.Pending;
+
+        if (AcceptsWorks() || status != ClassActivityWorkStatus.Pending) return status;
+
+        return IsPastDue() ? ClassActivityWorkStatus.InReview : status;
+    }
 }

@@ -85,7 +85,7 @@ function workLabel(activity: StudentClassActivityItem) {
   if (activity.workStatus === 'Finalized') {
     return `Nota ${formatNote(activity.value)} · ${formatNote(activity.ponderedValue)} de ${formatNote(activity.weight / MAX_WEIGHT * MAX_NOTE)} pontos`
   }
-  return `${classActivityWorkStatusLabels[activity.workStatus] ?? activity.workStatus} · sem nota`
+  return `${classActivityWorkStatusLabel(activity, activity.workStatus)} · sem nota`
 }
 
 function barLabel(bar: Bar) {
@@ -229,7 +229,7 @@ function barLabel(bar: Bar) {
           {{ workLabel(tooltip.bar.activity) }}
         </span>
         <span class="text-xs opacity-70">
-          Entrega até {{ formatClassActivityDueDate(tooltip.bar.activity.dueDate, tooltip.bar.activity.dueHour) }}
+          {{ classActivityDueLabel(tooltip.bar.activity) }} {{ formatClassActivityDueDate(tooltip.bar.activity.dueDate, tooltip.bar.activity.dueHour) }}
         </span>
       </div>
     </div>

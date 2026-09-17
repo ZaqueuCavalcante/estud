@@ -1,3 +1,4 @@
+using Amazon.S3;
 using Estud.Back.Emails;
 using Estud.Back.Google;
 using Estud.Back.Storage;
@@ -16,12 +17,25 @@ public static class ServicesConfigs
 
         builder.Services.AddScoped<IEmailsService, EmailsService>();
         builder.Services.AddScoped<IGoogleService, GoogleService>();
-        builder.Services.AddScoped<IStorageService, FakeStorageService>();
+        builder.Services.AddScoped<IStorageService, R2StorageService>();
+
+        builder.Services.AddSingleton<IAmazonS3>(sp =>
+        {
+            var settings = sp.GetRequiredService<StorageSettings>();
+            var config = new AmazonS3Config
+            {
+                ForcePathStyle = true,
+                AuthenticationRegion = "auto",
+                ServiceURL = settings.ServiceUrl,
+            };
+            return new AmazonS3Client(settings.AccessKeyId, settings.SecretAccessKey, config);
+        });
 
         if (EnvironmentExtensions.IsTesting())
         {
             builder.Services.Replace(ServiceDescriptor.Singleton<IGoogleService, FakeGoogleService>());
             builder.Services.Replace(ServiceDescriptor.Singleton<IEmailsService, FakeEmailsService>());
+            builder.Services.Replace(ServiceDescriptor.Singleton<IStorageService, FakeStorageService>());
         }
         if (EnvironmentExtensions.IsDevelopment())
         {

@@ -79,7 +79,7 @@ function openNoteModal(work: TeacherActivityWorkItem) {
             </span>
             <span class="flex items-center gap-1.5">
               <UIcon name="i-lucide-calendar-clock" class="size-4" />
-              Entrega até {{ formatClassActivityDueDate(data.dueDate, data.dueHour) }}
+              {{ classActivityDueLabel(data) }} {{ formatClassActivityDueDate(data.dueDate, data.dueHour) }}
             </span>
             <UBadge
               :label="classActivityStatusLabels[data.status] ?? data.status"
@@ -103,7 +103,7 @@ function openNoteModal(work: TeacherActivityWorkItem) {
 
         <section class="flex flex-col gap-3">
           <h2 class="font-semibold text-highlighted">
-            Entregas ({{ data.deliveredWorks }} / {{ data.totalWorks }})
+            {{ isExamActivity(data) ? 'Notas' : 'Entregas' }} ({{ data.deliveredWorks }} / {{ data.totalWorks }})
           </h2>
 
           <div v-if="works.length" class="flex flex-col divide-y divide-default">
@@ -124,7 +124,7 @@ function openNoteModal(work: TeacherActivityWorkItem) {
                   >
                     {{ work.link }}
                   </ULink>
-                  <span v-else class="text-xs text-muted">
+                  <span v-else-if="!isExamActivity(data)" class="text-xs text-muted">
                     Nenhuma entrega
                   </span>
                 </div>
@@ -139,7 +139,7 @@ function openNoteModal(work: TeacherActivityWorkItem) {
                   icon="i-lucide-award"
                 />
                 <UBadge
-                  :label="classActivityWorkStatusLabels[work.status] ?? work.status"
+                  :label="classActivityWorkStatusLabel(data, work.status)"
                   :color="classActivityWorkStatusColors[work.status] ?? 'neutral'"
                   variant="subtle"
                 />

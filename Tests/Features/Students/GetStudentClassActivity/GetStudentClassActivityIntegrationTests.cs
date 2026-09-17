@@ -242,6 +242,77 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Students_GetStudentClassActivity_Should_get_exam_as_pending_before_due_date()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await teacherClient.CreateClassActivity(
+            @class.Id,
+            type: ClassActivityType.Exam,
+            dueDate: DateTime.UtcNow.AddDays(1).ToDateOnly()
+        ).Success();
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+
+        // Act
+        var result = await client.GetStudentClassActivity(@class.Id, activity.Id);
+
+        // Assert
+        result.Success.WorkStatus.Should().Be(ClassActivityWorkStatus.Pending);
+    }
+
+    [Test]
+    public async Task Students_GetStudentClassActivity_Should_get_exam_as_in_review_after_due_date()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await teacherClient.CreateClassActivity(
+            @class.Id,
+            type: ClassActivityType.Exam,
+            dueDate: DateTime.UtcNow.AddDays(-2).ToDateOnly()
+        ).Success();
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+
+        // Act
+        var result = await client.GetStudentClassActivity(@class.Id, activity.Id);
+
+        // Assert
+        result.Success.WorkStatus.Should().Be(ClassActivityWorkStatus.InReview);
+    }
+
+    [Test]
+    public async Task Students_GetStudentClassActivity_Should_get_exam_as_finalized_after_note()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await teacherClient.CreateClassActivity(
+            @class.Id,
+            type: ClassActivityType.Exam,
+            dueDate: DateTime.UtcNow.AddDays(-2).ToDateOnly()
+        ).Success();
+        await teacherClient.ShortcutAddStudentActivityNote(@class.Id, activity.Id, @class.StudentIds[0], 7);
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+
+        // Act
+        var result = await client.GetStudentClassActivity(@class.Id, activity.Id);
+
+        // Assert
+        result.Success.WorkStatus.Should().Be(ClassActivityWorkStatus.Finalized);
+        result.Success.Value.Should().Be(7);
+    }
+
+    [Test]
     public async Task Students_GetStudentClassActivity_Should_get_only_the_note_of_the_logged_student()
     {
         // Arrange

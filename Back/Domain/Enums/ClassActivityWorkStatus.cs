@@ -11,6 +11,9 @@ public enum ClassActivityWorkStatus
     [Description("Entregue")]
     Delivered = 1,
 
+    [Description("Em correção")]
+    InReview = 2,
+
     [Description("Finalizado")]
-    Finalized = 2,
+    Finalized = 3,
 }

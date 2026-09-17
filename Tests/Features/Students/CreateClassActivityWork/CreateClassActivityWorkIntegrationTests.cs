@@ -121,6 +121,23 @@ public partial class IntegrationTests
         result.ShouldBeError(ClassActivityWorkNotFound.I);
     }
 
+    [Test]
+    public async Task Students_CreateClassActivityWork_Should_not_create_work_when_activity_is_an_exam()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+        var teacher = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await teacher.CreateClassActivity(@class.Id, type: ClassActivityType.Exam, weight: 40).Success();
+        var student = await _back.LoginAs(@class.StudentEmail);
+
+        // Act
+        var result = await student.CreateClassActivityWork(activity.Id);
+
+        // Assert
+        result.ShouldBeError(ClassActivityDoesNotAcceptWorks.I);
+    }
+
     #endregion
 
     #region Happy path

@@ -29,12 +29,12 @@ const deliveredPercent = computed(() => props.activity.totalWorks > 0
 
     <span class="flex items-center gap-1.5 text-sm text-muted">
       <UIcon name="i-lucide-calendar-clock" class="size-4" />
-      Entrega até {{ formatClassActivityDueDate(activity.dueDate, activity.dueHour) }}
+      {{ classActivityDueLabel(activity) }} {{ formatClassActivityDueDate(activity.dueDate, activity.dueHour) }}
     </span>
 
     <div class="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-default pt-3">
       <UBadge
-        :label="`${activity.deliveredWorks} / ${activity.totalWorks} entregas`"
+        :label="`${activity.deliveredWorks} / ${activity.totalWorks} ${isExamActivity(activity) ? 'notas' : 'entregas'}`"
         :color="deliveredPercent === 100 ? 'success' : 'neutral'"
         variant="subtle"
         icon="i-lucide-file-check"

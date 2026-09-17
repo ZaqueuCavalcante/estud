@@ -24,7 +24,7 @@ defineProps<{ activity: StudentClassActivityItem, to: string }>()
 
     <span class="flex items-center gap-1.5 text-sm text-muted">
       <UIcon name="i-lucide-calendar-clock" class="size-4" />
-      Entrega até {{ formatClassActivityDueDate(activity.dueDate, activity.dueHour) }}
+      {{ classActivityDueLabel(activity) }} {{ formatClassActivityDueDate(activity.dueDate, activity.dueHour) }}
     </span>
 
     <div class="mt-auto flex flex-wrap items-center gap-2 border-t border-default pt-3">
@@ -37,7 +37,7 @@ defineProps<{ activity: StudentClassActivityItem, to: string }>()
       />
       <UBadge
         class="ms-auto"
-        :label="classActivityWorkStatusLabels[activity.workStatus] ?? activity.workStatus"
+        :label="classActivityWorkStatusLabel(activity, activity.workStatus)"
         :color="classActivityWorkStatusColors[activity.workStatus] ?? 'neutral'"
         variant="subtle"
       />

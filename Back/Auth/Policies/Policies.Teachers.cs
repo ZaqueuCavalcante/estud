@@ -28,6 +28,7 @@ public static partial class Policies
     public const string GetTeacherClassActivities = nameof(GetTeacherClassActivities);
 
     public const string UpdateLessonPlan = nameof(UpdateLessonPlan);
+    public const string CreateLessonPlanImage = nameof(CreateLessonPlanImage);
     public const string GetTeacherClassLesson = nameof(GetTeacherClassLesson);
     public const string GetTeacherClassLessons = nameof(GetTeacherClassLessons);
     public const string CreateLessonAttendance = nameof(CreateLessonAttendance);
@@ -64,6 +65,7 @@ public static partial class Policies
 
         builder
             .AddEstudPolicy(UpdateLessonPlan, UserType.Teacher)
+            .AddEstudPolicy(CreateLessonPlanImage, UserType.Teacher)
             .AddEstudPolicy(GetTeacherClassLesson, UserType.Teacher)
             .AddEstudPolicy(GetTeacherClassLessons, UserType.Teacher)
             .AddEstudPolicy(CreateLessonAttendance, UserType.Teacher);

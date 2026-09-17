@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { CreateLessonPlanImageOut } from '~/types/classes'
+
 const props = defineProps<{ lessonId: number, plannedContent: string | null }>()
 const emit = defineEmits<{ updated: [] }>()
 
@@ -9,6 +11,7 @@ const maxLength = 10000
 
 const editing = ref(false)
 const saving = ref(false)
+const uploading = ref(0)
 const plan = ref('')
 
 const saved = computed(() => props.plannedContent ?? '')
@@ -24,6 +27,25 @@ function startEditing() {
 function cancelEditing() {
   editing.value = false
   plan.value = ''
+}
+
+async function uploadImage(file: File) {
+  const { uploadUrl, publicUrl } = await $fetch<CreateLessonPlanImageOut>(
+    `${config.public.backendUrl}/teachers/lessons/${props.lessonId}/plan/images`,
+    {
+      method: 'POST',
+      body: { contentType: file.type, sizeInBytes: file.size },
+      credentials: 'include',
+    },
+  )
+
+  await $fetch(uploadUrl, {
+    method: 'PUT',
+    body: file,
+    headers: { 'Content-Type': file.type },
+  })
+
+  return publicUrl
 }
 
 async function save() {
@@ -67,9 +89,9 @@ async function save() {
             @click="() => { cancelEditing() }"
           />
           <UButton
-            label="Salvar"
-            :loading="saving"
-            :disabled="!dirty || tooLong"
+            :label="uploading > 0 ? 'Enviando imagem...' : 'Salvar'"
+            :loading="saving || uploading > 0"
+            :disabled="!dirty || tooLong || uploading > 0"
             @click="() => { save() }"
           />
         </template>
@@ -102,6 +124,8 @@ async function save() {
     <template v-else>
       <RichEditor
         v-model="plan"
+        v-model:uploading="uploading"
+        :upload-image="uploadImage"
         placeholder="Descreva o que será abordado na aula."
         autofocus
       />

@@ -78,7 +78,7 @@ const diagrams: Diagram[] = [
       { id: 'oidc', label: 'Provedor OIDC', sub: 'SSO da instituição', group: 'external', x: 1035, y: 134, w: 175, note: 'Cada instituição configura seu próprio provedor (SsoConfiguration + domínios permitidos).' },
       { id: 'brevo', label: 'Brevo', sub: 'Envio de e-mails', group: 'external', x: 1035, y: 218, w: 175, note: 'Em dev e nos testes é trocado pelo FakeEmailsService.' },
       { id: 'otlp', label: 'Collector OTLP', sub: 'Traces e métricas', group: 'external', x: 1035, y: 302, w: 175, note: 'OTEL_EXPORTER_OTLP_ENDPOINT. Hoje só é ligado quando OpenTelemetry:Enabled = true.' },
-      { id: 'blob', label: 'Azure Blob Storage', sub: 'Uploads', group: 'planned', x: 1035, y: 386, w: 175, planned: true, note: 'O pacote está no csproj e existe IStorageService, mas o registro atual é o FakeStorageService — não há upload real ainda.' },
+      { id: 'blob', label: 'Cloudflare R2', sub: 'Uploads', group: 'planned', x: 1035, y: 386, w: 175, planned: true, note: 'API compatível com S3, acessada pelo AWSSDK.S3 no R2StorageService. O upload vai direto do navegador para o bucket por URL pré-assinada. Em dev e nos testes é trocado pelo FakeStorageService.' },
     ],
     edges: [
       { from: 'browser', to: 'cloudflare', label: 'https' },
