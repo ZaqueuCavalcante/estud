@@ -34,9 +34,3 @@
 
 
 
-altere o endpoint de matricular um aluno numa turma
-quando isso for feito e a turma ja tiver atividades, o sistema deve criar os vinculos do aluno com as atividades
-a mesma coisa deve acontecer pra frequencia na turma, vamos assumir que o aluno faltou todas as aulas que ja aconteceram
-assim o aluno ja sera matriculado e todos os dados vao constar como se ele estivesse na turma desde o inicio dela...
-
-

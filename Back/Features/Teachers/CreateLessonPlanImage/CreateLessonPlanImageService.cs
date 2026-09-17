@@ -43,7 +43,7 @@ public class CreateLessonPlanImageService(EstudDbContext ctx, IStorageService st
 
         return new CreateLessonPlanImageOut
         {
-            UploadUrl = await storage.CreatePreSignedUrlForUpload(container, path, data.ContentType, UploadUrlExpiration),
+            UploadUrl = await storage.CreatePreSignedUrlForUpload(container, path, data.ContentType, data.SizeInBytes, UploadUrlExpiration),
             PublicUrl = storage.GetPublicUrl(container, path),
         };
     }

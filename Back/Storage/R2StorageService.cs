@@ -1,12 +1,12 @@
-using System.Net;
 using Amazon.S3;
+using System.Net;
 using Amazon.S3.Model;
 
 namespace Estud.Back.Storage;
 
 public class R2StorageService(IAmazonS3 s3, StorageSettings settings) : IStorageService
 {
-    public async Task<string> CreatePreSignedUrlForUpload(StorageContainer container, string path, string contentType, TimeSpan expiresIn)
+    public async Task<string> CreatePreSignedUrlForUpload(StorageContainer container, string path, string contentType, long sizeInBytes, TimeSpan expiresIn)
     {
         var request = new GetPreSignedUrlRequest
         {
@@ -17,6 +17,10 @@ public class R2StorageService(IAmazonS3 s3, StorageSettings settings) : IStorage
             ContentType = contentType,
             Expires = DateTime.UtcNow.Add(expiresIn),
         };
+
+        // O Content-Length entra nos SignedHeaders e é o que impede enviar um arquivo maior que o
+        // declarado: com outro tamanho a assinatura não fecha e o R2 recusa com SignatureDoesNotMatch.
+        request.Headers.ContentLength = sizeInBytes;
 
         return await s3.GetPreSignedURLAsync(request);
     }

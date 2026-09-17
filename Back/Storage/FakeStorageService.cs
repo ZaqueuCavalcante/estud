@@ -6,7 +6,7 @@ public class FakeStorageService : IStorageService
 {
     public ConcurrentDictionary<string, StorageFileMetadata> Files = new();
 
-    public Task<string> CreatePreSignedUrlForUpload(StorageContainer container, string path, string contentType, TimeSpan expiresIn)
+    public Task<string> CreatePreSignedUrlForUpload(StorageContainer container, string path, string contentType, long sizeInBytes, TimeSpan expiresIn)
     {
         return Task.FromResult(GetUrl(container, path));
     }
