@@ -74,6 +74,36 @@ Nos comentários XML dos controllers, **sempre** colocar as tags de abertura e f
 /// <remarks>Vincula um aluno a uma oferta de curso, criando uma matrícula.</remarks>
 ```
 
+### Enums — valor inteiro sempre explícito
+
+Todo membro de enum **sempre** declara explicitamente seu valor inteiro. **Nunca** depender da numeração implícita do compilador: os valores são persistidos no banco e expostos na API, então reordenar ou inserir um membro no meio mudaria o significado dos dados já gravados.
+
+Ao adicionar um membro novo, usar o próximo valor livre (nunca reaproveitar nem renumerar os existentes).
+
+**Correto:**
+```csharp
+public enum ClassLessonStatus
+{
+    [Description("Pendente")]
+    Pending = 0,
+
+    [Description("Concluída")]
+    Finalized = 1,
+}
+```
+
+**Errado:**
+```csharp
+public enum ClassLessonStatus
+{
+    [Description("Pendente")]
+    Pending,
+
+    [Description("Concluída")]
+    Finalized,
+}
+```
+
 ### LINQ — sempre method syntax, nunca query syntax
 
 **Nunca** usar a query syntax do LINQ (`from ... join ... where ... select ...`). **Sempre** usar method syntax com as navigation properties do EF Core, deixando o EF montar os joins.

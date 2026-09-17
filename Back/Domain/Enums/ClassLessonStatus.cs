@@ -6,8 +6,8 @@ namespace Estud.Back.Domain.Enums;
 public enum ClassLessonStatus
 {
     [Description("Pendente")]
-    Pending,
+    Pending = 0,
 
     [Description("Concluída")]
-    Finalized,
+    Finalized = 1,
 }

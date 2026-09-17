@@ -6,20 +6,20 @@ namespace Estud.Back.Domain.Enums;
 public enum Day
 {
     [Description("Segunda")]
-    Monday,
+    Monday = 0,
 
     [Description("Terça")]
-    Tuesday,
+    Tuesday = 1,
 
     [Description("Quarta")]
-    Wednesday,
+    Wednesday = 2,
 
     [Description("Quinta")]
-    Thursday,
+    Thursday = 3,
 
     [Description("Sexta")]
-    Friday,
+    Friday = 4,
 
     [Description("Sábado")]
-    Saturday,
+    Saturday = 5,
 }

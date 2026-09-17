@@ -6,11 +6,11 @@ namespace Estud.Back.Domain.Enums;
 public enum ClassNoteType
 {
     [Description("N1")]
-    N1,
+    N1 = 0,
 
     [Description("N2")]
-    N2,
+    N2 = 1,
 
     [Description("N3")]
-    N3,
+    N3 = 2,
 }

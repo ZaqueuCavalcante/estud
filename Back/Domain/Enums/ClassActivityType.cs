@@ -6,14 +6,14 @@ namespace Estud.Back.Domain.Enums;
 public enum ClassActivityType
 {
     [Description("Prova")]
-    Exam,
+    Exam = 0,
 
     [Description("Projeto")]
-    Project,
+    Project = 1,
     
     [Description("Trabalho")]
-    Work,
+    Work = 2,
 
     [Description("Apresentação")]
-    Presentation,
+    Presentation = 3,
 }

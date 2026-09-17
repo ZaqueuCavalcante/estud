@@ -6,11 +6,11 @@ namespace Estud.Back.Domain.Enums;
 public enum ClassActivityWorkStatus
 {
     [Description("Pendente")]
-    Pending,
+    Pending = 0,
 
     [Description("Entregue")]
-    Delivered,
+    Delivered = 1,
 
     [Description("Finalizado")]
-    Finalized,
+    Finalized = 2,
 }

@@ -6,11 +6,11 @@ namespace Estud.Back.Domain.Enums;
 public enum Shift
 {
     [Description("Manhã")]
-    Morning,
+    Morning = 0,
 
     [Description("Tarde")]
-    Afternoon,
+    Afternoon = 1,
 
     [Description("Noite")]
-    Evening,
+    Evening = 2,
 }

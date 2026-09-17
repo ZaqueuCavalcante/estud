@@ -6,11 +6,11 @@ namespace Estud.Back.Domain.Enums;
 public enum UsersGroup
 {
     [Description("Todos")]
-    All,
+    All = 0,
 
     [Description("Alunos")]
-    Students,
+    Students = 1,
 
     [Description("Professores")]
-    Teachers,
+    Teachers = 2,
 }

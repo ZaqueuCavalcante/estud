@@ -6,23 +6,23 @@ namespace Estud.Back.Domain.Enums;
 public enum CourseType
 {
     [Description("Bacharelado")]
-    Bacharelado,
+    Bacharelado = 0,
 
     [Description("Licenciatura")]
-    Licenciatura,
+    Licenciatura = 1,
 
     [Description("Tecnólogo")]
-    Tecnologo,
+    Tecnologo = 2,
 
     [Description("Especialização")]
-    Especializacao,
+    Especializacao = 3,
 
     [Description("Mestrado")]
-    Mestrado,
+    Mestrado = 4,
 
     [Description("Doutorado")]
-    Doutorado,
+    Doutorado = 5,
 
     [Description("Pós-Doutorado")]
-    PosDoutorado,
+    PosDoutorado = 6,
 }
