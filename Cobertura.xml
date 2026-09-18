@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9332234130255564" branch-rate="0.8112606232294618" lines-covered="11320" lines-valid="12130" branches-covered="2291" branches-valid="2824" complexity="4201" version="0" timestamp="1789762484">
+<coverage line-rate="0.9343203009978733" branch-rate="0.8133333333333334" lines-covered="11423" lines-valid="12226" branches-covered="2318" branches-valid="2850" complexity="4248" version="0" timestamp="1789769517">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9321863197650021" branch-rate="0.8081647398843931" complexity="4125">
+    <package name="Back" line-rate="0.9333111314628257" branch-rate="0.8103078024337866" complexity="4172">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -1221,20 +1221,28 @@
           <methods>
             <method name="AddUsersPolicies" signature="(Microsoft.AspNetCore.Authorization.AuthorizationBuilder)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="11" hits="2" branch="false" />
-                <line number="12" hits="2" branch="false" />
-                <line number="13" hits="2" branch="false" />
-                <line number="14" hits="2" branch="false" />
+                <line number="15" hits="2" branch="false" />
                 <line number="16" hits="2" branch="false" />
+                <line number="17" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
+                <line number="20" hits="2" branch="false" />
+                <line number="21" hits="2" branch="false" />
+                <line number="22" hits="2" branch="false" />
+                <line number="23" hits="2" branch="false" />
+                <line number="25" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="11" hits="2" branch="false" />
-            <line number="12" hits="2" branch="false" />
-            <line number="13" hits="2" branch="false" />
-            <line number="14" hits="2" branch="false" />
+            <line number="15" hits="2" branch="false" />
             <line number="16" hits="2" branch="false" />
+            <line number="17" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+            <line number="20" hits="2" branch="false" />
+            <line number="21" hits="2" branch="false" />
+            <line number="22" hits="2" branch="false" />
+            <line number="23" hits="2" branch="false" />
+            <line number="25" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Auth.Policies.Policies" filename="/home/runner/work/estud/estud/Back/Auth/Policies/Policies.Webhooks.cs" line-rate="1" branch-rate="1" complexity="1">
@@ -8757,13 +8765,13 @@
             <line number="42" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Domain.Enums.StorageContainerExtensions" filename="/home/runner/work/estud/estud/Back/Domain/Enums/StorageContainer.cs" line-rate="0.6666666666666666" branch-rate="0.5" complexity="4">
+        <class name="Estud.Back.Domain.Enums.StorageContainerExtensions" filename="/home/runner/work/estud/estud/Back/Domain/Enums/StorageContainer.cs" line-rate="0.8333333333333334" branch-rate="0.75" complexity="4">
           <methods>
-            <method name="get_IsPublic" signature="(Estud.Back.Domain.Enums.StorageContainer)" line-rate="0.6666666666666666" branch-rate="0.5" complexity="4">
+            <method name="get_IsPublic" signature="(Estud.Back.Domain.Enums.StorageContainer)" line-rate="0.8333333333333334" branch-rate="0.75" complexity="4">
               <lines>
-                <line number="16" hits="2" branch="true" condition-coverage="50% (2/4)" />
+                <line number="16" hits="2" branch="true" condition-coverage="75% (3/4)" />
                 <line number="17" hits="2" branch="false" />
-                <line number="18" hits="0" branch="false" />
+                <line number="18" hits="2" branch="false" />
                 <line number="19" hits="2" branch="false" />
                 <line number="20" hits="0" branch="false" />
                 <line number="21" hits="2" branch="false" />
@@ -8771,9 +8779,9 @@
             </method>
           </methods>
           <lines>
-            <line number="16" hits="2" branch="true" condition-coverage="50% (2/4)" />
+            <line number="16" hits="2" branch="true" condition-coverage="75% (3/4)" />
             <line number="17" hits="2" branch="false" />
-            <line number="18" hits="0" branch="false" />
+            <line number="18" hits="2" branch="false" />
             <line number="19" hits="2" branch="false" />
             <line number="20" hits="0" branch="false" />
             <line number="21" hits="2" branch="false" />
@@ -12640,6 +12648,66 @@
             <line number="28" hits="2" branch="false" />
           </lines>
         </class>
+        <class name="Estud.Back.Errors.InvalidProfilePhotoContentType" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Users.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="41" hits="2" branch="false" />
+                <line number="42" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="40" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="40" hits="2" branch="false" />
+            <line number="41" hits="2" branch="false" />
+            <line number="42" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Errors.InvalidProfilePhotoPath" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Users.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="55" hits="2" branch="false" />
+                <line number="56" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="54" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="54" hits="2" branch="false" />
+            <line number="55" hits="2" branch="false" />
+            <line number="56" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Errors.InvalidProfilePhotoSize" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Users.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="48" hits="2" branch="false" />
+                <line number="49" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="47" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="47" hits="2" branch="false" />
+            <line number="48" hits="2" branch="false" />
+            <line number="49" hits="2" branch="false" />
+          </lines>
+        </class>
         <class name="Estud.Back.Errors.InvalidRoleBaseType" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Identity.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
@@ -13198,6 +13266,26 @@
             <line number="47" hits="2" branch="false" />
             <line number="48" hits="2" branch="false" />
             <line number="49" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Errors.ProfilePhotoNotFound" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Users.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="62" hits="2" branch="false" />
+                <line number="63" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="61" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="61" hits="2" branch="false" />
+            <line number="62" hits="2" branch="false" />
+            <line number="63" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Errors.RoleNameAlreadyExists" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Identity.cs" line-rate="1" branch-rate="1" complexity="2">
@@ -35434,6 +35522,148 @@
             <line number="12" hits="2" branch="false" />
           </lines>
         </class>
+        <class name="Estud.Back.Features.Users.CreateProfilePhotoUpload.CreateProfilePhotoUploadController" filename="/home/runner/work/estud/estud/Back/Features/Users/CreateProfilePhotoUpload/CreateProfilePhotoUploadController.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="(Estud.Back.Features.Users.CreateProfilePhotoUpload.CreateProfilePhotoUploadService)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="4" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="Create" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="19" hits="2" branch="false" />
+                <line number="20" hits="2" branch="false" />
+                <line number="21" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="4" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
+            <line number="20" hits="2" branch="false" />
+            <line number="21" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Users.CreateProfilePhotoUpload.CreateProfilePhotoUploadIn" filename="/home/runner/work/estud/estud/Back/Features/Users/CreateProfilePhotoUpload/CreateProfilePhotoUploadIn.cs" line-rate="1" branch-rate="1" complexity="1">
+          <methods>
+            <method name="GetExamples" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="16" hits="2" branch="false" />
+                <line number="17" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="16" hits="2" branch="false" />
+            <line number="17" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Users.CreateProfilePhotoUpload.CreateProfilePhotoUploadOut" filename="/home/runner/work/estud/estud/Back/Features/Users/CreateProfilePhotoUpload/CreateProfilePhotoUploadOut.cs" line-rate="1" branch-rate="1" complexity="1">
+          <methods>
+            <method name="GetExamples" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="16" hits="2" branch="false" />
+                <line number="17" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
+                <line number="19" hits="2" branch="false" />
+                <line number="20" hits="2" branch="false" />
+                <line number="21" hits="2" branch="false" />
+                <line number="22" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="16" hits="2" branch="false" />
+            <line number="17" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
+            <line number="20" hits="2" branch="false" />
+            <line number="21" hits="2" branch="false" />
+            <line number="22" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Users.CreateProfilePhotoUpload.CreateProfilePhotoUploadService" filename="/home/runner/work/estud/estud/Back/Features/Users/CreateProfilePhotoUpload/CreateProfilePhotoUploadService.cs" line-rate="1" branch-rate="1" complexity="6">
+          <methods>
+            <method name=".ctor" signature="(Estud.Back.Database.EstudDbContext, Estud.Back.Storage.IStorageService)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="5" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="8" hits="2" branch="false" />
+                <line number="10" hits="2" branch="false" />
+                <line number="11" hits="2" branch="false" />
+                <line number="12" hits="2" branch="false" />
+                <line number="13" hits="2" branch="false" />
+                <line number="14" hits="2" branch="false" />
+                <line number="15" hits="2" branch="false" />
+                <line number="19" hits="2" branch="false" />
+                <line number="21" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="22" hits="2" branch="false" />
+                <line number="23" hits="2" branch="false" />
+                <line number="25" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="2">
+              <lines>
+                <line number="19" hits="2" branch="false" />
+                <line number="21" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="22" hits="2" branch="false" />
+                <line number="23" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="Create" signature="()" line-rate="1" branch-rate="1" complexity="2">
+              <lines>
+                <line number="29" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="31" hits="2" branch="false" />
+                <line number="32" hits="2" branch="false" />
+                <line number="34" hits="2" branch="false" />
+                <line number="35" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="5" hits="2" branch="false" />
+            <line number="8" hits="2" branch="false" />
+            <line number="10" hits="2" branch="false" />
+            <line number="11" hits="2" branch="false" />
+            <line number="12" hits="2" branch="false" />
+            <line number="13" hits="2" branch="false" />
+            <line number="14" hits="2" branch="false" />
+            <line number="15" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
+            <line number="21" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="22" hits="2" branch="false" />
+            <line number="23" hits="2" branch="false" />
+            <line number="25" hits="2" branch="false" />
+            <line number="29" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="31" hits="2" branch="false" />
+            <line number="32" hits="2" branch="false" />
+            <line number="34" hits="2" branch="false" />
+            <line number="35" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Users.CreateProfilePhotoUpload.CreateProfilePhotoUploadService.Validator" filename="/home/runner/work/estud/estud/Back/Features/Users/CreateProfilePhotoUpload/CreateProfilePhotoUploadService.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="2">
+              <lines>
+                <line number="19" hits="2" branch="false" />
+                <line number="21" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="22" hits="2" branch="false" />
+                <line number="23" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="19" hits="2" branch="false" />
+            <line number="21" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="22" hits="2" branch="false" />
+            <line number="23" hits="2" branch="false" />
+          </lines>
+        </class>
         <class name="Estud.Back.Features.Users.GetAuthStatus.GetAuthStatusController" filename="/home/runner/work/estud/estud/Back/Features/Users/GetAuthStatus/GetAuthStatusController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="Get" signature="()" line-rate="1" branch-rate="1" complexity="1">
@@ -35472,10 +35702,6 @@
           <methods>
             <method name="GetExamples" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="26" hits="2" branch="false" />
-                <line number="27" hits="2" branch="false" />
-                <line number="28" hits="2" branch="false" />
-                <line number="29" hits="2" branch="false" />
                 <line number="30" hits="2" branch="false" />
                 <line number="31" hits="2" branch="false" />
                 <line number="32" hits="2" branch="false" />
@@ -35490,6 +35716,10 @@
                 <line number="41" hits="2" branch="false" />
                 <line number="42" hits="2" branch="false" />
                 <line number="43" hits="2" branch="false" />
+                <line number="44" hits="2" branch="false" />
+                <line number="45" hits="2" branch="false" />
+                <line number="46" hits="2" branch="false" />
+                <line number="47" hits="2" branch="false" />
               </lines>
             </method>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
@@ -35500,10 +35730,6 @@
           </methods>
           <lines>
             <line number="12" hits="2" branch="false" />
-            <line number="26" hits="2" branch="false" />
-            <line number="27" hits="2" branch="false" />
-            <line number="28" hits="2" branch="false" />
-            <line number="29" hits="2" branch="false" />
             <line number="30" hits="2" branch="false" />
             <line number="31" hits="2" branch="false" />
             <line number="32" hits="2" branch="false" />
@@ -35518,28 +35744,38 @@
             <line number="41" hits="2" branch="false" />
             <line number="42" hits="2" branch="false" />
             <line number="43" hits="2" branch="false" />
+            <line number="44" hits="2" branch="false" />
+            <line number="45" hits="2" branch="false" />
+            <line number="46" hits="2" branch="false" />
+            <line number="47" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Features.Users.GetUserAccount.GetUserAccountService" filename="/home/runner/work/estud/estud/Back/Features/Users/GetUserAccount/GetUserAccountService.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="Estud.Back.Features.Users.GetUserAccount.GetUserAccountService" filename="/home/runner/work/estud/estud/Back/Features/Users/GetUserAccount/GetUserAccountService.cs" line-rate="1" branch-rate="1" complexity="3">
           <methods>
-            <method name=".ctor" signature="(Estud.Back.Database.EstudDbContext)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(Estud.Back.Database.EstudDbContext, Estud.Back.Storage.IStorageService)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="5" hits="2" branch="false" />
+                <line number="6" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="Get" signature="()" line-rate="1" branch-rate="1" complexity="1">
+            <method name="Get" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
-                <line number="9" hits="2" branch="false" />
-                <line number="38" hits="2" branch="false" />
+                <line number="10" hits="2" branch="false" />
                 <line number="39" hits="2" branch="false" />
+                <line number="41" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="42" hits="2" branch="false" />
+                <line number="44" hits="2" branch="false" />
+                <line number="45" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="5" hits="2" branch="false" />
-            <line number="9" hits="2" branch="false" />
-            <line number="38" hits="2" branch="false" />
+            <line number="6" hits="2" branch="false" />
+            <line number="10" hits="2" branch="false" />
             <line number="39" hits="2" branch="false" />
+            <line number="41" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="42" hits="2" branch="false" />
+            <line number="44" hits="2" branch="false" />
+            <line number="45" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Features.Users.RegisterUser.RegisterUserController" filename="/home/runner/work/estud/estud/Back/Features/Users/RegisterUser/RegisterUserController.cs" line-rate="1" branch-rate="1" complexity="2">
@@ -35702,6 +35938,164 @@
             <line number="8" hits="2" branch="false" />
             <line number="12" hits="2" branch="false" />
             <line number="13" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Users.RemoveProfilePhoto.RemoveProfilePhotoController" filename="/home/runner/work/estud/estud/Back/Features/Users/RemoveProfilePhoto/RemoveProfilePhotoController.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="(Estud.Back.Features.Users.RemoveProfilePhoto.RemoveProfilePhotoService)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="4" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="Remove" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="17" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
+                <line number="19" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="4" hits="2" branch="false" />
+            <line number="17" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Users.RemoveProfilePhoto.RemoveProfilePhotoService" filename="/home/runner/work/estud/estud/Back/Features/Users/RemoveProfilePhoto/RemoveProfilePhotoService.cs" line-rate="1" branch-rate="1" complexity="3">
+          <methods>
+            <method name=".ctor" signature="(Estud.Back.Database.EstudDbContext, Estud.Back.Storage.IStorageService)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="5" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="Remove" signature="()" line-rate="1" branch-rate="1" complexity="2">
+              <lines>
+                <line number="9" hits="2" branch="false" />
+                <line number="10" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="12" hits="2" branch="false" />
+                <line number="13" hits="2" branch="false" />
+                <line number="14" hits="2" branch="false" />
+                <line number="16" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
+                <line number="19" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="5" hits="2" branch="false" />
+            <line number="9" hits="2" branch="false" />
+            <line number="10" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="12" hits="2" branch="false" />
+            <line number="13" hits="2" branch="false" />
+            <line number="14" hits="2" branch="false" />
+            <line number="16" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Users.UpdateProfilePhoto.UpdateProfilePhotoController" filename="/home/runner/work/estud/estud/Back/Features/Users/UpdateProfilePhoto/UpdateProfilePhotoController.cs" line-rate="1" branch-rate="1" complexity="2">
+          <methods>
+            <method name=".ctor" signature="(Estud.Back.Features.Users.UpdateProfilePhoto.UpdateProfilePhotoService)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="4" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="Update" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="18" hits="2" branch="false" />
+                <line number="19" hits="2" branch="false" />
+                <line number="20" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="4" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
+            <line number="20" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Users.UpdateProfilePhoto.UpdateProfilePhotoIn" filename="/home/runner/work/estud/estud/Back/Features/Users/UpdateProfilePhoto/UpdateProfilePhotoIn.cs" line-rate="1" branch-rate="1" complexity="1">
+          <methods>
+            <method name="GetExamples" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="11" hits="2" branch="false" />
+                <line number="12" hits="2" branch="false" />
+                <line number="13" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="11" hits="2" branch="false" />
+            <line number="12" hits="2" branch="false" />
+            <line number="13" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Users.UpdateProfilePhoto.UpdateProfilePhotoOut" filename="/home/runner/work/estud/estud/Back/Features/Users/UpdateProfilePhoto/UpdateProfilePhotoOut.cs" line-rate="1" branch-rate="1" complexity="1">
+          <methods>
+            <method name="GetExamples" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="11" hits="2" branch="false" />
+                <line number="12" hits="2" branch="false" />
+                <line number="13" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="11" hits="2" branch="false" />
+            <line number="12" hits="2" branch="false" />
+            <line number="13" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Features.Users.UpdateProfilePhoto.UpdateProfilePhotoService" filename="/home/runner/work/estud/estud/Back/Features/Users/UpdateProfilePhoto/UpdateProfilePhotoService.cs" line-rate="1" branch-rate="1" complexity="17">
+          <methods>
+            <method name=".ctor" signature="(Estud.Back.Database.EstudDbContext, Estud.Back.Storage.IStorageService)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="7" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="Update" signature="()" line-rate="1" branch-rate="1" complexity="16">
+              <lines>
+                <line number="14" hits="2" branch="false" />
+                <line number="15" hits="2" branch="true" condition-coverage="100% (6/6)" />
+                <line number="16" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
+                <line number="20" hits="2" branch="false" />
+                <line number="21" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="23" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="24" hits="2" branch="false" />
+                <line number="26" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="27" hits="2" branch="false" />
+                <line number="29" hits="2" branch="false" />
+                <line number="30" hits="2" branch="false" />
+                <line number="32" hits="2" branch="false" />
+                <line number="33" hits="2" branch="false" />
+                <line number="35" hits="2" branch="true" condition-coverage="100% (4/4)" />
+                <line number="37" hits="2" branch="false" />
+                <line number="38" hits="2" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="7" hits="2" branch="false" />
+            <line number="14" hits="2" branch="false" />
+            <line number="15" hits="2" branch="true" condition-coverage="100% (6/6)" />
+            <line number="16" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+            <line number="20" hits="2" branch="false" />
+            <line number="21" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="23" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="24" hits="2" branch="false" />
+            <line number="26" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="27" hits="2" branch="false" />
+            <line number="29" hits="2" branch="false" />
+            <line number="30" hits="2" branch="false" />
+            <line number="32" hits="2" branch="false" />
+            <line number="33" hits="2" branch="false" />
+            <line number="35" hits="2" branch="true" condition-coverage="100% (4/4)" />
+            <line number="37" hits="2" branch="false" />
+            <line number="38" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Features.Users.UpdateUserAccount.UpdateUserAccountController" filename="/home/runner/work/estud/estud/Back/Features/Users/UpdateUserAccount/UpdateUserAccountController.cs" line-rate="1" branch-rate="1" complexity="2">
@@ -37888,7 +38282,7 @@
             <line number="46" hits="0" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Storage.FakeStorageService" filename="/home/runner/work/estud/estud/Back/Storage/FakeStorageService.cs" line-rate="0.5" branch-rate="0.5" complexity="10">
+        <class name="Estud.Back.Storage.FakeStorageService" filename="/home/runner/work/estud/estud/Back/Storage/FakeStorageService.cs" line-rate="0.9166666666666666" branch-rate="0.5" complexity="10">
           <methods>
             <method name="CreatePreSignedUrlForUpload" signature="(Estud.Back.Domain.Enums.StorageContainer, string, string, long, System.TimeSpan)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -37906,21 +38300,21 @@
                 <line number="23" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="GetMetadata" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="0" branch-rate="1" complexity="1">
+            <method name="GetMetadata" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="28" hits="0" branch="false" />
+                <line number="28" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="Delete" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="0" branch-rate="1" complexity="1">
+            <method name="Delete" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="33" hits="0" branch="false" />
-                <line number="34" hits="0" branch="false" />
+                <line number="33" hits="2" branch="false" />
+                <line number="34" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="SimulateUpload" signature="(Estud.Back.Domain.Enums.StorageContainer, string, string, long)" line-rate="0" branch-rate="1" complexity="1">
+            <method name="SimulateUpload" signature="(Estud.Back.Domain.Enums.StorageContainer, string, string, long)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="39" hits="0" branch="false" />
-                <line number="40" hits="0" branch="false" />
+                <line number="39" hits="2" branch="false" />
+                <line number="40" hits="2" branch="false" />
               </lines>
             </method>
             <method name="GetUrl" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="1" branch-rate="1" complexity="1">
@@ -37945,11 +38339,11 @@
             <line number="16" hits="0" branch="false" />
             <line number="21" hits="2" branch="true" condition-coverage="50% (1/2)" />
             <line number="23" hits="2" branch="false" />
-            <line number="28" hits="0" branch="false" />
-            <line number="33" hits="0" branch="false" />
-            <line number="34" hits="0" branch="false" />
-            <line number="39" hits="0" branch="false" />
-            <line number="40" hits="0" branch="false" />
+            <line number="28" hits="2" branch="false" />
+            <line number="33" hits="2" branch="false" />
+            <line number="34" hits="2" branch="false" />
+            <line number="39" hits="2" branch="false" />
+            <line number="40" hits="2" branch="false" />
             <line number="44" hits="2" branch="false" />
             <line number="49" hits="2" branch="false" />
           </lines>
@@ -38060,16 +38454,16 @@
             <line number="74" hits="0" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Storage.StorageFileMetadata" filename="/home/runner/work/estud/estud/Back/Storage/StorageFileMetadata.cs" line-rate="0" branch-rate="1" complexity="1">
+        <class name="Estud.Back.Storage.StorageFileMetadata" filename="/home/runner/work/estud/estud/Back/Storage/StorageFileMetadata.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name=".ctor" signature="(string, long)" line-rate="0" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(string, long)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="3" hits="0" branch="false" />
+                <line number="3" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="3" hits="0" branch="false" />
+            <line number="3" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Webhooks.ReceivedWebhookEventsProcessor" filename="/home/runner/work/estud/estud/Back/Webhooks/ReceivedWebhookEventsProcessor.cs" line-rate="0" branch-rate="0" complexity="29">
