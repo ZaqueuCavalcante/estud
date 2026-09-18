@@ -3,12 +3,14 @@ import * as z from 'zod'
 import { DateFormatter, getLocalTimeZone, type CalendarDate } from '@internationalized/date'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { GetInstitutionNoteTypesOut } from '~/types/configs'
+import type { CreateClassActivityFileOut } from '~/types/classes'
 
 const props = defineProps<{ classId: string }>()
 
 const config = useRuntimeConfig()
 const toast = useToast()
 const loading = ref(false)
+const uploading = ref(0)
 
 const breadcrumb = computed(() => [
   { label: 'Turmas', icon: 'i-lucide-presentation' },
@@ -115,7 +117,28 @@ watch(defaultNote, (note) => {
   if (!formState.note) formState.note = note
 }, { immediate: true })
 
+async function uploadFile(file: File) {
+  const { uploadUrl, publicUrl } = await $fetch<CreateClassActivityFileOut>(
+    `${config.public.backendUrl}/teachers/classes/${props.classId}/activities/files`,
+    {
+      method: 'POST',
+      body: { contentType: file.type, sizeInBytes: file.size },
+      credentials: 'include',
+    },
+  )
+
+  await $fetch(uploadUrl, {
+    method: 'PUT',
+    body: file,
+    headers: { 'Content-Type': file.type },
+  })
+
+  return publicUrl
+}
+
 async function onSubmit(event: FormSubmitEvent<Schema>) {
+  if (uploading.value > 0) return
+
   loading.value = true
   try {
     const created = await $fetch<{ id: number }>(`${config.public.backendUrl}/teachers/classes/${props.classId}/activities`, {
@@ -227,6 +250,9 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           <UFormField label="Descrição" name="description" required>
             <RichEditor
               v-model="formState.description"
+              v-model:uploading="uploading"
+              :upload-image="uploadFile"
+              :upload-pdf="uploadFile"
               placeholder="Descreva o que o aluno deve entregar."
             />
           </UFormField>
@@ -239,7 +265,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
               :disabled="loading"
               :to="`/classes/${props.classId}`"
             />
-            <UButton label="Salvar" type="submit" :loading="loading" />
+            <UButton
+              :label="uploading > 0 ? 'Enviando arquivo...' : 'Salvar'"
+              type="submit"
+              :loading="loading || uploading > 0"
+              :disabled="uploading > 0"
+            />
           </div>
         </UForm>
       </div>

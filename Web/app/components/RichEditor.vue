@@ -8,6 +8,7 @@ const props = defineProps<{
   placeholder?: string
   autofocus?: boolean
   uploadImage?: (file: File) => Promise<string>
+  uploadPdf?: (file: File) => Promise<string>
   readonly?: boolean
 }>()
 
@@ -18,6 +19,7 @@ const toast = useToast()
 
 const imageTypes = ['image/png', 'image/jpeg', 'image/webp']
 const maxImageSize = 5 * 1024 * 1024
+const maxPdfSize = 10 * 1024 * 1024
 
 const toolbarItems: EditorToolbarItem[][] = [
   [
@@ -38,6 +40,7 @@ const toolbarItems: EditorToolbarItem[][] = [
     { kind: 'codeBlock', icon: 'i-lucide-square-code', tooltip: { text: 'Bloco de código' } },
     { kind: 'link', icon: 'i-lucide-link', tooltip: { text: 'Link' } },
     ...(props.uploadImage ? [{ kind: 'image', icon: 'i-lucide-image', tooltip: { text: 'Imagem' } } as const] : []),
+    ...(props.uploadPdf ? [{ kind: 'pdf', icon: 'i-lucide-paperclip', tooltip: { text: 'Anexar PDF' } }] : []),
   ],
   [
     { kind: 'undo', icon: 'i-lucide-undo', tooltip: { text: 'Desfazer' } },
@@ -67,30 +70,48 @@ const editorHandlers: EditorCustomHandlers = {
     },
     isActive: () => false,
   },
+  pdf: {
+    canExecute: () => !!props.uploadPdf,
+    execute: (editor) => {
+      pickPdfs(editor.view)
+      return editor.chain()
+    },
+    isActive: () => false,
+  },
 }
 
-const editorProps = props.uploadImage
+const editorProps = props.uploadImage || props.uploadPdf
   ? {
-      handlePaste: (view: EditorView, event: ClipboardEvent) => {
-        const files = imageFiles(event.clipboardData?.files)
-        if (files.length === 0) return false
-
-        insertImage(view, files)
-        return true
-      },
+      handlePaste: (view: EditorView, event: ClipboardEvent) => insertFiles(view, event.clipboardData?.files),
       handleDrop: (view: EditorView, event: DragEvent) => {
-        const files = imageFiles(event.dataTransfer?.files)
-        if (files.length === 0) return false
-
         const pos = view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos
-        insertImage(view, files, pos)
-        return true
+        return insertFiles(view, event.dataTransfer?.files, pos)
       },
     }
   : undefined
 
+function insertFiles(view: EditorView, list?: FileList | null, pos?: number) {
+  const images = props.uploadImage ? imageFiles(list) : []
+  if (images.length > 0) {
+    insertImage(view, images, pos)
+    return true
+  }
+
+  const pdfs = props.uploadPdf ? pdfFiles(list) : []
+  if (pdfs.length > 0) {
+    insertPdf(view, pdfs, pos)
+    return true
+  }
+
+  return false
+}
+
 function imageFiles(list?: FileList | null) {
   return Array.from(list ?? []).filter(file => file.type.startsWith('image/'))
+}
+
+function pdfFiles(list?: FileList | null) {
+  return Array.from(list ?? []).filter(file => file.type === 'application/pdf')
 }
 
 function isAcceptedImage(files: File[]) {
@@ -126,6 +147,30 @@ function isAcceptedImage(files: File[]) {
   return true
 }
 
+function isAcceptedPdf(files: File[]) {
+  if (files.length > 1) {
+    toast.add({
+      title: 'Envie um PDF por vez',
+      description: `Foram selecionados ${files.length} arquivos.`,
+      color: 'error',
+    })
+    return false
+  }
+
+  const file = files[0]!
+
+  if (file.size > maxPdfSize) {
+    toast.add({
+      title: 'PDF muito grande',
+      description: `${file.name} tem ${formatSize(file.size)}, e o limite é de ${formatSize(maxPdfSize)}.`,
+      color: 'error',
+    })
+    return false
+  }
+
+  return true
+}
+
 function formatSize(bytes: number) {
   return `${(bytes / 1024 / 1024).toFixed(1).replace('.', ',')} MB`
 }
@@ -139,6 +184,72 @@ function pickImages(view: EditorView) {
     if (files.length > 0) insertImage(view, files)
   }
   input.click()
+}
+
+function pickPdfs(view: EditorView) {
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = 'application/pdf'
+  input.onchange = () => {
+    const files = pdfFiles(input.files)
+    if (files.length > 0) insertPdf(view, files)
+  }
+  input.click()
+}
+
+// Enquanto o envio não termina, o link aponta para uma âncora única que serve de marcador
+// para achar o texto depois; `blob:` seria descartado pelo `isAllowedUri` do Tiptap.
+function insertPdf(view: EditorView, files: File[], pos?: number) {
+  if (!isAcceptedPdf(files)) return
+
+  const file = files[0]!
+  const placeholder = `#enviando-${crypto.randomUUID()}`
+  const link = view.state.schema.marks.link!.create({ href: placeholder })
+  const node = view.state.schema.text(file.name, [link])
+
+  const tr = pos === undefined
+    ? view.state.tr.replaceSelectionWith(node, false)
+    : view.state.tr.insert(pos, node)
+
+  // O link do Tiptap é `inclusive`: sem isso, o que for digitado logo depois vira parte do link.
+  view.dispatch(tr.setStoredMarks([]))
+
+  sendPdf(view, file, placeholder)
+}
+
+async function sendPdf(view: EditorView, file: File, placeholder: string) {
+  uploading.value++
+  try {
+    const href = await props.uploadPdf!(file)
+    replacePdf(view, placeholder, href)
+  } catch (err: unknown) {
+    replacePdf(view, placeholder, null)
+    toast.add({
+      title: 'Não foi possível enviar o PDF',
+      description: (err as { data?: { message?: string } })?.data?.message ?? 'Tente novamente.',
+      color: 'error',
+    })
+  } finally {
+    uploading.value--
+  }
+}
+
+function replacePdf(view: EditorView, placeholder: string, href: string | null) {
+  if (view.isDestroyed) return
+
+  const linkType = view.state.schema.marks.link!
+  const tr = view.state.tr
+  view.state.doc.descendants((node, pos) => {
+    const mark = node.marks.find(m => m.type === linkType && m.attrs.href === placeholder)
+    if (!node.isText || !mark) return
+
+    const from = tr.mapping.map(pos)
+    const to = tr.mapping.map(pos + node.nodeSize)
+
+    if (href) tr.addMark(from, to, linkType.create({ ...mark.attrs, href }))
+    else tr.delete(from, to)
+  })
+  view.dispatch(tr)
 }
 
 function insertImage(view: EditorView, files: File[], pos?: number) {

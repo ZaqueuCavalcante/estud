@@ -203,6 +203,20 @@ public class InvalidLessonPlanImageSize : EstudError
     public override string Message { get; set; } = "A imagem deve ter no máximo 5 MB.";
 }
 
+public class InvalidClassActivityFileContentType : EstudError
+{
+    public static readonly InvalidClassActivityFileContentType I = new();
+    public override string Code { get; set; } = nameof(InvalidClassActivityFileContentType);
+    public override string Message { get; set; } = "Formato de arquivo inválido. Envie PNG, JPEG, WebP ou PDF.";
+}
+
+public class InvalidClassActivityFileSize : EstudError
+{
+    public static readonly InvalidClassActivityFileSize I = new();
+    public override string Code { get; set; } = nameof(InvalidClassActivityFileSize);
+    public override string Message { get; set; } = "A imagem deve ter no máximo 5 MB e o PDF, 10 MB.";
+}
+
 public class InvalidStudentsList : EstudError
 {
     public static readonly InvalidStudentsList I = new();

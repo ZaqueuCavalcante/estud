@@ -110,6 +110,11 @@ export interface CreateLessonPlanImageOut {
   publicUrl: string
 }
 
+export interface CreateClassActivityFileOut {
+  uploadUrl: string
+  publicUrl: string
+}
+
 export interface StudentClassLessonItem {
   id: number
   number: number

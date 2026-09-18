@@ -17,6 +17,7 @@ using Estud.Back.Features.Teachers.CreateLessonAttendance;
 using Estud.Back.Features.Teachers.GetTeacherClassLessons;
 using Estud.Back.Features.Teachers.GetTeacherClassActivity;
 using Estud.Back.Features.Teachers.GetTeacherClassStudents;
+using Estud.Back.Features.Teachers.CreateClassActivityFile;
 using Estud.Back.Features.Teachers.GetTeacherCurrentClasses;
 using Estud.Back.Features.Teachers.GetTeacherPotentialCampi;
 using Estud.Back.Features.Teachers.GetTeacherClassActivities;
@@ -144,6 +145,16 @@ public partial class TestsHttpClient
         };
         var response = await http.PostAsJsonAsync($"/teachers/classes/{classId}/activities", data);
         return await response.Resolve<CreateClassActivityOut>();
+    }
+
+    public async Task<OneOf<CreateClassActivityFileOut, ErrorOut>> CreateClassActivityFile(
+        int classId,
+        string contentType = "application/pdf",
+        long sizeInBytes = 1_850_000
+    ) {
+        var data = new CreateClassActivityFileIn { ContentType = contentType, SizeInBytes = sizeInBytes };
+        var response = await http.PostAsJsonAsync($"/teachers/classes/{classId}/activities/files", data);
+        return await response.Resolve<CreateClassActivityFileOut>();
     }
 
     public async Task<OneOf<GetTeacherClassActivitiesOut, ErrorOut>> GetTeacherClassActivities(int classId)
