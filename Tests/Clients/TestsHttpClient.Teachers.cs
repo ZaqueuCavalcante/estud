@@ -10,8 +10,9 @@ using Estud.Back.Features.Teachers.GetTeacherAgenda;
 using Estud.Back.Features.Teachers.UpdateLessonPlan;
 using Estud.Back.Features.Teachers.GetTeacherDetails;
 using Estud.Back.Features.Teachers.CreateClassActivity;
+using Estud.Back.Features.Teachers.UpdateClassActivity;
 using Estud.Back.Features.Teachers.AssignCampiToTeacher;
-using Estud.Back.Features.Teachers.CreateLessonPlanImage;
+using Estud.Back.Features.Teachers.CreateLessonPlanFile;
 using Estud.Back.Features.Teachers.GetTeacherClassLesson;
 using Estud.Back.Features.Teachers.CreateLessonAttendance;
 using Estud.Back.Features.Teachers.GetTeacherClassLessons;
@@ -147,6 +148,31 @@ public partial class TestsHttpClient
         return await response.Resolve<CreateClassActivityOut>();
     }
 
+    public async Task<OneOf<SuccessOut, ErrorOut>> UpdateClassActivity(
+        int classId,
+        int activityId,
+        ClassNoteType note = ClassNoteType.N1,
+        string title = "Modelagem de Banco de Dados",
+        string description = "Modele um banco de dados para um sistema de gerenciamento de biblioteca.",
+        ClassActivityType type = ClassActivityType.Work,
+        int weight = 40,
+        DateOnly? dueDate = null,
+        Hour dueHour = Hour.H19_00
+    ) {
+        var data = new UpdateClassActivityIn
+        {
+            Note = note,
+            Title = title,
+            Description = description,
+            Type = type,
+            Weight = weight,
+            DueDate = dueDate ?? DateTime.UtcNow.AddDays(7).ToDateOnly(),
+            DueHour = dueHour,
+        };
+        var response = await http.PutAsJsonAsync($"/teachers/classes/{classId}/activities/{activityId}", data);
+        return await response.Resolve<SuccessOut>();
+    }
+
     public async Task<OneOf<CreateClassActivityFileOut, ErrorOut>> CreateClassActivityFile(
         int classId,
         string contentType = "application/pdf",
@@ -215,14 +241,14 @@ public partial class TestsHttpClient
         return await response.Resolve<SuccessOut>();
     }
 
-    public async Task<OneOf<CreateLessonPlanImageOut, ErrorOut>> CreateLessonPlanImage(
+    public async Task<OneOf<CreateLessonPlanFileOut, ErrorOut>> CreateLessonPlanFile(
         int lessonId,
         string contentType = "image/png",
         long sizeInBytes = 245_000
     ) {
-        var data = new CreateLessonPlanImageIn { ContentType = contentType, SizeInBytes = sizeInBytes };
-        var response = await http.PostAsJsonAsync($"/teachers/lessons/{lessonId}/plan/images", data);
-        return await response.Resolve<CreateLessonPlanImageOut>();
+        var data = new CreateLessonPlanFileIn { ContentType = contentType, SizeInBytes = sizeInBytes };
+        var response = await http.PostAsJsonAsync($"/teachers/lessons/{lessonId}/plan/files", data);
+        return await response.Resolve<CreateLessonPlanFileOut>();
     }
 
     public async Task<OneOf<SuccessOut, ErrorOut>> UpdateTeacher(

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CreateLessonPlanImageOut } from '~/types/classes'
+import type { CreateLessonPlanFileOut } from '~/types/classes'
 
 const props = defineProps<{ lessonId: number, plannedContent: string | null }>()
 const emit = defineEmits<{ updated: [] }>()
@@ -29,9 +29,9 @@ function cancelEditing() {
   plan.value = ''
 }
 
-async function uploadImage(file: File) {
-  const { uploadUrl, publicUrl } = await $fetch<CreateLessonPlanImageOut>(
-    `${config.public.backendUrl}/teachers/lessons/${props.lessonId}/plan/images`,
+async function uploadFile(file: File) {
+  const { uploadUrl, publicUrl } = await $fetch<CreateLessonPlanFileOut>(
+    `${config.public.backendUrl}/teachers/lessons/${props.lessonId}/plan/files`,
     {
       method: 'POST',
       body: { contentType: file.type, sizeInBytes: file.size },
@@ -89,7 +89,7 @@ async function save() {
             @click="() => { cancelEditing() }"
           />
           <UButton
-            :label="uploading > 0 ? 'Enviando imagem...' : 'Salvar'"
+            :label="uploading > 0 ? 'Enviando arquivo...' : 'Salvar'"
             :loading="saving || uploading > 0"
             :disabled="!dirty || tooLong || uploading > 0"
             @click="() => { save() }"
@@ -125,7 +125,8 @@ async function save() {
       <RichEditor
         v-model="plan"
         v-model:uploading="uploading"
-        :upload-image="uploadImage"
+        :upload-image="uploadFile"
+        :upload-pdf="uploadFile"
         placeholder="Descreva o que será abordado na aula."
         autofocus
       />

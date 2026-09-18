@@ -1,21 +1,26 @@
 <script setup lang="ts">
 import * as z from 'zod'
-import { DateFormatter, getLocalTimeZone, type CalendarDate } from '@internationalized/date'
+import { DateFormatter, getLocalTimeZone, parseDate, type CalendarDate } from '@internationalized/date'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { GetInstitutionNoteTypesOut } from '~/types/configs'
-import type { CreateClassActivityFileOut } from '~/types/classes'
+import type { CreateClassActivityFileOut, GetTeacherClassActivityOut } from '~/types/classes'
 
-const props = defineProps<{ classId: string }>()
+const props = defineProps<{ classId: string, activityId?: string }>()
 
 const config = useRuntimeConfig()
 const toast = useToast()
 const loading = ref(false)
 const uploading = ref(0)
 
+const isEdit = !!props.activityId
+const activityUrl = `/classes/${props.classId}/activities/${props.activityId}`
+
 const breadcrumb = computed(() => [
   { label: 'Turmas', icon: 'i-lucide-presentation' },
   { label: 'Detalhes', to: `/classes/${props.classId}` },
-  { label: 'Nova atividade' },
+  ...(isEdit
+    ? [{ label: 'Atividade', to: activityUrl }, { label: 'Editar' }]
+    : [{ label: 'Nova atividade' }]),
 ])
 
 const df = new DateFormatter('pt-BR', { dateStyle: 'medium' })
@@ -117,6 +122,24 @@ watch(defaultNote, (note) => {
   if (!formState.note) formState.note = note
 }, { immediate: true })
 
+const { data: activity, status: activityStatus } = await useFetch<GetTeacherClassActivityOut>(
+  `${config.public.backendUrl}/teachers/classes/${props.classId}/activities/${props.activityId}`,
+  { credentials: 'include', server: false, immediate: isEdit },
+)
+
+watch(activity, (value) => {
+  if (!value) return
+
+  formState.note = value.note
+  formState.title = value.title
+  formState.description = value.description
+  formState.type = value.type
+  formState.weight = value.weight
+  formState.dueHour = value.dueHour
+  weightDisplay.value = String(value.weight)
+  dueDate.value = parseDate(value.dueDate)
+}, { immediate: true })
+
 async function uploadFile(file: File) {
   const { uploadUrl, publicUrl } = await $fetch<CreateClassActivityFileOut>(
     `${config.public.backendUrl}/teachers/classes/${props.classId}/activities/files`,
@@ -141,15 +164,26 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
   loading.value = true
   try {
-    const created = await $fetch<{ id: number }>(`${config.public.backendUrl}/teachers/classes/${props.classId}/activities`, {
-      method: 'POST',
-      body: event.data,
-      credentials: 'include',
-    })
-    toast.add({ title: 'Atividade criada com sucesso', color: 'success' })
-    await navigateTo(`/classes/${props.classId}/activities/${created.id}`, { replace: true })
+    if (isEdit) {
+      await $fetch(`${config.public.backendUrl}/teachers/classes/${props.classId}/activities/${props.activityId}`, {
+        method: 'PUT',
+        body: event.data,
+        credentials: 'include',
+      })
+      toast.add({ title: 'Atividade atualizada com sucesso', color: 'success' })
+      await navigateTo(activityUrl, { replace: true })
+    } else {
+      const created = await $fetch<{ id: number }>(`${config.public.backendUrl}/teachers/classes/${props.classId}/activities`, {
+        method: 'POST',
+        body: event.data,
+        credentials: 'include',
+      })
+      toast.add({ title: 'Atividade criada com sucesso', color: 'success' })
+      await navigateTo(`/classes/${props.classId}/activities/${created.id}`, { replace: true })
+    }
   } catch (err: unknown) {
-    const msg = (err as { data?: { message?: string } })?.data?.message ?? 'Erro ao criar atividade.'
+    const fallback = isEdit ? 'Erro ao atualizar atividade.' : 'Erro ao criar atividade.'
+    const msg = (err as { data?: { message?: string } })?.data?.message ?? fallback
     toast.add({ title: 'Erro', description: msg, color: 'error' })
   } finally {
     loading.value = false
@@ -168,13 +202,25 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     </template>
 
     <template #body>
-      <div class="flex flex-col gap-6 py-2">
+      <div v-if="isEdit && activityStatus === 'error'" class="flex flex-col items-center gap-4 py-12">
+        <UIcon name="i-lucide-triangle-alert" class="size-16 text-muted" />
+        <p class="text-muted text-sm">
+          Atividade não encontrada
+        </p>
+        <UButton icon="i-lucide-arrow-left" label="Voltar" :to="`/classes/${props.classId}`" />
+      </div>
+
+      <div v-else-if="isEdit && activityStatus !== 'success'" class="flex justify-center py-12">
+        <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
+      </div>
+
+      <div v-else class="flex flex-col gap-6 py-2">
         <div class="flex flex-col gap-1">
           <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
-            Nova atividade
+            {{ isEdit ? 'Editar atividade' : 'Nova atividade' }}
           </h1>
           <p class="text-sm text-muted">
-            Preencha os dados para cadastrar uma nova atividade da turma.
+            {{ isEdit ? 'Altere os dados da atividade da turma.' : 'Preencha os dados para cadastrar uma nova atividade da turma.' }}
           </p>
         </div>
 
@@ -263,7 +309,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
               color="neutral"
               variant="subtle"
               :disabled="loading"
-              :to="`/classes/${props.classId}`"
+              :to="isEdit ? activityUrl : `/classes/${props.classId}`"
             />
             <UButton
               :label="uploading > 0 ? 'Enviando arquivo...' : 'Salvar'"

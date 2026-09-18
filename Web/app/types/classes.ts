@@ -105,7 +105,7 @@ export interface GetTeacherClassLessonOut {
   students: TeacherLessonStudentItem[]
 }
 
-export interface CreateLessonPlanImageOut {
+export interface CreateLessonPlanFileOut {
   uploadUrl: string
   publicUrl: string
 }

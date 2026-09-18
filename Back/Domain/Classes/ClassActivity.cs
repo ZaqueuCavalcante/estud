@@ -69,6 +69,28 @@ public class ClassActivity : DomainEntity
         return new ClassActivity(classId, note, title, description, type, weight, dueDate, dueHour, students);
     }
 
+    public OneOf<EstudSuccess, EstudError> Update(
+        ClassNoteType note,
+        string title,
+        string description,
+        ClassActivityType type,
+        int weight,
+        DateOnly dueDate,
+        Hour dueHour
+    ) {
+        if (weight < 0 || weight > 100) return InvalidClassActivityWeight.I;
+
+        Note = note;
+        Title = title;
+        Description = description;
+        ActivityType = type;
+        Weight = weight;
+        DueDate = dueDate;
+        DueHour = dueHour;
+
+        return EstudSuccess.I;
+    }
+
     public bool AcceptsWorks()
     {
         return ActivityType != ClassActivityType.Exam;

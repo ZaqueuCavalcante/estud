@@ -5,8 +5,8 @@ public enum StorageContainer
     [Description("profile-photos")]
     ProfilePhotos = 0,
 
-    [Description("lesson-plan-images")]
-    LessonPlanImages = 1,
+    [Description("lesson-plan-files")]
+    LessonPlanFiles = 1,
 
     [Description("class-activity-files")]
     ClassActivityFiles = 2,
@@ -19,7 +19,7 @@ public static class StorageContainerExtensions
         public bool IsPublic => container switch
         {
             StorageContainer.ProfilePhotos => true,
-            StorageContainer.LessonPlanImages => true,
+            StorageContainer.LessonPlanFiles => true,
             StorageContainer.ClassActivityFiles => true,
             _ => false,
         };

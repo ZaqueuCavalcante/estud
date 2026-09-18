@@ -87,6 +87,16 @@ function openNoteModal(work: TeacherActivityWorkItem) {
               variant="subtle"
             />
           </div>
+          <div class="order-3 flex flex-wrap gap-2 sm:col-start-2 sm:row-start-1 sm:justify-self-end">
+            <UButton
+              icon="i-lucide-pencil"
+              label="Editar"
+              size="sm"
+              color="neutral"
+              variant="subtle"
+              :to="`/classes/${props.classId}/activities/${props.activityId}/edit`"
+            />
+          </div>
         </div>
 
         <section class="flex flex-col gap-3">

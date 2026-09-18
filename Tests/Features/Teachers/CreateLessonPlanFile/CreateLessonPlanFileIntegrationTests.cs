@@ -5,13 +5,13 @@ public partial class IntegrationTests
     #region Authentication
 
     [Test]
-    public async Task Teachers_CreateLessonPlanImage_Should_not_create_image_when_not_authenticated()
+    public async Task Teachers_CreateLessonPlanFile_Should_not_create_file_when_not_authenticated()
     {
         // Arrange
         var client = _back.GetTestsClient();
 
         // Act
-        var result = await client.CreateLessonPlanImage(lessonId: 1);
+        var result = await client.CreateLessonPlanFile(lessonId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Unauthorized);
@@ -22,20 +22,20 @@ public partial class IntegrationTests
     #region Authorization
 
     [Test]
-    public async Task Teachers_CreateLessonPlanImage_Should_not_create_image_when_user_is_not_a_teacher()
+    public async Task Teachers_CreateLessonPlanFile_Should_not_create_file_when_user_is_not_a_teacher()
     {
         // Arrange
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.CreateLessonPlanImage(lessonId: 1);
+        var result = await client.CreateLessonPlanFile(lessonId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
     }
 
     [Test]
-    public async Task Teachers_CreateLessonPlanImage_Should_not_create_image_when_user_is_a_student()
+    public async Task Teachers_CreateLessonPlanFile_Should_not_create_file_when_user_is_a_student()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -44,7 +44,7 @@ public partial class IntegrationTests
         var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.CreateLessonPlanImage(lessonId: 1);
+        var result = await client.CreateLessonPlanFile(lessonId: 1);
 
         // Assert
         result.ShouldBeError(HttpStatusCode.Forbidden);
@@ -59,50 +59,55 @@ public partial class IntegrationTests
     [TestCase("")]
     [TestCase("image/gif")]
     [TestCase("image/svg+xml")]
-    [TestCase("application/pdf")]
-    public async Task Teachers_CreateLessonPlanImage_Should_not_create_image_when_content_type_is_invalid(string? contentType)
+    [TestCase("application/zip")]
+    [TestCase("text/html")]
+    public async Task Teachers_CreateLessonPlanFile_Should_not_create_file_when_content_type_is_invalid(string? contentType)
     {
         // Arrange
         var client = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await client.CreateLessonPlanImage(lessonId: 1, contentType: contentType!);
+        var result = await client.CreateLessonPlanFile(lessonId: 1, contentType: contentType!);
 
         // Assert
-        result.ShouldBeError(InvalidLessonPlanImageContentType.I);
+        result.ShouldBeError(InvalidLessonPlanFileContentType.I);
     }
 
     [Test]
-    [TestCase(0)]
-    [TestCase(-1)]
-    [TestCase(5 * 1024 * 1024 + 1)]
-    public async Task Teachers_CreateLessonPlanImage_Should_not_create_image_when_size_is_invalid(long sizeInBytes)
+    [TestCase("image/png", 0)]
+    [TestCase("image/png", -1)]
+    [TestCase("image/png", 5 * 1024 * 1024 + 1)]
+    [TestCase("image/jpeg", 5 * 1024 * 1024 + 1)]
+    [TestCase("image/webp", 5 * 1024 * 1024 + 1)]
+    [TestCase("application/pdf", 0)]
+    [TestCase("application/pdf", 10 * 1024 * 1024 + 1)]
+    public async Task Teachers_CreateLessonPlanFile_Should_not_create_file_when_size_is_invalid(string contentType, long sizeInBytes)
     {
         // Arrange
         var client = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await client.CreateLessonPlanImage(lessonId: 1, sizeInBytes: sizeInBytes);
+        var result = await client.CreateLessonPlanFile(lessonId: 1, contentType, sizeInBytes);
 
         // Assert
-        result.ShouldBeError(InvalidLessonPlanImageSize.I);
+        result.ShouldBeError(InvalidLessonPlanFileSize.I);
     }
 
     [Test]
-    public async Task Teachers_CreateLessonPlanImage_Should_not_create_image_when_lesson_not_found()
+    public async Task Teachers_CreateLessonPlanFile_Should_not_create_file_when_lesson_not_found()
     {
         // Arrange
         var client = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await client.CreateLessonPlanImage(lessonId: 999999);
+        var result = await client.CreateLessonPlanFile(lessonId: 999999);
 
         // Assert
         result.ShouldBeError(ClassLessonNotFound.I);
     }
 
     [Test]
-    public async Task Teachers_CreateLessonPlanImage_Should_not_create_image_on_lesson_of_another_institution()
+    public async Task Teachers_CreateLessonPlanFile_Should_not_create_file_on_lesson_of_another_institution()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -114,14 +119,14 @@ public partial class IntegrationTests
         var otherTeacher = await _back.LoggedAsTeacher();
 
         // Act
-        var result = await otherTeacher.CreateLessonPlanImage(lessons.First());
+        var result = await otherTeacher.CreateLessonPlanFile(lessons.First());
 
         // Assert
         result.ShouldBeError(ClassLessonNotFound.I);
     }
 
     [Test]
-    public async Task Teachers_CreateLessonPlanImage_Should_not_create_image_on_lesson_of_another_teacher()
+    public async Task Teachers_CreateLessonPlanFile_Should_not_create_file_on_lesson_of_another_teacher()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -134,7 +139,7 @@ public partial class IntegrationTests
         var client = await _back.LoginAs(otherTeacher.Email);
 
         // Act
-        var result = await client.CreateLessonPlanImage(lessons.First());
+        var result = await client.CreateLessonPlanFile(lessons.First());
 
         // Assert
         result.ShouldBeError(TeacherNotAssignedToClass.I);
@@ -145,10 +150,11 @@ public partial class IntegrationTests
     #region Happy path
 
     [Test]
-    [TestCase("image/png", ".png")]
-    [TestCase("image/jpeg", ".jpg")]
-    [TestCase("image/webp", ".webp")]
-    public async Task Teachers_CreateLessonPlanImage_Should_create_image_upload_urls(string contentType, string extension)
+    [TestCase("image/png", ".png", 5 * 1024 * 1024)]
+    [TestCase("image/jpeg", ".jpg", 5 * 1024 * 1024)]
+    [TestCase("image/webp", ".webp", 5 * 1024 * 1024)]
+    [TestCase("application/pdf", ".pdf", 10 * 1024 * 1024)]
+    public async Task Teachers_CreateLessonPlanFile_Should_create_file_upload_urls(string contentType, string extension, long sizeInBytes)
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -158,19 +164,19 @@ public partial class IntegrationTests
         var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
 
         // Act
-        var result = await teacherClient.CreateLessonPlanImage(lessons.First(), contentType, sizeInBytes: 5 * 1024 * 1024);
+        var result = await teacherClient.CreateLessonPlanFile(lessons.First(), contentType, sizeInBytes);
 
         // Assert
         result.ShouldBeSuccess();
 
-        var image = result.Success;
-        image.PublicUrl.Should().Contain("/lesson-plan-images/").And.EndWith(extension);
-        image.PublicUrl.Should().Contain($"/{@class.Id}/{lessons.First()}/");
-        image.UploadUrl.Should().NotBeNullOrEmpty();
+        var file = result.Success;
+        file.PublicUrl.Should().Contain("/lesson-plan-files/").And.EndWith(extension);
+        file.PublicUrl.Should().Contain($"/{@class.Id}/{lessons.First()}/");
+        file.UploadUrl.Should().NotBeNullOrEmpty();
     }
 
     [Test]
-    public async Task Teachers_CreateLessonPlanImage_Should_create_a_distinct_url_for_each_image()
+    public async Task Teachers_CreateLessonPlanFile_Should_create_a_distinct_url_for_each_file()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -180,8 +186,8 @@ public partial class IntegrationTests
         var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
 
         // Act
-        var first = await teacherClient.CreateLessonPlanImage(lessons.First()).Success();
-        var second = await teacherClient.CreateLessonPlanImage(lessons.First()).Success();
+        var first = await teacherClient.CreateLessonPlanFile(lessons.First()).Success();
+        var second = await teacherClient.CreateLessonPlanFile(lessons.First()).Success();
 
         // Assert
         first.PublicUrl.Should().NotBe(second.PublicUrl);

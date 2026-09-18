@@ -336,5 +336,33 @@ public partial class IntegrationTests
         result.Success.PonderedValue.Should().Be(1.8m);
     }
 
+    [Test]
+    [TestCase(25, 2.0)]
+    [TestCase(100, 8.0)]
+    public async Task Students_GetStudentClassActivity_Should_recalculate_the_pondered_value_when_the_weight_of_a_graded_activity_changes(int newWeight, decimal newPonderedValue)
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 50).Success();
+        await teacherClient.ShortcutAddStudentActivityNote(@class.Id, activity.Id, @class.StudentIds[0], 8);
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+        var before = await client.GetStudentClassActivity(@class.Id, activity.Id).Success();
+
+        // Act
+        await teacherClient.UpdateClassActivity(@class.Id, activity.Id, ClassNoteType.N1, weight: newWeight);
+
+        // Assert
+        before.PonderedValue.Should().Be(4M);
+
+        var after = await client.GetStudentClassActivity(@class.Id, activity.Id).Success();
+        after.Value.Should().Be(8M);
+        after.Weight.Should().Be(newWeight);
+        after.PonderedValue.Should().Be(newPonderedValue);
+    }
+
     #endregion
 }

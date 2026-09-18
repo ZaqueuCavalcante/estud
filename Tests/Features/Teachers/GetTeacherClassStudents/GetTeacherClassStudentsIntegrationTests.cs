@@ -441,5 +441,31 @@ public partial class IntegrationTests
         brunoStudent.AverageAttendance.Should().Be(50M);
     }
 
+    [Test]
+    [TestCase(25, 1.0)]
+    [TestCase(100, 4.0)]
+    public async Task Teachers_GetTeacherClassStudents_Should_recalculate_the_average_grade_when_the_weight_of_a_graded_activity_changes(int newWeight, decimal newAverage)
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var @class = await director.ShortcutCreateStartedClass([student.Id]);
+        var teacher = await _back.LoginAs(@class.TeacherEmail);
+
+        var activity = await teacher.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 50).Success();
+        await teacher.ShortcutAddStudentActivityNote(@class.Id, activity.Id, student.Id, 8M);
+
+        var before = await teacher.GetTeacherClassStudents(@class.Id).Success();
+
+        // Act
+        await teacher.UpdateClassActivity(@class.Id, activity.Id, ClassNoteType.N1, weight: newWeight);
+
+        // Assert
+        before.Students.Single().AverageGrade.Should().Be(2M);
+
+        var after = await teacher.GetTeacherClassStudents(@class.Id).Success();
+        after.Students.Single().AverageGrade.Should().Be(newAverage);
+    }
+
     #endregion
 }

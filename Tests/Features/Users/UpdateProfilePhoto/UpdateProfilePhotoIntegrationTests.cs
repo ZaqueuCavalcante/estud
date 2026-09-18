@@ -38,10 +38,10 @@ public partial class IntegrationTests
     }
 
     [Test]
-    [TestCase("../../lesson-plan-images/01K5B4Z8Q2M3N4P5R6S7T8V9W0.png")]
-    [TestCase("01K5B4Z8Q2M3N4P5R6S7T8V9W0.gif")]
     [TestCase("foto.png")]
+    [TestCase("01K5B4Z8Q2M3N4P5R6S7T8V9W0.gif")]
     [TestCase("a/01K5B4Z8Q2M3N4P5R6S7T8V9W0.png")]
+    [TestCase("../../lesson-plan-files/01K5B4Z8Q2M3N4P5R6S7T8V9W0.png")]
     public async Task Users_UpdateProfilePhoto_Should_not_update_photo_when_file_name_is_invalid(string fileName)
     {
         // Arrange

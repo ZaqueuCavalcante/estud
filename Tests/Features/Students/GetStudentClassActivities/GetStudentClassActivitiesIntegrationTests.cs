@@ -354,5 +354,62 @@ public partial class IntegrationTests
         result.Success.Notes.Single(n => n.Note == ClassNoteType.N2).Performance.Should().Be(60M);
     }
 
+    [Test]
+    [TestCase(25, 2.0)]
+    [TestCase(100, 8.0)]
+    public async Task Students_GetStudentClassActivities_Should_recalculate_the_pondered_value_when_the_weight_of_a_graded_activity_changes(int newWeight, decimal newPonderedValue)
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 50).Success();
+        await teacherClient.ShortcutAddStudentActivityNote(@class.Id, activity.Id, @class.StudentIds[0], 8);
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+        var before = await client.GetStudentClassActivities(@class.Id).Success();
+
+        // Act
+        await teacherClient.UpdateClassActivity(@class.Id, activity.Id, ClassNoteType.N1, weight: newWeight);
+
+        // Assert
+        before.Activities.Single().PonderedValue.Should().Be(4M);
+
+        var after = await client.GetStudentClassActivities(@class.Id).Success();
+        after.Activities.Single().Value.Should().Be(8M);
+        after.Activities.Single().Weight.Should().Be(newWeight);
+        after.Activities.Single().PonderedValue.Should().Be(newPonderedValue);
+    }
+
+    [Test]
+    [TestCase(50, 25, 80.0)]
+    [TestCase(25, 50, 60.0)]
+    public async Task Students_GetStudentClassActivities_Should_recalculate_the_performance_when_the_weight_of_a_graded_activity_changes(int firstWeight, int secondWeight, decimal newPerformance)
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var first = await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 50).Success();
+        var second = await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 50).Success();
+        await teacherClient.ShortcutAddStudentActivityNote(@class.Id, first.Id, @class.StudentIds[0], 10);
+        await teacherClient.ShortcutAddStudentActivityNote(@class.Id, second.Id, @class.StudentIds[0], 4);
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+        var before = await client.GetStudentClassActivities(@class.Id).Success();
+
+        // Act
+        await teacherClient.UpdateClassActivity(@class.Id, first.Id, ClassNoteType.N1, weight: firstWeight);
+        await teacherClient.UpdateClassActivity(@class.Id, second.Id, ClassNoteType.N1, weight: secondWeight);
+
+        // Assert — (10 × 50 + 4 × 50) / 100 = 70 antes; depois (10 × 50 + 4 × 25) / 75 = 80 ou (10 × 25 + 4 × 50) / 75 = 60
+        before.Notes.Single(n => n.Note == ClassNoteType.N1).Performance.Should().Be(70M);
+
+        var after = await client.GetStudentClassActivities(@class.Id).Success();
+        after.Notes.Single(n => n.Note == ClassNoteType.N1).Performance.Should().Be(newPerformance);
+    }
+
     #endregion
 }

@@ -23,13 +23,14 @@ public static partial class Policies
 
     public const string AddActivityNote = nameof(AddActivityNote);
     public const string CreateClassActivity = nameof(CreateClassActivity);
+    public const string UpdateClassActivity = nameof(UpdateClassActivity);
     public const string CreateClassActivityFile = nameof(CreateClassActivityFile);
     public const string GetTeacherClassActivity = nameof(GetTeacherClassActivity);
     public const string GetTeacherClassStudents = nameof(GetTeacherClassStudents);
     public const string GetTeacherClassActivities = nameof(GetTeacherClassActivities);
 
     public const string UpdateLessonPlan = nameof(UpdateLessonPlan);
-    public const string CreateLessonPlanImage = nameof(CreateLessonPlanImage);
+    public const string CreateLessonPlanFile = nameof(CreateLessonPlanFile);
     public const string GetTeacherClassLesson = nameof(GetTeacherClassLesson);
     public const string GetTeacherClassLessons = nameof(GetTeacherClassLessons);
     public const string CreateLessonAttendance = nameof(CreateLessonAttendance);
@@ -60,6 +61,7 @@ public static partial class Policies
         builder
             .AddEstudPolicy(AddActivityNote, UserType.Teacher)
             .AddEstudPolicy(CreateClassActivity, UserType.Teacher)
+            .AddEstudPolicy(UpdateClassActivity, UserType.Teacher)
             .AddEstudPolicy(CreateClassActivityFile, UserType.Teacher)
             .AddEstudPolicy(GetTeacherClassActivity, UserType.Teacher)
             .AddEstudPolicy(GetTeacherClassStudents, UserType.Teacher)
@@ -67,7 +69,7 @@ public static partial class Policies
 
         builder
             .AddEstudPolicy(UpdateLessonPlan, UserType.Teacher)
-            .AddEstudPolicy(CreateLessonPlanImage, UserType.Teacher)
+            .AddEstudPolicy(CreateLessonPlanFile, UserType.Teacher)
             .AddEstudPolicy(GetTeacherClassLesson, UserType.Teacher)
             .AddEstudPolicy(GetTeacherClassLessons, UserType.Teacher)
             .AddEstudPolicy(CreateLessonAttendance, UserType.Teacher);
