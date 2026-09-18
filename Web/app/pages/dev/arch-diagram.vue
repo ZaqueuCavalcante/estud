@@ -151,7 +151,7 @@ const BACK: NodeContent = { title: 'Back', sub: 'C# · ASP.NET', color: '#9B7BFF
 const POSTGRES: NodeContent = { title: 'Postgres', sub: 'PostgreSQL', color: '#5B8DEF', icon: 'i-simple-icons-postgresql' }
 
 const ASYNC: NodeContent = {
-  title: 'Async',
+  title: 'Workers',
   sub: 'Quartz.NET · Retry · Backoff',
   color: AMBER,
   icon: 'i-lucide-list-end',
@@ -395,8 +395,8 @@ const poster = computed(() => {
   return {
     frames: [docs, r2, card, tests, ...[0, 1, 2].map((i): Frame => ({ x: colX(i), y: rowCY, w: colW, h: rowCH, rx: 22 }))],
     headers: [
-      header('docs', docs.x, docs.y, 'i-lucide-library-big', 'Docs', '#fff', docs.w),
-      header('r2', r2.x, r2.y, R2.icon, R2.title, R2.color, r2.w),
+      header('docs', docs.x, docs.y + 8, 'i-lucide-library-big', 'Docs', '#fff', docs.w),
+      header('r2', r2.x, r2.y + 8, R2.icon, R2.title, R2.color, r2.w),
       header('tests', tests.x + 4, tests.y, TESTS.icon, TESTS.title, '#fff'),
       header('otel', colX(0), rowCY, OTEL.icon, OTEL.title, OTEL.color, colW),
       header('identity', colX(1), rowCY, IDENTITY.icon, IDENTITY.title, IDENTITY.color, colW),
@@ -422,7 +422,6 @@ const poster = computed(() => {
     pills: [
       pill((CX + webX + 200) / 2, splitY, '/*'),
       pill((CX + backX + 200) / 2, splitY, '/api/*'),
-      pill(backX + 200, linkY, 'EF Core · Dapper'),
       pill((dashX + webX + 200) / 2, linkY, 'in-process')
     ],
     cylinder: {
@@ -741,19 +740,6 @@ onMounted(async () => {
                 >
                   <path d="M0 0 L10 5 L0 10 z" :fill="C.line" />
                 </marker>
-
-                <marker
-                  id="headStart"
-                  viewBox="0 0 10 10"
-                  refX="2"
-                  refY="5"
-                  markerWidth="5"
-                  markerHeight="5"
-                  orient="auto"
-                  markerUnits="strokeWidth"
-                >
-                  <path d="M10 0 L0 5 L10 10 z" :fill="C.line" />
-                </marker>
               </defs>
 
               <rect :width="W" :height="H" :fill="C.bg" />
@@ -842,7 +828,6 @@ onMounted(async () => {
                 fill="none"
                 :stroke="C.line"
                 stroke-width="2.5"
-                marker-start="url(#headStart)"
                 marker-end="url(#head)"
               />
 
