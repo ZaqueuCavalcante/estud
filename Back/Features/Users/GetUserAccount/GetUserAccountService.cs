@@ -1,8 +1,9 @@
 using Dapper;
+using Estud.Back.Storage;
 
 namespace Estud.Back.Features.Users.GetUserAccount;
 
-public class GetUserAccountService(EstudDbContext ctx) : IEstudService
+public class GetUserAccountService(EstudDbContext ctx, IStorageService storage) : IEstudService
 {
     public async Task<GetUserAccountOut> Get()
     {
@@ -35,6 +36,11 @@ public class GetUserAccountService(EstudDbContext ctx) : IEstudService
             LIMIT 1
         ";
 
-        return await connection.QueryFirstAsync<GetUserAccountOut>(sql, new { UserId = ctx.RequestUser.Id });
+        var account = await connection.QueryFirstAsync<GetUserAccountOut>(sql, new { UserId = ctx.RequestUser.Id });
+
+        if (account.ProfilePhoto.HasValue())
+            account.ProfilePhoto = storage.GetPublicUrl(StorageContainer.ProfilePhotos, account.ProfilePhoto);
+
+        return account;
     }
 }

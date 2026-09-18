@@ -387,8 +387,8 @@ const poster = computed(() => {
   const pgTextW = Math.max(measure(POSTGRES.title, 24, 600), measure(POSTGRES.sub, 14, 400, MONO))
   const pgBx = pgX + (pgW - (64 + pgTextW)) / 2
 
-  const ghX = tests.x + tests.w - 22 - (30 + measure(TESTS.actions.title, 17, 600))
-  const covX = ghX - 32 - (30 + measure(TESTS.coverage.title, 17, 600))
+  const covX = tests.x + tests.w - 22 - (30 + measure(TESTS.coverage.title, 17, 600))
+  const ghX = covX - 32 - (30 + measure(TESTS.actions.title, 17, 600))
 
   const signalW = (colW - 52) / 3
 
@@ -422,7 +422,8 @@ const poster = computed(() => {
     pills: [
       pill((CX + webX + 200) / 2, splitY, '/*'),
       pill((CX + backX + 200) / 2, splitY, '/api/*'),
-      pill((dashX + webX + 200) / 2, linkY, 'in-process')
+      pill((dashX + webX + 200) / 2, linkY, 'in-process'),
+      pill(backX + 200, (midBottom + pgY - 10) / 2, 'EF Core · Dapper')
     ],
     cylinder: {
       x: pgX,
@@ -471,8 +472,8 @@ const poster = computed(() => {
     points: [
       point('linkedin', M+4, 102, { title: LINKEDIN.handle, icon: LINKEDIN.icon, color: LINKEDIN.color, mono: true }, 16),
       ...OTEL.points.map((p, i) => point(p.title, colX(0) + 20, rowCY + 146 + i * 30, p, 16)),
-      point('coverage', covX, tests.y + 37, TESTS.coverage),
-      point('actions', ghX, tests.y + 37, TESTS.actions)
+      point('actions', ghX, tests.y + 37, TESTS.actions),
+      point('coverage', covX, tests.y + 37, TESTS.coverage)
     ],
     chips: [
       ...chipRow(asyncNode.title.x, asyncNode.title.y + 34, ASYNC.chips!, ASYNC.color, ASYNC.chipText!),

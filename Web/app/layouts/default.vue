@@ -4,7 +4,7 @@ import type { SidebarGroup, SidebarLink } from '~/composables/useSidebarNav'
 
 const open = ref(false)
 const { can } = usePolicy()
-const { account } = useUserAccount()
+const { account, fetchAccount } = useUserAccount()
 const { unreadCount } = useNotifications()
 const { isNotificationsSlideoverOpen } = useDashboard()
 const { classes: currentClasses, canSeeClasses, fetchClasses: fetchCurrentClasses } = useCurrentClasses()
@@ -20,6 +20,8 @@ const visibleGroups = computed<SidebarGroup[]>(() =>
     .map(group => ({ ...group, items: group.items.filter(({ policy }) => can(policy).value) }))
     .filter(group => group.items.length > 0)
 )
+
+onMounted(() => { if (!account.value) fetchAccount() })
 
 watch(account, () => { fetchCurrentClasses() }, { immediate: true })
 

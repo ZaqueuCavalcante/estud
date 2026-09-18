@@ -1,73 +1,34 @@
 <script setup lang="ts">
-import type { DropdownMenuItem } from '@nuxt/ui'
-
 defineProps<{
     collapsed?: boolean
 }>()
 
-const config = useRuntimeConfig()
 const { account } = useUserAccount()
-
-const loggingOut = useState('loggingOut', () => false)
-
-async function logout() {
-    loggingOut.value = true
-    try {
-        await $fetch(`${config.public.backendUrl}/identity/logout`, {
-            method: 'POST',
-            credentials: 'include',
-        })
-        account.value = null
-        usePostHog()?.reset()
-        await navigateTo('/')
-    } finally {
-        loggingOut.value = false
-    }
-}
-
-const initials = computed(() => {
-    const name = account.value?.name ?? ''
-    return name.split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()
-})
-
-const items = computed<DropdownMenuItem[][]>(() => ([[
-{
-    label: 'Conta',
-    icon: 'i-lucide-circle-user',
-    to: '/account'
-},
-{
-    label: 'Sair',
-    icon: 'i-lucide-log-out',
-    onSelect: logout,
-}]]))
 </script>
 
 <template>
-    <UDropdownMenu
-        :items="items"
-        :content="{ align: 'center', collisionPadding: 12 }"
-        :ui="{ content: collapsed ? 'w-48' : 'w-(--reka-dropdown-menu-trigger-width)' }"
+    <UButton
+        v-if="collapsed"
+        to="/account"
+        color="neutral"
+        variant="ghost"
+        square
+        class="p-0 rounded-full"
     >
-        <UButton
-            v-if="collapsed"
-            color="neutral"
-            variant="ghost"
-            square
-            icon="i-lucide-user"
-            class="data-[state=open]:bg-elevated"
-        />
-        <UButton
-            v-else
-            color="neutral"
-            variant="ghost"
-            block
-            class="data-[state=open]:bg-elevated justify-start"
-        >
-            <div class="flex flex-col items-start min-w-0 w-full overflow-hidden text-left">
-                <span class="truncate w-full text-sm font-medium">{{ account?.name }}</span>
-                <span class="truncate w-full text-xs text-muted">{{ account?.role }}</span>
-            </div>
-        </UButton>
-    </UDropdownMenu>
+        <UAvatar :src="account?.profilePhoto ?? undefined" :alt="account?.name" size="md" />
+    </UButton>
+    <UButton
+        v-else
+        to="/account"
+        color="neutral"
+        variant="ghost"
+        block
+        class="px-0 hover:bg-transparent active:bg-transparent justify-start"
+    >
+        <UAvatar :src="account?.profilePhoto ?? undefined" :alt="account?.name" size="md" />
+        <div class="flex flex-col items-start min-w-0 w-full overflow-hidden text-left">
+            <span class="truncate w-full text-sm font-medium">{{ account?.name }}</span>
+            <span class="truncate w-full text-xs text-muted">{{ account?.role }}</span>
+        </div>
+    </UButton>
 </template>

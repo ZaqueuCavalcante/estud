@@ -34,3 +34,31 @@ public class InvalidBirthdate : EstudError
     public override string Code { get; set; } = nameof(InvalidBirthdate);
     public override string Message { get; set; } = "Data de nascimento inválida.";
 }
+
+public class InvalidProfilePhotoContentType : EstudError
+{
+    public static readonly InvalidProfilePhotoContentType I = new();
+    public override string Code { get; set; } = nameof(InvalidProfilePhotoContentType);
+    public override string Message { get; set; } = "Formato de foto inválido. Envie PNG, JPEG ou WebP.";
+}
+
+public class InvalidProfilePhotoSize : EstudError
+{
+    public static readonly InvalidProfilePhotoSize I = new();
+    public override string Code { get; set; } = nameof(InvalidProfilePhotoSize);
+    public override string Message { get; set; } = "A foto deve ter no máximo 3 MB.";
+}
+
+public class InvalidProfilePhotoPath : EstudError
+{
+    public static readonly InvalidProfilePhotoPath I = new();
+    public override string Code { get; set; } = nameof(InvalidProfilePhotoPath);
+    public override string Message { get; set; } = "Caminho da foto inválido.";
+}
+
+public class ProfilePhotoNotFound : EstudError
+{
+    public static readonly ProfilePhotoNotFound I = new();
+    public override string Code { get; set; } = nameof(ProfilePhotoNotFound);
+    public override string Message { get; set; } = "Foto não encontrada. Envie o arquivo antes de confirmar.";
+}

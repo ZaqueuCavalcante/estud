@@ -10,7 +10,11 @@ public class GetUserAccountOut : IApiDto<GetUserAccountOut>
     public string Role { get; set; }
     public UserType UserType { get; set; }
     public List<int> Permissions { get; set; } = [];
-    public string ProfilePhoto { get; set; }
+
+    /// <summary>
+    /// URL pública da foto de perfil, caso o usuário tenha definido uma.
+    /// </summary>
+    public string? ProfilePhoto { get; set; }
 
     /// <summary>
     /// Curso, caso seja um Aluno.

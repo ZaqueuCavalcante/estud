@@ -1,5 +1,6 @@
 using Quartz;
 using Estud.Back.Emails;
+using Estud.Back.Storage;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Estud.Tests.Integration.Clients;
@@ -65,5 +66,10 @@ public class BackFactory : WebApplicationFactory<Back::Program>
     public FakeEmailsService GetFakeEmailsService()
     {
         return (FakeEmailsService)Services.GetRequiredService<IEmailsService>();
+    }
+
+    public FakeStorageService GetFakeStorageService()
+    {
+        return (FakeStorageService)Services.GetRequiredService<IStorageService>();
     }
 }

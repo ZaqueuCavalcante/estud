@@ -51,7 +51,36 @@ const _useUserAccount = () => {
     if (account.value) account.value.name = name
   }
 
-  return { account, fetchAccount, updateAccount }
+  async function updateProfilePhoto(file: File) {
+    const { uploadUrl, path } = await $fetch<{ uploadUrl: string, path: string }>(`${config.public.backendUrl}/users/account/profile-photo/upload`, {
+      method: 'POST',
+      credentials: 'include',
+      body: { contentType: file.type, sizeInBytes: file.size }
+    })
+
+    await $fetch(uploadUrl, {
+      method: 'PUT',
+      body: file,
+      headers: { 'Content-Type': file.type }
+    })
+
+    const { profilePhoto } = await $fetch<{ profilePhoto: string }>(`${config.public.backendUrl}/users/account/profile-photo`, {
+      method: 'PUT',
+      credentials: 'include',
+      body: { path }
+    })
+    if (account.value) account.value.profilePhoto = profilePhoto
+  }
+
+  async function removeProfilePhoto() {
+    await $fetch(`${config.public.backendUrl}/users/account/profile-photo`, {
+      method: 'DELETE',
+      credentials: 'include'
+    })
+    if (account.value) account.value.profilePhoto = null
+  }
+
+  return { account, fetchAccount, updateAccount, updateProfilePhoto, removeProfilePhoto }
 }
 
 export const useUserAccount = createSharedComposable(_useUserAccount)

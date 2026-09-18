@@ -1,19 +1,33 @@
 # TODO
 
+## Foco atual
+
+- full text search com GIN index no Postgres
+
+## Próximo
+
+- atividades com texto rico (upload pro R2 com imagens e PDFs)
+- entregas com texto rico (upload pro R2 com imagens e PDFs), thread e feedbacks (ex: @zaqueu isso ficou ruim, refaz)
+- notificar quando um usuário for marcado em algum lugar (Basecamp style, o clique na notificação vai pro local da marcação)
+- notificar aluno quando o professor adicionar nota de alguma atividade que ele entregou ou quando o professor comentar na entrega, mesmo sem mencao
+- professor e apenas o professor pode marcar todo mundo da turma usando o atalho @todos
+
+## Planejado
+
 - notas parciais
-- profile photos
 - test containers
 - finalizar turma
-- full text search
 - elaboração de horários
 - lista de alunos em risco
 - coeficiente de rendimento
+- header X-Estud-Signature nos webhooks
 - backoffice (eventos, comandos, auditoria)
+- mural da turma com avisos e comentários da turma
 - ajustar usos do DateTime.UtcNow e fusos horários
 - colocar os nomes inteiros no breadcrumbs, apenas reduzir no mobile
 - visão de opções/conflitos na hora de definir horários (professor e sala)
 
-## Current work
+---------------------------------------------------------------------------------------------------
 
 ### Dada uma turma com 3 alunos (Ana, Bia e Carlos)
 

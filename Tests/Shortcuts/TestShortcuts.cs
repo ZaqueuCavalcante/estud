@@ -1,7 +1,9 @@
+using Estud.Back.Storage;
 using Estud.Tests.Integration.Clients;
 using Estud.Back.Features.Identity.VerifySsoDomain;
 using Estud.Back.Features.Periods.GetAcademicPeriods;
 using Estud.Back.Features.Identity.CreateSsoConfiguration;
+using Estud.Back.Features.Users.CreateProfilePhotoUpload;
 
 namespace Estud.Tests.Shortcuts;
 
@@ -27,6 +29,18 @@ public static class TestShortcuts
         await MocksFactory.PublishDnsTxtRecords(domain.TxtRecordName, domain.TxtRecordValue);
 
         return await client.VerifySsoDomain(ssoConfigurationId, domain.Domain).Success();
+    }
+
+    public static async Task<CreateProfilePhotoUploadOut> ShortcutUploadProfilePhoto(
+        this TestsHttpClient client,
+        FakeStorageService storage,
+        string contentType = "image/png",
+        long sizeInBytes = 245_000
+    ) {
+        var upload = await client.CreateProfilePhotoUpload(contentType, sizeInBytes).Success();
+        storage.SimulateUpload(StorageContainer.ProfilePhotos, upload.Path, contentType, sizeInBytes);
+
+        return upload;
     }
 
     public static async Task<GetAcademicPeriodsItemOut> ShortcutGetFirstAcademicPeriod(this TestsHttpClient client)
