@@ -152,7 +152,7 @@ const POSTGRES: NodeContent = { title: 'Postgres', sub: 'PostgreSQL', color: '#5
 
 const ASYNC: NodeContent = {
   title: 'Workers',
-  sub: 'Quartz.NET · Retry · Backoff',
+  sub: 'Quartz.NET · Outbox',
   color: AMBER,
   icon: 'i-lucide-list-end',
   chips: ['Events', 'Commands', 'Jobs'],
@@ -193,19 +193,19 @@ const WEBHOOKS = {
   icon: 'i-lucide-webhook',
   color: ROSE,
   chipText: '#fecdd3',
-  chips: ['Aluno criado', 'Atividade publicada'],
+  chips: ['StudentCreated', 'ActivityPublished'],
   rows: [
-    { title: 'Assinaturas', sub: 'Eventos', color: ROSE, icon: 'i-lucide-arrow-up-right' },
-    { title: 'Entrega async', sub: 'Retry · Logs', color: AMBER, icon: 'i-lucide-activity' }
+    { title: 'Subscriptions', sub: 'Domain Events', color: ROSE, icon: 'i-lucide-arrow-up-right' },
+    { title: 'Async Callbacks', sub: 'Commands · Retry', color: AMBER, icon: 'i-lucide-activity' }
   ] as ItemContent[]
 }
 
 const TESTS = {
-  title: 'Testes',
+  title: 'Testing',
   icon: 'i-lucide-flask-conical',
   items: [
     { title: 'Unit', sub: 'NUnit · FluentAssertions', color: '#38bdf8', icon: 'i-lucide-box' },
-    { title: 'Integration', sub: 'API + Postgres', color: '#34d399', icon: 'i-lucide-plug' },
+    { title: 'Integration', sub: 'API · Postgres', color: '#34d399', icon: 'i-lucide-plug' },
     { title: 'Mutation', sub: 'Stryker.NET', color: '#f472b6', icon: 'i-lucide-dna' }
   ] as ItemContent[],
   coverage: { title: 'Coverage Report', icon: 'i-lucide-chart-column', color: '#a3e635' },

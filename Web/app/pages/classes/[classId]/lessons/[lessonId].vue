@@ -12,4 +12,9 @@ const lessonId = route.params.lessonId as string
     :class-id="classId"
     :lesson-id="lessonId"
   />
+  <LazyLessonsDetailStudent
+    v-else-if="account?.userType === 'Student'"
+    :class-id="classId"
+    :lesson-id="lessonId"
+  />
 </template>

@@ -7,6 +7,7 @@ using Estud.Back.Features.Students.GetStudentAgenda;
 using Estud.Back.Features.Students.GetStudentDetails;
 using Estud.Back.Features.Students.GetEnrollmentProofs;
 using Estud.Back.Features.Students.AssignStudentToClass;
+using Estud.Back.Features.Students.GetStudentClassLesson;
 using Estud.Back.Features.Students.GetStudentClassLessons;
 using Estud.Back.Features.Students.CreateClassActivityWork;
 using Estud.Back.Features.Students.GetStudentClassActivity;
@@ -77,6 +78,12 @@ public partial class TestsHttpClient
     {
         var response = await http.GetAsync($"/students/classes/{classId}/lessons");
         return await response.Resolve<GetStudentClassLessonsOut>();
+    }
+
+    public async Task<OneOf<GetStudentClassLessonOut, ErrorOut>> GetStudentClassLesson(int classId, int lessonId)
+    {
+        var response = await http.GetAsync($"/students/classes/{classId}/lessons/{lessonId}");
+        return await response.Resolve<GetStudentClassLessonOut>();
     }
 
     public async Task<OneOf<GetStudentAttendanceCalendarOut, ErrorOut>> GetStudentAttendanceCalendar(int? year = null)

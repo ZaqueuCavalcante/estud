@@ -8,6 +8,7 @@ const props = defineProps<{
   placeholder?: string
   autofocus?: boolean
   uploadImage?: (file: File) => Promise<string>
+  readonly?: boolean
 }>()
 
 const value = defineModel<string>({ default: '' })
@@ -74,7 +75,7 @@ const editorProps = props.uploadImage
         const files = imageFiles(event.clipboardData?.files)
         if (files.length === 0) return false
 
-        insertImages(view, files)
+        insertImage(view, files)
         return true
       },
       handleDrop: (view: EditorView, event: DragEvent) => {
@@ -82,7 +83,7 @@ const editorProps = props.uploadImage
         if (files.length === 0) return false
 
         const pos = view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos
-        insertImages(view, files, pos)
+        insertImage(view, files, pos)
         return true
       },
     }
@@ -92,32 +93,37 @@ function imageFiles(list?: FileList | null) {
   return Array.from(list ?? []).filter(file => file.type.startsWith('image/'))
 }
 
-function acceptedImageFiles(files: File[]) {
-  const accepted: File[] = []
-
-  for (const file of files) {
-    if (!imageTypes.includes(file.type)) {
-      toast.add({
-        title: 'Formato de imagem inválido',
-        description: `${file.name} não é PNG, JPEG ou WebP.`,
-        color: 'error',
-      })
-      continue
-    }
-
-    if (file.size > maxImageSize) {
-      toast.add({
-        title: 'Imagem muito grande',
-        description: `${file.name} tem ${formatSize(file.size)}, e o limite é de ${formatSize(maxImageSize)}.`,
-        color: 'error',
-      })
-      continue
-    }
-
-    accepted.push(file)
+function isAcceptedImage(files: File[]) {
+  if (files.length > 1) {
+    toast.add({
+      title: 'Envie uma imagem por vez',
+      description: `Foram selecionadas ${files.length} imagens.`,
+      color: 'error',
+    })
+    return false
   }
 
-  return accepted
+  const file = files[0]!
+
+  if (!imageTypes.includes(file.type)) {
+    toast.add({
+      title: 'Formato de imagem inválido',
+      description: `${file.name} não é PNG, JPEG ou WebP.`,
+      color: 'error',
+    })
+    return false
+  }
+
+  if (file.size > maxImageSize) {
+    toast.add({
+      title: 'Imagem muito grande',
+      description: `${file.name} tem ${formatSize(file.size)}, e o limite é de ${formatSize(maxImageSize)}.`,
+      color: 'error',
+    })
+    return false
+  }
+
+  return true
 }
 
 function formatSize(bytes: number) {
@@ -128,22 +134,25 @@ function pickImages(view: EditorView) {
   const input = document.createElement('input')
   input.type = 'file'
   input.accept = imageTypes.join(',')
-  input.multiple = true
-  input.onchange = () => { insertImages(view, imageFiles(input.files)) }
+  input.onchange = () => {
+    const files = imageFiles(input.files)
+    if (files.length > 0) insertImage(view, files)
+  }
   input.click()
 }
 
-function insertImages(view: EditorView, files: File[], pos?: number) {
-  for (const file of acceptedImageFiles(files)) {
-    const localSrc = URL.createObjectURL(file)
-    const node = view.state.schema.nodes.image!.create({ src: localSrc })
+function insertImage(view: EditorView, files: File[], pos?: number) {
+  if (!isAcceptedImage(files)) return
 
-    view.dispatch(pos === undefined
-      ? view.state.tr.replaceSelectionWith(node)
-      : view.state.tr.insert(pos, node))
+  const file = files[0]!
+  const localSrc = URL.createObjectURL(file)
+  const node = view.state.schema.nodes.image!.create({ src: localSrc })
 
-    upload(view, file, localSrc)
-  }
+  view.dispatch(pos === undefined
+    ? view.state.tr.replaceSelectionWith(node)
+    : view.state.tr.insert(pos, node))
+
+  upload(view, file, localSrc)
 }
 
 async function upload(view: EditorView, file: File, localSrc: string) {
@@ -184,14 +193,16 @@ function replaceImage(view: EditorView, localSrc: string, src: string | null) {
     content-type="markdown"
     :placeholder="placeholder"
     :autofocus="autofocus ? 'end' : false"
-    :image="!!uploadImage"
+    :editable="!readonly"
+    :image="readonly || !!uploadImage"
     :mention="false"
     :handlers="editorHandlers"
     :editor-props="editorProps"
-    class="flex min-h-64 flex-col gap-3 rounded-lg border border-default p-3"
+    class="flex flex-col gap-3 rounded-lg border border-default p-3"
+    :class="{ 'min-h-64': !readonly }"
     :ui="{ base: 'sm:px-0' }"
   >
-    <template #default="{ editor }">
+    <template v-if="!readonly" #default="{ editor }">
       <UEditorToolbar :editor="editor" :items="toolbarItems" class="border-b border-default pb-3" />
     </template>
   </UEditor>

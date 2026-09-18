@@ -162,7 +162,7 @@ public partial class IntegrationTests
         var subscription = await director.CreateWebhookSubscription(
             name: "Atividade publicada",
             url: $"{MocksFactory.Url}/webhooks/target",
-            events: [WebhookEventType.ClassActivityCreated],
+            events: [WebhookEventType.ClassActivityPublished],
             customHeaders: new() { ["X-Api-Key"] = "secret-key-123" }).Success();
 
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
@@ -191,13 +191,13 @@ public partial class IntegrationTests
         var calls = await director.GetWebhookCalls().Success();
         var call = await director.GetWebhookCall(calls.Items.Single().Id).Success();
 
-        call.EventType.Should().Be(WebhookEventType.ClassActivityCreated);
+        call.EventType.Should().Be(WebhookEventType.ClassActivityPublished);
         call.Status.Should().Be(WebhookCallStatus.Success);
         call.Subscription.Id.Should().Be(subscription.Id);
 
         using var payload = JsonDocument.Parse(call.Payload);
         payload.RootElement.GetProperty("id").GetString().Should().Be(call.Uid);
-        payload.RootElement.GetProperty("event_type").GetString().Should().Be(nameof(WebhookEventType.ClassActivityCreated));
+        payload.RootElement.GetProperty("event_type").GetString().Should().Be(nameof(WebhookEventType.ClassActivityPublished));
 
         var data = payload.RootElement.GetProperty("data");
         data.GetProperty("id").GetInt32().Should().Be(activity.Id);
@@ -257,7 +257,7 @@ public partial class IntegrationTests
         await client.CreateWebhookSubscription(
             name: "Atividade publicada",
             url: $"{MocksFactory.Url}/webhooks/target",
-            events: [WebhookEventType.ClassActivityCreated]).Success();
+            events: [WebhookEventType.ClassActivityPublished]).Success();
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
 

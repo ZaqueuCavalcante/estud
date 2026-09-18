@@ -173,24 +173,30 @@ const lessons = computed(() => lessonsData.value?.lessons ?? [])
             <div
               v-for="lesson in lessons"
               :key="lesson.id"
-              class="flex flex-col gap-2 py-3"
+              class="flex items-center justify-between gap-2 py-3"
             >
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <div class="flex flex-col gap-1">
-                  <span class="text-sm text-highlighted">Aula {{ lesson.number }}</span>
-                  <span class="text-xs text-muted">{{ formatClassLesson(lesson) }}</span>
-                </div>
+              <div class="flex flex-col gap-1">
+                <span class="text-sm text-highlighted">Aula {{ lesson.number }}</span>
+                <span class="text-xs text-muted">{{ formatClassLesson(lesson) }}</span>
+              </div>
+
+              <div class="flex items-center gap-2">
                 <UBadge
                   :label="classLessonStatusLabels[lesson.status] ?? lesson.status"
                   :color="classLessonStatusColors[lesson.status] ?? 'neutral'"
                   variant="subtle"
                 />
+                <UTooltip text="Ver detalhes">
+                  <UButton
+                    icon="i-lucide-arrow-right"
+                    color="neutral"
+                    variant="ghost"
+                    size="sm"
+                    :to="`/classes/${props.classId}/lessons/${lesson.id}`"
+                    aria-label="Ver detalhes"
+                  />
+                </UTooltip>
               </div>
-
-              <MarkdownContent v-if="lesson.plannedContent" :value="lesson.plannedContent" />
-              <p v-else class="text-sm text-dimmed">
-                Sem planejamento
-              </p>
             </div>
           </div>
           <div v-else class="flex flex-col items-center gap-3 py-6">

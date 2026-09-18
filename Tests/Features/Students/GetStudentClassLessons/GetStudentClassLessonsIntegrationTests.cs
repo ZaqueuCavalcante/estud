@@ -89,7 +89,7 @@ public partial class IntegrationTests
     #region Happy path
 
     [Test]
-    public async Task Students_GetStudentClassLessons_Should_get_lessons_with_planned_content()
+    public async Task Students_GetStudentClassLessons_Should_get_lessons()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -97,7 +97,6 @@ public partial class IntegrationTests
 
         var teacherClient = await _back.LoginAs(@class.TeacherEmail);
         var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
-        await teacherClient.UpdateLessonPlan(lessons.First(), "Introdução a grafos.");
 
         var client = await _back.LoginAs(@class.StudentEmail);
 
@@ -108,9 +107,8 @@ public partial class IntegrationTests
         var items = result.Success.Lessons;
         items.Should().NotBeEmpty();
         items.Should().BeInAscendingOrder(l => l.Number);
-        items.First().Id.Should().Be(lessons.First());
-        items.First().PlannedContent.Should().Be("Introdução a grafos.");
-        items.Skip(1).Should().AllSatisfy(l => l.PlannedContent.Should().BeNull());
+        items.Select(l => l.Id).Should().Equal(lessons);
+        items.Should().OnlyContain(l => l.Status == ClassLessonStatus.Pending);
     }
 
     #endregion

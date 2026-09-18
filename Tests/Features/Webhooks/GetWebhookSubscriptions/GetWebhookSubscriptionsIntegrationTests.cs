@@ -44,7 +44,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector("director@webhooks-get-all.com");
         await client.CreateWebhookSubscription(name: "Aluno criado", events: [WebhookEventType.StudentCreated]);
-        await client.CreateWebhookSubscription(name: "Atividade publicada", events: [WebhookEventType.ClassActivityCreated]);
+        await client.CreateWebhookSubscription(name: "Atividade publicada", events: [WebhookEventType.ClassActivityPublished]);
 
         // Act
         var result = await client.GetWebhookSubscriptions();

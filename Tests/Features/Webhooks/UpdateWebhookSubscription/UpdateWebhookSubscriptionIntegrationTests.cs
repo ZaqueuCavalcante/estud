@@ -136,7 +136,7 @@ public partial class IntegrationTests
             name: "Atividade publicada",
             url: "https://webhook.site/my-other-webhook",
             isActive: false,
-            events: [WebhookEventType.ClassActivityCreated],
+            events: [WebhookEventType.ClassActivityPublished],
             customHeaders: new() { ["Estud-AuthToken"] = "new-token-value" });
 
         // Assert
@@ -147,7 +147,7 @@ public partial class IntegrationTests
         subscription.Name.Should().Be("Atividade publicada");
         subscription.Url.Should().Be("https://webhook.site/my-other-webhook");
         subscription.IsActive.Should().BeFalse();
-        subscription.Events.Should().BeEquivalentTo([WebhookEventType.ClassActivityCreated]);
+        subscription.Events.Should().BeEquivalentTo([WebhookEventType.ClassActivityPublished]);
         subscription.CustomHeaders.Should().ContainKey("Estud-AuthToken").WhoseValue.Should().Be("new-token-value");
     }
 

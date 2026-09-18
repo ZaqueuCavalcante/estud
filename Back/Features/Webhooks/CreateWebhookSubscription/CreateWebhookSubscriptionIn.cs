@@ -38,7 +38,7 @@ public class CreateWebhookSubscriptionIn : IApiDto<CreateWebhookSubscriptionIn>
         {
             Name = "Atividade publicada",
             Url = "https://webhook.site/my-other-webhook",
-            Events = [WebhookEventType.ClassActivityCreated],
+            Events = [WebhookEventType.ClassActivityPublished],
             CustomHeaders = []
         }),
     ];

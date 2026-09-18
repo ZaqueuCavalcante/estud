@@ -25,7 +25,6 @@ public class GetStudentClassLessonsService(EstudDbContext ctx) : IEstudService
                 StartAt = l.StartAt,
                 EndAt = l.EndAt,
                 Status = l.Status,
-                PlannedContent = l.PlannedContent,
             })
             .ToListAsync();
 

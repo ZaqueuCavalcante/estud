@@ -2,16 +2,25 @@
 
 - notas parciais
 - profile photos
+- test containers
 - finalizar turma
+- full text search
 - elaboração de horários
 - lista de alunos em risco
 - coeficiente de rendimento
 - backoffice (eventos, comandos, auditoria)
 - ajustar usos do DateTime.UtcNow e fusos horários
-- Colocar os nomes inteiros no breadcrumbs, apenas reduzir no mobile
+- colocar os nomes inteiros no breadcrumbs, apenas reduzir no mobile
 - visão de opções/conflitos na hora de definir horários (professor e sala)
 
 ## Current work
+
+### Dada uma turma com 3 alunos (Ana, Bia e Carlos)
+
+- Professor faz a chamada das 4 primeiras aulas
+    - Ana vai em todas, 100% de frequência
+    - Bia falta 1 dia, 70% de frequência
+    - Carlos só foi dia, 25% de frequência
 
 ### Dada uma turma com 3 alunos (Ana, Bia e Carlos)
 
@@ -23,10 +32,3 @@
 - Resultados esperados
     - Aproveitamento dos 3 alunos deve ser diferente
     - Nota final dos 3 alunos deve ser diferente
-
-### Dada uma turma com 3 alunos (Ana, Bia e Carlos)
-
-- Professor faz a chamada das 4 primeiras aulas
-    - Ana vai em todas, 100% de frequência
-    - Bia falta 1 dia, 70% de frequência
-    - Carlos só foi dia, 25% de frequência

@@ -19,7 +19,7 @@ public class ClassActivityCreatedDomainEventHandler(EstudDbContext ctx) : IDomai
             .Where(x => x.InstitutionId == institutionId && x.IsActive)
             .Select(x => new { x.Id, x.Events }).ToListAsync();
 
-        foreach (var subscription in subscriptions.Where(x => x.Events.Contains(WebhookEventType.ClassActivityCreated)))
+        foreach (var subscription in subscriptions.Where(x => x.Events.Contains(WebhookEventType.ClassActivityPublished)))
         {
             var data = new
             {
@@ -31,7 +31,7 @@ public class ClassActivityCreatedDomainEventHandler(EstudDbContext ctx) : IDomai
                 DueDate = activity.DueDate.ToString("yyyy-MM-dd"),
             };
 
-            var webhookCall = new WebhookCall(institutionId, subscription.Id, data, WebhookEventType.ClassActivityCreated);
+            var webhookCall = new WebhookCall(institutionId, subscription.Id, data, WebhookEventType.ClassActivityPublished);
             ctx.Add(webhookCall);
             ctx.AddCommand(institutionId, new CallWebhookCommand(webhookCall.Uid));
         }

@@ -7,8 +7,7 @@ public class GetStudentClassLessonsController(GetStudentClassLessonsService serv
     /// Aulas da turma do aluno
     /// </summary>
     /// <remarks>
-    /// Retorna as aulas de uma turma em que o aluno logado está matriculado,
-    /// com o planejamento que o professor gravou para cada uma delas.
+    /// Retorna as aulas de uma turma em que o aluno logado está matriculado.
     /// </remarks>
     [HttpGet("students/classes/{classId}/lessons")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]
