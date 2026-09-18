@@ -102,26 +102,6 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Students_CreateClassActivityWork_Should_not_create_work_when_student_enrolled_after_activity_creation()
-    {
-        // Arrange
-        var director = await _back.LoggedAsDirector();
-        var @class = await director.ShortcutCreateStartedClass();
-        var teacher = await _back.LoginAs(@class.TeacherEmail);
-        var activity = await teacher.CreateClassActivity(@class.Id, weight: 40).Success();
-
-        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
-        await director.AssignStudentToClass(student.Id, @class.Id);
-        var client = await _back.LoginAs(student.Email);
-
-        // Act
-        var result = await client.CreateClassActivityWork(activity.Id);
-
-        // Assert
-        result.ShouldBeError(ClassActivityWorkNotFound.I);
-    }
-
-    [Test]
     public async Task Students_CreateClassActivityWork_Should_not_create_work_when_activity_is_an_exam()
     {
         // Arrange
@@ -158,6 +138,34 @@ public partial class IntegrationTests
         // Assert
         var work = result.Success;
         work.Id.Should().BeGreaterThan(0);
+    }
+
+    [Test]
+    public async Task Students_CreateClassActivityWork_Should_create_work_when_student_enrolled_after_activity_creation()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+        var teacher = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await teacher.CreateClassActivity(@class.Id, weight: 40).Success();
+
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        await director.AssignStudentToClass(student.Id, @class.Id);
+        var client = await _back.LoginAs(student.Email);
+
+        // Act
+        var result = await client.CreateClassActivityWork(activity.Id, "https://github.com/ZaqueuCavalcante/estud");
+
+        // Assert
+        var work = result.Success;
+        work.Id.Should().BeGreaterThan(0);
+
+        var classActivity = await teacher.GetTeacherClassActivity(@class.Id, activity.Id).Success();
+        classActivity.Works.Should().ContainSingle(w =>
+            w.StudentId == student.Id &&
+            w.Status == ClassActivityWorkStatus.Delivered &&
+            w.Link == "https://github.com/ZaqueuCavalcante/estud"
+        );
     }
 
     [Test]

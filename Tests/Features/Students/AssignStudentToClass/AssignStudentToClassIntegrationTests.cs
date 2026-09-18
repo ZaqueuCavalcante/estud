@@ -132,5 +132,139 @@ public partial class IntegrationTests
         studentClass.Students.Should().ContainSingle(x => x.Id == student.Id && x.Status == StudentClassStatus.Matriculado);
     }
 
+    [Test]
+    public async Task Students_AssignStudentToClass_Should_create_works_for_activities_already_created_in_class()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await teacherClient.CreateClassActivity(@class.Id).Success();
+
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+
+        // Act
+        var result = await director.AssignStudentToClass(student.Id, @class.Id);
+
+        // Assert
+        result.ShouldBeSuccess();
+
+        var classActivity = await teacherClient.GetTeacherClassActivity(@class.Id, activity.Id).Success();
+        classActivity.TotalWorks.Should().Be(2);
+        classActivity.Works.Should().ContainSingle(w =>
+            w.StudentId == student.Id &&
+            w.Status == ClassActivityWorkStatus.Pending &&
+            w.Link == null &&
+            w.Value == 0
+        );
+
+        var studentClient = await _back.LoginAs(student.Email);
+        var activities = await studentClient.GetStudentClassActivities(@class.Id).Success();
+        activities.Activities.Should().ContainSingle(a => a.Id == activity.Id && a.WorkStatus == ClassActivityWorkStatus.Pending);
+    }
+
+    [Test]
+    public async Task Students_AssignStudentToClass_Should_create_works_for_all_activities_of_the_class()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var firstActivity = await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 40).Success();
+        var secondActivity = await teacherClient.CreateClassActivity(@class.Id, ClassNoteType.N2, weight: 60).Success();
+
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+
+        // Act
+        var result = await director.AssignStudentToClass(student.Id, @class.Id);
+
+        // Assert
+        result.ShouldBeSuccess();
+
+        foreach (var activityId in new[] { firstActivity.Id, secondActivity.Id })
+        {
+            var classActivity = await teacherClient.GetTeacherClassActivity(@class.Id, activityId).Success();
+            classActivity.Works.Should().ContainSingle(w => w.StudentId == student.Id);
+        }
+    }
+
+    [Test]
+    public async Task Students_AssignStudentToClass_Should_create_absences_for_lessons_already_called()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = (await teacherClient.GetTeacherClassLessons(@class.Id).Success()).Lessons;
+        var calledLesson = lessons.First();
+        await teacherClient.CreateLessonAttendance(calledLesson.Id, @class.StudentIds);
+
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+
+        // Act
+        var result = await director.AssignStudentToClass(student.Id, @class.Id);
+
+        // Assert
+        result.ShouldBeSuccess();
+
+        var lesson = await teacherClient.GetTeacherClassLesson(@class.Id, calledLesson.Id).Success();
+        lesson.Students.Should().ContainSingle(s => s.Id == student.Id && !s.Present);
+
+        var studentClient = await _back.LoginAs(student.Email);
+        var calendar = await studentClient.GetStudentAttendanceCalendar(calledLesson.Date.Year).Success();
+        var day = calendar.Items.Single(i => i.Date == calledLesson.Date.ToDateTime(TimeOnly.MinValue));
+        day.Status.Should().Be(StudentDayAttendanceStatus.Absent);
+    }
+
+    [Test]
+    public async Task Students_AssignStudentToClass_Should_not_create_absences_for_lessons_not_called_yet()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = (await teacherClient.GetTeacherClassLessons(@class.Id).Success()).Lessons;
+        var calledLesson = lessons.First();
+        var pendingLesson = lessons.Last();
+        await teacherClient.CreateLessonAttendance(calledLesson.Id, @class.StudentIds);
+
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+
+        // Act
+        var result = await director.AssignStudentToClass(student.Id, @class.Id);
+
+        // Assert
+        result.ShouldBeSuccess();
+
+        var studentClient = await _back.LoginAs(student.Email);
+        var calendar = await studentClient.GetStudentAttendanceCalendar(pendingLesson.Date.Year).Success();
+        var day = calendar.Items.Single(i => i.Date == pendingLesson.Date.ToDateTime(TimeOnly.MinValue));
+        day.Status.Should().Be(StudentDayAttendanceStatus.Undefined);
+    }
+
+    [Test]
+    public async Task Students_AssignStudentToClass_Should_assign_student_to_class_without_activities_and_lessons_called()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+
+        // Act
+        var result = await director.AssignStudentToClass(student.Id, @class.Id);
+
+        // Assert
+        result.ShouldBeSuccess();
+
+        var students = await teacherClient.GetTeacherClassStudents(@class.Id).Success();
+        students.Students.Should().ContainSingle(s => s.Id == student.Id && s.AverageAttendance == 0 && s.AverageGrade == 0);
+    }
+
     #endregion
 }

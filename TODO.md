@@ -1,15 +1,14 @@
 # TODO
 
 - notas parciais
-- finalizar turma
 - profile photos
+- finalizar turma
 - elaboração de horários
 - lista de alunos em risco
 - coeficiente de rendimento
 - backoffice (eventos, comandos, auditoria)
 - ajustar usos do DateTime.UtcNow e fusos horários
 - Colocar os nomes inteiros no breadcrumbs, apenas reduzir no mobile
-
 - visão de opções/conflitos na hora de definir horários (professor e sala)
 
 ## Current work
@@ -31,6 +30,3 @@
     - Ana vai em todas, 100% de frequência
     - Bia falta 1 dia, 70% de frequência
     - Carlos só foi dia, 25% de frequência
-
-
-

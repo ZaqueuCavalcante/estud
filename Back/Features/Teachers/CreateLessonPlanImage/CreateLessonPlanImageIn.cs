@@ -5,7 +5,7 @@ public class CreateLessonPlanImageIn : IApiDto<CreateLessonPlanImageIn>
     /// <summary>
     /// Content-Type da imagem (image/png, image/jpeg ou image/webp)
     /// </summary>
-    public string ContentType { get; set; }
+    public string? ContentType { get; set; }
 
     /// <summary>
     /// Tamanho da imagem em bytes (máximo de 5 MB)
