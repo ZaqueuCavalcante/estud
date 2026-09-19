@@ -15,22 +15,33 @@ eles citam (ver "Impacto nos outros planos").
 
 ## Ponto de partida
 
-O que existe, incluindo o trabalho ainda não commitado de entrega com texto rico:
+O que existe, já com a entrega em texto rico (`fb02f265`), que trocou o link por `Content`:
 
-- `ClassActivityWork` (`Back/Domain/Classes/ClassActivityWork.cs`): `Content` (markdown), `Note`
-  (`decimal`, default 0) e `Status`. `Deliver(content)` sobrescreve o conteúdo e marca `Delivered`,
-  **em qualquer status**. Isso inclui `Finalized`: o aluno consegue reenviar depois da nota, e a nota
-  antiga continua valendo. `AddNote(note)` marca `Finalized`.
+- `ClassActivityWork` (`Back/Domain/Classes/ClassActivityWork.cs`): `Content` (markdown, até 10000
+  caracteres), `Note` (`decimal`, default 0) e `Status`. `Deliver(content)` sobrescreve o conteúdo e
+  marca `Delivered`, **em qualquer status**. Isso inclui `Finalized`: a tela do aluno não oferece
+  editar depois da nota, mas a API aceita, e a nota antiga continua valendo. `AddNote(note)` marca
+  `Finalized`. A entidade não é `DomainEntity`.
 - `ClassActivityWorkStatus`: `Pending = 0`, `Delivered = 1`, `InReview = 2` (só prova vencida,
   calculado em `ClassActivity.GetWorkStatus`), `Finalized = 3`.
 - Entregas: `POST students/activities/{id}/works` e `POST students/activities/{id}/works/files`
-  (URL pré-assinada, container `ClassActivityWorkFiles`).
+  (URL pré-assinada, container `ClassActivityWorkFiles`, path
+  `{institutionId}/{classId}/{activityId}/{studentId}/{ulid}.{ext}`; PNG/JPEG/WebP até 5 MB e PDF
+  até 10 MB, num dicionário privado do `CreateClassActivityWorkFileService`). Os arquivos ficam em
+  URL pública.
+- Leituras: `GET students/classes/{classId}/activities/{activityId}` (devolve `WorkContent`) e
+  `GET teachers/classes/{classId}/activities/{activityId}` (devolve `Works` com `Content`, em ordem
+  alfabética do aluno, e `DeliveredWorks`, que já conta todo status diferente de `Pending`).
 - Nota: `PUT teachers/activities/{activityId}/works/{workId}/note` (`AddActivityNote`).
 - Aproveitamento (`ClassGrade.Performance`) soma `Note × Weight` de **todas** as atividades,
   qualquer que seja o status. Uma entrega pendente já conta como 0.
-- Front: `DetailTeacher.vue` lista as entregas com `AddNoteModal`. `DetailStudent.vue` mostra a
-  entrega e abre `CreateWorkModal`, que ainda é o formulário de link. `RichEditor.vue` já sabe
-  subir imagem e PDF, e `MarkdownContent.vue` exibe markdown com `UEditor` em modo leitura.
+- Front:
+  - `DetailStudent.vue` mostra "Minha entrega" com `WorkEditor.vue`: exibe a entrega com
+    `MarkdownContent` e, com "Editar", abre o `RichEditor` com upload de imagem e PDF. Fica editável
+    em qualquer status menos `Finalized`. Em prova, só o texto "Nota lançada pelo professor".
+  - `DetailTeacher.vue` lista as entregas com "Ver entrega" (`WorkModal.vue`, só leitura) e
+    "Dar nota"/"Editar nota" (`AddNoteModal.vue`).
+  - `CreateWorkModal.vue` (link) já foi removido.
 - Notificação: domain event → `IDomainEventHandler` → `ctx.AddCommand(...)` → handler cria
   `Notification` + `UserNotification`. O `UpdateClassActivity` é o exemplo mais recente.
 
@@ -196,14 +207,16 @@ thread sem perder o texto digitado. Para prova, que não tem versão, o campo va
 
 ### Migration
 
+O repositório não versiona migrations do EF (o banco de teste sai do `EnsureCreatedAsync`), e a troca
+`Link` → `Content` também entrou sem migration. Os passos abaixo viram um script SQL aplicado em
+produção junto com o deploy da fase 1.
+
 1. Cria `class_activity_work_entries` e a coluna `last_entry_at`.
 2. Backfill: toda entrega com `content` não nulo ganha uma entry `Submission` com o conteúdo, autor =
    `students.user_id` e `created_at` = data da migration (não existe data de entrega hoje).
    `last_entry_at` recebe o mesmo valor.
 3. **Nota antiga não vira entry `Review`**, porque não se sabe quem deu. O cabeçalho da thread
    mostra a nota vigente a partir de `ClassActivityWork.Note`, então nada se perde na tela.
-
-Esse passo roda depois da migração `Link` → `Content` que está no diff atual.
 
 ## Backend
 
@@ -308,8 +321,8 @@ public class ThreadEntryOut
 Cada item de `Works` ganha `EntriesCount`, `LastEntryAt` e `AwaitingTeacher`. `AwaitingTeacher` é
 verdadeiro quando o status é `Delivered` **ou** quando o último item da thread é do aluno, ou seja,
 quando o aluno comentou depois da última fala do professor. É o "tem coisa para você aqui" da
-listagem, e dispensa controle de lido por enquanto. `DeliveredWorks` passa a contar também
-`ChangesRequested` como entregue.
+listagem, e dispensa controle de lido por enquanto. `DeliveredWorks` não muda: como já conta todo
+status diferente de `Pending`, `ChangesRequested` entra como entregue.
 
 ### Erros novos
 
@@ -376,8 +389,9 @@ gera uma `Notification` por papel.
 `RichEditor.vue` ganha a prop `compact`, que troca o `min-h-64` por uma altura menor e cresce com o
 texto. Menção continua com `:mention="false"` até a fase de menção.
 
-`CreateWorkModal.vue` (link) e `AddNoteModal.vue` saem. A entrega e a nota passam a acontecer dentro
-da thread, sem modal.
+`WorkEditor.vue` vira a base do `WorkComposer` (edição, upload, limite de caracteres, botão
+desabilitado com upload em andamento). `WorkModal.vue` e `AddNoteModal.vue` saem: a leitura da
+entrega e a nota passam a acontecer dentro da thread, sem modal.
 
 ### Tela do professor — correção
 
@@ -516,8 +530,8 @@ Cada fase vai para produção sozinha.
 
 1. **Histórico de versões.** Entidade, migration com backfill, `Deliver` criando `Submission` e
    recusando `Finalized`, `GetStudentClassActivityWork`/`GetTeacherClassActivityWork` só leitura.
-   No front, a entrega com `RichEditor`, que conclui o trabalho em andamento e substitui o
-   `CreateWorkModal`, e a thread mostrando só as versões.
+   No front, a entrega com `RichEditor` já existe (`WorkEditor.vue`). Falta a thread mostrando só as
+   versões, no aluno e no lugar do `WorkModal` do professor.
 2. **Avaliação com feedback.** `ReviewClassActivityWork`, status `ChangesRequested`, remoção do
    `AddActivityNote`, tela de correção com Anterior/Próximo, `CreateTeacherWorkFile`. Isso já
    resolve "nota com explicação" e "refaz".
