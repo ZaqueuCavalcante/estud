@@ -2,7 +2,7 @@ namespace Estud.Back.Features.Teachers.GetTeacherClassLessons;
 
 public class GetTeacherClassLessonsService(EstudDbContext ctx) : IEstudService
 {
-    public async Task<OneOf<GetTeacherClassLessonsOut, EstudError>> Get(int classId)
+    public async Task<OneOf<GetTeacherClassLessonsOut, EstudError>> Get(int classId, GetTeacherClassLessonsIn query)
     {
         var userId = ctx.RequestUser.Id;
         var institutionId = ctx.RequestUser.InstitutionId;
@@ -15,8 +15,13 @@ public class GetTeacherClassLessonsService(EstudDbContext ctx) : IEstudService
         var assigned = await ctx.ClassTeachers.AnyAsync(ct => ct.ClassId == classId && ct.TeacherId == teacherId);
         if (!assigned) return TeacherNotAssignedToClass.I;
 
-        var lessons = await ctx.ClassLessons.AsNoTracking()
-            .Where(l => l.ClassId == classId)
+        var lessonsQuery = ctx.ClassLessons.AsNoTracking()
+            .Where(l => l.ClassId == classId);
+
+        var search = query.Search?.Trim();
+        if (search.HasValue()) lessonsQuery = lessonsQuery.Where(l => l.PlannedContent != null && EF.Functions.ILike(l.PlannedContent, $"%{search}%"));
+
+        var lessons = await lessonsQuery
             .OrderBy(l => l.Number)
             .Select(l => new GetTeacherClassLessonsItemOut
             {

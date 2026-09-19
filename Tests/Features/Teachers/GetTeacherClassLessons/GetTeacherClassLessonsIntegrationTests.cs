@@ -123,5 +123,123 @@ public partial class IntegrationTests
         lesson.PresentStudents.Should().BeEquivalentTo([students[0]]);
     }
 
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_search_lessons_by_planned_content()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "## Introdução a **Grafos** dirigidos");
+        await client.UpdateLessonPlan(lessons[1], "Árvores binárias de busca");
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "grafos");
+
+        // Assert
+        result.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0]]);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_search_lessons_by_part_of_a_word()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Introdução a Grafos dirigidos");
+        await client.UpdateLessonPlan(lessons[1], "Grafo ponderado");
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "GRAF");
+
+        // Assert
+        result.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0], lessons[1]]);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_not_find_lessons_when_search_does_not_match()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Introdução a grafos");
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "árvore");
+
+        // Assert
+        result.Success.Lessons.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_search_by_updated_planned_content()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Introdução a grafos");
+        await client.UpdateLessonPlan(lessons[0], "Árvores binárias");
+
+        // Act
+        var oldResult = await client.GetTeacherClassLessons(@class.Id, search: "grafos");
+        var newResult = await client.GetTeacherClassLessons(@class.Id, search: "árvores");
+
+        // Assert
+        oldResult.Success.Lessons.Should().BeEmpty();
+        newResult.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0]]);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_search_only_in_lessons_of_the_class()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+        var otherClass = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Introdução a grafos");
+
+        var otherClient = await _back.LoginAs(otherClass.TeacherEmail);
+        var otherLessons = await otherClient.ShortcutGetClassLessons(otherClass.Id);
+        await otherClient.UpdateLessonPlan(otherLessons[0], "Introdução a grafos");
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "grafos");
+
+        // Assert
+        result.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0]]);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_get_all_lessons_when_search_is_blank()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Introdução a grafos");
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "   ");
+
+        // Assert
+        result.Success.Lessons.Select(l => l.Id).Should().Equal(lessons);
+    }
+
     #endregion
 }

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useDebounceFn } from '@vueuse/core'
 import type { NavigationMenuItem, TableColumn } from '@nuxt/ui'
 import type { InstitutionConfig } from '~/types/configs'
 import type { ClassStudentItem, GetTeacherClassActivitiesOut, GetTeacherClassLessonsOut, GetTeacherClassOut, GetTeacherClassStudentsOut } from '~/types/classes'
@@ -88,9 +89,19 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
   },
 ]
 
+const lessonsSearch = ref('')
+const appliedLessonsSearch = ref('')
+const applyLessonsSearch = useDebounceFn((value: string) => { appliedLessonsSearch.value = value.trim() }, 300)
+watch(lessonsSearch, (value) => { applyLessonsSearch(value) })
+
 const { data: lessonsData, status: lessonsStatus, refresh: refreshLessons } = await useFetch<GetTeacherClassLessonsOut>(
   `${config.public.backendUrl}/teachers/classes/${props.classId}/lessons`,
-  { credentials: 'include', server: false, immediate: false },
+  {
+    credentials: 'include',
+    server: false,
+    immediate: false,
+    query: { search: computed(() => appliedLessonsSearch.value || undefined) },
+  },
 )
 const lessons = computed(() => lessonsData.value?.lessons ?? [])
 
@@ -204,6 +215,26 @@ const enrolledStudents = computed(() =>
 
         <!-- Aulas -->
         <section v-else-if="activeTab === 'lessons'" class="flex flex-col gap-3">
+          <UInput
+            v-model="lessonsSearch"
+            class="w-full sm:max-w-sm"
+            :ui="{ base: 'h-8' }"
+            icon="i-lucide-search"
+            placeholder="Buscar no plano de aula..."
+            :loading="lessonsStatus === 'pending'"
+          >
+            <template v-if="lessonsSearch" #trailing>
+              <UButton
+                icon="i-lucide-x"
+                color="neutral"
+                variant="link"
+                size="sm"
+                aria-label="Limpar busca"
+                @click="() => { lessonsSearch = ''; appliedLessonsSearch = '' }"
+              />
+            </template>
+          </UInput>
+
           <div v-if="lessonsStatus === 'pending'" class="flex justify-center py-8">
             <UIcon name="i-lucide-loader-circle" class="size-6 animate-spin text-muted" />
           </div>
@@ -245,6 +276,15 @@ const enrolledStudents = computed(() =>
                 </div>
               </div>
             </div>
+            <TableEmptyState
+              v-else-if="appliedLessonsSearch"
+              :loading="false"
+              icon="i-lucide-calendar-days"
+              message="Nenhuma aula cadastrada"
+              filtered
+              not-found-message="Nenhuma aula encontrada com esse conteúdo no plano"
+              @clear-filters="() => { lessonsSearch = ''; appliedLessonsSearch = '' }"
+            />
             <div v-else class="flex items-center gap-2 text-sm text-muted">
               <UIcon name="i-lucide-calendar-days" class="size-4" />
               Nenhuma aula cadastrada
