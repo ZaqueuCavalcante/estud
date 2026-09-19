@@ -34,6 +34,14 @@ function openNoteModal(work: TeacherActivityWorkItem) {
   selectedWork.value = work
   noteModalOpen.value = true
 }
+
+const workModalOpen = ref(false)
+const viewedWork = ref<TeacherActivityWorkItem | null>(null)
+
+function openWorkModal(work: TeacherActivityWorkItem) {
+  viewedWork.value = work
+  workModalOpen.value = true
+}
 </script>
 
 <template>
@@ -126,15 +134,7 @@ function openNoteModal(work: TeacherActivityWorkItem) {
                 <UAvatar :alt="work.student" size="2xs" />
                 <div class="flex flex-col gap-0.5">
                   <span class="text-sm font-medium text-highlighted">{{ work.student }}</span>
-                  <ULink
-                    v-if="work.link"
-                    :to="work.link"
-                    target="_blank"
-                    class="text-xs text-muted hover:text-highlighted"
-                  >
-                    {{ work.link }}
-                  </ULink>
-                  <span v-else-if="!isExamActivity(data)" class="text-xs text-muted">
+                  <span v-if="!work.content && !isExamActivity(data)" class="text-xs text-muted">
                     Nenhuma entrega
                   </span>
                 </div>
@@ -152,6 +152,15 @@ function openNoteModal(work: TeacherActivityWorkItem) {
                   :label="classActivityWorkStatusLabel(data, work.status)"
                   :color="classActivityWorkStatusColors[work.status] ?? 'neutral'"
                   variant="subtle"
+                />
+                <UButton
+                  v-if="work.content"
+                  icon="i-lucide-file-text"
+                  label="Ver entrega"
+                  color="neutral"
+                  variant="subtle"
+                  size="xs"
+                  @click="() => { openWorkModal(work) }"
                 />
                 <UButton
                   :icon="work.status === 'Finalized' ? 'i-lucide-pencil' : 'i-lucide-award'"
@@ -177,6 +186,11 @@ function openNoteModal(work: TeacherActivityWorkItem) {
           :activity-id="props.activityId"
           :work="selectedWork"
           @saved="() => { refresh() }"
+        />
+
+        <ActivitiesWorkModal
+          v-model:open="workModalOpen"
+          :work="viewedWork"
         />
       </div>
     </template>

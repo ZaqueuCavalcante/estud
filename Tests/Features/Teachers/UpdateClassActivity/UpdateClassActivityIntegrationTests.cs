@@ -317,7 +317,7 @@ public partial class IntegrationTests
         updated.Title.Should().Be("Novo título");
         updated.DeliveredWorks.Should().Be(1);
         updated.Works.Should().ContainSingle();
-        updated.Works[0].Link.Should().Be("https://github.com/ZaqueuCavalcante/estud");
+        updated.Works[0].Content.Should().Be("https://github.com/ZaqueuCavalcante/estud");
     }
 
     [Test]

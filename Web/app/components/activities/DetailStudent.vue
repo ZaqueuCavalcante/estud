@@ -17,8 +17,6 @@ const { data, status, error, refresh } = await useFetch<GetStudentClassActivityO
   `${config.public.backendUrl}/students/classes/${props.classId}/activities/${props.activityId}`,
   { credentials: 'include', server: false },
 )
-
-const createWorkModalOpen = ref(false)
 </script>
 
 <template>
@@ -87,43 +85,28 @@ const createWorkModalOpen = ref(false)
         </section>
 
         <section class="flex flex-col gap-3">
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2">
-              <h2 class="font-semibold text-highlighted">
-                {{ isExamActivity(data) ? 'Minha nota' : 'Minha entrega' }}
-              </h2>
-              <UBadge
-                :label="classActivityWorkStatusLabel(data, data.workStatus)"
-                :color="classActivityWorkStatusColors[data.workStatus] ?? 'neutral'"
-                variant="subtle"
-              />
-            </div>
-            <UButton
-              v-if="!data.workLink && !isExamActivity(data)"
-              icon="i-lucide-plus"
-              label="Entrega"
-              size="sm"
-              @click="() => { createWorkModalOpen = true }"
+          <div class="flex items-center gap-2">
+            <h2 class="font-semibold text-highlighted">
+              {{ isExamActivity(data) ? 'Minha nota' : 'Minha entrega' }}
+            </h2>
+            <UBadge
+              :label="classActivityWorkStatusLabel(data, data.workStatus)"
+              :color="classActivityWorkStatusColors[data.workStatus] ?? 'neutral'"
+              variant="subtle"
             />
           </div>
 
           <div class="flex flex-col gap-4">
-            <div v-if="data.workLink" class="flex flex-col gap-1">
-              <span class="text-xs text-muted">Link entregue</span>
-              <ULink
-                :to="data.workLink"
-                target="_blank"
-                class="text-sm text-highlighted hover:text-primary"
-              >
-                {{ data.workLink }}
-              </ULink>
-            </div>
-            <p v-else-if="isExamActivity(data)" class="text-sm text-muted">
+            <p v-if="isExamActivity(data)" class="text-sm text-muted">
               {{ data.workStatus === 'Finalized' ? 'Nota lançada pelo professor' : 'A nota será lançada pelo professor' }}
             </p>
-            <p v-else class="text-sm text-muted">
-              Você ainda não entregou esta atividade
-            </p>
+            <ActivitiesWorkEditor
+              v-else
+              :activity-id="props.activityId"
+              :content="data.workContent"
+              :editable="data.workStatus !== 'Finalized'"
+              @delivered="() => { refresh() }"
+            />
 
             <div v-if="data.workStatus === 'Finalized'" class="flex items-center gap-2">
               <UBadge
@@ -135,12 +118,6 @@ const createWorkModalOpen = ref(false)
             </div>
           </div>
         </section>
-
-        <ActivitiesCreateWorkModal
-          v-model:open="createWorkModalOpen"
-          :activity-id="props.activityId"
-          @created="() => { refresh() }"
-        />
       </div>
     </template>
   </UDashboardPanel>

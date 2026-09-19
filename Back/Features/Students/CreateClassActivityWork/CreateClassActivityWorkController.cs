@@ -8,7 +8,7 @@ public class CreateClassActivityWorkController(CreateClassActivityWorkService se
     /// </summary>
     /// <remarks>
     /// Registra a entrega do aluno logado para a atividade especificada,
-    /// salvando o link do material entregue.
+    /// salvando o conteúdo da entrega em markdown (texto, imagens e PDFs).
     /// </remarks>
     [HttpPost("students/activities/{classActivityId}/works")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]
@@ -23,7 +23,7 @@ public class CreateClassActivityWorkController(CreateClassActivityWorkService se
 internal class RequestExamples : ExamplesProvider<CreateClassActivityWorkIn>;
 internal class ResponseExamples : ExamplesProvider<CreateClassActivityWorkOut>;
 internal class ErrorsExamples : ErrorExamplesProvider<
-    InvalidClassActivityWorkLink,
+    InvalidClassActivityWorkContent,
     ClassActivityNotFound,
     ClassActivityDoesNotAcceptWorks,
     StudentNotEnrolledInClass,

@@ -233,7 +233,7 @@ public partial class IntegrationTests
         activity.TotalWorks.Should().Be(1);
         activity.Works.Should().ContainSingle();
         activity.Works[0].StudentId.Should().Be(student.Id);
-        activity.Works[0].Link.Should().Be("https://github.com/ZaqueuCavalcante/estud");
+        activity.Works[0].Content.Should().Be("https://github.com/ZaqueuCavalcante/estud");
         activity.Works[0].Status.Should().Be(ClassActivityWorkStatus.Delivered);
         activity.Works[0].Value.Should().Be(0);
     }
@@ -258,7 +258,7 @@ public partial class IntegrationTests
         // Assert
         var work = result.Success.Works.Single();
         work.Status.Should().Be(ClassActivityWorkStatus.InReview);
-        work.Link.Should().BeNull();
+        work.Content.Should().BeNull();
     }
 
     #endregion

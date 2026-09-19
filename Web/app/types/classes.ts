@@ -115,6 +115,11 @@ export interface CreateClassActivityFileOut {
   publicUrl: string
 }
 
+export interface CreateClassActivityWorkFileOut {
+  uploadUrl: string
+  publicUrl: string
+}
+
 export interface StudentClassLessonItem {
   id: number
   number: number
@@ -173,7 +178,7 @@ export interface StudentClassActivityItem {
   dueDate: string // ex: "2026-07-20"
   dueHour: string // ex: "H19_00"
   workStatus: string // 'Pending' | 'Delivered' | 'Finalized' | 'InReview'
-  workLink: string | null
+  workContent: string | null
   value: number
   ponderedValue: number
 }
@@ -193,7 +198,7 @@ export interface TeacherActivityWorkItem {
   studentId: number
   student: string
   status: string // 'Pending' | 'Delivered' | 'Finalized' | 'InReview'
-  link: string | null
+  content: string | null
   value: number
 }
 
@@ -227,7 +232,7 @@ export interface GetStudentClassActivityOut {
   dueDate: string // ex: "2026-07-20"
   dueHour: string // ex: "H19_00"
   workStatus: string // 'Pending' | 'Delivered' | 'Finalized' | 'InReview'
-  workLink: string | null
+  workContent: string | null
   value: number
   ponderedValue: number
 }

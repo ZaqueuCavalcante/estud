@@ -187,7 +187,7 @@ public partial class IntegrationTests
         activity.DueDate.Should().Be(dueDate);
         activity.DueHour.Should().Be(Hour.H08_30);
         activity.WorkStatus.Should().Be(ClassActivityWorkStatus.Pending);
-        activity.WorkLink.Should().BeNull();
+        activity.WorkContent.Should().BeNull();
         activity.Value.Should().Be(0);
         activity.PonderedValue.Should().Be(0);
     }
@@ -212,7 +212,7 @@ public partial class IntegrationTests
         var item = result.Success.Activities.Should().ContainSingle().Subject;
         item.Id.Should().Be(activity.Id);
         item.WorkStatus.Should().Be(ClassActivityWorkStatus.Delivered);
-        item.WorkLink.Should().Be("https://github.com/ZaqueuCavalcante/estud");
+        item.WorkContent.Should().Be("https://github.com/ZaqueuCavalcante/estud");
     }
 
     [Test]
@@ -238,7 +238,7 @@ public partial class IntegrationTests
         item.Id.Should().Be(activity.Id);
         item.Weight.Should().Be(40);
         item.WorkStatus.Should().Be(ClassActivityWorkStatus.Finalized);
-        item.WorkLink.Should().Be("https://github.com/ZaqueuCavalcante/estud");
+        item.WorkContent.Should().Be("https://github.com/ZaqueuCavalcante/estud");
         item.Value.Should().Be(8.5m);
         item.PonderedValue.Should().Be(3.4m);
     }

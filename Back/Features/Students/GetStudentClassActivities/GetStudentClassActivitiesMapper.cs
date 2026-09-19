@@ -22,7 +22,7 @@ public static class GetStudentClassActivitiesMapper
                 DueDate = activity.DueDate,
                 DueHour = activity.DueHour,
                 WorkStatus = activity.GetWorkStatus(work),
-                WorkLink = work?.Link,
+                WorkContent = work?.Content,
                 Value = work?.Note ?? 0,
                 PonderedValue = (work?.Note ?? 0) * activity.Weight / 100M,
             };

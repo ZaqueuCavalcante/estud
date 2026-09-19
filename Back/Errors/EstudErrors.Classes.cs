@@ -154,11 +154,11 @@ public class ClassActivityWorkNotFound : EstudError
     public override string Message { get; set; } = "Entrega da atividade não encontrada.";
 }
 
-public class InvalidClassActivityWorkLink : EstudError
+public class InvalidClassActivityWorkContent : EstudError
 {
-    public static readonly InvalidClassActivityWorkLink I = new();
-    public override string Code { get; set; } = nameof(InvalidClassActivityWorkLink);
-    public override string Message { get; set; } = "Link da entrega inválido.";
+    public static readonly InvalidClassActivityWorkContent I = new();
+    public override string Code { get; set; } = nameof(InvalidClassActivityWorkContent);
+    public override string Message { get; set; } = "Conteúdo da entrega inválido.";
 }
 
 public class ClassActivityDoesNotAcceptWorks : EstudError
@@ -214,6 +214,20 @@ public class InvalidClassActivityFileSize : EstudError
 {
     public static readonly InvalidClassActivityFileSize I = new();
     public override string Code { get; set; } = nameof(InvalidClassActivityFileSize);
+    public override string Message { get; set; } = "A imagem deve ter no máximo 5 MB e o PDF, 10 MB.";
+}
+
+public class InvalidClassActivityWorkFileContentType : EstudError
+{
+    public static readonly InvalidClassActivityWorkFileContentType I = new();
+    public override string Code { get; set; } = nameof(InvalidClassActivityWorkFileContentType);
+    public override string Message { get; set; } = "Formato de arquivo inválido. Envie PNG, JPEG, WebP ou PDF.";
+}
+
+public class InvalidClassActivityWorkFileSize : EstudError
+{
+    public static readonly InvalidClassActivityWorkFileSize I = new();
+    public override string Code { get; set; } = nameof(InvalidClassActivityWorkFileSize);
     public override string Message { get; set; } = "A imagem deve ter no máximo 5 MB e o PDF, 10 MB.";
 }
 

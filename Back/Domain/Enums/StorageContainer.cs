@@ -10,6 +10,9 @@ public enum StorageContainer
 
     [Description("class-activity-files")]
     ClassActivityFiles = 2,
+
+    [Description("class-activity-work-files")]
+    ClassActivityWorkFiles = 3,
 }
 
 public static class StorageContainerExtensions
@@ -21,6 +24,7 @@ public static class StorageContainerExtensions
             StorageContainer.ProfilePhotos => true,
             StorageContainer.LessonPlanFiles => true,
             StorageContainer.ClassActivityFiles => true,
+            StorageContainer.ClassActivityWorkFiles => true,
             _ => false,
         };
     }

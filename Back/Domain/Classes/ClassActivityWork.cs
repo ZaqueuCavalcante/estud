@@ -11,7 +11,7 @@ public class ClassActivityWork
     public int ClassActivityId { get; set; }
     public int StudentId { get; set; }
     public EstudStudent Student { get; set; }
-    public string? Link { get; set; }
+    public string? Content { get; set; }
     public decimal Note { get; set; }
     public ClassActivityWorkStatus Status { get; set; }
 
@@ -27,9 +27,9 @@ public class ClassActivityWork
         Status = ClassActivityWorkStatus.Pending;
     }
 
-    public void AddLink(string link)
+    public void Deliver(string content)
     {
-        Link = link;
+        Content = content;
         Status = ClassActivityWorkStatus.Delivered;
     }
 

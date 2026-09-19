@@ -53,7 +53,7 @@ public class GetTeacherClassActivityOut : IApiDto<GetTeacherClassActivityOut>
                     Id = 1,
                     StudentId = 1,
                     Student = "Maria Souza",
-                    Link = "https://github.com/ZaqueuCavalcante/estud",
+                    Content = "Segue a modelagem do banco da biblioteca.\n\n![Diagrama ER](https://cdn.estud.com.br/class-activity-work-files/1/2/3/4/01K5B4Z8Q2M3N4P5R6S7T8V9W0.png)",
                     Status = ClassActivityWorkStatus.Delivered,
                     Value = 0,
                 },
@@ -62,7 +62,7 @@ public class GetTeacherClassActivityOut : IApiDto<GetTeacherClassActivityOut>
                     Id = 2,
                     StudentId = 2,
                     Student = "Chico Ferreira",
-                    Link = null,
+                    Content = null,
                     Status = ClassActivityWorkStatus.Pending,
                     Value = 0,
                 },
@@ -76,7 +76,7 @@ public class GetTeacherClassActivityWorkOut
     public int Id { get; set; }
     public int StudentId { get; set; }
     public string Student { get; set; }
-    public string? Link { get; set; }
+    public string? Content { get; set; }
     public ClassActivityWorkStatus Status { get; set; }
 
     /// <summary>

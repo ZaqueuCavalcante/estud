@@ -53,7 +53,7 @@ public partial class IntegrationTests
 
     [TestCase("")]
     [TestCase(null)]
-    public async Task Students_CreateClassActivityWork_Should_not_create_work_with_invalid_link(string? link)
+    public async Task Students_CreateClassActivityWork_Should_not_create_work_with_invalid_content(string? content)
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -61,10 +61,25 @@ public partial class IntegrationTests
         var client = await _back.LoginAs(student.Email);
 
         // Act
-        var result = await client.CreateClassActivityWork(activityId: 1, link);
+        var result = await client.CreateClassActivityWork(activityId: 1, content);
 
         // Assert
-        result.ShouldBeError(InvalidClassActivityWorkLink.I);
+        result.ShouldBeError(InvalidClassActivityWorkContent.I);
+    }
+
+    [Test]
+    public async Task Students_CreateClassActivityWork_Should_not_create_work_with_content_too_long()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var client = await _back.LoginAs(student.Email);
+
+        // Act
+        var result = await client.CreateClassActivityWork(activityId: 1, new string('a', 10_001));
+
+        // Assert
+        result.ShouldBeError(InvalidClassActivityWorkContent.I);
     }
 
     [Test]
@@ -153,8 +168,10 @@ public partial class IntegrationTests
         await director.AssignStudentToClass(student.Id, @class.Id);
         var client = await _back.LoginAs(student.Email);
 
+        var content = "Segue a modelagem.\n\n![Diagrama](https://estud.storage.com/class-activity-work-files/diagrama.png)";
+
         // Act
-        var result = await client.CreateClassActivityWork(activity.Id, "https://github.com/ZaqueuCavalcante/estud");
+        var result = await client.CreateClassActivityWork(activity.Id, content);
 
         // Assert
         var work = result.Success;
@@ -164,12 +181,12 @@ public partial class IntegrationTests
         classActivity.Works.Should().ContainSingle(w =>
             w.StudentId == student.Id &&
             w.Status == ClassActivityWorkStatus.Delivered &&
-            w.Link == "https://github.com/ZaqueuCavalcante/estud"
+            w.Content == content
         );
     }
 
     [Test]
-    public async Task Students_CreateClassActivityWork_Should_update_link_when_work_is_delivered_again()
+    public async Task Students_CreateClassActivityWork_Should_update_content_when_work_is_delivered_again()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -178,13 +195,16 @@ public partial class IntegrationTests
         var activity = await teacher.CreateClassActivity(@class.Id, weight: 40).Success();
         var client = await _back.LoginAs(@class.StudentEmail);
 
-        await client.CreateClassActivityWork(activity.Id, "https://github.com/ZaqueuCavalcante/estud");
+        await client.CreateClassActivityWork(activity.Id, "Primeira versão");
 
         // Act
-        var result = await client.CreateClassActivityWork(activity.Id, "https://github.com/ZaqueuCavalcante/estud/pulls");
+        var result = await client.CreateClassActivityWork(activity.Id, "Segunda versão");
 
         // Assert
         result.ShouldBeSuccess();
+
+        var classActivity = await client.GetStudentClassActivity(@class.Id, activity.Id).Success();
+        classActivity.WorkContent.Should().Be("Segunda versão");
     }
 
     #endregion

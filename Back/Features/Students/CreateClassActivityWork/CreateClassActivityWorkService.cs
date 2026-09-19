@@ -6,8 +6,8 @@ public class CreateClassActivityWorkService(EstudDbContext ctx) : IEstudService
     {
         public Validator()
         {
-            RuleFor(x => x.Link).NotEmpty().WithError(InvalidClassActivityWorkLink.I);
-            RuleFor(x => x.Link).MaximumLength(500).WithError(InvalidClassActivityWorkLink.I);
+            RuleFor(x => x.Content).NotEmpty().WithError(InvalidClassActivityWorkContent.I);
+            RuleFor(x => x.Content).MaximumLength(10000).WithError(InvalidClassActivityWorkContent.I);
         }
     }
     private static readonly Validator V = new();
@@ -33,7 +33,7 @@ public class CreateClassActivityWorkService(EstudDbContext ctx) : IEstudService
         var work = await ctx.ClassActivityWorks.FirstOrDefaultAsync(w => w.ClassActivityId == classActivityId && w.StudentId == studentId);
         if (work == null) return ClassActivityWorkNotFound.I;
 
-        work.AddLink(data.Link);
+        work.Deliver(data.Content);
 
         await ctx.SaveChangesAsync();
 

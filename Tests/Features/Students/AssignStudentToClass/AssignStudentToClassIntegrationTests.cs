@@ -155,7 +155,7 @@ public partial class IntegrationTests
         classActivity.Works.Should().ContainSingle(w =>
             w.StudentId == student.Id &&
             w.Status == ClassActivityWorkStatus.Pending &&
-            w.Link == null &&
+            w.Content == null &&
             w.Value == 0
         );
 

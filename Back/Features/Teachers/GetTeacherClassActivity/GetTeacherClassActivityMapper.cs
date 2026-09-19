@@ -40,7 +40,7 @@ public static class GetTeacherClassActivityMapper
                 Id = work.Id,
                 StudentId = work.StudentId,
                 Student = work.Student.Name,
-                Link = work.Link,
+                Content = work.Content,
                 Status = activity.GetWorkStatus(work),
                 Value = work.Note,
             };

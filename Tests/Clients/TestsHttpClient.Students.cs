@@ -16,6 +16,7 @@ using Estud.Back.Features.Students.ValidateEnrollmentProof;
 using Estud.Back.Features.Students.GetStudentCurrentClasses;
 using Estud.Back.Features.Students.GetStudentClassActivities;
 using Estud.Back.Features.Students.GetStudentPendingActivities;
+using Estud.Back.Features.Students.CreateClassActivityWorkFile;
 using Estud.Back.Features.Students.GetStudentAttendanceCalendar;
 using Estud.Back.Features.Students.EnrollStudentInCourseOffering;
 
@@ -107,11 +108,21 @@ public partial class TestsHttpClient
 
     public async Task<OneOf<CreateClassActivityWorkOut, ErrorOut>> CreateClassActivityWork(
         int activityId,
-        string? link = "https://github.com/ZaqueuCavalcante/estud"
+        string? content = "Segue o link do repositório: https://github.com/ZaqueuCavalcante/estud"
     ) {
-        var data = new CreateClassActivityWorkIn { Link = link };
+        var data = new CreateClassActivityWorkIn { Content = content };
         var response = await http.PostAsJsonAsync($"/students/activities/{activityId}/works", data);
         return await response.Resolve<CreateClassActivityWorkOut>();
+    }
+
+    public async Task<OneOf<CreateClassActivityWorkFileOut, ErrorOut>> CreateClassActivityWorkFile(
+        int activityId,
+        string contentType = "application/pdf",
+        long sizeInBytes = 1_850_000
+    ) {
+        var data = new CreateClassActivityWorkFileIn { ContentType = contentType, SizeInBytes = sizeInBytes };
+        var response = await http.PostAsJsonAsync($"/students/activities/{activityId}/works/files", data);
+        return await response.Resolve<CreateClassActivityWorkFileOut>();
     }
 
     public async Task<OneOf<SuccessOut, ErrorOut>> AssignStudentToClass(int studentId, int classId)

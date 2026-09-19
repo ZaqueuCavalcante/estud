@@ -20,9 +20,9 @@ public class GetStudentClassActivityOut : IApiDto<GetStudentClassActivityOut>
     public ClassActivityWorkStatus WorkStatus { get; set; }
 
     /// <summary>
-    /// Link entregue pelo aluno logado
+    /// Conteúdo (markdown) da entrega do aluno logado
     /// </summary>
-    public string? WorkLink { get; set; }
+    public string? WorkContent { get; set; }
 
     /// <summary>
     /// Nota do aluno logado na atividade
@@ -50,7 +50,7 @@ public class GetStudentClassActivityOut : IApiDto<GetStudentClassActivityOut>
             DueDate = new DateOnly(2026, 3, 20),
             DueHour = Hour.H22_00,
             WorkStatus = ClassActivityWorkStatus.Delivered,
-            WorkLink = "https://github.com/ZaqueuCavalcante/estud",
+            WorkContent = "Segue a modelagem do banco da biblioteca.\n\n![Diagrama ER](https://cdn.estud.com.br/class-activity-work-files/1/2/3/4/01K5B4Z8Q2M3N4P5R6S7T8V9W0.png)",
             Value = 8.5M,
             PonderedValue = 2.125M,
         }),

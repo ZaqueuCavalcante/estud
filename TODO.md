@@ -3,17 +3,11 @@
 ## Foco atual
 
 - full text search
-
-vamos permitir que as entregas que os alunos fazem possa conter texto rico (upload pro R2 com imagens e PDFs)
-hoje so eh permitido um link, isso eh muito limitante
-
-veja como sao as features de plano de aula e de criar/editar atividade, para tomar como base a alteracao na entrega do aluno
-
+- entregas com texto rico (upload pro R2 com imagens e PDFs), thread e feedbacks
 
 
 ## Próximo
 
-- entregas com texto rico (upload pro R2 com imagens e PDFs), thread e feedbacks (ex: @zaqueu isso ficou ruim, refaz)
 - notificar quando um usuário for marcado em algum lugar (Basecamp style, o clique na notificação vai pro local da marcação)
 - notificar aluno quando o professor adicionar nota de alguma atividade que ele entregou ou quando o professor comentar na entrega, mesmo sem mencao
 - professor e apenas o professor pode marcar todo mundo da turma usando o atalho @todos
