@@ -75,9 +75,10 @@ public partial class TestsHttpClient
         return await response.Resolve<GetStudentClassOut>();
     }
 
-    public async Task<OneOf<GetStudentClassLessonsOut, ErrorOut>> GetStudentClassLessons(int classId)
+    public async Task<OneOf<GetStudentClassLessonsOut, ErrorOut>> GetStudentClassLessons(int classId, string? search = null)
     {
-        var response = await http.GetAsync($"/students/classes/{classId}/lessons");
+        var data = new GetStudentClassLessonsIn { Search = search };
+        var response = await http.GetAsync($"/students/classes/{classId}/lessons".AddQueryString(data));
         return await response.Resolve<GetStudentClassLessonsOut>();
     }
 

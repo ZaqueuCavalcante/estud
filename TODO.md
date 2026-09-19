@@ -3,14 +3,13 @@
 ## Foco atual
 
 - full text search
-- entregas com texto rico (upload pro R2 com imagens e PDFs), thread e feedbacks
-
 
 ## Próximo
 
-- notificar quando um usuário for marcado em algum lugar (Basecamp style, o clique na notificação vai pro local da marcação)
+- entregas com texto rico (upload pro R2 com imagens e PDFs), thread e feedbacks
+- notificar quando um usuário for marcado em algum lugar (Basecamp like, o clique na notificação vai pro local da marcação)
 - notificar aluno quando o professor adicionar nota de alguma atividade que ele entregou ou quando o professor comentar na entrega, mesmo sem mencao
-- professor e apenas o professor pode marcar todo mundo da turma usando o atalho @todos
+- professor e apenas o professor pode marcar todo mundo da turma usando o atalho @turma
 
 ## Planejado
 

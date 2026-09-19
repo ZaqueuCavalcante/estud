@@ -75,6 +75,39 @@ public partial class IntegrationTests
         result.ShouldBeError(TeacherNotAssignedToClass.I);
     }
 
+    [TestCase("gr")]
+    [TestCase("  gr  ")]
+    public async Task Teachers_GetTeacherClassLessons_Should_not_get_lessons_when_search_is_too_short(string search)
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: search);
+
+        // Assert
+        result.ShouldBeError(InvalidClassLessonSearch.I);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_not_get_lessons_when_search_is_too_long()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: new string('a', 101));
+
+        // Assert
+        result.ShouldBeError(InvalidClassLessonSearch.I);
+    }
+
     #endregion
 
     #region Happy path
@@ -124,7 +157,7 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Teachers_GetTeacherClassLessons_Should_search_lessons_by_planned_content()
+    public async Task Teachers_GetTeacherClassLessons_Should_search_by_word_stem()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -132,8 +165,62 @@ public partial class IntegrationTests
 
         var client = await _back.LoginAs(@class.TeacherEmail);
         var lessons = await client.ShortcutGetClassLessons(@class.Id);
-        await client.UpdateLessonPlan(lessons[0], "## Introdução a **Grafos** dirigidos");
+        await client.UpdateLessonPlan(lessons[0], "## Introdução a **grafos** dirigidos");
         await client.UpdateLessonPlan(lessons[1], "Árvores binárias de busca");
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "grafo");
+
+        // Assert
+        result.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0]]);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_search_ignoring_accents_in_planned_content()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Lista de exercício");
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "exercicio");
+
+        // Assert
+        result.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0]]);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_search_ignoring_accents_in_search()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Lista de exercicio");
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "exercício");
+
+        // Assert
+        result.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0]]);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_search_ignoring_case()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Grafos dirigidos");
 
         // Act
         var result = await client.GetTeacherClassLessons(@class.Id, search: "grafos");
@@ -143,7 +230,7 @@ public partial class IntegrationTests
     }
 
     [Test]
-    public async Task Teachers_GetTeacherClassLessons_Should_search_lessons_by_part_of_a_word()
+    public async Task Teachers_GetTeacherClassLessons_Should_search_requiring_all_words()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -151,18 +238,75 @@ public partial class IntegrationTests
 
         var client = await _back.LoginAs(@class.TeacherEmail);
         var lessons = await client.ShortcutGetClassLessons(@class.Id);
-        await client.UpdateLessonPlan(lessons[0], "Introdução a Grafos dirigidos");
+        await client.UpdateLessonPlan(lessons[0], "Grafos dirigidos");
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "grafo árvore");
+
+        // Assert
+        result.Success.Lessons.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_search_by_phrase()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Busca em largura");
+        await client.UpdateLessonPlan(lessons[1], "Largura da busca");
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "\"busca em largura\"");
+
+        // Assert
+        result.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0]]);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_search_excluding_words()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Grafo dirigido");
         await client.UpdateLessonPlan(lessons[1], "Grafo ponderado");
 
         // Act
-        var result = await client.GetTeacherClassLessons(@class.Id, search: "GRAF");
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "grafo -ponderado");
+
+        // Assert
+        result.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0]]);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_search_any_of_the_words_with_or()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Grafos dirigidos");
+        await client.UpdateLessonPlan(lessons[1], "Árvores binárias");
+        await client.UpdateLessonPlan(lessons[2], "Filas e pilhas");
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "grafo or árvore");
 
         // Assert
         result.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0], lessons[1]]);
     }
 
     [Test]
-    public async Task Teachers_GetTeacherClassLessons_Should_not_find_lessons_when_search_does_not_match()
+    public async Task Teachers_GetTeacherClassLessons_Should_not_search_in_image_urls()
     {
         // Arrange
         var director = await _back.LoggedAsDirector();
@@ -170,13 +314,31 @@ public partial class IntegrationTests
 
         var client = await _back.LoginAs(@class.TeacherEmail);
         var lessons = await client.ShortcutGetClassLessons(@class.Id);
-        await client.UpdateLessonPlan(lessons[0], "Introdução a grafos");
+        await client.UpdateLessonPlan(lessons[0], "![](https://cdn.estud.com/lessons/grafo.png)");
 
         // Act
-        var result = await client.GetTeacherClassLessons(@class.Id, search: "árvore");
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "grafo");
 
         // Assert
         result.Success.Lessons.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_search_by_file_names()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Rodar o main.py no terminal");
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "main.py");
+
+        // Assert
+        result.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0]]);
     }
 
     [Test]
@@ -192,12 +354,31 @@ public partial class IntegrationTests
         await client.UpdateLessonPlan(lessons[0], "Árvores binárias");
 
         // Act
-        var oldResult = await client.GetTeacherClassLessons(@class.Id, search: "grafos");
-        var newResult = await client.GetTeacherClassLessons(@class.Id, search: "árvores");
+        var oldResult = await client.GetTeacherClassLessons(@class.Id, search: "grafo");
+        var newResult = await client.GetTeacherClassLessons(@class.Id, search: "árvore");
 
         // Assert
         oldResult.Success.Lessons.Should().BeEmpty();
         newResult.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0]]);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_not_find_lessons_with_cleared_plan()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Introdução a grafos");
+        await client.UpdateLessonPlan(lessons[0], null);
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "grafo");
+
+        // Assert
+        result.Success.Lessons.Should().BeEmpty();
     }
 
     [Test]

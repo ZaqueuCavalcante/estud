@@ -91,7 +91,10 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
 
 const lessonsSearch = ref('')
 const appliedLessonsSearch = ref('')
-const applyLessonsSearch = useDebounceFn((value: string) => { appliedLessonsSearch.value = value.trim() }, 300)
+const applyLessonsSearch = useDebounceFn((value: string) => {
+  const search = value.trim()
+  appliedLessonsSearch.value = search.length >= 3 ? search : ''
+}, 300)
 watch(lessonsSearch, (value) => { applyLessonsSearch(value) })
 
 const { data: lessonsData, status: lessonsStatus, refresh: refreshLessons } = await useFetch<GetTeacherClassLessonsOut>(
@@ -221,6 +224,7 @@ const enrolledStudents = computed(() =>
             :ui="{ base: 'h-8' }"
             icon="i-lucide-search"
             placeholder="Buscar no plano de aula..."
+            :maxlength="100"
             :loading="lessonsStatus === 'pending'"
           >
             <template v-if="lessonsSearch" #trailing>

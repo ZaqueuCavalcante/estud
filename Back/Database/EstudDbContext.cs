@@ -34,6 +34,8 @@ public partial class EstudDbContext(DbContextOptions<EstudDbContext> options, Np
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.HasPostgresExtension("unaccent");
+
         ConfigureAdmin(modelBuilder);
         ConfigureAudit(modelBuilder);
         ConfigureCampi(modelBuilder);

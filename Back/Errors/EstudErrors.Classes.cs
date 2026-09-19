@@ -189,6 +189,13 @@ public class InvalidClassLessonPlan : EstudError
     public override string Message { get; set; } = "Planejamento da aula inválido.";
 }
 
+public class InvalidClassLessonSearch : EstudError
+{
+    public static readonly InvalidClassLessonSearch I = new();
+    public override string Code { get; set; } = nameof(InvalidClassLessonSearch);
+    public override string Message { get; set; } = "O termo de busca deve ter entre 3 e 100 caracteres.";
+}
+
 public class InvalidLessonPlanFileContentType : EstudError
 {
     public static readonly InvalidLessonPlanFileContentType I = new();

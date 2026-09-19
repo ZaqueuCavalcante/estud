@@ -84,6 +84,39 @@ public partial class IntegrationTests
         result.ShouldBeError(StudentNotEnrolledInClass.I);
     }
 
+    [TestCase("gr")]
+    [TestCase("  gr  ")]
+    public async Task Students_GetStudentClassLessons_Should_not_get_lessons_when_search_is_too_short(string search)
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+
+        // Act
+        var result = await client.GetStudentClassLessons(@class.Id, search: search);
+
+        // Assert
+        result.ShouldBeError(InvalidClassLessonSearch.I);
+    }
+
+    [Test]
+    public async Task Students_GetStudentClassLessons_Should_not_get_lessons_when_search_is_too_long()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+
+        // Act
+        var result = await client.GetStudentClassLessons(@class.Id, search: new string('a', 101));
+
+        // Assert
+        result.ShouldBeError(InvalidClassLessonSearch.I);
+    }
+
     #endregion
 
     #region Happy path
@@ -109,6 +142,47 @@ public partial class IntegrationTests
         items.Should().BeInAscendingOrder(l => l.Number);
         items.Select(l => l.Id).Should().Equal(lessons);
         items.Should().OnlyContain(l => l.Status == ClassLessonStatus.Pending);
+    }
+
+    [Test]
+    public async Task Students_GetStudentClassLessons_Should_search_lessons_by_planned_content()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
+        await teacherClient.UpdateLessonPlan(lessons[0], "Lista de exercícios sobre grafos dirigidos");
+        await teacherClient.UpdateLessonPlan(lessons[1], "Árvores binárias de busca");
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+
+        // Act
+        var result = await client.GetStudentClassLessons(@class.Id, search: "exercicio grafo");
+
+        // Assert
+        result.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0]]);
+    }
+
+    [Test]
+    public async Task Students_GetStudentClassLessons_Should_get_all_lessons_when_search_is_blank()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await teacherClient.ShortcutGetClassLessons(@class.Id);
+        await teacherClient.UpdateLessonPlan(lessons[0], "Introdução a grafos");
+
+        var client = await _back.LoginAs(@class.StudentEmail);
+
+        // Act
+        var result = await client.GetStudentClassLessons(@class.Id, search: "   ");
+
+        // Assert
+        result.Success.Lessons.Select(l => l.Id).Should().Equal(lessons);
     }
 
     #endregion

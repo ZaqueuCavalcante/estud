@@ -23,4 +23,4 @@ public class GetTeacherClassLessonsController(GetTeacherClassLessonsService serv
 
 internal class RequestExamples : ExamplesProvider<GetTeacherClassLessonsIn>;
 internal class ResponseExamples : ExamplesProvider<GetTeacherClassLessonsOut>;
-internal class ErrorsExamples : ErrorExamplesProvider<ClassNotFound, TeacherNotAssignedToClass>;
+internal class ErrorsExamples : ErrorExamplesProvider<InvalidClassLessonSearch, ClassNotFound, TeacherNotAssignedToClass>;

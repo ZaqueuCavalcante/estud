@@ -4,7 +4,7 @@
 [![Branch coverage](https://zaqueucavalcante.github.io/estud/badge_branchcoverage.svg)](https://zaqueucavalcante.github.io/estud)
 [![Mutation score](https://zaqueucavalcante.github.io/estud/mutation/badge.svg)](https://zaqueucavalcante.github.io/estud/mutation)
 
-O **Estud** é um sistema open-source para gestão educacional, que pode ser usado por gestores, professores e alunos.
+O **Estud** é um sistema open-source para gestão educacional, utilizado por gestores, professores e alunos para descomplicar sua vida acadêmica.
 
 Cadastre sua instituição de ensino em https://estud.com.br e começe a usar o Estud agora mesmo!
 
@@ -13,19 +13,31 @@ Cadastre sua instituição de ensino em https://estud.com.br e começe a usar o 
   <img alt="Tela de ocupação de campus do Estud: mapa de uso das salas por dia e turno, com indicadores de tempo usado e espaço alocado" src=".github/assets/campus-light.svg">
 </picture>
 
-### Gestor
+## Gestor
 
-- Organize e entenda todos os dados da sua instituição de ensino
-- Otimize a alocação de tempo e de espaço nas salas do seu campus
-- Saiba a frequência e o desempenho das suas turmas e alunos
+- Organiza todas as turmas, salas e horários do semestre
+- Entende o desempenho real dos alunos, tanto em frequência quanto em atividades/notas
+- Controla a alocação de tempo e espaço do seu campus (geral, por turno e por sala)
+- Cadastra cursos, grades curriculares, ofertas de curso e períodos de matrícula
+- Notifica diretamente todos os usuários da sua instituição (recados, eventos, lembretes...)
+- Define perfis de acesso customizados para sua operação, com permissões granulares
+- Aumenta a segurança dos seus usuários através de Single Sign-On (SSO) e Two-Factor Authentication (2FA)
+- Integra facilmente o Estud à outros sistemas via webhooks e eventos assíncronos
 
-### Professor
+## Professor
 
-- Agenda, turmas, alunos e atividades organizados
+- Organiza seu semestre, com agenda semanal e turmas ativas
+- Monta o plano de aula diretamente no sistema, com suporte nativo a Markdown
+- Realiza chamadas e publica atividades nas suas turmas
+- Corrige as entregas, atribui notas e dá feedbacks direto aos seus alunos
 
-### Aluno
+## Aluno
 
-- Agenda, turmas e atividades organizadas
+- Acompanha com clareza sua jornada no curso, com dados de frequência e notas
+- Organiza seu semestre, com agenda semanal, turmas atuais e atividades pendentes
+- Recebe notificações sobre suas turmas, atividades e entregas (+ recados da instituição)
+- Sabe em detalhes seu progresso atual e aproveitamento em cada turma
+- Tira dúvidas com os professores a cada entrega realizada
 
 ## Pontos de Extensão
 

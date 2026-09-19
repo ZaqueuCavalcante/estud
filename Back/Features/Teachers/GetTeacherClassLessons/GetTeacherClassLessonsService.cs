@@ -2,8 +2,19 @@ namespace Estud.Back.Features.Teachers.GetTeacherClassLessons;
 
 public class GetTeacherClassLessonsService(EstudDbContext ctx) : IEstudService
 {
+    private class Validator : AbstractValidator<GetTeacherClassLessonsIn>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.Search).Must(s => s.IsEmpty() || s!.Trim().Length is >= 3 and <= 100).WithError(InvalidClassLessonSearch.I);
+        }
+    }
+    private static readonly Validator V = new();
+
     public async Task<OneOf<GetTeacherClassLessonsOut, EstudError>> Get(int classId, GetTeacherClassLessonsIn query)
     {
+        if (V.Run(query, out var error)) return error;
+
         var userId = ctx.RequestUser.Id;
         var institutionId = ctx.RequestUser.InstitutionId;
         var teacherId = await ctx.GetTeacherId(institutionId, userId);
@@ -19,7 +30,12 @@ public class GetTeacherClassLessonsService(EstudDbContext ctx) : IEstudService
             .Where(l => l.ClassId == classId);
 
         var search = query.Search?.Trim();
-        if (search.HasValue()) lessonsQuery = lessonsQuery.Where(l => l.PlannedContent != null && EF.Functions.ILike(l.PlannedContent, $"%{search}%"));
+        if (search.HasValue())
+        {
+            lessonsQuery = lessonsQuery.Where(l => l.PlannedContent != null
+                && EF.Functions.ToTsVector("portuguese", EF.Functions.Unaccent(l.PlannedContent))
+                    .Matches(EF.Functions.WebSearchToTsQuery("portuguese", EF.Functions.Unaccent(search!))));
+        }
 
         var lessons = await lessonsQuery
             .OrderBy(l => l.Number)

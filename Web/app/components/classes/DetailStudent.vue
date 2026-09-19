@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useDebounceFn } from '@vueuse/core'
 import type { GetStudentClassActivitiesOut, GetStudentClassLessonsOut, GetStudentClassOut } from '~/types/classes'
 
 const props = defineProps<{ classId: string }>()
@@ -22,9 +23,21 @@ const { data: activitiesData } = await useFetch<GetStudentClassActivitiesOut>(
   { credentials: 'include', server: false },
 )
 
-const { data: lessonsData } = await useFetch<GetStudentClassLessonsOut>(
+const lessonsSearch = ref('')
+const appliedLessonsSearch = ref('')
+const applyLessonsSearch = useDebounceFn((value: string) => {
+  const search = value.trim()
+  appliedLessonsSearch.value = search.length >= 3 ? search : ''
+}, 300)
+watch(lessonsSearch, (value) => { applyLessonsSearch(value) })
+
+const { data: lessonsData, status: lessonsStatus } = await useFetch<GetStudentClassLessonsOut>(
   `${config.public.backendUrl}/students/classes/${props.classId}/lessons`,
-  { credentials: 'include', server: false },
+  {
+    credentials: 'include',
+    server: false,
+    query: { search: computed(() => appliedLessonsSearch.value || undefined) },
+  },
 )
 
 const activities = computed(() => activitiesData.value?.activities ?? [])
@@ -169,6 +182,27 @@ const lessons = computed(() => lessonsData.value?.lessons ?? [])
             Aulas ({{ lessons.length }})
           </h2>
 
+          <UInput
+            v-model="lessonsSearch"
+            class="w-full sm:max-w-sm"
+            :ui="{ base: 'h-8' }"
+            icon="i-lucide-search"
+            placeholder="Buscar no plano de aula..."
+            :maxlength="100"
+            :loading="lessonsStatus === 'pending'"
+          >
+            <template v-if="lessonsSearch" #trailing>
+              <UButton
+                icon="i-lucide-x"
+                color="neutral"
+                variant="link"
+                size="sm"
+                aria-label="Limpar busca"
+                @click="() => { lessonsSearch = ''; appliedLessonsSearch = '' }"
+              />
+            </template>
+          </UInput>
+
           <div v-if="lessons.length" class="flex flex-col divide-y divide-default">
             <div
               v-for="lesson in lessons"
@@ -199,6 +233,15 @@ const lessons = computed(() => lessonsData.value?.lessons ?? [])
               </div>
             </div>
           </div>
+          <TableEmptyState
+            v-else-if="appliedLessonsSearch"
+            :loading="false"
+            icon="i-lucide-calendar-days"
+            message="Nenhuma aula cadastrada"
+            filtered
+            not-found-message="Nenhuma aula encontrada com esse conteúdo no plano"
+            @clear-filters="() => { lessonsSearch = ''; appliedLessonsSearch = '' }"
+          />
           <div v-else class="flex flex-col items-center gap-3 py-6">
             <UIcon name="i-lucide-calendar-days" class="size-10 text-muted" />
             <p class="text-sm text-muted">
