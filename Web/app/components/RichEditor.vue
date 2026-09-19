@@ -197,33 +197,27 @@ function pickPdfs(view: EditorView) {
   input.click()
 }
 
-// Enquanto o envio não termina, o link aponta para uma âncora única que serve de marcador
-// para achar o texto depois; `blob:` seria descartado pelo `isAllowedUri` do Tiptap.
 function insertPdf(view: EditorView, files: File[], pos?: number) {
   if (!isAcceptedPdf(files)) return
 
   const file = files[0]!
-  const placeholder = `#enviando-${crypto.randomUUID()}`
-  const link = view.state.schema.marks.link!.create({ href: placeholder })
-  const node = view.state.schema.text(file.name, [link])
+  const uploadId = crypto.randomUUID()
+  const node = view.state.schema.nodes.fileAttachment!.create({ name: file.name, uploadId })
 
-  const tr = pos === undefined
-    ? view.state.tr.replaceSelectionWith(node, false)
-    : view.state.tr.insert(pos, node)
+  view.dispatch(pos === undefined
+    ? view.state.tr.replaceSelectionWith(node)
+    : view.state.tr.insert(pos, node))
 
-  // O link do Tiptap é `inclusive`: sem isso, o que for digitado logo depois vira parte do link.
-  view.dispatch(tr.setStoredMarks([]))
-
-  sendPdf(view, file, placeholder)
+  sendPdf(view, file, uploadId)
 }
 
-async function sendPdf(view: EditorView, file: File, placeholder: string) {
+async function sendPdf(view: EditorView, file: File, uploadId: string) {
   uploading.value++
   try {
     const href = await props.uploadPdf!(file)
-    replacePdf(view, placeholder, href)
+    replacePdf(view, uploadId, href)
   } catch (err: unknown) {
-    replacePdf(view, placeholder, null)
+    replacePdf(view, uploadId, null)
     toast.add({
       title: 'Não foi possível enviar o PDF',
       description: (err as { data?: { message?: string } })?.data?.message ?? 'Tente novamente.',
@@ -234,20 +228,15 @@ async function sendPdf(view: EditorView, file: File, placeholder: string) {
   }
 }
 
-function replacePdf(view: EditorView, placeholder: string, href: string | null) {
+function replacePdf(view: EditorView, uploadId: string, href: string | null) {
   if (view.isDestroyed) return
 
-  const linkType = view.state.schema.marks.link!
   const tr = view.state.tr
   view.state.doc.descendants((node, pos) => {
-    const mark = node.marks.find(m => m.type === linkType && m.attrs.href === placeholder)
-    if (!node.isText || !mark) return
+    if (node.type.name !== 'fileAttachment' || node.attrs.uploadId !== uploadId) return
 
-    const from = tr.mapping.map(pos)
-    const to = tr.mapping.map(pos + node.nodeSize)
-
-    if (href) tr.addMark(from, to, linkType.create({ ...mark.attrs, href }))
-    else tr.delete(from, to)
+    if (href) tr.setNodeMarkup(tr.mapping.map(pos), undefined, { ...node.attrs, href, uploadId: null })
+    else tr.delete(tr.mapping.map(pos), tr.mapping.map(pos + node.nodeSize))
   })
   view.dispatch(tr)
 }
@@ -309,6 +298,7 @@ function replaceImage(view: EditorView, localSrc: string, src: string | null) {
     :mention="false"
     :handlers="editorHandlers"
     :editor-props="editorProps"
+    :extensions="[FileAttachment]"
     class="flex flex-col gap-3 rounded-lg border border-default p-3"
     :class="{ 'min-h-64': !readonly }"
     :ui="{ base: 'sm:px-0' }"

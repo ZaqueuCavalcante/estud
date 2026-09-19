@@ -9,6 +9,7 @@ public class UpdateClassActivityController(UpdateClassActivityService service) :
     /// <remarks>
     /// Atualiza os dados de uma atividade de uma turma lecionada pelo professor logado.
     /// A soma dos pesos das atividades de uma mesma nota não pode passar de 100.
+    /// Com NotifyStudents, os alunos da turma recebem uma notificação sobre a alteração.
     /// </remarks>
     [HttpPut("teachers/classes/{classId}/activities/{activityId}")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]

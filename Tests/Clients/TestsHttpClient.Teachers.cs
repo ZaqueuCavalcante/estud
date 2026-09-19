@@ -157,7 +157,8 @@ public partial class TestsHttpClient
         ClassActivityType type = ClassActivityType.Work,
         int weight = 40,
         DateOnly? dueDate = null,
-        Hour dueHour = Hour.H19_00
+        Hour dueHour = Hour.H19_00,
+        bool notifyStudents = false
     ) {
         var data = new UpdateClassActivityIn
         {
@@ -168,6 +169,7 @@ public partial class TestsHttpClient
             Weight = weight,
             DueDate = dueDate ?? DateTime.UtcNow.AddDays(7).ToDateOnly(),
             DueHour = dueHour,
+            NotifyStudents = notifyStudents,
         };
         var response = await http.PutAsJsonAsync($"/teachers/classes/{classId}/activities/{activityId}", data);
         return await response.Resolve<SuccessOut>();

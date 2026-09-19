@@ -159,34 +159,59 @@ async function uploadFile(file: File) {
   return publicUrl
 }
 
+const notifyOpen = ref(false)
+const notifyStudents = ref<boolean | null>(null)
+const pendingData = ref<Schema | null>(null)
+
+function errorMessage(err: unknown, fallback: string) {
+  return (err as { data?: { message?: string } })?.data?.message ?? fallback
+}
+
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   if (uploading.value > 0) return
 
+  if (isEdit) {
+    pendingData.value = event.data
+    notifyOpen.value = true
+    return
+  }
+
   loading.value = true
   try {
-    if (isEdit) {
-      await $fetch(`${config.public.backendUrl}/teachers/classes/${props.classId}/activities/${props.activityId}`, {
-        method: 'PUT',
-        body: event.data,
-        credentials: 'include',
-      })
-      toast.add({ title: 'Atividade atualizada com sucesso', color: 'success' })
-      await navigateTo(activityUrl, { replace: true })
-    } else {
-      const created = await $fetch<{ id: number }>(`${config.public.backendUrl}/teachers/classes/${props.classId}/activities`, {
-        method: 'POST',
-        body: event.data,
-        credentials: 'include',
-      })
-      toast.add({ title: 'Atividade criada com sucesso', color: 'success' })
-      await navigateTo(`/classes/${props.classId}/activities/${created.id}`, { replace: true })
-    }
+    const created = await $fetch<{ id: number }>(`${config.public.backendUrl}/teachers/classes/${props.classId}/activities`, {
+      method: 'POST',
+      body: event.data,
+      credentials: 'include',
+    })
+    toast.add({ title: 'Atividade criada com sucesso', color: 'success' })
+    await navigateTo(`/classes/${props.classId}/activities/${created.id}`, { replace: true })
   } catch (err: unknown) {
-    const fallback = isEdit ? 'Erro ao atualizar atividade.' : 'Erro ao criar atividade.'
-    const msg = (err as { data?: { message?: string } })?.data?.message ?? fallback
-    toast.add({ title: 'Erro', description: msg, color: 'error' })
+    toast.add({ title: 'Erro', description: errorMessage(err, 'Erro ao criar atividade.'), color: 'error' })
   } finally {
     loading.value = false
+  }
+}
+
+async function onUpdate(notify: boolean) {
+  if (!pendingData.value) return
+
+  loading.value = true
+  notifyStudents.value = notify
+  try {
+    await $fetch(`${config.public.backendUrl}/teachers/classes/${props.classId}/activities/${props.activityId}`, {
+      method: 'PUT',
+      body: { ...pendingData.value, notifyStudents: notify },
+      credentials: 'include',
+    })
+    notifyOpen.value = false
+    toast.add({ title: 'Atividade atualizada com sucesso', color: 'success' })
+    await navigateTo(activityUrl, { replace: true })
+  } catch (err: unknown) {
+    notifyOpen.value = false
+    toast.add({ title: 'Erro', description: errorMessage(err, 'Erro ao atualizar atividade.'), color: 'error' })
+  } finally {
+    loading.value = false
+    notifyStudents.value = null
   }
 }
 </script>
@@ -322,4 +347,31 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       </div>
     </template>
   </UDashboardPanel>
+
+  <UModal
+    v-model:open="notifyOpen"
+    title="Notificar alunos"
+    description="Notificar os alunos da turma sobre essa alteração na atividade?"
+    :dismissible="!loading"
+  >
+    <template #footer>
+      <div class="flex justify-end gap-2 w-full">
+        <UButton
+          label="Não notificar"
+          color="neutral"
+          variant="subtle"
+          :loading="notifyStudents === false"
+          :disabled="loading"
+          @click="() => { onUpdate(false) }"
+        />
+        <UButton
+          icon="i-lucide-bell"
+          label="Notificar alunos"
+          :loading="notifyStudents === true"
+          :disabled="loading"
+          @click="() => { onUpdate(true) }"
+        />
+      </div>
+    </template>
+  </UModal>
 </template>

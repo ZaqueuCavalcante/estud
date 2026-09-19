@@ -3,8 +3,11 @@
 ## Foco atual
 
 - full text search
-- atividades com texto rico (upload pro R2 com imagens e PDFs)
 
+vamos permitir que as entregas que os alunos fazem possa conter texto rico (upload pro R2 com imagens e PDFs)
+hoje so eh permitido um link, isso eh muito limitante
+
+veja como sao as features de plano de aula e de criar/editar atividade, para tomar como base a alteracao na entrega do aluno
 
 
 

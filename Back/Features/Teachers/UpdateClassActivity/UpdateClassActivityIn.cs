@@ -37,6 +37,11 @@ public class UpdateClassActivityIn : IApiDto<UpdateClassActivityIn>
     /// </summary>
     public Hour DueHour { get; set; }
 
+    /// <summary>
+    /// Notificar os alunos da turma sobre a alteração
+    /// </summary>
+    public bool NotifyStudents { get; set; }
+
     public static IEnumerable<(string, UpdateClassActivityIn)> GetExamples() =>
     [
         ("Modelagem de Banco de Dados",
@@ -49,6 +54,7 @@ public class UpdateClassActivityIn : IApiDto<UpdateClassActivityIn>
             Weight = 40,
             DueDate = DateTime.UtcNow.AddDays(10).ToDateOnly(),
             DueHour = Hour.H23_00,
+            NotifyStudents = true,
         }),
     ];
 }

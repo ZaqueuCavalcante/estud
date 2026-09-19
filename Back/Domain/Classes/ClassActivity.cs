@@ -76,7 +76,8 @@ public class ClassActivity : DomainEntity
         ClassActivityType type,
         int weight,
         DateOnly dueDate,
-        Hour dueHour
+        Hour dueHour,
+        bool notifyStudents
     ) {
         if (weight < 0 || weight > 100) return InvalidClassActivityWeight.I;
 
@@ -87,6 +88,8 @@ public class ClassActivity : DomainEntity
         Weight = weight;
         DueDate = dueDate;
         DueHour = dueHour;
+
+        if (notifyStudents) AddDomainEvent(new ClassActivityUpdatedDomainEvent(Uid));
 
         return EstudSuccess.I;
     }

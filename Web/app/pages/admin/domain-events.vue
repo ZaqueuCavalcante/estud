@@ -52,6 +52,7 @@ const statusLabels = Object.fromEntries(statuses.map(s => [s.value, s.label]))
 const types = [
   { label: 'Aluno criado', value: 'Estud.Back.Domain.Students.StudentCreatedDomainEvent' },
   { label: 'Atividade criada', value: 'Estud.Back.Domain.Classes.ClassActivityCreatedDomainEvent' },
+  { label: 'Atividade alterada', value: 'Estud.Back.Domain.Classes.ClassActivityUpdatedDomainEvent' },
 ]
 
 const typeLabels = Object.fromEntries(types.map(t => [t.value, t.label]))

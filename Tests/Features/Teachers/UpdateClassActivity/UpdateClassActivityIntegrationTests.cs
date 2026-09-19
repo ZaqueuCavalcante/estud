@@ -1,3 +1,5 @@
+using Newtonsoft.Json.Linq;
+
 namespace Estud.Tests.Integration;
 
 public partial class IntegrationTests
@@ -316,6 +318,84 @@ public partial class IntegrationTests
         updated.DeliveredWorks.Should().Be(1);
         updated.Works.Should().ContainSingle();
         updated.Works[0].Link.Should().Be("https://github.com/ZaqueuCavalcante/estud");
+    }
+
+    [Test]
+    public async Task Teachers_UpdateClassActivity_Should_notify_the_students_when_the_teacher_chooses_to()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+
+        var disciplineName = $"Modelagem de Dados {DataGen.Numbers}";
+        var discipline = await director.CreateDiscipline(disciplineName).Success();
+        await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
+        var period = await director.ShortcutGetFirstAcademicPeriod();
+        var @class = await director.CreateClass(discipline.Id, period.Id).Success();
+        await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
+
+        await director.ReleaseClassForEnrollment(@class.Id);
+
+        var studentEmails = new List<string> { DataGen.Email, DataGen.Email };
+        foreach (var studentEmail in studentEmails)
+        {
+            var student = await director.CreateStudent(DataGen.UserName, studentEmail).Success();
+            await director.AssignStudentToClass(student.Id, @class.Id);
+        }
+
+        var client = await _back.LoginAs(teacher.Email);
+        var activity = await client.CreateClassActivity(@class.Id).Success();
+        var title = $"Modelagem de Banco de Dados {DataGen.Numbers}";
+
+        // Act
+        var result = await client.UpdateClassActivity(@class.Id, activity.Id, title: title, notifyStudents: true);
+
+        await _back.AwaitDomainEventsProcessing();
+        await _back.AwaitCommandsProcessing();
+
+        // Assert
+        result.ShouldBeSuccess();
+
+        foreach (var studentEmail in studentEmails)
+        {
+            var studentClient = await _back.LoginAs(studentEmail);
+            var notifications = await studentClient.GetNotifications().Success();
+            var notification = notifications.Items.Should().ContainSingle(x => x.Title == "Atividade alterada").Subject;
+
+            notification.NotificationType.Should().Be(NotificationType.UpdatedClassActivity);
+            notification.Description.Should().Be($"{disciplineName}: {title}");
+
+            var link = ((JObject)notification.Metadata!)["links"]![0]!;
+            link.Value<string>("label").Should().Be("Ver atividade");
+            link.Value<string>("to").Should().Be($"/classes/{@class.Id}/activities/{activity.Id}");
+        }
+    }
+
+    [Test]
+    public async Task Teachers_UpdateClassActivity_Should_not_notify_the_students_by_default()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass();
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var activity = await client.CreateClassActivity(@class.Id).Success();
+
+        await _back.AwaitDomainEventsProcessing();
+        await _back.AwaitCommandsProcessing();
+
+        // Act
+        await client.UpdateClassActivity(@class.Id, activity.Id, title: "Novo título");
+
+        await _back.AwaitDomainEventsProcessing();
+        await _back.AwaitCommandsProcessing();
+
+        // Assert
+        var studentClient = await _back.LoginAs(@class.StudentEmail);
+        var notifications = await studentClient.GetNotifications().Success();
+        notifications.Items.Should().ContainSingle(x => x.Title == "Nova atividade");
+        notifications.Items.Should().NotContain(x => x.Title == "Atividade alterada");
     }
 
     #endregion

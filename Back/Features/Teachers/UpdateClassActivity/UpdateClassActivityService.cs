@@ -32,7 +32,8 @@ public class UpdateClassActivityService(EstudDbContext ctx) : IEstudService
             data.Type,
             data.Weight,
             data.DueDate,
-            data.DueHour
+            data.DueHour,
+            data.NotifyStudents
         );
         if (result.IsError) return result.Error;
 

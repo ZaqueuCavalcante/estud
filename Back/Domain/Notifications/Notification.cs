@@ -77,4 +77,26 @@ public class Notification
             }
         );
     }
+
+    public static Notification UpdatedClassActivity(
+        int institutionId,
+        int classId,
+        int activityId,
+        string disciplineName,
+        string activityTitle)
+    {
+        return new Notification(
+            institutionId,
+            NotificationType.UpdatedClassActivity,
+            "Atividade alterada",
+            $"{disciplineName}: {activityTitle}",
+            new
+            {
+                links = new[]
+                {
+                    new { label = "Ver atividade", to = $"/classes/{classId}/activities/{activityId}", icon = "i-lucide-clipboard-list", newTab = false },
+                },
+            }
+        );
+    }
 }
