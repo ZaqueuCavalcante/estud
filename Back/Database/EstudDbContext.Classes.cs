@@ -25,4 +25,18 @@ public partial class EstudDbContext
         modelBuilder.ApplyConfiguration(new ClassActivityWorkDbConfig());
         modelBuilder.ApplyConfiguration(new ClassLessonAttendanceDbConfig());
     }
+
+    // O :* é colocado em cada lexema do texto gerado pelo websearch_to_tsquery.
+    // O to_tsquery usa 'simple' para não aplicar o stemming de novo sobre o radical.
+    public IQueryable<ClassLesson> SearchClassLessons(string search)
+    {
+        return ClassLessons.FromSql($"""
+            SELECT * FROM estud.class_lessons
+            WHERE planned_content IS NOT NULL
+              AND to_tsvector('portuguese', unaccent(planned_content))
+                  @@ to_tsquery('simple', regexp_replace(
+                       websearch_to_tsquery('portuguese', unaccent({search}))::text,
+                       '''(?:[^'']|'''')*''', '\&:*', 'g'))
+            """);
+    }
 }

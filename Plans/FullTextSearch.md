@@ -85,10 +85,20 @@ Termos como `para`, `como` ou `que` passam no mínimo de 3 letras, mas são stop
 vazia. Fica assim para ver o comportamento na prática antes de decidir (tratar como "sem busca" via
 `numnode(query) = 0`, ou devolver erro).
 
-### Busca por prefixo: fora da v1
+### Busca por prefixo: `:*` em todos os termos
 
-O `websearch_to_tsquery` não faz prefixo ("graf" não encontra "grafos" enquanto digita). Busca
-enquanto digita exigiria montar `to_tsquery` com `:*` em cada termo. Fica para depois.
+O `websearch_to_tsquery` não faz prefixo ("exerci" não encontra "exercício"). A busca roda o
+`websearch_to_tsquery` primeiro (unaccent, stemming, stopwords, aspas, `-`, `or`), acrescenta `:*` em
+cada lexema do texto resultante e usa `to_tsquery('simple', ...)` para não aplicar o stemming de novo:
+
+```sql
+select websearch_to_tsquery('portuguese', unaccent('exerci -ponderado'))::text;
+-- 'exerc' & !'ponder'   →   to_tsquery('simple', '''exerc'':* & !''ponder'':*')
+```
+
+Tudo roda numa consulta só: o filtro é SQL via `FromSql` (`EstudDbContext.SearchClassLessons`), com o
+`regexp_replace` colocando o `:*`, e o resto da query (turma, ordem, projeção) continua em LINQ. Efeito colateral: o prefixo amplia os resultados ("grafo" vira
+`graf:*` e também encontra "grafite"). A busca continua sendo disparada só depois do debounce do front.
 
 ## v1 — implementação
 

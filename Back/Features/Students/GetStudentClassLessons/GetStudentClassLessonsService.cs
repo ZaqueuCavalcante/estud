@@ -25,18 +25,11 @@ public class GetStudentClassLessonsService(EstudDbContext ctx) : IEstudService
         var enrolled = await ctx.ClassStudents.AsNoTracking().AnyAsync(cs => cs.ClassId == classId && cs.StudentId == studentId);
         if (!enrolled) return StudentNotEnrolledInClass.I;
 
-        var lessonsQuery = ctx.ClassLessons.AsNoTracking()
-            .Where(l => l.ClassId == classId);
-
         var search = query.Search?.Trim();
-        if (search.HasValue())
-        {
-            lessonsQuery = lessonsQuery.Where(l => l.PlannedContent != null
-                && EF.Functions.ToTsVector("portuguese", EF.Functions.Unaccent(l.PlannedContent))
-                    .Matches(EF.Functions.WebSearchToTsQuery("portuguese", EF.Functions.Unaccent(search!))));
-        }
+        var lessonsQuery = search.HasValue() ? ctx.SearchClassLessons(search!) : ctx.ClassLessons;
 
-        var lessons = await lessonsQuery
+        var lessons = await lessonsQuery.AsNoTracking()
+            .Where(l => l.ClassId == classId)
             .OrderBy(l => l.Number)
             .Select(l => new GetStudentClassLessonsItemOut
             {

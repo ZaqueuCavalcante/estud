@@ -176,6 +176,25 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Teachers_GetTeacherClassLessons_Should_search_by_prefix()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var @class = await director.ShortcutCreateStartedClass(students: []);
+
+        var client = await _back.LoginAs(@class.TeacherEmail);
+        var lessons = await client.ShortcutGetClassLessons(@class.Id);
+        await client.UpdateLessonPlan(lessons[0], "Exercício número sete.");
+        await client.UpdateLessonPlan(lessons[1], "Árvores binárias de busca");
+
+        // Act
+        var result = await client.GetTeacherClassLessons(@class.Id, search: "exerci");
+
+        // Assert
+        result.Success.Lessons.Select(l => l.Id).Should().Equal([lessons[0]]);
+    }
+
+    [Test]
     public async Task Teachers_GetTeacherClassLessons_Should_search_ignoring_accents_in_planned_content()
     {
         // Arrange

@@ -129,6 +129,26 @@ var schedules = await ctx.Schedules.AsNoTracking()
 
 Se não existir navigation property para o relacionamento, criar uma no entity/config em vez de recorrer a `join`.
 
+### Raw SQL — palavras-chave em maiúsculo
+
+Em SQL escrito à mão (`FromSql`, `SqlQueryRaw`, Dapper, migrations), as palavras-chave do SQL **sempre** vão em
+maiúsculo: `SELECT`, `FROM`, `WHERE`, `JOIN`, `ON`, `AND`, `OR`, `NOT`, `IS NULL`, `AS`, `GROUP BY`, `ORDER BY`,
+`FILTER`... Nomes de tabelas, colunas e funções (`count`, `to_tsvector`, `unaccent`) continuam em minúsculo.
+
+**Correto:**
+```sql
+SELECT * FROM estud.class_lessons
+WHERE planned_content IS NOT NULL
+  AND to_tsvector('portuguese', unaccent(planned_content)) @@ to_tsquery('simple', ...)
+```
+
+**Errado:**
+```sql
+select * from estud.class_lessons
+where planned_content is not null
+  and to_tsvector('portuguese', unaccent(planned_content)) @@ to_tsquery('simple', ...)
+```
+
 ## Frontend conventions
 
 ### Zod validation — campos opcionais/undefined
