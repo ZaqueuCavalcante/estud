@@ -10,6 +10,7 @@ public class AdminUserDbConfig : IEntityTypeConfiguration<AdminUser>
         entity.ToTable("admin_users", DbSchemas.Estud);
 
         entity.HasKey(e => e.UserId);
+
         entity.Property(e => e.UserId).ValueGeneratedNever();
 
         entity.HasOne<EstudUser>()

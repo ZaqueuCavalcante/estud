@@ -9,6 +9,7 @@ public class MagicLinkDbConfig : IEntityTypeConfiguration<MagicLink>
         entity.ToTable("magic_links", DbSchemas.Estud);
 
         entity.HasKey(e => e.Id);
+
         entity.Property(e => e.Id).ValueGeneratedNever();
 
         entity.HasOne(e => e.User)

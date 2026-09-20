@@ -307,7 +307,7 @@ public partial class IntegrationTests
         var activity = await client.CreateClassActivity(@class.Id).Success();
 
         var studentClient = await _back.LoginAs(student.Email);
-        await studentClient.CreateClassActivityWork(activity.Id, "https://github.com/ZaqueuCavalcante/estud");
+        await studentClient.CreateClassActivityWorkComment(activity.Id, "https://github.com/ZaqueuCavalcante/estud");
 
         // Act
         await client.UpdateClassActivity(@class.Id, activity.Id, title: "Novo título");
@@ -317,7 +317,7 @@ public partial class IntegrationTests
         updated.Title.Should().Be("Novo título");
         updated.DeliveredWorks.Should().Be(1);
         updated.Works.Should().ContainSingle();
-        updated.Works[0].Content.Should().Be("https://github.com/ZaqueuCavalcante/estud");
+        updated.Works[0].Entries.Should().ContainSingle(e => e.Content == "https://github.com/ZaqueuCavalcante/estud");
     }
 
     [Test]

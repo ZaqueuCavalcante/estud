@@ -12,9 +12,6 @@ public class EnrollmentProofDbConfig : IEntityTypeConfiguration<EnrollmentProof>
         entity.HasKey(e => e.Id);
 
         entity.Property(e => e.Metadata)
-            .HasColumnType("jsonb");
-
-        entity.Property(e => e.Metadata)
             .HasConversion(
                 v => JsonConvert.SerializeObject(v),
                 v => JsonConvert.DeserializeObject<EnrollmentProofMetadata>(v) ?? new()

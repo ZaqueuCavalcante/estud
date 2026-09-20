@@ -105,7 +105,7 @@ public partial class IntegrationTests
         await teacher.CreateClassActivity(@class.Id, ClassNoteType.N1, weight: 50);
 
         var client = await _back.LoginAs(@class.StudentEmail);
-        await client.CreateClassActivityWork(delivered.Id);
+        await client.CreateClassActivityWorkComment(delivered.Id);
 
         // Act
         var result = await client.GetStudentPendingActivities();

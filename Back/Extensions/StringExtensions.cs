@@ -17,6 +17,12 @@ public static class StringExtensions
         Converters = [new StringEnumConverter()],
     };
 
+    private static JsonSerializerSettings _camelCaseSettings = new()
+    {
+        Converters = [new StringEnumConverter()],
+        ContractResolver = new CamelCasePropertyNamesContractResolver(),
+    };
+
     private static JsonSerializerSettings _snakeCaseSettings = new()
     {
         Converters = [new StringEnumConverter()],
@@ -160,6 +166,11 @@ public static class StringExtensions
         public string Serialize()
         {
             return JsonConvert.SerializeObject(obj, _settings);
+        }
+
+        public string SerializeAsCamelCase()
+        {
+            return JsonConvert.SerializeObject(obj, _camelCaseSettings);
         }
 
         public string SerializeAsSnakeCase()

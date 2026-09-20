@@ -23,10 +23,10 @@ public static partial class Policies
     public const string GenerateEnrollmentProof = nameof(GenerateEnrollmentProof);
     public const string GetEnrollmentProofs = nameof(GetEnrollmentProofs);
 
-    public const string CreateClassActivityWork = nameof(CreateClassActivityWork);
     public const string GetStudentClassActivity = nameof(GetStudentClassActivity);
     public const string GetStudentClassActivities = nameof(GetStudentClassActivities);
     public const string CreateClassActivityWorkFile = nameof(CreateClassActivityWorkFile);
+    public const string CreateClassActivityWorkComment = nameof(CreateClassActivityWorkComment);
 
     public static AuthorizationBuilder AddStudentsPolicies(this AuthorizationBuilder builder)
     {
@@ -53,10 +53,10 @@ public static partial class Policies
             .AddEstudPolicy(GetEnrollmentProofs, UserType.Student);
 
         builder
-            .AddEstudPolicy(CreateClassActivityWork, UserType.Student)
             .AddEstudPolicy(GetStudentClassActivity, UserType.Student)
             .AddEstudPolicy(GetStudentClassActivities, UserType.Student)
-            .AddEstudPolicy(CreateClassActivityWorkFile, UserType.Student);
+            .AddEstudPolicy(CreateClassActivityWorkFile, UserType.Student)
+            .AddEstudPolicy(CreateClassActivityWorkComment, UserType.Student);
 
         return builder;
     }

@@ -185,7 +185,7 @@ public partial class IntegrationTests
         item.DueDate.Should().Be(dueDate);
         item.DueHour.Should().Be(Hour.H08_30);
         item.WorkStatus.Should().Be(ClassActivityWorkStatus.Pending);
-        item.WorkContent.Should().BeNull();
+        item.WorkEntries.Should().BeEmpty();
         item.Value.Should().Be(0);
         item.PonderedValue.Should().Be(0);
     }
@@ -201,7 +201,7 @@ public partial class IntegrationTests
         var activity = await teacherClient.CreateClassActivity(@class.Id, weight: 40).Success();
 
         var client = await _back.LoginAs(@class.StudentEmail);
-        await client.CreateClassActivityWork(activity.Id, "https://github.com/ZaqueuCavalcante/estud");
+        await client.CreateClassActivityWorkComment(activity.Id, "https://github.com/ZaqueuCavalcante/estud");
 
         // Act
         var result = await client.GetStudentClassActivity(@class.Id, activity.Id);
@@ -209,8 +209,8 @@ public partial class IntegrationTests
         // Assert
         var item = result.Success;
         item.Id.Should().Be(activity.Id);
-        item.WorkStatus.Should().Be(ClassActivityWorkStatus.Delivered);
-        item.WorkContent.Should().Be("https://github.com/ZaqueuCavalcante/estud");
+        item.WorkStatus.Should().Be(ClassActivityWorkStatus.Review);
+        item.WorkEntries.Should().ContainSingle(e => e.Content == "https://github.com/ZaqueuCavalcante/estud");
     }
 
     [Test]
@@ -224,7 +224,7 @@ public partial class IntegrationTests
         var activity = await teacherClient.CreateClassActivity(@class.Id, weight: 40).Success();
 
         var client = await _back.LoginAs(@class.StudentEmail);
-        await client.CreateClassActivityWork(activity.Id, "https://github.com/ZaqueuCavalcante/estud");
+        await client.CreateClassActivityWorkComment(activity.Id, "https://github.com/ZaqueuCavalcante/estud");
 
         await teacherClient.ShortcutAddStudentActivityNote(@class.Id, activity.Id, @class.StudentIds[0], 8.5m);
 
@@ -236,7 +236,7 @@ public partial class IntegrationTests
         item.Id.Should().Be(activity.Id);
         item.Weight.Should().Be(40);
         item.WorkStatus.Should().Be(ClassActivityWorkStatus.Finalized);
-        item.WorkContent.Should().Be("https://github.com/ZaqueuCavalcante/estud");
+        item.WorkEntries.Should().ContainSingle(e => e.Content == "https://github.com/ZaqueuCavalcante/estud");
         item.Value.Should().Be(8.5m);
         item.PonderedValue.Should().Be(3.4m);
     }
@@ -284,7 +284,7 @@ public partial class IntegrationTests
         var result = await client.GetStudentClassActivity(@class.Id, activity.Id);
 
         // Assert
-        result.Success.WorkStatus.Should().Be(ClassActivityWorkStatus.InReview);
+        result.Success.WorkStatus.Should().Be(ClassActivityWorkStatus.Review);
     }
 
     [Test]

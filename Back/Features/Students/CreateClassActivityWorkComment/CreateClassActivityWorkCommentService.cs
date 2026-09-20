@@ -1,8 +1,8 @@
-namespace Estud.Back.Features.Students.CreateClassActivityWork;
+namespace Estud.Back.Features.Students.CreateClassActivityWorkComment;
 
-public class CreateClassActivityWorkService(EstudDbContext ctx) : IEstudService
+public class CreateClassActivityWorkCommentService(EstudDbContext ctx) : IEstudService
 {
-    private class Validator : AbstractValidator<CreateClassActivityWorkIn>
+    private class Validator : AbstractValidator<CreateClassActivityWorkCommentIn>
     {
         public Validator()
         {
@@ -12,7 +12,7 @@ public class CreateClassActivityWorkService(EstudDbContext ctx) : IEstudService
     }
     private static readonly Validator V = new();
 
-    public async Task<OneOf<CreateClassActivityWorkOut, EstudError>> Create(int classActivityId, CreateClassActivityWorkIn data)
+    public async Task<OneOf<CreateClassActivityWorkCommentOut, EstudError>> Create(int classActivityId, CreateClassActivityWorkCommentIn data)
     {
         if (V.Run(data, out var error)) return error;
 
@@ -21,22 +21,21 @@ public class CreateClassActivityWorkService(EstudDbContext ctx) : IEstudService
         var studentId = await ctx.GetStudentId(institutionId, userId);
 
         var classActivity = await ctx.ClassActivities.AsNoTracking()
-            .Where(x => x.Id == classActivityId)
-            .FirstOrDefaultAsync();
+            .Where(x => x.Id == classActivityId).FirstOrDefaultAsync();
         if (classActivity == null) return new ClassActivityNotFound();
         if (!classActivity.AcceptsWorks()) return ClassActivityDoesNotAcceptWorks.I;
 
-        var classesIds = await ctx.ClassStudents.Where(x => x.StudentId == studentId)
-            .Select(x => x.ClassId).ToListAsync();
+        var classesIds = await ctx.ClassStudents.Where(x => x.StudentId == studentId).Select(x => x.ClassId).ToListAsync();
         if (!classesIds.Contains(classActivity.ClassId)) return new StudentNotEnrolledInClass();
 
         var work = await ctx.ClassActivityWorks.FirstOrDefaultAsync(w => w.ClassActivityId == classActivityId && w.StudentId == studentId);
         if (work == null) return ClassActivityWorkNotFound.I;
 
-        work.Deliver(data.Content);
+        var result = work.AddEntry(userId, ClassActivityWorkEntryType.Comment, data.Content);
+        if (result.IsError) return result.Error;
 
         await ctx.SaveChangesAsync();
 
-        return new CreateClassActivityWorkOut { Id = work.Id };
+        return new CreateClassActivityWorkCommentOut { Id = work.Id };
     }
 }

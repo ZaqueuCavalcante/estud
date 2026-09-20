@@ -70,7 +70,7 @@ public static class TestShortcuts
         var activity = await client.GetTeacherClassActivity(classId, activityId).Success();
         var work = activity.Works.First(w => w.StudentId == studentId);
 
-        await client.AddActivityNote(activityId, work.Id, note);
+        await client.CreateClassActivityWorkEntry(activityId, work.Id, note: note, status: ClassActivityWorkStatus.Finalized);
     }
 
     public static async Task<ShortcutCreateClassDto> ShortcutCreateStartedClass(
@@ -82,7 +82,8 @@ public static class TestShortcuts
         int? periodId = null
     ) {
         var discipline = await client.CreateDiscipline(disciplineName).Success();
-        var teacher = await client.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+        var teacherName = DataGen.UserName;
+        var teacher = await client.CreateTeacher(teacherName, DataGen.Email).Success();
         await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
 
         periodId ??= (await client.ShortcutGetFirstAcademicPeriod()).Id;
@@ -92,16 +93,26 @@ public static class TestShortcuts
 
         await client.ReleaseClassForEnrollment(@class.Id);
 
-        var result = new ShortcutCreateClassDto { Id = @class.Id, TeacherEmail = teacher.Email };
+        var result = new ShortcutCreateClassDto
+        {
+            Id = @class.Id,
+            TeacherEmail = teacher.Email,
+            TeacherName = teacherName,
+        };
 
         if (students is null)
         {
             students = [];
             for (var i = 0; i < studentsCount; i++)
             {
-                var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+                var studentName = DataGen.UserName;
+                var student = await client.CreateStudent(studentName, DataGen.Email).Success();
                 students.Add(student.Id);
-                if (i == 0) result.StudentEmail = student.Email;
+                if (i == 0)
+                {
+                    result.StudentEmail = student.Email;
+                    result.StudentName = studentName;
+                }
             }
         }
 

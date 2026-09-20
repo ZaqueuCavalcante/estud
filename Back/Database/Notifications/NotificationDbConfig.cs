@@ -9,5 +9,8 @@ public class NotificationDbConfig : IEntityTypeConfiguration<Notification>
         entity.ToTable("notifications", DbSchemas.Estud);
 
         entity.HasKey(e => e.Id);
+
+        entity.Property(e => e.Metadata)
+            .HasColumnType("jsonb");
     }
 }

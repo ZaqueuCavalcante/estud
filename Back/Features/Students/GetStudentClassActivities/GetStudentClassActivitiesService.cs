@@ -1,8 +1,9 @@
+using Estud.Back.Storage;
 using Estud.Back.Domain.Classes;
 
 namespace Estud.Back.Features.Students.GetStudentClassActivities;
 
-public class GetStudentClassActivitiesService(EstudDbContext ctx) : IEstudService
+public class GetStudentClassActivitiesService(EstudDbContext ctx, IStorageService storage) : IEstudService
 {
     public async Task<OneOf<GetStudentClassActivitiesOut, EstudError>> Get(int classId)
     {
@@ -32,7 +33,20 @@ public class GetStudentClassActivitiesService(EstudDbContext ctx) : IEstudServic
             })
             .ToListAsync();
 
-        var items = activities.ConvertAll(x => x.Activity.ToGetStudentClassActivitiesItemOut(x.Work));
+        var worksIds = activities.Where(x => x.Work != null).Select(x => x.Work!.Id).ToList();
+        var entries = await ctx.ClassActivityWorkEntries.AsNoTracking()
+            .Include(e => e.User)
+            .Where(e => worksIds.Contains(e.ClassActivityWorkId))
+            .OrderBy(e => e.CreatedAt)
+            .ToListAsync();
+
+        var items = activities.ConvertAll(x => x.Activity.ToGetStudentClassActivitiesItemOut(
+            x.Work,
+            entries.FindAll(e => e.ClassActivityWorkId == x.Work?.Id)
+        ));
+
+        foreach (var entry in items.SelectMany(i => i.WorkEntries).Where(e => e.UserPhoto.HasValue()))
+            entry.UserPhoto = storage.GetPublicUrl(StorageContainer.ProfilePhotos, entry.UserPhoto!);
 
         var notes = gradeRule.NoteTypes
             .Union(items.Select(i => i.Note))

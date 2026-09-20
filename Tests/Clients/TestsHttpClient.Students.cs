@@ -9,7 +9,7 @@ using Estud.Back.Features.Students.GetEnrollmentProofs;
 using Estud.Back.Features.Students.AssignStudentToClass;
 using Estud.Back.Features.Students.GetStudentClassLesson;
 using Estud.Back.Features.Students.GetStudentClassLessons;
-using Estud.Back.Features.Students.CreateClassActivityWork;
+using Estud.Back.Features.Students.CreateClassActivityWorkComment;
 using Estud.Back.Features.Students.GetStudentClassActivity;
 using Estud.Back.Features.Students.GetStudentCourseDetails;
 using Estud.Back.Features.Students.ValidateEnrollmentProof;
@@ -107,13 +107,13 @@ public partial class TestsHttpClient
         return await response.Resolve<GetStudentClassActivityOut>();
     }
 
-    public async Task<OneOf<CreateClassActivityWorkOut, ErrorOut>> CreateClassActivityWork(
+    public async Task<OneOf<CreateClassActivityWorkCommentOut, ErrorOut>> CreateClassActivityWorkComment(
         int activityId,
         string? content = "Segue o link do repositório: https://github.com/ZaqueuCavalcante/estud"
     ) {
-        var data = new CreateClassActivityWorkIn { Content = content };
-        var response = await http.PostAsJsonAsync($"/students/activities/{activityId}/works", data);
-        return await response.Resolve<CreateClassActivityWorkOut>();
+        var data = new CreateClassActivityWorkCommentIn { Content = content };
+        var response = await http.PostAsJsonAsync($"/students/activities/{activityId}/works/comments", data);
+        return await response.Resolve<CreateClassActivityWorkCommentOut>();
     }
 
     public async Task<OneOf<CreateClassActivityWorkFileOut, ErrorOut>> CreateClassActivityWorkFile(

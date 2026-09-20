@@ -11,12 +11,12 @@ public class EstudStudentDbConfig : IEntityTypeConfiguration<EstudStudent>
 
         entity.HasKey(e => e.Id);
 
+        entity.Property(x => x.YieldCoefficient).HasPrecision(4, 2);
+
         entity.HasOne(e => e.User)
             .WithOne()
             .HasPrincipalKey<EstudUser>(u => new { u.InstitutionId, u.Id })
             .HasForeignKey<EstudStudent>(e => new { e.InstitutionId, e.UserId });
-
-        entity.Property(x => x.YieldCoefficient).HasPrecision(4, 2);
 
         entity.HasIndex(s => s.EnrollmentCode).IsUnique();
     }

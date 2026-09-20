@@ -13,6 +13,7 @@ public partial class EstudDbContext
     public DbSet<ClassActivity> ClassActivities { get; set; }
     public DbSet<ClassActivityWork> ClassActivityWorks { get; set; }
     public DbSet<ClassLessonAttendance> ClassLessonAttendances { get; set; }
+    public DbSet<ClassActivityWorkEntry> ClassActivityWorkEntries { get; set; }
 
     private static void ConfigureClasses(ModelBuilder modelBuilder)
     {
@@ -24,6 +25,7 @@ public partial class EstudDbContext
         modelBuilder.ApplyConfiguration(new ClassActivityDbConfig());
         modelBuilder.ApplyConfiguration(new ClassActivityWorkDbConfig());
         modelBuilder.ApplyConfiguration(new ClassLessonAttendanceDbConfig());
+        modelBuilder.ApplyConfiguration(new ClassActivityWorkEntryDbConfig());
     }
 
     // O :* é colocado em cada lexema do texto gerado pelo websearch_to_tsquery.

@@ -11,9 +11,6 @@ public class ClassLessonAttendanceDbConfig : IEntityTypeConfiguration<ClassLesso
 
         entity.HasKey(t => t.Id);
 
-        entity.HasIndex(t => new { t.LessonId, t.StudentId })
-            .IsUnique();
-
         entity.HasOne<EstudStudent>()
             .WithMany()
             .HasForeignKey(t => t.StudentId);
@@ -21,5 +18,8 @@ public class ClassLessonAttendanceDbConfig : IEntityTypeConfiguration<ClassLesso
         entity.HasOne<Class>()
             .WithMany()
             .HasForeignKey(t => t.ClassId);
+
+        entity.HasIndex(t => new { t.LessonId, t.StudentId })
+            .IsUnique();
     }
 }

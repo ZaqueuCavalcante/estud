@@ -100,13 +100,21 @@ const { data, status, error, refresh } = await useFetch<GetStudentClassActivityO
             <p v-if="isExamActivity(data)" class="text-sm text-muted">
               {{ data.workStatus === 'Finalized' ? 'Nota lançada pelo professor' : 'A nota será lançada pelo professor' }}
             </p>
-            <ActivitiesWorkEditor
-              v-else
-              :activity-id="props.activityId"
-              :content="data.workContent"
-              :editable="data.workStatus !== 'Finalized'"
-              @delivered="() => { refresh() }"
+
+            <ActivitiesWorkTimeline
+              :entries="data.workEntries"
+              :empty-message="isExamActivity(data) ? 'Nenhum comentário do professor' : 'Você ainda não entregou esta atividade'"
             />
+
+            <ActivitiesWorkComposer
+              v-if="!isExamActivity(data) && data.workStatus !== 'Finalized'"
+              :activity-id="props.activityId"
+              @created="() => { refresh() }"
+            />
+
+            <p v-else-if="!isExamActivity(data)" class="text-sm text-muted">
+              A entrega foi finalizada pelo professor e não aceita mais comentários.
+            </p>
 
             <div v-if="data.workStatus === 'Finalized'" class="flex items-center gap-2">
               <UBadge

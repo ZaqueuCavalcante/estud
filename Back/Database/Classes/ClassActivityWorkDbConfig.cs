@@ -14,5 +14,9 @@ public class ClassActivityWorkDbConfig : IEntityTypeConfiguration<ClassActivityW
             .WithMany()
             .HasPrincipalKey(x => x.Id)
             .HasForeignKey(e => e.StudentId);
+
+        entity.HasMany(e => e.Entries)
+            .WithOne()
+            .HasForeignKey(e => e.ClassActivityWorkId);
     }
 }

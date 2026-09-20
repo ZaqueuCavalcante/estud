@@ -1,6 +1,8 @@
+using Estud.Back.Storage;
+
 namespace Estud.Back.Features.Students.GetStudentClassActivity;
 
-public class GetStudentClassActivityService(EstudDbContext ctx) : IEstudService
+public class GetStudentClassActivityService(EstudDbContext ctx, IStorageService storage) : IEstudService
 {
     public async Task<OneOf<GetStudentClassActivityOut, EstudError>> Get(int classId, int activityId)
     {
@@ -24,6 +26,18 @@ public class GetStudentClassActivityService(EstudDbContext ctx) : IEstudService
             .FirstOrDefaultAsync();
         if (activity == null) return ClassActivityNotFound.I;
 
-        return activity.Activity.ToGetStudentClassActivityOut(activity.Work);
+        var workId = activity.Work?.Id ?? 0;
+        var entries = await ctx.ClassActivityWorkEntries.AsNoTracking()
+            .Include(e => e.User)
+            .Where(e => e.ClassActivityWorkId == workId)
+            .OrderBy(e => e.CreatedAt)
+            .ToListAsync();
+
+        var result = activity.Activity.ToGetStudentClassActivityOut(activity.Work, entries);
+
+        foreach (var entry in result.WorkEntries.FindAll(e => e.UserPhoto.HasValue()))
+            entry.UserPhoto = storage.GetPublicUrl(StorageContainer.ProfilePhotos, entry.UserPhoto!);
+
+        return result;
     }
 }

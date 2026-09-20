@@ -122,7 +122,8 @@ const tables: TableRow[] = [
   { table: 'classes__students', entity: 'ClassStudent', group: 'classes', dbSet: 'ClassStudents', join: true, note: 'Aluno matriculado na turma. Exige turma em matrícula e vaga disponível.' },
   { table: 'classes__teachers', entity: 'ClassTeacher', group: 'classes', dbSet: 'ClassTeachers', join: true, note: 'Professor responsável pela turma.' },
   { table: 'class_activities', entity: 'ClassActivity', group: 'classes', dbSet: 'ClassActivities', note: 'Atividade ou avaliação criada pelo professor da turma.' },
-  { table: 'class_activity_works', entity: 'ClassActivityWork', group: 'classes', dbSet: 'ClassActivityWorks', note: 'Entrega do aluno para uma atividade.' },
+  { table: 'class_activity_works', entity: 'ClassActivityWork', group: 'classes', dbSet: 'ClassActivityWorks', note: 'Entrega do aluno para uma atividade: guarda o status e a nota vigente.' },
+  { table: 'class_activity_work_entries', entity: 'ClassActivityWorkEntry', group: 'classes', dbSet: 'ClassActivityWorkEntries', note: 'Item da linha do tempo da entrega: comentário do aluno ou do professor, alteração de nota e alteração de status.' },
   { table: 'student_class_notes', entity: 'StudentClassNote', group: 'classes', note: 'Nota do aluno na turma, com precisão (4,2). Única por (turma, aluno, tipo). Sem DbSet.' },
 
   { table: 'students', entity: 'EstudStudent', group: 'people', dbSet: 'Students', note: 'Aluno. O usuário correspondente é criado junto, no mesmo CreateStudent.' },

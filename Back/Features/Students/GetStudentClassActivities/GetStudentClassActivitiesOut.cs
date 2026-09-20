@@ -1,3 +1,5 @@
+using Estud.Back.Domain.Classes;
+
 namespace Estud.Back.Features.Students.GetStudentClassActivities;
 
 public class GetStudentClassActivitiesOut : IApiDto<GetStudentClassActivitiesOut>
@@ -31,7 +33,31 @@ public class GetStudentClassActivitiesOut : IApiDto<GetStudentClassActivitiesOut
                     DueDate = new DateOnly(2026, 3, 20),
                     DueHour = Hour.H22_00,
                     WorkStatus = ClassActivityWorkStatus.Finalized,
-                    WorkContent = "Segue a modelagem do banco da biblioteca.\n\n![Diagrama ER](https://cdn.estud.com.br/class-activity-work-files/1/2/3/4/01K5B4Z8Q2M3N4P5R6S7T8V9W0.png)",
+                    WorkEntries =
+                    [
+                        new()
+                        {
+                            Id = 1,
+                            UserId = 4,
+                            User = "Maria Souza",
+                            Type = ClassActivityWorkEntryType.Comment,
+                            Content = "Segue a modelagem do banco da biblioteca.\n\n![Diagrama ER](https://cdn.estud.com.br/class-activity-work-files/1/2/3/4/01K5B4Z8Q2M3N4P5R6S7T8V9W0.png)",
+                            CreatedAt = new DateTime(2026, 3, 18, 22, 14, 0, DateTimeKind.Utc),
+                        },
+                        new()
+                        {
+                            Id = 2,
+                            UserId = 7,
+                            User = "João Alves",
+                            Type = ClassActivityWorkEntryType.StatusChange,
+                            Metadata = new ClassActivityWorkStatusChange
+                            {
+                                FromStatus = ClassActivityWorkStatus.Review,
+                                ToStatus = ClassActivityWorkStatus.Finalized,
+                            },
+                            CreatedAt = new DateTime(2026, 3, 19, 9, 2, 0, DateTimeKind.Utc),
+                        },
+                    ],
                     Value = 8.5M,
                     PonderedValue = 2.125M,
                 },
@@ -72,9 +98,9 @@ public class GetStudentClassActivitiesItemOut
     public ClassActivityWorkStatus WorkStatus { get; set; }
 
     /// <summary>
-    /// Conteúdo (markdown) da entrega do aluno logado
+    /// Linha do tempo da entrega do aluno logado, em ordem cronológica
     /// </summary>
-    public string? WorkContent { get; set; }
+    public List<GetStudentClassActivitiesWorkEntryOut> WorkEntries { get; set; } = [];
 
     /// <summary>
     /// Nota do aluno logado na atividade
@@ -85,4 +111,34 @@ public class GetStudentClassActivitiesItemOut
     /// Nota do aluno logado ponderada pelo peso da atividade
     /// </summary>
     public decimal PonderedValue { get; set; }
+}
+
+public class GetStudentClassActivitiesWorkEntryOut
+{
+    public int Id { get; set; }
+    public int UserId { get; set; }
+
+    /// <summary>
+    /// Nome de quem criou o item
+    /// </summary>
+    public string? User { get; set; }
+
+    /// <summary>
+    /// Foto de perfil de quem criou o item
+    /// </summary>
+    public string? UserPhoto { get; set; }
+
+    public ClassActivityWorkEntryType Type { get; set; }
+
+    /// <summary>
+    /// Conteúdo (markdown) do comentário
+    /// </summary>
+    public string? Content { get; set; }
+
+    /// <summary>
+    /// Dados da mudança de nota ({ FromNote, ToNote }) ou de status ({ FromStatus, ToStatus })
+    /// </summary>
+    public object? Metadata { get; set; }
+
+    public DateTime CreatedAt { get; set; }
 }

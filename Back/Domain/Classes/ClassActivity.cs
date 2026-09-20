@@ -111,6 +111,6 @@ public class ClassActivity : DomainEntity
 
         if (AcceptsWorks() || status != ClassActivityWorkStatus.Pending) return status;
 
-        return IsPastDue() ? ClassActivityWorkStatus.InReview : status;
+        return IsPastDue() ? ClassActivityWorkStatus.Review : status;
     }
 }

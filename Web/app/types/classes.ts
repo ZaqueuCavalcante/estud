@@ -165,6 +165,27 @@ export interface GetTeacherClassActivitiesOut {
   activities: ClassActivityItem[]
 }
 
+export interface ClassActivityWorkNoteChange {
+  fromNote: number
+  toNote: number
+}
+
+export interface ClassActivityWorkStatusChange {
+  fromStatus: string // 'Pending' | 'Review' | 'Finalized'
+  toStatus: string
+}
+
+export interface ClassActivityWorkEntry {
+  id: number
+  userId: number
+  user: string | null
+  userPhoto: string | null
+  type: string // 'Comment' | 'NoteChange' | 'StatusChange'
+  content: string | null
+  metadata: ClassActivityWorkNoteChange | ClassActivityWorkStatusChange | null
+  createdAt: string
+}
+
 export interface StudentClassActivityItem {
   id: number
   classId: number
@@ -177,8 +198,8 @@ export interface StudentClassActivityItem {
   createdAt: string
   dueDate: string // ex: "2026-07-20"
   dueHour: string // ex: "H19_00"
-  workStatus: string // 'Pending' | 'Delivered' | 'Finalized' | 'InReview'
-  workContent: string | null
+  workStatus: string // 'Pending' | 'Review' | 'Finalized'
+  workEntries: ClassActivityWorkEntry[]
   value: number
   ponderedValue: number
 }
@@ -197,9 +218,10 @@ export interface TeacherActivityWorkItem {
   id: number
   studentId: number
   student: string
-  status: string // 'Pending' | 'Delivered' | 'Finalized' | 'InReview'
-  content: string | null
+  studentPhoto: string | null
+  status: string // 'Pending' | 'Review' | 'Finalized'
   value: number
+  entries: ClassActivityWorkEntry[]
 }
 
 export interface GetTeacherClassActivityOut {
@@ -231,8 +253,8 @@ export interface GetStudentClassActivityOut {
   createdAt: string
   dueDate: string // ex: "2026-07-20"
   dueHour: string // ex: "H19_00"
-  workStatus: string // 'Pending' | 'Delivered' | 'Finalized' | 'InReview'
-  workContent: string | null
+  workStatus: string // 'Pending' | 'Review' | 'Finalized'
+  workEntries: ClassActivityWorkEntry[]
   value: number
   ponderedValue: number
 }

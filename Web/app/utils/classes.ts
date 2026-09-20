@@ -64,16 +64,37 @@ export const classActivityStatusColors: Record<string, BadgeColor> = {
 
 export const classActivityWorkStatusLabels: Record<string, string> = {
   Pending: 'Pendente',
-  Delivered: 'Entregue',
-  InReview: 'Em correção',
-  Finalized: 'Finalizado',
+  Review: 'Correção',
+  Finalized: 'Finalizada',
 }
 
 export const classActivityWorkStatusColors: Record<string, BadgeColor> = {
   Pending: 'neutral',
-  Delivered: 'info',
+  Review: 'info',
   Finalized: 'success',
-  InReview: 'warning',
+}
+
+export const classActivityWorkStatusOptions = Object.entries(classActivityWorkStatusLabels)
+  .map(([value, label]) => ({ value, label }))
+
+export const classActivityWorkEntryTypeLabels: Record<string, string> = {
+  Comment: 'Comentário',
+  NoteChange: 'Alteração de Nota',
+  StatusChange: 'Alteração de Status',
+}
+
+export function formatClassActivityWorkEntryDate(value: string) {
+  return new Date(value).toLocaleString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+export function formatClassActivityNote(note: number) {
+  return note.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 2 })
 }
 
 export function isExamActivity(activity: { type: string }) {

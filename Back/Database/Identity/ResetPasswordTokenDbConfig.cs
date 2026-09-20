@@ -9,6 +9,7 @@ public class ResetPasswordTokenDbConfig : IEntityTypeConfiguration<ResetPassword
         entity.ToTable("reset_password_tokens", DbSchemas.Estud);
 
         entity.HasKey(e => e.Id);
+
         entity.Property(e => e.Id).ValueGeneratedNever();
 
         entity.HasOne<EstudUser>()

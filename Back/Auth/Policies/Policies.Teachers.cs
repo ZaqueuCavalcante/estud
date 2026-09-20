@@ -21,13 +21,13 @@ public static partial class Policies
     public const string GetTeacherAgenda = nameof(GetTeacherAgenda);
     public const string GetTeacherCurrentClasses = nameof(GetTeacherCurrentClasses);
 
-    public const string AddActivityNote = nameof(AddActivityNote);
     public const string CreateClassActivity = nameof(CreateClassActivity);
     public const string UpdateClassActivity = nameof(UpdateClassActivity);
     public const string CreateClassActivityFile = nameof(CreateClassActivityFile);
     public const string GetTeacherClassActivity = nameof(GetTeacherClassActivity);
     public const string GetTeacherClassStudents = nameof(GetTeacherClassStudents);
     public const string GetTeacherClassActivities = nameof(GetTeacherClassActivities);
+    public const string CreateClassActivityWorkEntry = nameof(CreateClassActivityWorkEntry);
 
     public const string UpdateLessonPlan = nameof(UpdateLessonPlan);
     public const string CreateLessonPlanFile = nameof(CreateLessonPlanFile);
@@ -59,13 +59,13 @@ public static partial class Policies
             .AddEstudPolicy(GetTeacherCurrentClasses, UserType.Teacher);
 
         builder
-            .AddEstudPolicy(AddActivityNote, UserType.Teacher)
             .AddEstudPolicy(CreateClassActivity, UserType.Teacher)
             .AddEstudPolicy(UpdateClassActivity, UserType.Teacher)
             .AddEstudPolicy(CreateClassActivityFile, UserType.Teacher)
             .AddEstudPolicy(GetTeacherClassActivity, UserType.Teacher)
             .AddEstudPolicy(GetTeacherClassStudents, UserType.Teacher)
-            .AddEstudPolicy(GetTeacherClassActivities, UserType.Teacher);
+            .AddEstudPolicy(GetTeacherClassActivities, UserType.Teacher)
+            .AddEstudPolicy(CreateClassActivityWorkEntry, UserType.Teacher);
 
         builder
             .AddEstudPolicy(UpdateLessonPlan, UserType.Teacher)

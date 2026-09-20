@@ -1,9 +1,21 @@
-namespace Estud.Back.Features.Teachers.AddActivityNote;
+namespace Estud.Back.Features.Teachers.CreateClassActivityWorkEntry;
 
-public class AddActivityNoteService(EstudDbContext ctx) : IEstudService
+public class CreateClassActivityWorkEntryService(EstudDbContext ctx) : IEstudService
 {
-    public async Task<OneOf<EstudSuccess, EstudError>> Add(int activityId, int workId, AddActivityNoteIn data)
+    private class Validator : AbstractValidator<CreateClassActivityWorkEntryIn>
     {
+        public Validator()
+        {
+            RuleFor(x => x.Content).MaximumLength(10000).WithError(InvalidClassActivityWorkContent.I);
+            RuleFor(x => x.Status).IsInEnum().WithError(InvalidClassActivityWorkEntry.I);
+        }
+    }
+    private static readonly Validator V = new();
+
+    public async Task<OneOf<EstudSuccess, EstudError>> Create(int activityId, int workId, CreateClassActivityWorkEntryIn data)
+    {
+        if (V.Run(data, out var error)) return error;
+
         var userId = ctx.RequestUser.Id;
         var institutionId = ctx.RequestUser.InstitutionId;
         var teacherId = await ctx.GetTeacherId(institutionId, userId);
@@ -20,7 +32,7 @@ public class AddActivityNoteService(EstudDbContext ctx) : IEstudService
         var work = await ctx.ClassActivityWorks.FirstOrDefaultAsync(w => w.Id == workId && w.ClassActivityId == activityId);
         if (work == null) return ClassActivityWorkNotFound.I;
 
-        var result = work.AddNote(data.Note);
+        var result = work.AddTeacherEntry(userId, data.Content, data.Note, data.Status);
         if (result.IsError) return result.Error;
 
         await ctx.SaveChangesAsync();

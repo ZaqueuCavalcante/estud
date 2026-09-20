@@ -165,15 +165,38 @@ export const dbSchema: DbTable[] = [
       { name: "id", prop: "Id", type: "integer", clr: "int", nullable: false },
       { name: "class_activity_id", prop: "ClassActivityId", type: "integer", clr: "int", nullable: false },
       { name: "student_id", prop: "StudentId", type: "integer", clr: "int", nullable: false },
-      { name: "link", prop: "Link", type: "text", clr: "string?", nullable: true },
       { name: "note", prop: "Note", type: "numeric", clr: "decimal", nullable: false },
       { name: "status", prop: "Status", type: "integer", clr: "ClassActivityWorkStatus", nullable: false, enum: "ClassActivityWorkStatus" },
+      { name: "last_entry_at", prop: "LastEntryAt", type: "timestamptz", clr: "DateTime?", nullable: true },
     ],
     fks: [
       { columns: ["class_activity_id"], target: "class_activities", targetEntity: "ClassActivity", principal: [], nav: null, convention: false },
       { columns: ["student_id"], target: "students", targetEntity: "EstudStudent", principal: ["id"], nav: "Student", convention: false },
     ],
     indexes: [
+    ],
+  },
+  {
+    table: "class_activity_work_entries",
+    entity: "ClassActivityWorkEntry",
+    file: "Back/Database/Classes/ClassActivityWorkEntryDbConfig.cs",
+    pk: ["id"],
+    columns: [
+      { name: "id", prop: "Id", type: "integer", clr: "int", nullable: false },
+      { name: "uid", prop: "Uid", type: "text", clr: "string", nullable: false },
+      { name: "class_activity_work_id", prop: "ClassActivityWorkId", type: "integer", clr: "int", nullable: false },
+      { name: "user_id", prop: "UserId", type: "integer", clr: "int", nullable: false },
+      { name: "type", prop: "Type", type: "integer", clr: "ClassActivityWorkEntryType", nullable: false, enum: "ClassActivityWorkEntryType" },
+      { name: "content", prop: "Content", type: "varchar(10000)", clr: "string?", nullable: true },
+      { name: "metadata", prop: "Metadata", type: "jsonb", clr: "JsonDocument?", nullable: true },
+      { name: "created_at", prop: "CreatedAt", type: "timestamptz", clr: "DateTime", nullable: false },
+    ],
+    fks: [
+      { columns: ["class_activity_work_id"], target: "class_activity_works", targetEntity: "ClassActivityWork", principal: [], nav: null, convention: false },
+      { columns: ["user_id"], target: "users", targetEntity: "EstudUser", principal: [], nav: "User", convention: false },
+    ],
+    indexes: [
+      { columns: ["class_activity_work_id", "created_at"], unique: false },
     ],
   },
   {

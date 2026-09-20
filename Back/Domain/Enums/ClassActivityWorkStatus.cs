@@ -8,12 +8,9 @@ public enum ClassActivityWorkStatus
     [Description("Pendente")]
     Pending = 0,
 
-    [Description("Entregue")]
-    Delivered = 1,
+    [Description("Correção")]
+    Review = 1,
 
-    [Description("Em correção")]
-    InReview = 2,
-
-    [Description("Finalizado")]
-    Finalized = 3,
+    [Description("Finalizada")]
+    Finalized = 2,
 }

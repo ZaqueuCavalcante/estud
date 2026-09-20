@@ -244,3 +244,17 @@ public class InvalidStudentsList : EstudError
     public override string Code { get; set; } = nameof(InvalidStudentsList);
     public override string Message { get; set; } = "Lista de alunos inválida.";
 }
+
+public class ClassActivityWorkAlreadyFinalized : EstudError
+{
+    public static readonly ClassActivityWorkAlreadyFinalized I = new();
+    public override string Code { get; set; } = nameof(ClassActivityWorkAlreadyFinalized);
+    public override string Message { get; set; } = "Entrega já finalizada pelo professor.";
+}
+
+public class InvalidClassActivityWorkEntry : EstudError
+{
+    public static readonly InvalidClassActivityWorkEntry I = new();
+    public override string Code { get; set; } = nameof(InvalidClassActivityWorkEntry);
+    public override string Message { get; set; } = "Informe um comentário, uma nota ou um status.";
+}

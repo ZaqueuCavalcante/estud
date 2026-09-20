@@ -223,7 +223,7 @@ public partial class IntegrationTests
         var classActivity = await client.CreateClassActivity(@class.Id).Success();
 
         var studentClient = await _back.LoginAs(student.Email);
-        await studentClient.CreateClassActivityWork(classActivity.Id, "https://github.com/ZaqueuCavalcante/estud");
+        await studentClient.CreateClassActivityWorkComment(classActivity.Id, "https://github.com/ZaqueuCavalcante/estud");
 
         // Act
         var activity = await client.GetTeacherClassActivity(@class.Id, classActivity.Id).Success();
@@ -233,8 +233,8 @@ public partial class IntegrationTests
         activity.TotalWorks.Should().Be(1);
         activity.Works.Should().ContainSingle();
         activity.Works[0].StudentId.Should().Be(student.Id);
-        activity.Works[0].Content.Should().Be("https://github.com/ZaqueuCavalcante/estud");
-        activity.Works[0].Status.Should().Be(ClassActivityWorkStatus.Delivered);
+        activity.Works[0].Entries.Should().ContainSingle(e => e.Content == "https://github.com/ZaqueuCavalcante/estud");
+        activity.Works[0].Status.Should().Be(ClassActivityWorkStatus.Review);
         activity.Works[0].Value.Should().Be(0);
     }
 
@@ -257,8 +257,8 @@ public partial class IntegrationTests
 
         // Assert
         var work = result.Success.Works.Single();
-        work.Status.Should().Be(ClassActivityWorkStatus.InReview);
-        work.Content.Should().BeNull();
+        work.Status.Should().Be(ClassActivityWorkStatus.Review);
+        work.Entries.Should().BeEmpty();
     }
 
     #endregion

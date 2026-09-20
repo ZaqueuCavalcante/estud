@@ -6,7 +6,7 @@ public static class GetStudentClassActivityMapper
 {
     extension(ClassActivity activity)
     {
-        public GetStudentClassActivityOut ToGetStudentClassActivityOut(ClassActivityWork? work)
+        public GetStudentClassActivityOut ToGetStudentClassActivityOut(ClassActivityWork? work, List<ClassActivityWorkEntry> entries)
         {
             return new()
             {
@@ -22,9 +22,27 @@ public static class GetStudentClassActivityMapper
                 DueDate = activity.DueDate,
                 DueHour = activity.DueHour,
                 WorkStatus = activity.GetWorkStatus(work),
-                WorkContent = work?.Content,
+                WorkEntries = entries.ConvertAll(e => e.ToGetStudentClassActivityWorkEntryOut()),
                 Value = work?.Note ?? 0,
                 PonderedValue = (work?.Note ?? 0) * activity.Weight / 100M,
+            };
+        }
+    }
+
+    extension(ClassActivityWorkEntry entry)
+    {
+        public GetStudentClassActivityWorkEntryOut ToGetStudentClassActivityWorkEntryOut()
+        {
+            return new()
+            {
+                Id = entry.Id,
+                UserId = entry.UserId,
+                User = entry.User?.Name,
+                UserPhoto = entry.User?.ProfilePhoto,
+                Type = entry.Type,
+                Content = entry.Content,
+                Metadata = entry.Metadata,
+                CreatedAt = entry.CreatedAt,
             };
         }
     }

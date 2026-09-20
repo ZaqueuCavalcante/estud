@@ -40,9 +40,31 @@ public static class GetTeacherClassActivityMapper
                 Id = work.Id,
                 StudentId = work.StudentId,
                 Student = work.Student.Name,
-                Content = work.Content,
+                StudentPhoto = work.Student.User?.ProfilePhoto,
                 Status = activity.GetWorkStatus(work),
                 Value = work.Note,
+                Entries = work.Entries
+                    .OrderBy(e => e.CreatedAt)
+                    .Select(e => e.ToGetTeacherClassActivityWorkEntryOut())
+                    .ToList(),
+            };
+        }
+    }
+
+    extension(ClassActivityWorkEntry entry)
+    {
+        public GetTeacherClassActivityWorkEntryOut ToGetTeacherClassActivityWorkEntryOut()
+        {
+            return new()
+            {
+                Id = entry.Id,
+                UserId = entry.UserId,
+                User = entry.User?.Name,
+                UserPhoto = entry.User?.ProfilePhoto,
+                Type = entry.Type,
+                Content = entry.Content,
+                Metadata = entry.Metadata,
+                CreatedAt = entry.CreatedAt,
             };
         }
     }
