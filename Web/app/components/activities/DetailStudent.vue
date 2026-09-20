@@ -47,28 +47,32 @@ const { data, status, error, refresh } = await useFetch<GetStudentClassActivityO
           <h1 class="order-1 text-2xl font-semibold tracking-tight text-highlighted sm:col-start-1 sm:row-start-1">
             {{ data.title }}
           </h1>
-          <div class="order-2 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-muted sm:col-start-1 sm:row-start-2">
-            <span class="flex items-center gap-1.5">
-              <UIcon name="i-lucide-tag" class="size-4" />
-              {{ classActivityTypeLabels[data.type] ?? data.type }}
-            </span>
-            <span class="flex items-center gap-1.5">
-              <UIcon name="i-lucide-hash" class="size-4" />
-              {{ data.note }}
-            </span>
-            <span class="flex items-center gap-1.5">
-              <UIcon name="i-lucide-scale" class="size-4" />
-              Peso {{ data.weight }}%
-            </span>
-            <span class="flex items-center gap-1.5">
-              <UIcon name="i-lucide-calendar-clock" class="size-4" />
-              {{ classActivityDueLabel(data) }} {{ formatClassActivityDueDate(data.dueDate, data.dueHour) }}
-            </span>
-            <UBadge
-              :label="classActivityStatusLabels[data.status] ?? data.status"
-              :color="classActivityStatusColors[data.status] ?? 'neutral'"
-              variant="subtle"
-            />
+          <div class="order-2 flex flex-col gap-1 text-sm text-muted sm:col-start-1 sm:row-start-2">
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-1">
+              <span class="flex items-center gap-1.5">
+                <UIcon name="i-lucide-hash" class="size-4" />
+                {{ data.note }}
+              </span>
+              <span class="flex items-center gap-1.5">
+                <UIcon :name="classActivityTypeIcons[data.type] ?? 'i-lucide-clipboard-list'" class="size-4" />
+                {{ classActivityTypeLabels[data.type] ?? data.type }}
+              </span>
+              <span class="flex items-center gap-1.5">
+                <UIcon name="i-lucide-scale" class="size-4" />
+                {{ data.weight }}%
+              </span>
+            </div>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span class="flex items-center gap-1.5">
+                <UIcon name="i-lucide-calendar-clock" class="size-4" />
+                {{ classActivityDueLabel(data) }} {{ formatClassActivityDueDate(data.dueDate, data.dueHour) }}
+              </span>
+              <UBadge
+                :label="classActivityStatusLabels[data.status] ?? data.status"
+                :color="classActivityStatusColors[data.status] ?? 'neutral'"
+                variant="subtle"
+              />
+            </div>
           </div>
         </div>
 

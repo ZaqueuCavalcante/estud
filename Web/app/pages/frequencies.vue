@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+import { breakpointsTailwind, useBreakpoints, useElementSize } from '@vueuse/core'
 import type { AttendanceDay, GetStudentAttendanceCalendarOut, StudentDayAttendanceStatus } from '~/types/frequencies'
 
 interface Cell {
@@ -9,13 +9,10 @@ interface Cell {
 
 interface Grid {
   key: string
+  month: string
   weeks: Cell[][]
   months: string[]
 }
-
-const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
-// GitHub mostra só algumas linhas rotuladas (índices 1, 3, 5).
-const WEEKDAYS = ['', 'Seg', '', 'Qua', '', 'Sex', '']
 
 const config = useRuntimeConfig()
 
@@ -79,7 +76,7 @@ function buildGrid(items: AttendanceDay[]): { weeks: Cell[][], months: string[] 
     const month = new Date(`${firstReal.date}T00:00:00`).getMonth()
     const prev = i > 0 ? weeks[i - 1]?.find(c => c.date) : undefined
     const prevMonth = prev ? new Date(`${prev.date}T00:00:00`).getMonth() : -1
-    return month !== prevMonth ? MONTHS[month] : ''
+    return month !== prevMonth ? attendanceMonths[month] : ''
   })
 
   return { weeks, months }
@@ -96,59 +93,44 @@ const monthGroups = computed<AttendanceDay[][]>(() => {
   return [...map.keys()].sort().map(k => map.get(k)!)
 })
 
-// Quantas grids exibir, conforme a largura da tela:
-//   >= 2xl → 1 grid  (o ano inteiro)
-//   >= xl  → 2 grids (6 meses cada)
-//   >= sm  → 4 grids (3 meses cada)
-//   < sm   → 12 grids (1 mês cada — mobile)
 const breakpoints = useBreakpoints(breakpointsTailwind)
-const is2xl = breakpoints.greaterOrEqual('2xl')
-const isXl = breakpoints.greaterOrEqual('xl')
 const isSm = breakpoints.greaterOrEqual('sm')
 
-const gridCount = computed(() => {
-  if (is2xl.value) return 1
-  if (isXl.value) return 2
-  if (isSm.value) return 4
-  return 12
+const gridArea = useTemplateRef<HTMLElement | null>('gridArea')
+const { width: gridAreaWidth } = useElementSize(gridArea)
+
+// Largura mínima do container pra cada densidade. Só divisores de 12, pra todas
+// as linhas terem o mesmo número de meses.
+const DENSITY_STEPS = [
+  { months: 12, minWidth: 1200 },
+  { months: 6, minWidth: 451 },
+  { months: 4, minWidth: 316 },
+  { months: 3, minWidth: 256 },
+  { months: 2, minWidth: 200 }
+]
+
+const monthsPerGrid = computed(() => {
+  if (!isSm.value) return 1
+
+  const step = DENSITY_STEPS.find(s => gridAreaWidth.value >= s.minWidth)
+  return step?.months ?? 1
 })
 
-// Divide os meses em `gridCount` blocos contíguos e monta uma grid contínua pra cada um.
+// Divide os meses em blocos contíguos de `monthsPerGrid` e monta uma grid contínua pra cada um.
 const grids = computed<Grid[]>(() => {
   const groups = monthGroups.value
   if (groups.length === 0) return []
 
-  const perGrid = Math.ceil(groups.length / gridCount.value)
+  const perGrid = monthsPerGrid.value
   const result: Grid[] = []
   for (let i = 0; i < groups.length; i += perGrid) {
     const chunkDays = groups.slice(i, i + perGrid).flat()
     const { weeks, months } = buildGrid(chunkDays)
-    result.push({ key: chunkDays[0]!.date, weeks, months })
+    const month = attendanceMonths[new Date(`${chunkDays[0]!.date}T00:00:00`).getMonth()]!
+    result.push({ key: chunkDays[0]!.date, month, weeks, months })
   }
   return result
 })
-
-function cellClass(cellStatus: StudentDayAttendanceStatus | null): string {
-  switch (cellStatus) {
-    case 'NoClass': return 'bg-elevated' // sem aula — o mais apagado possível
-    case 'Undefined': return 'bg-accented' // aula sem frequência definida
-    case 'Present': return 'bg-success' // presença
-    case 'Absent': return 'bg-error' // falta
-    default: return 'bg-transparent' // padding fora do intervalo
-  }
-}
-
-const STATUS_LABEL: Record<StudentDayAttendanceStatus, string> = {
-  NoClass: 'Sem aula',
-  Undefined: 'Aguardando registro',
-  Present: 'Presença',
-  Absent: 'Falta'
-}
-
-function cellTooltip(cell: Cell): string {
-  if (!cell.date) return ''
-  return `${cell.date} — ${STATUS_LABEL[cell.status as StudentDayAttendanceStatus]}`
-}
 
 const legend: { status: StudentDayAttendanceStatus, label: string }[] = [
   { status: 'NoClass', label: 'Sem aula' },
@@ -174,58 +156,110 @@ const legend: { status: StudentDayAttendanceStatus, label: string }[] = [
       </div>
 
       <UPageCard v-else variant="subtle">
-        <div class="flex flex-col gap-6">
-          <!-- Uma ou mais grids, empilhadas, conforme a largura da tela -->
-          <div
-            v-for="grid in grids"
-            :key="grid.key"
-            class="flex items-stretch gap-2"
-          >
-            <!-- Coluna de rótulos dos dias da semana (eixo Y) -->
-            <div class="flex shrink-0 flex-col gap-1">
-              <div class="h-4" />
-              <div class="flex flex-1 flex-col gap-[3px]">
+        <div ref="gridArea" class="flex flex-col gap-6">
+          <!-- Mobile: eixos invertidos — dias da semana no topo, meses na esquerda -->
+          <div v-if="!isSm" class="flex flex-col gap-4">
+            <div class="flex items-center gap-2">
+              <div class="w-7 shrink-0" />
+              <div class="flex min-w-0 flex-1 gap-[3px]">
                 <div
-                  v-for="(label, i) in WEEKDAYS"
+                  v-for="(label, i) in attendanceWeekDays"
                   :key="i"
-                  class="flex flex-1 items-center text-[10px] leading-none text-muted"
+                  class="min-w-0 flex-1 text-center text-[10px] leading-none text-muted"
                 >
                   {{ label }}
                 </div>
               </div>
             </div>
 
-            <!-- Grid de semanas (eixo X) — ocupa todo o width disponível -->
-            <div class="flex min-w-0 flex-1 flex-col gap-1">
-              <!-- Rótulos de mês -->
-              <div class="flex h-4 items-center gap-[3px]">
-                <div
-                  v-for="(label, i) in grid.months"
-                  :key="i"
-                  class="min-w-0 flex-1 whitespace-nowrap text-center text-[10px] leading-none text-muted"
-                >
-                  {{ label }}
-                </div>
+            <div
+              v-for="grid in grids"
+              :key="grid.key"
+              class="flex items-center gap-2"
+            >
+              <div class="w-7 shrink-0 text-[10px] leading-none text-muted">
+                {{ grid.month }}
               </div>
 
-              <!-- Quadradinhos -->
-              <div class="flex gap-[3px]">
+              <div class="flex min-w-0 flex-1 flex-col gap-[3px]">
                 <div
                   v-for="(week, wi) in grid.weeks"
                   :key="wi"
-                  class="flex flex-1 flex-col gap-[3px]"
+                  class="flex gap-[3px]"
                 >
-                  <UTooltip
+                  <template
                     v-for="(cell, di) in week"
                     :key="di"
-                    :text="cellTooltip(cell)"
-                    :disabled="!cell.date"
                   >
-                    <div
-                      class="aspect-square w-full rounded-[2px] ring-1 ring-inset ring-default/40"
-                      :class="cell.date ? cellClass(cell.status) : 'bg-transparent ring-transparent'"
+                    <FrequenciesDayCell
+                      v-if="cell.date"
+                      :date="cell.date"
+                      :status="cell.status!"
+                      class="min-w-0 flex-1"
                     />
-                  </UTooltip>
+
+                    <div v-else class="aspect-square min-w-0 flex-1" />
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Uma ou mais grids, empilhadas, conforme a largura disponível -->
+          <div v-else-if="gridAreaWidth > 0" class="flex flex-col gap-6">
+            <div
+              v-for="grid in grids"
+              :key="grid.key"
+              class="flex items-stretch gap-2"
+            >
+              <!-- Coluna de rótulos dos dias da semana (eixo Y) -->
+              <div class="flex shrink-0 flex-col gap-1">
+                <div class="h-4" />
+                <div class="flex flex-1 flex-col gap-[3px]">
+                  <div
+                    v-for="(label, i) in attendanceWeekDays"
+                    :key="i"
+                    class="flex flex-1 items-center justify-end text-[10px] leading-none text-muted"
+                  >
+                    {{ label }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Grid de semanas (eixo X) — ocupa todo o width disponível -->
+              <div class="flex min-w-0 flex-1 flex-col gap-1">
+                <!-- Rótulos de mês -->
+                <div class="flex h-4 items-center gap-[3px]">
+                  <div
+                    v-for="(label, i) in grid.months"
+                    :key="i"
+                    class="min-w-0 flex-1 whitespace-nowrap text-center text-[10px] leading-none text-muted"
+                  >
+                    {{ label }}
+                  </div>
+                </div>
+
+                <!-- Quadradinhos -->
+                <div class="flex gap-[3px]">
+                  <div
+                    v-for="(week, wi) in grid.weeks"
+                    :key="wi"
+                    class="flex flex-1 flex-col gap-[3px]"
+                  >
+                    <template
+                      v-for="(cell, di) in week"
+                      :key="di"
+                    >
+                      <FrequenciesDayCell
+                        v-if="cell.date"
+                        :date="cell.date"
+                        :status="cell.status!"
+                        class="w-full"
+                      />
+
+                      <div v-else class="aspect-square w-full" />
+                    </template>
+                  </div>
                 </div>
               </div>
             </div>
@@ -240,7 +274,7 @@ const legend: { status: StudentDayAttendanceStatus, label: string }[] = [
             >
               <div
                 class="size-3 rounded-[2px] ring-1 ring-inset ring-default/40"
-                :class="cellClass(item.status)"
+                :class="attendanceCellClass(item.status)"
               />
               <span>{{ item.label }}</span>
             </div>

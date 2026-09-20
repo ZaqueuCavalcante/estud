@@ -123,6 +123,8 @@ watch(activeTab, (tab) => {
 const enrolledStudents = computed(() =>
   students.value.filter(s => s.status === 'Matriculado'),
 )
+
+const activityGroups = computed(() => groupActivitiesByNote(activities.value))
 </script>
 
 <template>
@@ -302,7 +304,7 @@ const enrolledStudents = computed(() =>
             <UIcon name="i-lucide-loader-circle" class="size-6 animate-spin text-muted" />
           </div>
           <template v-else>
-            <div class="flex items-center justify-end gap-2">
+            <div class="flex items-center gap-2">
               <UButton
                 icon="i-lucide-plus"
                 label="Atividade"
@@ -311,13 +313,30 @@ const enrolledStudents = computed(() =>
               />
             </div>
 
-            <div v-if="activities.length" class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              <ActivitiesCardTeacher
-                v-for="activity in activities"
-                :key="activity.id"
-                :activity="activity"
-                :to="`/classes/${props.classId}/activities/${activity.id}`"
-              />
+            <div v-if="activityGroups.length" class="flex flex-col gap-6">
+              <section
+                v-for="group in activityGroups"
+                :key="group.note"
+                class="flex flex-col gap-3"
+              >
+                <div class="flex items-center gap-2">
+                  <h2 class="font-medium text-highlighted">
+                    {{ group.note }}
+                  </h2>
+                  <span class="text-xs text-muted">
+                    {{ group.activities.length }} {{ group.activities.length === 1 ? 'atividade' : 'atividades' }}
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  <ActivitiesCardTeacher
+                    v-for="activity in group.activities"
+                    :key="activity.id"
+                    :activity="activity"
+                    :to="`/classes/${props.classId}/activities/${activity.id}`"
+                  />
+                </div>
+              </section>
             </div>
             <div v-else class="flex flex-col items-center gap-3 py-6">
               <UIcon name="i-lucide-clipboard-list" class="size-10 text-muted" />

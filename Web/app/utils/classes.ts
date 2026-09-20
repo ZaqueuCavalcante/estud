@@ -163,6 +163,12 @@ export function isFutureClassLesson(lesson: Pick<ClassLessonItem, 'date'>) {
   return lesson.date > new Date().toISOString().slice(0, 10)
 }
 
+export function groupActivitiesByNote<T extends { note: string }>(activities: T[]) {
+  return [...new Set(activities.map(a => a.note))]
+    .sort()
+    .map(note => ({ note, activities: activities.filter(a => a.note === note) }))
+}
+
 export function groupStudentActivitiesByNote(notes: StudentClassNoteItem[], activities: StudentClassActivityItem[]) {
   return notes.map(note => ({
     ...note,

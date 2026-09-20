@@ -12,14 +12,18 @@ defineProps<{ activity: StudentClassActivityItem, to: string }>()
     <span class="font-medium text-highlighted">{{ activity.title }}</span>
 
     <div class="flex flex-wrap items-center gap-2">
-      <UBadge :label="activity.note" color="neutral" variant="subtle" />
       <UBadge
         :label="classActivityTypeLabels[activity.type] ?? activity.type"
         :icon="classActivityTypeIcons[activity.type] ?? 'i-lucide-clipboard-list'"
         color="neutral"
         variant="subtle"
       />
-      <span class="text-xs text-muted">Peso {{ activity.weight }}</span>
+      <UBadge
+        :label="`${activity.weight}%`"
+        icon="i-lucide-scale"
+        color="neutral"
+        variant="subtle"
+      />
     </div>
 
     <span class="flex items-center gap-1.5 text-sm text-muted">
@@ -30,7 +34,7 @@ defineProps<{ activity: StudentClassActivityItem, to: string }>()
     <div class="mt-auto flex flex-wrap items-center gap-2 border-t border-default pt-3">
       <UBadge
         v-if="activity.workStatus === 'Finalized'"
-        :label="`Nota ${activity.value} · ${activity.ponderedValue} na ${activity.note}`"
+        :label="`Nota ${activity.value} · ${activity.ponderedValue} pontos`"
         color="neutral"
         variant="subtle"
         icon="i-lucide-award"

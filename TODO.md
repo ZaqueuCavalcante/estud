@@ -2,10 +2,15 @@
 
 ## Foco atual
 
-- notificar quando um usuário for marcado em algum lugar (Basecamp like, o clique na notificação vai pro local da marcação)
+no mobile, cada mes ficou separado, gostei muito dessa forma de visualizar
+mas em telas maiores, fica tudo colado
+teria como melhorar isso? por exemplo, colocar um contorno discreto delimitando cada mes?
+junto a isso, exibir o nome do mes centralizado em cada mes?
+
 
 ## Próximo
 
+- notificar quando um usuário for marcado em algum lugar (Basecamp like, o clique na notificação vai pro local da marcação)
 - notificar aluno quando o professor adicionar nota de alguma atividade que ele entregou ou quando o professor comentar na entrega, mesmo sem mencao
 - professor e apenas o professor pode marcar todo mundo da turma usando o atalho @turma
 
