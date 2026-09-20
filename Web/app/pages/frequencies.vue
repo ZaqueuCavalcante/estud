@@ -1,17 +1,23 @@
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints, useElementSize } from '@vueuse/core'
-import type { AttendanceDay, GetStudentAttendanceCalendarOut, StudentDayAttendanceStatus } from '~/types/frequencies'
+import type {
+  AttendanceCell,
+  AttendanceDay,
+  AttendanceMonthSpan,
+  GetStudentAttendanceCalendarOut,
+  StudentDayAttendanceStatus
+} from '~/types/frequencies'
 
-interface Cell {
-  date: string | null
-  status: StudentDayAttendanceStatus | null
+interface MonthGrid {
+  key: string
+  label: string
+  weeks: AttendanceCell[][]
 }
 
-interface Grid {
+interface GridRow {
   key: string
-  month: string
-  weeks: Cell[][]
-  months: string[]
+  weeks: AttendanceCell[][]
+  months: AttendanceMonthSpan[]
 }
 
 const config = useRuntimeConfig()
@@ -38,11 +44,9 @@ function toIso(d: Date): string {
   return `${y}-${m}-${day}`
 }
 
-// Monta as colunas (semanas) x linhas (dias da semana) pra um conjunto de dias,
-// igual ao mapa de commits do GitHub, junto dos rótulos de mês de cada semana.
-function buildGrid(items: AttendanceDay[]): { weeks: Cell[][], months: string[] } {
-  if (items.length === 0) return { weeks: [], months: [] }
-
+// Monta as colunas (semanas) x linhas (dias da semana), igual ao mapa de commits
+// do GitHub: as semanas seguem contínuas, atravessando a virada de mês.
+function buildWeeks(items: AttendanceDay[]): AttendanceCell[][] {
   const byDate = new Map<string, StudentDayAttendanceStatus>()
   for (const d of items) byDate.set(d.date, d.status)
 
@@ -56,8 +60,8 @@ function buildGrid(items: AttendanceDay[]): { weeks: Cell[][], months: string[] 
   const end = new Date(last)
   end.setDate(last.getDate() + (6 - last.getDay()))
 
-  const weeks: Cell[][] = []
-  let col: Cell[] = []
+  const weeks: AttendanceCell[][] = []
+  let col: AttendanceCell[] = []
   for (const d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
     const iso = toIso(d)
     const hit = byDate.has(iso)
@@ -69,17 +73,31 @@ function buildGrid(items: AttendanceDay[]): { weeks: Cell[][], months: string[] 
   }
   if (col.length > 0) weeks.push(col)
 
-  // Rótulo de mês na primeira semana em que o mês aparece.
-  const months = weeks.map((week, i) => {
-    const firstReal = week.find(c => c.date)
-    if (!firstReal) return ''
-    const month = new Date(`${firstReal.date}T00:00:00`).getMonth()
-    const prev = i > 0 ? weeks[i - 1]?.find(c => c.date) : undefined
-    const prevMonth = prev ? new Date(`${prev.date}T00:00:00`).getMonth() : -1
-    return month !== prevMonth ? attendanceMonths[month] : ''
-  })
+  return weeks
+}
 
-  return { weeks, months }
+function monthSpans(weeks: AttendanceCell[][]): AttendanceMonthSpan[] {
+  const spans: AttendanceMonthSpan[] = []
+  const byMonth = new Map<string, AttendanceMonthSpan>()
+
+  weeks.forEach((week, col) => week.forEach((cell, row) => {
+    if (!cell.date) return
+
+    const key = cell.date.slice(0, 7)
+    const span = byMonth.get(key)
+    if (span) {
+      span.endCol = col
+      span.endRow = row
+      return
+    }
+
+    const label = attendanceMonths[new Date(`${cell.date}T00:00:00`).getMonth()]!
+    const created = { key, label, startCol: col, startRow: row, endCol: col, endRow: row }
+    byMonth.set(key, created)
+    spans.push(created)
+  }))
+
+  return spans
 }
 
 // Agrupa os dias por mês-calendário ('YYYY-MM'), em ordem cronológica.
@@ -109,25 +127,25 @@ const DENSITY_STEPS = [
   { months: 2, minWidth: 200 }
 ]
 
-const monthsPerGrid = computed(() => {
-  if (!isSm.value) return 1
-
+const monthsPerRow = computed(() => {
   const step = DENSITY_STEPS.find(s => gridAreaWidth.value >= s.minWidth)
   return step?.months ?? 1
 })
 
-// Divide os meses em blocos contíguos de `monthsPerGrid` e monta uma grid contínua pra cada um.
-const grids = computed<Grid[]>(() => {
-  const groups = monthGroups.value
-  if (groups.length === 0) return []
+// Mobile: um mês por grid, com os eixos invertidos.
+const monthGrids = computed<MonthGrid[]>(() => monthGroups.value.map(group => ({
+  key: group[0]!.date,
+  label: attendanceMonths[new Date(`${group[0]!.date}T00:00:00`).getMonth()]!,
+  weeks: buildWeeks(group)
+})))
 
-  const perGrid = monthsPerGrid.value
-  const result: Grid[] = []
-  for (let i = 0; i < groups.length; i += perGrid) {
-    const chunkDays = groups.slice(i, i + perGrid).flat()
-    const { weeks, months } = buildGrid(chunkDays)
-    const month = attendanceMonths[new Date(`${chunkDays[0]!.date}T00:00:00`).getMonth()]!
-    result.push({ key: chunkDays[0]!.date, month, weeks, months })
+const rows = computed<GridRow[]>(() => {
+  const groups = monthGroups.value
+  const result: GridRow[] = []
+  for (let i = 0; i < groups.length; i += monthsPerRow.value) {
+    const chunk = groups.slice(i, i + monthsPerRow.value).flat()
+    const weeks = buildWeeks(chunk)
+    result.push({ key: chunk[0]!.date, weeks, months: monthSpans(weeks) })
   }
   return result
 })
@@ -173,17 +191,17 @@ const legend: { status: StudentDayAttendanceStatus, label: string }[] = [
             </div>
 
             <div
-              v-for="grid in grids"
-              :key="grid.key"
+              v-for="month in monthGrids"
+              :key="month.key"
               class="flex items-center gap-2"
             >
               <div class="w-7 shrink-0 text-[10px] leading-none text-muted">
-                {{ grid.month }}
+                {{ month.label }}
               </div>
 
               <div class="flex min-w-0 flex-1 flex-col gap-[3px]">
                 <div
-                  v-for="(week, wi) in grid.weeks"
+                  v-for="(week, wi) in month.weeks"
                   :key="wi"
                   class="flex gap-[3px]"
                 >
@@ -205,11 +223,11 @@ const legend: { status: StudentDayAttendanceStatus, label: string }[] = [
             </div>
           </div>
 
-          <!-- Uma ou mais grids, empilhadas, conforme a largura disponível -->
+          <!-- Uma ou mais linhas de meses, conforme a largura disponível -->
           <div v-else-if="gridAreaWidth > 0" class="flex flex-col gap-6">
             <div
-              v-for="grid in grids"
-              :key="grid.key"
+              v-for="row in rows"
+              :key="row.key"
               class="flex items-stretch gap-2"
             >
               <!-- Coluna de rótulos dos dias da semana (eixo Y) -->
@@ -226,42 +244,11 @@ const legend: { status: StudentDayAttendanceStatus, label: string }[] = [
                 </div>
               </div>
 
-              <!-- Grid de semanas (eixo X) — ocupa todo o width disponível -->
-              <div class="flex min-w-0 flex-1 flex-col gap-1">
-                <!-- Rótulos de mês -->
-                <div class="flex h-4 items-center gap-[3px]">
-                  <div
-                    v-for="(label, i) in grid.months"
-                    :key="i"
-                    class="min-w-0 flex-1 whitespace-nowrap text-center text-[10px] leading-none text-muted"
-                  >
-                    {{ label }}
-                  </div>
-                </div>
-
-                <!-- Quadradinhos -->
-                <div class="flex gap-[3px]">
-                  <div
-                    v-for="(week, wi) in grid.weeks"
-                    :key="wi"
-                    class="flex flex-1 flex-col gap-[3px]"
-                  >
-                    <template
-                      v-for="(cell, di) in week"
-                      :key="di"
-                    >
-                      <FrequenciesDayCell
-                        v-if="cell.date"
-                        :date="cell.date"
-                        :status="cell.status!"
-                        class="w-full"
-                      />
-
-                      <div v-else class="aspect-square w-full" />
-                    </template>
-                  </div>
-                </div>
-              </div>
+              <FrequenciesMonthRow
+                :weeks="row.weeks"
+                :months="row.months"
+                class="min-w-0 flex-1"
+              />
             </div>
           </div>
 

@@ -23,3 +23,20 @@ export interface AttendanceDay {
   date: string
   status: StudentDayAttendanceStatus
 }
+
+// Uma célula da grid contínua. `date` null = preenchimento fora do intervalo.
+export interface AttendanceCell {
+  date: string | null
+  status: StudentDayAttendanceStatus | null
+}
+
+// Onde um mês começa e termina na grid contínua da linha, em coluna (semana)
+// e linha (dia da semana). O contorno do mês é desenhado a partir disso.
+export interface AttendanceMonthSpan {
+  key: string
+  label: string
+  startCol: number
+  startRow: number
+  endCol: number
+  endRow: number
+}

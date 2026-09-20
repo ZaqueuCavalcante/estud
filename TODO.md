@@ -2,10 +2,6 @@
 
 ## Foco atual
 
-no mobile, cada mes ficou separado, gostei muito dessa forma de visualizar
-mas em telas maiores, fica tudo colado
-teria como melhorar isso? por exemplo, colocar um contorno discreto delimitando cada mes?
-junto a isso, exibir o nome do mes centralizado em cada mes?
 
 
 ## Próximo
