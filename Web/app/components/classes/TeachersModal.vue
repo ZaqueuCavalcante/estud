@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { ClassTeacherItem } from '~/types/classes'
 
-interface GetDisciplineTeachersOut { items: ClassTeacherItem[] }
+interface DisciplineTeacherItem { id: number, name: string }
+interface GetDisciplineTeachersOut { items: DisciplineTeacherItem[] }
 
 const MAX_TEACHERS = 2
 
@@ -17,7 +18,7 @@ const isMobile = useIsMobile()
 const config = useRuntimeConfig()
 const toast = useToast()
 
-const options = ref<ClassTeacherItem[]>([])
+const options = ref<DisciplineTeacherItem[]>([])
 const selectedIds = ref<number[]>([])
 const loadingOptions = ref(false)
 const saving = ref(false)

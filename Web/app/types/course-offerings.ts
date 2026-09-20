@@ -1,6 +1,7 @@
 export interface CourseOfferingStudentItem {
   id: number
   name: string
+  photo: string | null
   enrollmentCode: string
   status: string
   enrolledAt: string

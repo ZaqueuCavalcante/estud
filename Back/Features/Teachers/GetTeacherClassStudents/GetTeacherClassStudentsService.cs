@@ -1,8 +1,9 @@
+using Estud.Back.Storage;
 using Estud.Back.Domain.Classes;
 
 namespace Estud.Back.Features.Teachers.GetTeacherClassStudents;
 
-public class GetTeacherClassStudentsService(EstudDbContext ctx) : IEstudService
+public class GetTeacherClassStudentsService(EstudDbContext ctx, IStorageService storage) : IEstudService
 {
     public async Task<OneOf<GetTeacherClassStudentsOut, EstudError>> Get(int classId)
     {
@@ -31,6 +32,7 @@ public class GetTeacherClassStudentsService(EstudDbContext ctx) : IEstudService
                 {
                     Id = s.Id,
                     Name = s.Name,
+                    Photo = s.Photo.HasValue() ? storage.GetPublicUrl(StorageContainer.ProfilePhotos, s.Photo!) : null,
                     Status = s.Status,
                     AverageGrade = Math.Round(config.GradeRule.Average(works), 1, MidpointRounding.AwayFromZero),
                     AverageAttendance = attendances > 0
@@ -47,21 +49,24 @@ public class GetTeacherClassStudentsService(EstudDbContext ctx) : IEstudService
     {
         const string sql = @"
             SELECT
-                s.id      AS id,
-                s.name    AS name,
-                cs.status AS status,
+                s.id              AS id,
+                s.name            AS name,
+                u.profile_photo   AS photo,
+                cs.status         AS status,
                 count(cla.id) FILTER (WHERE cla.present)     AS presences,
                 count(cla.id) FILTER (WHERE NOT cla.present) AS absences
             FROM
                 estud.classes__students cs
             INNER JOIN
                 estud.students s ON s.id = cs.student_id
+            INNER JOIN
+                estud.users u ON u.id = s.user_id
             LEFT JOIN
                 estud.class_lesson_attendances cla ON cla.class_id = cs.class_id AND cla.student_id = s.id
             WHERE
                 cs.class_id = {0}
             GROUP BY
-                s.id, cs.status
+                s.id, u.profile_photo, cs.status
             ORDER BY
                 s.name
         ";

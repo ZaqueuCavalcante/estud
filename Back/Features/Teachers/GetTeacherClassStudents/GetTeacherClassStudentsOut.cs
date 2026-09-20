@@ -14,6 +14,7 @@ public class GetTeacherClassStudentsOut : IApiDto<GetTeacherClassStudentsOut>
                 {
                     Id = 1,
                     Name = "Zaqueu do Vale",
+                    Photo = "https://cdn.estud.com.br/profile-photos/1.jpg",
                     Status = StudentClassStatus.Matriculado,
                     AverageGrade = 8.5M,
                     AverageAttendance = 92.0M,
@@ -27,6 +28,7 @@ public class GetTeacherClassStudentsItemOut
 {
     public int Id { get; set; }
     public string Name { get; set; }
+    public string? Photo { get; set; }
     public StudentClassStatus Status { get; set; }
 
     /// <summary>

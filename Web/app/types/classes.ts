@@ -11,6 +11,7 @@ export interface ClassSchedule {
 export interface ClassStudentItem {
   id: number
   name: string
+  photo: string | null
   status: string
   averageGrade: number // nota média do aluno na turma (de 0 a 10)
   averageAttendance: number // frequência média do aluno na turma (de 0% a 100%)
@@ -19,6 +20,7 @@ export interface ClassStudentItem {
 export interface ClassTeacherItem {
   id: number
   name: string
+  photo: string | null
 }
 
 export interface GetClassOut {

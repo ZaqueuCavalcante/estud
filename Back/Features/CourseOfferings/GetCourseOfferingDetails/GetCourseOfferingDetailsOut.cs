@@ -48,6 +48,7 @@ public class GetCourseOfferingDetailsOut : IApiDto<GetCourseOfferingDetailsOut>
                 {
                     Id = 1,
                     Name = "Maria Souza",
+                    Photo = "https://cdn.estud.com.br/profile-photos/1.jpg",
                     EnrollmentCode = "20251A2B3C4D",
                     Status = StudentStatus.Enrolled,
                     EnrolledAt = new DateTime(2026, 2, 2, 13, 30, 0, DateTimeKind.Utc),
@@ -61,6 +62,7 @@ public class GetCourseOfferingDetailsStudentOut
 {
     public int Id { get; set; }
     public string Name { get; set; }
+    public string? Photo { get; set; }
     public string EnrollmentCode { get; set; }
     public StudentStatus Status { get; set; }
     public DateTime EnrolledAt { get; set; }

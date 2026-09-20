@@ -1,8 +1,9 @@
+using Estud.Back.Storage;
 using Estud.Back.Domain.Classes;
 
 namespace Estud.Back.Features.Classes.GetClass;
 
-public class GetClassService(EstudDbContext ctx) : IEstudService
+public class GetClassService(EstudDbContext ctx, IStorageService storage) : IEstudService
 {
     public async Task<OneOf<GetClassOut, EstudError>> Get(int classId)
     {
@@ -13,6 +14,7 @@ public class GetClassService(EstudDbContext ctx) : IEstudService
             .Include(c => c.Period)
             .Include(c => c.Campus)
             .Include(c => c.Teachers)
+                .ThenInclude(t => t.User)
             .Include(c => c.Schedules)
             .Include(c => c.Discipline)
             .FirstOrDefaultAsync(c => c.Id == classId && c.InstitutionId == institutionId);
@@ -47,6 +49,7 @@ public class GetClassService(EstudDbContext ctx) : IEstudService
                 {
                     Id = s.Id,
                     Name = s.Name,
+                    Photo = PublicPhotoUrl(s.Photo),
                     Status = s.Status,
                     AverageGrade = Math.Round(config.GradeRule.Average(works), 1, MidpointRounding.AwayFromZero),
                     AverageAttendance = attendances > 0
@@ -80,7 +83,7 @@ public class GetClassService(EstudDbContext ctx) : IEstudService
             AverageGrade = averageGrade,
             Teachers = @class.Teachers
                 .OrderBy(t => t.Name)
-                .Select(t => new GetClassTeacherOut { Id = t.Id, Name = t.Name })
+                .Select(t => new GetClassTeacherOut { Id = t.Id, Name = t.Name, Photo = PublicPhotoUrl(t.User?.ProfilePhoto) })
                 .ToList(),
             Schedules = @class.Schedules
                 .OrderBy(s => s.Day).ThenBy(s => s.Start)
@@ -96,25 +99,31 @@ public class GetClassService(EstudDbContext ctx) : IEstudService
         };
     }
 
+    private string? PublicPhotoUrl(string? path) =>
+        path.HasValue() ? storage.GetPublicUrl(StorageContainer.ProfilePhotos, path!) : null;
+
     private async Task<List<GetClassStudentDto>> GetClassStudents(int classId)
     {
         const string sql = @"
             SELECT
-                s.id      AS id,
-                s.name    AS name,
-                cs.status AS status,
+                s.id              AS id,
+                s.name            AS name,
+                u.profile_photo   AS photo,
+                cs.status         AS status,
                 count(cla.id) FILTER (WHERE cla.present)     AS presences,
                 count(cla.id) FILTER (WHERE NOT cla.present) AS absences
             FROM
                 estud.classes__students cs
             INNER JOIN
                 estud.students s ON s.id = cs.student_id
+            INNER JOIN
+                estud.users u ON u.id = s.user_id
             LEFT JOIN
                 estud.class_lesson_attendances cla ON cla.class_id = cs.class_id AND cla.student_id = s.id
             WHERE
                 cs.class_id = {0}
             GROUP BY
-                s.id, cs.status
+                s.id, u.profile_photo, cs.status
             ORDER BY
                 s.name
         ";

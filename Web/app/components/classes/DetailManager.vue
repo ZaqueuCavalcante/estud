@@ -144,7 +144,7 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
     accessorKey: 'name',
     header: 'Aluno',
     cell: ({ row }) => h('div', { class: 'flex items-center gap-2.5' }, [
-      h(UAvatar, { alt: row.original.name, size: '2xs' }),
+      h(UAvatar, { src: row.original.photo ?? undefined, alt: row.original.name, size: '2xs' }),
       h('span', { class: 'font-medium text-highlighted' }, row.original.name),
     ]),
   },
@@ -267,7 +267,7 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
               :key="teacher.id"
               class="flex items-center gap-2 rounded-full border border-default bg-elevated/40 py-1 pl-1 pr-3"
             >
-              <UAvatar :alt="teacher.name" size="2xs" />
+              <UAvatar :src="teacher.photo ?? undefined" :alt="teacher.name" size="2xs" />
               <span class="text-sm text-highlighted">{{ teacher.name }}</span>
             </div>
           </div>

@@ -13,9 +13,11 @@ const editNameOpen = ref(false)
 const loading = ref(false)
 
 const photoTypes = ['image/png', 'image/jpeg', 'image/webp']
-const maxPhotoSize = 3 * 1024 * 1024
+const maxPhotoSize = 15 * 1024 * 1024
 const photoInput = ref<HTMLInputElement | null>(null)
 const uploadingPhoto = ref(false)
+const cropPhotoOpen = ref(false)
+const photoToCrop = ref<File | null>(null)
 const removePhotoOpen = ref(false)
 const removingPhoto = ref(false)
 
@@ -45,7 +47,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   }
 }
 
-async function onPhotoSelected(event: Event) {
+function onPhotoSelected(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   input.value = ''
@@ -65,10 +67,17 @@ async function onPhotoSelected(event: Event) {
     return
   }
 
+  photoToCrop.value = file
+  cropPhotoOpen.value = true
+}
+
+async function onPhotoCropped(photo: Blob) {
   uploadingPhoto.value = true
   try {
-    await updateProfilePhoto(file)
+    await updateProfilePhoto(photo)
     toast.add({ title: 'Foto atualizada com sucesso', color: 'success' })
+    cropPhotoOpen.value = false
+    photoToCrop.value = null
   } catch (err: unknown) {
     const msg = (err as { data?: { message?: string } })?.data?.message ?? 'Erro ao atualizar foto.'
     toast.add({ title: 'Erro', description: msg, color: 'error' })
@@ -125,7 +134,7 @@ function formatSize(bytes: number) {
       <div class="flex max-sm:flex-col justify-between items-start sm:items-center gap-4 py-4 first:pt-0 last:pb-0">
         <div>
           <p class="text-sm font-medium text-highlighted">Foto</p>
-          <p class="text-xs text-muted">PNG, JPEG ou WebP, até 3 MB.</p>
+          <p class="text-xs text-muted">PNG, JPEG ou WebP.</p>
         </div>
         <div class="flex items-center gap-3">
           <UAvatar :src="account?.profilePhoto ?? undefined" :alt="account?.name" size="3xl" />
@@ -250,6 +259,13 @@ function formatSize(bytes: number) {
       </UForm>
     </template>
   </UModal>
+
+  <AccountProfilePhotoCropper
+    v-model:open="cropPhotoOpen"
+    :file="photoToCrop"
+    :loading="uploadingPhoto"
+    @save="onPhotoCropped"
+  />
 
   <UModal
     v-model:open="removePhotoOpen"

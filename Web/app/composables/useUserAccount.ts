@@ -51,17 +51,17 @@ const _useUserAccount = () => {
     if (account.value) account.value.name = name
   }
 
-  async function updateProfilePhoto(file: File) {
+  async function updateProfilePhoto(photo: Blob) {
     const { uploadUrl, path } = await $fetch<{ uploadUrl: string, path: string }>(`${config.public.backendUrl}/users/account/profile-photo/upload`, {
       method: 'POST',
       credentials: 'include',
-      body: { contentType: file.type, sizeInBytes: file.size }
+      body: { contentType: photo.type, sizeInBytes: photo.size }
     })
 
     await $fetch(uploadUrl, {
       method: 'PUT',
-      body: file,
-      headers: { 'Content-Type': file.type }
+      body: photo,
+      headers: { 'Content-Type': photo.type }
     })
 
     const { profilePhoto } = await $fetch<{ profilePhoto: string }>(`${config.public.backendUrl}/users/account/profile-photo`, {

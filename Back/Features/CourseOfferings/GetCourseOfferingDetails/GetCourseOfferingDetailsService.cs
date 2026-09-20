@@ -1,6 +1,8 @@
+using Estud.Back.Storage;
+
 namespace Estud.Back.Features.CourseOfferings.GetCourseOfferingDetails;
 
-public class GetCourseOfferingDetailsService(EstudDbContext ctx) : IEstudService
+public class GetCourseOfferingDetailsService(EstudDbContext ctx, IStorageService storage) : IEstudService
 {
     public async Task<OneOf<GetCourseOfferingDetailsOut, EstudError>> Get(int courseOfferingId)
     {
@@ -34,11 +36,15 @@ public class GetCourseOfferingDetailsService(EstudDbContext ctx) : IEstudService
             {
                 Id = e.StudentId,
                 Name = e.Student!.Name,
+                Photo = e.Student.User!.ProfilePhoto,
                 EnrollmentCode = e.Student.EnrollmentCode,
                 Status = e.Student.Status,
                 EnrolledAt = e.EnrolledAt,
             })
             .ToListAsync();
+
+        foreach (var student in students.FindAll(s => s.Photo.HasValue()))
+            student.Photo = storage.GetPublicUrl(StorageContainer.ProfilePhotos, student.Photo!);
 
         return new GetCourseOfferingDetailsOut
         {

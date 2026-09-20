@@ -56,7 +56,7 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
     accessorKey: 'name',
     header: 'Aluno',
     cell: ({ row }) => h('div', { class: 'flex items-center gap-2.5' }, [
-      h(UAvatar, { alt: row.original.name, size: '2xs' }),
+      h(UAvatar, { src: row.original.photo ?? undefined, alt: row.original.name, size: '2xs' }),
       h('span', { class: 'font-medium text-highlighted' }, row.original.name),
     ]),
   },
