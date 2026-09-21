@@ -20,6 +20,15 @@ public class GetStudentClassService(EstudDbContext ctx) : IEstudService
             .FirstOrDefaultAsync(x => x.ClassId == classId && x.StudentId == studentId);
         if (classStudent == null) return StudentNotEnrolledInClass.I;
 
+        var classroomIds = @class.Schedules
+            .Where(s => s.ClassroomId != null)
+            .Select(s => s.ClassroomId!.Value)
+            .Distinct()
+            .ToList();
+        var classroomNames = await ctx.Classrooms.AsNoTracking()
+            .Where(c => classroomIds.Contains(c.Id))
+            .ToDictionaryAsync(c => c.Id, c => c.Name);
+
         return new GetStudentClassOut
         {
             Id = @class.Id,
@@ -31,7 +40,13 @@ public class GetStudentClassService(EstudDbContext ctx) : IEstudService
             Teachers = @class.Teachers.Select(t => t.Name).Order().ToList(),
             Schedules = @class.Schedules
                 .OrderBy(s => s.Day).ThenBy(s => s.Start)
-                .Select(s => new GetStudentClassScheduleOut(s.Day, s.Start, s.End))
+                .Select(s => new GetStudentClassScheduleOut(s.Day, s.Start, s.End)
+                {
+                    TeacherId = s.TeacherId,
+                    Teacher = s.TeacherId == null ? null : @class.Teachers.FirstOrDefault(t => t.Id == s.TeacherId)?.Name,
+                    ClassroomId = s.ClassroomId,
+                    Classroom = s.ClassroomId != null && classroomNames.TryGetValue(s.ClassroomId.Value, out var name) ? name : null,
+                })
                 .ToList(),
         };
     }

@@ -11,9 +11,9 @@ const props = withDefaults(defineProps<{
 }>(), {
   institution: 'Instituição',
   campi: () => [
-    { name: 'Campus Central', city: 'Recife', state: 'PE' },
-    { name: 'Campus Norte', city: 'Olinda', state: 'PE' },
-    { name: 'Campus Sul', city: 'Jaboatão', state: 'PE' }
+    { name: 'Campus Suassuna', city: 'Recife', state: 'PE' },
+    { name: 'Campus Agreste', city: 'Caruaru', state: 'PE' },
+    { name: 'Campus Sertão', city: 'Petrolina', state: 'PE' }
   ]
 })
 </script>
@@ -21,10 +21,10 @@ const props = withDefaults(defineProps<{
 <template>
   <div class="not-prose my-6 flex flex-col items-center">
     <UCard
-      :ui="{ body: 'p-4 sm:p-4' }"
-      class="w-full max-w-xs ring-primary/50"
+      :ui="{ body: 'py-4 px-10' }"
+      class="max-w-xs ring-primary/50"
     >
-      <div class="flex items-center gap-3">
+      <div class="flex items-center justify-center gap-3">
         <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
           <UIcon name="i-lucide-building-2" class="size-5 text-primary" />
         </span>
