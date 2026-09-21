@@ -22,7 +22,7 @@ export default defineNuxtConfig({
 
   site: {
     url: "https://estud.com.br",
-    name: "Estud",
+    name: "Estud - Gestão Educacional",
   },
 
   sitemap: {
@@ -60,7 +60,7 @@ export default defineNuxtConfig({
         { property: 'og:site_name', content: 'Estud' },
         { property: 'og:locale', content: 'pt_BR' },
         { property: 'og:type', content: 'website' },
-        { property: 'og:title', content: 'Estud' },
+        { property: 'og:title', content: 'Estud - Gestão Educacional' },
         { property: 'og:description', content: 'Organize sua instituição de ensino com excelência!' },
         { property: 'og:image', content: 'https://estud.com.br/images/campus-preview.png' },
         { property: 'og:image:type', content: 'image/png' },
@@ -68,7 +68,7 @@ export default defineNuxtConfig({
         { property: 'og:image:height', content: '1260' },
         { property: 'og:image:alt', content: 'Tela de ocupação de campus do Estud: mapa de uso das salas por dia e turno' },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'Estud' },
+        { name: 'twitter:title', content: 'Estud - Gestão Educacional' },
         { name: 'twitter:description', content: 'Organize sua instituição de ensino com excelência!' },
         { name: 'twitter:image', content: 'https://estud.com.br/images/campus-preview.png' },
         { name: 'twitter:image:alt', content: 'Tela de ocupação de campus do Estud: mapa de uso das salas por dia e turno' }
