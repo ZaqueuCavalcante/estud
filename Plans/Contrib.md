@@ -24,7 +24,7 @@ até a app de pé. Resolvido isso, o resto são melhorias incrementais.
 O `CLAUDE.md` manda rodar `docker-compose up`, mas **não existe compose no repo**. Criar um com:
 
 - Postgres (obrigatório, é o que o back e os testes precisam);
-- opcionalmente back, web e `Mocks`, para quem quer só subir tudo e olhar.
+- Back, Web e `Mocks`, para quem quer só subir tudo e olhar.
 
 ### 2. Template de settings
 

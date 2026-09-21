@@ -13,7 +13,7 @@ Cadastre sua instituição de ensino em https://estud.com.br e começe a usar o 
   <img alt="Tela de ocupação de campus do Estud: mapa de uso das salas por dia e turno, com indicadores de tempo usado e espaço alocado" src=".github/assets/campus-light.svg">
 </picture>
 
-## Gestor
+### Gestor
 
 - Organiza todas as turmas, salas e horários do semestre
 - Entende o desempenho real dos alunos, tanto em frequência quanto em atividades/notas
@@ -24,14 +24,14 @@ Cadastre sua instituição de ensino em https://estud.com.br e começe a usar o 
 - Aumenta a segurança dos seus usuários através de Single Sign-On (SSO) e Two-Factor Authentication (2FA)
 - Integra facilmente o Estud à outros sistemas via webhooks e eventos assíncronos
 
-## Professor
+### Professor
 
 - Organiza seu semestre, com agenda semanal e turmas ativas
 - Monta o plano de aula diretamente no sistema, com suporte nativo a Markdown
 - Realiza chamadas e publica atividades nas suas turmas
 - Corrige as entregas, atribui notas e dá feedbacks direto aos seus alunos
 
-## Aluno
+### Aluno
 
 - Acompanha com clareza sua jornada no curso, com dados de frequência e notas
 - Organiza seu semestre, com agenda semanal, turmas atuais e atividades pendentes
@@ -39,6 +39,21 @@ Cadastre sua instituição de ensino em https://estud.com.br e começe a usar o 
 - Sabe em detalhes seu progresso atual e aproveitamento em cada turma
 - Tira dúvidas com os professores a cada entrega realizada
 
-## Pontos de Extensão
+## Tecnologias
 
-- Módulos financeiro, biblioteca, almoxarifado, colaboradores...
+O projeto utiliza diversas tecnologia e conceitos de design de sistemas:
+
+- ASP.NET, Vue.js, Postgres
+- RBAC, OAuth, SSO, 2FA, Multi-Tenant
+- Workers, Outbox Pattern, Webhooks
+- Cloudflare, Railway, Caddy, R2
+- GitHub Actions, CI/CD Pipelines
+- Unit, Integration, Mutation Tests
+- OpenTelemetry, Grafana, PostHog
+- Full Text Search, Audit Trail
+- Vertical Slice Architecture
+
+<picture>
+  <source srcset=".github/assets/estud-arch.png">
+  <img alt="Diagrama de arquitetura do Estud." src=".github/assets/estud-arch.png">
+</picture>

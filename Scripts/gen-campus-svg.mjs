@@ -310,8 +310,10 @@ function renderSidebar(t) {
   out.push(text('Documentação', 44, footerTop - 19, { size: 14, weight: 500, fill: t.muted }))
 
   out.push(`<line x1="0" y1="${footerTop}" x2="${SIDEBAR_W}" y2="${footerTop}" stroke="${t.border}"/>`)
-  out.push(text('Zaqueu Cavalcante', 16, footerTop + 27, { size: 14, weight: 500, fill: t.text }))
-  out.push(text('Diretor', 16, footerTop + 44, { size: 12, fill: t.muted }))
+  out.push(`<circle cx="32" cy="${footerTop + 30}" r="16" fill="${t.elevated}"/>`)
+  out.push(text('ZC', 32, footerTop + 36, { size: 16, weight: 500, fill: t.muted, anchor: 'middle' }))
+  out.push(text('Zaqueu Cavalcante', 54, footerTop + 27, { size: 14, weight: 500, fill: t.text }))
+  out.push(text('Diretor', 54, footerTop + 44, { size: 12, fill: t.muted }))
 
   return out.join('')
 }

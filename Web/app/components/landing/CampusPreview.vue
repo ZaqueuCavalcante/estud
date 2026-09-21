@@ -70,9 +70,12 @@ const tabs: NavigationMenuItem[][] = [[
           />
         </div>
 
-        <div class="shrink-0 border-t border-default px-4 py-3">
-          <span class="block truncate text-sm font-medium text-default">Zaqueu Cavalcante</span>
-          <span class="block truncate text-xs text-muted">Diretor</span>
+        <div class="flex shrink-0 items-center gap-1.5 border-t border-default px-4 py-3">
+          <UAvatar alt="Zaqueu Cavalcante" size="md" />
+          <div class="min-w-0">
+            <span class="block truncate text-sm font-medium text-default">Zaqueu Cavalcante</span>
+            <span class="block truncate text-xs text-muted">Diretor</span>
+          </div>
         </div>
       </aside>
 
