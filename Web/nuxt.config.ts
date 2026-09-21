@@ -52,26 +52,26 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'Estud',
+      title: 'Estud - Gestão Educacional',
       htmlAttrs: { lang: 'pt-BR' },
       meta: [
-        { name: 'description', content: 'Organize sua instituição de ensino com excelência' },
+        { name: 'description', content: 'Organize sua instituição de ensino com excelência!' },
         { name: 'robots', content: 'noindex, nofollow' },
         { property: 'og:site_name', content: 'Estud' },
         { property: 'og:locale', content: 'pt_BR' },
         { property: 'og:type', content: 'website' },
         { property: 'og:title', content: 'Estud' },
-        { property: 'og:description', content: 'Organize sua instituição de ensino com excelência' },
-        { property: 'og:image', content: 'https://estud.com.br/images/home-page.png' },
+        { property: 'og:description', content: 'Organize sua instituição de ensino com excelência!' },
+        { property: 'og:image', content: 'https://estud.com.br/images/campus-preview.png' },
         { property: 'og:image:type', content: 'image/png' },
         { property: 'og:image:width', content: '2400' },
         { property: 'og:image:height', content: '1260' },
-        { property: 'og:image:alt', content: 'Tela inicial do Estud' },
+        { property: 'og:image:alt', content: 'Tela de ocupação de campus do Estud: mapa de uso das salas por dia e turno' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: 'Estud' },
-        { name: 'twitter:description', content: 'Organize sua instituição de ensino com excelência' },
-        { name: 'twitter:image', content: 'https://estud.com.br/images/home-page.png' },
-        { name: 'twitter:image:alt', content: 'Tela inicial do Estud' }
+        { name: 'twitter:description', content: 'Organize sua instituição de ensino com excelência!' },
+        { name: 'twitter:image', content: 'https://estud.com.br/images/campus-preview.png' },
+        { name: 'twitter:image:alt', content: 'Tela de ocupação de campus do Estud: mapa de uso das salas por dia e turno' }
       ]
     }
   },

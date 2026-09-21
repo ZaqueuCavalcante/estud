@@ -1,0 +1,85 @@
+name: estud
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    environment:
+      POSTGRES_DB: estud
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - db:/var/lib/postgresql
+    healthcheck:
+      # Via TCP: durante o initdb o Postgres temporário só escuta no socket, então isso só passa depois do schema criado.
+      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "postgres", "-d", "estud"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+
+  back:
+    build:
+      context: .
+      dockerfile: Dockerfile.back
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5000:5000"
+    environment:
+      # Development troca o envio de e-mails (Brevo) por um fake que escreve os links no log.
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "5000"
+      Database__ConnectionString: "Host=db;Port=5432;Database=estud;Username=postgres;Password=postgres;Pooling=true"
+      Auth__Issuer: local
+      Auth__Audience: local
+      Auth__CookieSecure: "false"
+      Auth__ExpirationTimeInMinutes: "6000"
+      Auth__SecurityKey: "4f1c2a9d8e7b6c5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a"
+      Frontend__Url: http://localhost:3000
+      Email__ApiUrl: http://localhost
+      Email__ApiKey: disabled
+      Email__FrontUrl: http://localhost:3000
+      # O scheme do Google é registrado mesmo desligado e o AuthenticationMiddleware valida as options dele em toda request.
+      SocialLogin__Google__Enabled: "false"
+      SocialLogin__Google__ClientId: disabled
+      SocialLogin__Google__ClientSecret: disabled
+      Dns__ResolverUrl: https://dns.google/resolve
+      Storage__ServiceUrl: http://localhost
+      Storage__AccessKeyId: disabled
+      Storage__SecretAccessKey: disabled
+      Storage__PublicBucket: estud-public
+      Storage__PrivateBucket: estud-private
+      Storage__PublicBaseUrl: http://localhost
+      Jobs__CommandsPollingIntervalInSeconds: "5"
+      Jobs__DomainEventsPollingIntervalInSeconds: "5"
+      RateLimiting__GlobalPermitLimit: "10000"
+      RateLimiting__SensitivePermitLimit: "10000"
+      OpenTelemetry__Enabled: "false"
+      Serilog__Using__0: Serilog.Sinks.Console
+      Serilog__MinimumLevel__Default: Information
+      Serilog__MinimumLevel__Override__Microsoft: Warning
+      Serilog__MinimumLevel__Override__System: Warning
+      Serilog__WriteTo__0__Name: Console
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+      args:
+        NUXT_PUBLIC_BACKEND_URL: http://localhost:5000
+        NUXT_PUBLIC_COMMIT_SHA: local
+    depends_on:
+      - back
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      NUXT_PUBLIC_BACKEND_URL: http://localhost:5000
+      NUXT_INTERNAL_BACKEND_URL: http://back:5000
+
+volumes:
+  db:

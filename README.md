@@ -41,7 +41,7 @@ Cadastre sua instituição de ensino em https://estud.com.br e começe a usar o 
 
 ## Tecnologias
 
-O projeto utiliza diversas tecnologia e conceitos de design de sistemas:
+O projeto utiliza diversas tecnologias e conceitos de design de sistemas:
 
 - ASP.NET, Vue.js, Postgres
 - RBAC, OAuth, SSO, 2FA, Multi-Tenant
@@ -57,3 +57,21 @@ O projeto utiliza diversas tecnologia e conceitos de design de sistemas:
   <source srcset=".github/assets/estud-arch.png">
   <img alt="Diagrama de arquitetura do Estud." src=".github/assets/estud-arch.png">
 </picture>
+
+## Rodando localmente
+
+Com o Docker instalado, basta rodar na raiz do repositório:
+
+```bash
+docker compose up --build
+```
+
+Isso sobe o Postgres (já com o schema criado), o backend em http://localhost:5000 e o frontend em http://localhost:3000.
+
+Nesse modo as integrações externas ficam desligadas (login com Google, upload de arquivos no R2 e envio de e-mails pela Brevo). Os e-mails são escritos no log do backend — para fazer o primeiro acesso, crie sua conta pelo frontend e pegue o link de acesso com:
+
+```bash
+docker compose logs back | grep magic-link
+```
+
+Ao mudar o schema do banco, recrie o volume com `docker compose down -v`.
