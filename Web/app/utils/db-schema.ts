@@ -533,6 +533,7 @@ export const dbSchema: DbTable[] = [
       { name: "activity_id", prop: "ActivityId", type: "text", clr: "string?", nullable: true },
     ],
     fks: [
+      { columns: ["institution_id"], target: "institutions", targetEntity: "Institution", principal: [], nav: "Institution", convention: true },
     ],
     indexes: [
     ],

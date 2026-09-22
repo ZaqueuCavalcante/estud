@@ -31,6 +31,30 @@ public static class TestShortcuts
         return await client.VerifySsoDomain(ssoConfigurationId, domain.Domain).Success();
     }
 
+    public static async Task<int> ShortcutEnqueueTestRetryCommand(
+        this BackFactory factory,
+        int failUntilAttempt,
+        int maxRetries = 0,
+        BackoffStrategy backoffStrategy = BackoffStrategy.None,
+        int baseDelaySeconds = 5
+    ) {
+        await using var ctx = factory.GetDbContext();
+        var institutionId = await ctx.Institutions.Select(x => x.Id).FirstAsync();
+
+        var command = ctx.AddCommand(
+            institutionId,
+            new TestRetryCommand(failUntilAttempt),
+            maxRetries: maxRetries,
+            backoffStrategy: backoffStrategy,
+            baseDelaySeconds: baseDelaySeconds);
+        await ctx.SaveChangesAsync();
+
+        var scheduler = await factory.GetSchedulerFactory().GetScheduler();
+        await scheduler.TriggerCommandsProcessorJob();
+
+        return command.Id;
+    }
+
     public static async Task<CreateProfilePhotoUploadOut> ShortcutUploadProfilePhoto(
         this TestsHttpClient client,
         FakeStorageService storage,

@@ -36,6 +36,11 @@ public class BackFactory : WebApplicationFactory<Back::Program>
 
             config.AddConfiguration(configuration);
         });
+
+        builder.ConfigureTestServices(services =>
+        {
+            services.AddSingleton<IStartupFilter, RequestsCounterStartupFilter>();
+        });
     }
 
     public TestsHttpClient GetTestsClient(bool followRedirects = true)

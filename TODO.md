@@ -2,6 +2,18 @@
 
 ## Foco atual
 
+│          Service           │ Branches │
+├────────────────────────────┼──────────┤
+│ Classrooms/GetClassroom    │ 35/48    │
+├────────────────────────────┼──────────┤
+│ Teachers/GetTeacherClass   │ 20/32    │
+├────────────────────────────┼──────────┤
+│ Students/GetStudentClass   │ 25/34    │
+├────────────────────────────┼──────────┤
+│ Teachers/GetTeacherDetails │ 13/20    │
+├────────────────────────────┼──────────┤
+│ Classes/GetClass           │ 55/62    │
+
 
 
 ## Próximo
@@ -19,6 +31,7 @@
 - lista de alunos em risco
 - coeficiente de rendimento
 - header X-Estud-Signature nos webhooks
+- webhook conditional send (custom rules)
 - backoffice (eventos, comandos, auditoria)
 - mural da turma com avisos e comentários da turma
 - ajustar usos do DateTime.UtcNow e fusos horários

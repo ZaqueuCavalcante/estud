@@ -52,7 +52,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'Estud - Gestão Educacional',
+      title: 'Estud',
       htmlAttrs: { lang: 'pt-BR' },
       meta: [
         { name: 'description', content: 'Organize sua instituição de ensino com excelência!' },

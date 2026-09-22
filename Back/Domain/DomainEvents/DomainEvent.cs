@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Estud.Back.Domain.Institutions;
 
 namespace Estud.Back.Domain.DomainEvents;
 
@@ -16,6 +17,8 @@ public class DomainEvent
     public string? Error { get; set; }
     public int Duration { get; set; }
     public string? ActivityId { get; set; }
+
+    public Institution? Institution { get; set; }
 
     public DomainEvent() { }
 
