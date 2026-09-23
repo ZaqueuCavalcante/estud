@@ -307,11 +307,11 @@ EF is configured with snake_case naming (`UseSnakeCaseNamingConvention`) and the
 
 ### Async Command Processing
 
-Business flows that are naturally asynchronous (emails, notifications, webhooks) use the `Command`/`CommandBatch` system:
+Business flows that are naturally asynchronous (emails, notifications, webhooks) use the `Command` system:
 
 1. A service creates a `Command` via `ctx.AddCommand(...)` — persisted in the `commands` table.
 2. A Quartz.NET job (`CommandsProcessorJob`) picks up pending commands and dispatches them to handlers.
-3. Commands support: parent-child relationships, batches, retry with exponential backoff, delayed execution (`NotBefore`).
+3. Commands support: parent-child relationships, retry with exponential backoff, delayed execution (`NotBefore`).
 
 ### API Documentation
 

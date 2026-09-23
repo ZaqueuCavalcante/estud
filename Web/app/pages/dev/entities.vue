@@ -140,10 +140,8 @@ const tables: TableRow[] = [
   { table: 'webhook_subscriptions', entity: 'WebhookSubscription', group: 'webhooks', dbSet: 'WebhookSubscriptions', note: 'Inscrição da instituição num evento, com URL de destino e segredo de assinatura.' },
   { table: 'webhook_calls', entity: 'WebhookCall', group: 'webhooks', dbSet: 'WebhookCalls', note: 'Disparo de um evento para uma inscrição.' },
   { table: 'webhook_call_attempts', entity: 'WebhookCallAttempt', group: 'webhooks', dbSet: 'WebhookCallAttempts', note: 'Cada tentativa de entrega do disparo, com status e resposta. É o que sustenta o retry.' },
-  { table: 'received_webhook_events', entity: 'ReceivedWebhookEvent', group: 'webhooks', dbSet: 'ReceivedWebhookEvents', note: 'Evento recebido de sistema externo, guardado para idempotência.' },
 
   { table: 'commands', entity: 'Command', group: 'platform', dbSet: 'Commands', note: 'Fila de comandos assíncronos, consumida pelo CommandsProcessorJob (Quartz). Suporta pai/filho, retry com backoff e execução adiada (NotBefore).' },
-  { table: 'command_batches', entity: 'CommandBatch', group: 'platform', note: 'Agrupa comandos disparados juntos. Sem DbSet — acessada por navigation.' },
   { table: 'domain_events', entity: 'DomainEvent', group: 'platform', dbSet: 'DomainEvents', note: 'Eventos de domínio persistidos pelo SaveDomainEventsInterceptor no SaveChanges.' },
   { table: 'audit_trails', entity: 'AuditTrail', group: 'platform', note: 'Trilha de auditoria gravada pelo AuditSaveChangesInterceptor. O diff da entidade fica em Data (jsonb). Sem DbSet.' },
   { table: 'user_activities', entity: 'UserActivity', group: 'platform', dbSet: 'UserActivities', note: 'Trilha de atividades do usuário para exibição no produto.' },

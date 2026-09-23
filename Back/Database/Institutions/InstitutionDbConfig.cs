@@ -30,10 +30,6 @@ public class InstitutionDbConfig : IEntityTypeConfiguration<Institution>
             .WithOne(c => c.Institution)
             .HasForeignKey(c => c.InstitutionId);
 
-        entity.HasMany(e => e.CommandBatches)
-            .WithOne()
-            .HasForeignKey(cb => cb.InstitutionId);
-
         entity.HasMany(e => e.CourseCurriculums)
             .WithOne()
             .HasForeignKey(cc => cc.InstitutionId);

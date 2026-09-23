@@ -334,28 +334,6 @@ export const dbSchema: DbTable[] = [
     ],
   },
   {
-    table: "command_batches",
-    entity: "CommandBatch",
-    file: "Back/Database/Commands/CommandBatchDbConfig.cs",
-    pk: ["id"],
-    columns: [
-      { name: "id", prop: "Id", type: "integer", clr: "int", nullable: false },
-      { name: "institution_id", prop: "InstitutionId", type: "integer", clr: "int", nullable: false },
-      { name: "type", prop: "Type", type: "integer", clr: "CommandBatchType", nullable: false, enum: "CommandBatchType" },
-      { name: "status", prop: "Status", type: "integer", clr: "CommandBatchStatus", nullable: false, enum: "CommandBatchStatus" },
-      { name: "created_at", prop: "CreatedAt", type: "timestamp with time zone", clr: "DateTime", nullable: false },
-      { name: "processed_at", prop: "ProcessedAt", type: "timestamp with time zone", clr: "DateTime?", nullable: true },
-      { name: "source_command_id", prop: "SourceCommandId", type: "integer", clr: "int?", nullable: true },
-      { name: "next_command_id", prop: "NextCommandId", type: "integer", clr: "int?", nullable: true },
-      { name: "size", prop: "Size", type: "integer", clr: "int", nullable: false },
-    ],
-    fks: [
-      { columns: ["institution_id"], target: "institutions", targetEntity: "Institution", principal: [], nav: null, convention: false },
-    ],
-    indexes: [
-    ],
-  },
-  {
     table: "commands",
     entity: "Command",
     file: "Back/Database/Commands/CommandDbConfig.cs",
@@ -373,7 +351,6 @@ export const dbSchema: DbTable[] = [
       { name: "error", prop: "Error", type: "text", clr: "string?", nullable: true },
       { name: "parent_id", prop: "ParentId", type: "integer", clr: "int?", nullable: true },
       { name: "original_id", prop: "OriginalId", type: "integer", clr: "int?", nullable: true },
-      { name: "batch_id", prop: "BatchId", type: "integer", clr: "int?", nullable: true },
       { name: "not_before", prop: "NotBefore", type: "timestamp with time zone", clr: "DateTime?", nullable: true },
       { name: "activity_id", prop: "ActivityId", type: "text", clr: "string?", nullable: true },
       { name: "max_retries", prop: "MaxRetries", type: "integer", clr: "int", nullable: false },
@@ -664,31 +641,6 @@ export const dbSchema: DbTable[] = [
     ],
     indexes: [
       { columns: ["campus_id", "day"], unique: false },
-    ],
-  },
-  {
-    table: "received_webhook_events",
-    entity: "ReceivedWebhookEvent",
-    file: "Back/Database/Webhooks/ReceivedWebhookEventDbConfig.cs",
-    pk: ["id"],
-    columns: [
-      { name: "id", prop: "Id", type: "integer", clr: "int", nullable: false },
-      { name: "external_id", prop: "ExternalId", type: "text", clr: "string", nullable: false },
-      { name: "source", prop: "Source", type: "integer", clr: "ReceivedWebhookEventSource", nullable: false, enum: "ReceivedWebhookEventSource" },
-      { name: "type", prop: "Type", type: "text", clr: "string", nullable: false },
-      { name: "payload", prop: "Payload", type: "text", clr: "string", nullable: false },
-      { name: "status", prop: "Status", type: "integer", clr: "ReceivedWebhookEventStatus", nullable: false, enum: "ReceivedWebhookEventStatus" },
-      { name: "created_at", prop: "CreatedAt", type: "timestamp with time zone", clr: "DateTime", nullable: false },
-      { name: "processed_at", prop: "ProcessedAt", type: "timestamp with time zone", clr: "DateTime?", nullable: true },
-      { name: "processor_id", prop: "ProcessorId", type: "uuid", clr: "Guid?", nullable: true },
-      { name: "error", prop: "Error", type: "text", clr: "string?", nullable: true },
-      { name: "command_id", prop: "CommandId", type: "integer", clr: "int?", nullable: true },
-    ],
-    fks: [
-      { columns: ["command_id"], target: "commands", targetEntity: "Command", principal: ["id"], nav: "Command", convention: false },
-    ],
-    indexes: [
-      { columns: ["external_id", "source"], unique: true },
     ],
   },
   {

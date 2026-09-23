@@ -29,11 +29,6 @@ public class Command
     /// </summary>
     public int? OriginalId { get; set; }
 
-    /// <summary>
-    /// Id do lote que contém o comando
-    /// </summary>
-    public int? BatchId { get; set; }
-
     public DateTime? NotBefore { get; set; }
 
     public string? ActivityId { get; set; }
@@ -71,7 +66,6 @@ public class Command
         object data,
         int? parentId = null,
         int? originalId = null,
-        int? batchId = null,
         int? delaySeconds = null,
         string? activityId = null,
         int maxRetries = 0,
@@ -84,7 +78,6 @@ public class Command
         CreatedAt = DateTime.UtcNow;
         ParentId = parentId;
         OriginalId = originalId;
-        BatchId = batchId;
         ActivityId = activityId;
         NotBefore = delaySeconds != null ? DateTime.UtcNow.AddSeconds(delaySeconds.Value) : null;
         MaxRetries = maxRetries;
@@ -97,7 +90,6 @@ public class Command
         object data,
         int? parentId = null,
         int? originalId = null,
-        int? batchId = null,
         int? delaySeconds = null,
         string? activityId = null,
         int maxRetries = 0,
@@ -110,17 +102,11 @@ public class Command
         CreatedAt = DateTime.UtcNow;
         ParentId = parentId;
         OriginalId = originalId;
-        BatchId = batchId;
         ActivityId = activityId;
         NotBefore = delaySeconds != null ? DateTime.UtcNow.AddSeconds(delaySeconds.Value) : null;
         MaxRetries = maxRetries;
         BackoffStrategy = backoffStrategy;
         BaseDelaySeconds = baseDelaySeconds;
-    }
-
-    public void SetAwaiting()
-    {
-        Status = CommandStatus.Awaiting;
     }
 
     public void Processed(double duration)

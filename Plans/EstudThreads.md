@@ -456,8 +456,7 @@ sozinho.
 Fluxo: criar a entry dispara `ClassActivityWorkEntryCreatedDomainEvent(Uid)`, cujo handler enfileira
 `CreateWorkEntryNotificationCommand(entryId)`. O command decide destinatários e texto pelo tipo e
 pelo `PreviousStatus`. Ele também **checa o acesso de novo**, porque o professor pode ter sido
-desvinculado da turma entre o evento e o processamento. O zero em lote gera um command por card, no
-mesmo `CommandBatch`.
+desvinculado da turma entre o evento e o processamento. O zero em lote gera um command por card.
 
 `NotificationType`, alinhado com a numeração reservada no `Mentions.md`:
 

@@ -1,8 +1,7 @@
 # Trocar o disparo dos background processors por Channels do .NET
 
-Hoje os três processadores de fila (`CommandsProcessor`, `DomainEventsProcessor` e
-`ReceivedWebhookEventsProcessor`) são `IJob` do Quartz. O `QuartzConfigs` registra um trigger de
-intervalo fixo para os dois primeiros (60s em produção) e o
+Hoje os dois processadores de fila (`CommandsProcessor` e `DomainEventsProcessor`) são `IJob` do
+Quartz. O `QuartzConfigs` registra um trigger de intervalo fixo para os dois (60s em produção) e o
 `BackgroundProcessorsTriggerMiddleware` serve de atalho: no fim de cada request, se o `EstudDbContext`
 marcou `HasPendingCommands`/`HasPendingDomainEvents`, ele chama `scheduler.TriggerJob(...)` para não
 esperar o próximo tick.
@@ -24,7 +23,7 @@ a dependência.
 | `OpenTelemetry.Instrumentation.Quartz` | referenciado no `.csproj`, **nunca registrado** no `OpenTelemetryConfigs` |
 
 Os traces dos processors vêm dos `ActivitySource` próprios (`AddSource(CommandsProcessing,
-DomainEventsProcessing, WebhookEventsProcessing)`), não do Quartz — a observabilidade não depende dele.
+DomainEventsProcessing)`), não do Quartz — a observabilidade não depende dele.
 
 ## Os problemas do disparo atual
 
@@ -76,7 +75,7 @@ public class BackgroundProcessorSignal<TProcessor>
 }
 ```
 
-O parâmetro genérico existe só para dar uma instância singleton por processador, sem criar três classes
+O parâmetro genérico existe só para dar uma instância singleton por processador, sem criar duas classes
 iguais.
 
 **Por que `DropWrite` não perde acordamento:** se o slot está vazio, o sinal é gravado e o próximo
@@ -162,7 +161,6 @@ builder.Services.AddHostedService<DomainEventsProcessor>();
 | `Back/Middlewares/BackgroundProcessorsTriggerMiddleware.cs` | sinaliza em vez de agendar |
 | `Back/Commands/CommandsProcessor.cs` | `IJob` → `BackgroundService`; o re-trigger das linhas 82-86 vira `signal.Signal()` ou some |
 | `Back/DomainEvents/DomainEventsProcessor.cs` | idem; as linhas 79-84 viram `commandsSignal.Signal()` |
-| `Back/Webhooks/ReceivedWebhookEventsProcessor.cs` | idem; as linhas 78-82 viram `commandsSignal.Signal()` |
 | `Back/Configs/QuartzConfigs.cs` | removido |
 | `Back/Extensions/CommandsExtensions.cs` | removido (só tinha `TriggerCommandsProcessorJob`) |
 | `Back/Extensions/DomainEventsExtensions.cs` | removido |
@@ -263,12 +261,5 @@ O passo 2 sozinho já é entregável e reversível: dá para ter uma fila em cha
 convivendo, o que torna o rollback barato se a serialização da drenagem apertar em produção.
 
 ## Fora do escopo, mas achado no caminho
-
-**`ReceivedWebhookEventsProcessor` nunca roda.** É um `IJob` sem `AddJob`/`AddTrigger` no
-`QuartzConfigs`, e `WebhookEventsPollingIntervalInSeconds` está nos três `appsettings` sem nenhum
-leitor. Webhooks recebidos não são processados hoje. A migração para `BackgroundService` acidentalmente
-corrige isso ao registrar o hosted service — o que significa que, no deploy, uma fila parada desde
-sempre começa a drenar de uma vez. Conferir o que há em `received_webhook_events` com `status = 0`
-**antes** de subir.
 
 **Sem reaper de claim órfão**, detalhado no trade-off 7.

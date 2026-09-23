@@ -19,7 +19,7 @@ SCALARS = {
 ENUMS = set("""BackoffStrategy BrazilState CalendarDaySource ClassActivityStatus ClassActivityType
 ClassActivityWorkStatus ClassLessonStatus ClassNoteType ClassStatus CommandBatchStatus CommandBatchType
 CommandStatus CourseSession CourseType Day DayType DomainEventStatus FeatureGroup Hour NotificationType
-PermissionGroup ReceivedWebhookEventSource ReceivedWebhookEventStatus
+PermissionGroup
 Shift SocialLoginProvider SsoProviderType StorageContainer StudentClassStatus StudentDayAttendanceStatus
 StudentDisciplineStatus StudentStatus UserActivitySeverity UserActivityType UserType UsersGroup
 WebhookCallAttemptStatus WebhookCallStatus WebhookEventType""".split())

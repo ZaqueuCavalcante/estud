@@ -414,7 +414,7 @@ Pressupõe as fases 3 e 4 do `RichEditor.md` (comentário e menção gravados).
 - **E-mail em paralelo**: a deduplicação por "não achei nada" assume um processamento por usuário
   por vez. Confirmar como o `CommandsProcessorJob` paraleliza antes da fase 4.
 - **Menção de grupo** (`@turma`, `@professores`): fora do escopo. Quando entrar, é um fan-out
-  grande, e deve ir em `CommandBatch`.
+  grande.
 - **Rate limit de menção**: alguém mencionando a mesma pessoa em dez comentários seguidos. O
   agrupamento na caixa e o resumo por e-mail já amortecem. Só tratar se virar problema.
 - **Aviso em massa agora "sem assunto"**: continua funcionando igual, como um grupo de um item.

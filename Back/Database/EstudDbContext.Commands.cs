@@ -15,7 +15,6 @@ public partial class EstudDbContext
     private static void ConfigureCommands(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new CommandDbConfig());
-        modelBuilder.ApplyConfiguration(new CommandBatchDbConfig());
     }
 
     public Command AddCommand(
@@ -23,7 +22,6 @@ public partial class EstudDbContext
         ICommand command,
         int? parentId = null,
         int? originalId = null,
-        int? batchId = null,
         int? delaySeconds = null,
         int maxRetries = 0,
         int baseDelaySeconds = 5,
@@ -39,7 +37,6 @@ public partial class EstudDbContext
                 command,
                 parentId: parentId,
                 originalId: originalId,
-                batchId: batchId,
                 delaySeconds: delaySeconds,
                 activityId: activityId,
                 maxRetries: maxRetries,
@@ -54,7 +51,6 @@ public partial class EstudDbContext
         ICommand command,
         int? parentId = null,
         int? originalId = null,
-        int? batchId = null,
         int? delaySeconds = null,
         int maxRetries = 0,
         int baseDelaySeconds = 5,
@@ -70,7 +66,6 @@ public partial class EstudDbContext
                 command,
                 parentId: parentId,
                 originalId: originalId,
-                batchId: batchId,
                 delaySeconds: delaySeconds,
                 activityId: activityId,
                 maxRetries: maxRetries,

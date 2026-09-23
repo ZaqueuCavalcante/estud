@@ -36,7 +36,6 @@ public class Institution
     public List<CalendarDay> CalendarDays { get; set; }
     public List<WebhookCall> WebhookCalls { get; set; }
     public List<Notification> Notifications { get; set; }
-    public List<CommandBatch> CommandBatches { get; set; }
     public List<CourseOffering> CourseOfferings { get; set; }
     public List<AcademicPeriod> AcademicPeriods { get; set; }
     public List<SsoConfiguration> SsoConfigurations { get; set; }

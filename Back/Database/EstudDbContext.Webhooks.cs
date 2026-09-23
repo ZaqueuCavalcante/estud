@@ -10,15 +10,11 @@ public partial class EstudDbContext
 
     public DbSet<WebhookSubscription> WebhookSubscriptions { get; set; }
 
-    public DbSet<ReceivedWebhookEvent> ReceivedWebhookEvents { get; set; }
-
     private static void ConfigureWebhooks(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new WebhookCallDbConfig());
         modelBuilder.ApplyConfiguration(new WebhookCallAttemptDbConfig());
 
         modelBuilder.ApplyConfiguration(new WebhookSubscriptionDbConfig());
-
-        modelBuilder.ApplyConfiguration(new ReceivedWebhookEventDbConfig());
     }
 }
