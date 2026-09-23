@@ -16,10 +16,10 @@ using Estud.Back.Features.Identity.GetSsoConfiguration;
 using Estud.Back.Features.Identity.TwoFactorSetupLogin;
 using Estud.Back.Features.Identity.CheckSsoAvailability;
 using Estud.Back.Features.Identity.CreateSsoConfiguration;
-using Estud.Back.Features.Identity.UpdateSsoConfiguration;
 using Estud.Back.Features.Identity.SendResetPasswordToken;
-using Estud.Back.Features.Identity.SetTwoFactorEnforcement;
+using Estud.Back.Features.Identity.UpdateSsoConfiguration;
 using Estud.Back.Features.Identity.GetTwoFactorEnforcement;
+using Estud.Back.Features.Identity.SetTwoFactorEnforcement;
 using Estud.Back.Features.Identity.CheckSocialLoginAvailability;
 
 namespace Estud.Tests.Integration.Clients;
@@ -213,6 +213,32 @@ public partial class TestsHttpClient
         // Os cookies de correlação e de nonce do OIDC são Secure e o client de testes fala http,
         // então o CookieContainer os guarda mas nunca os reenvia — o browser real, em https, reenviaria.
         if (withCorrelationCookie && challenge.Headers.TryGetValues("Set-Cookie", out var cookies))
+        {
+            foreach (var cookie in cookies) callback.Headers.Add("Cookie", cookie.Split(';')[0]);
+        }
+
+        return await http.SendAsync(callback);
+    }
+
+    public async Task<KeycloakLoginPage> SsoOpenKeycloakLoginPage(string email)
+    {
+        await KeycloakFactory.Start();
+
+        var challenge = await SsoChallenge(email);
+        return await KeycloakFactory.OpenLoginPage(await RedirectTo(challenge));
+    }
+
+    public async Task<HttpResponseMessage> SsoLoginWithKeycloak(string email)
+    {
+        await KeycloakFactory.Start();
+
+        var challenge = await SsoChallenge(email);
+        var page = await KeycloakFactory.OpenLoginPage(await RedirectTo(challenge));
+        var authenticate = await KeycloakFactory.SubmitLogin(page, email);
+
+        var callback = await KeycloakFactory.BuildCallback(authenticate);
+
+        if (challenge.Headers.TryGetValues("Set-Cookie", out var cookies))
         {
             foreach (var cookie in cookies) callback.Headers.Add("Cookie", cookie.Split(';')[0]);
         }

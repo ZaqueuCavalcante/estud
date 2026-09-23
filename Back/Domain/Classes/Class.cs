@@ -1,8 +1,8 @@
 using Estud.Back.Domain.Campi;
 using Estud.Back.Domain.Periods;
 using Estud.Back.Domain.Calendar;
-using Estud.Back.Domain.Teachers;
 using Estud.Back.Domain.Students;
+using Estud.Back.Domain.Teachers;
 using Estud.Back.Domain.Disciplines;
 
 namespace Estud.Back.Domain.Classes;

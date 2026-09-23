@@ -1,8 +1,8 @@
 using Estud.Tests.Integration.Clients;
 using Estud.Back.Features.Identity.VerifySsoDomain;
 using Estud.Back.Features.Periods.GetAcademicPeriods;
-using Estud.Back.Features.Identity.CreateSsoConfiguration;
 using Estud.Back.Features.Users.CreateProfilePhotoUpload;
+using Estud.Back.Features.Identity.CreateSsoConfiguration;
 
 namespace Estud.Tests.Shortcuts;
 
@@ -13,10 +13,11 @@ public static class TestShortcuts
         SsoProviderType providerType = SsoProviderType.AzureAd,
         string authority = "https://login.microsoftonline.com/tenant-id/v2.0",
         string clientId = "00000000-0000-0000-0000-000000000000",
+        string clientSecret = "client-secret-value",
         bool requireSso = false,
         string? domain = null
     ) {
-        var config = await client.CreateSsoConfiguration(providerType, authority, clientId, requireSso: requireSso, domain: domain).Success();
+        var config = await client.CreateSsoConfiguration(providerType, authority, clientId, clientSecret, requireSso, domain).Success();
         await client.ShortcutVerifySsoDomain(config.Id);
 
         return config;

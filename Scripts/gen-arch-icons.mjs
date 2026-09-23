@@ -1,4 +1,4 @@
-// Gera o mapa de ícones usado pelo pôster de arquitetura (/dev/arch-diagram).
+// Gera o mapa de ícones usado pelos pôsteres (/dev/arch-diagram e /dev/tests-diagram).
 //
 // A página exporta o SVG como arquivo solto (download de SVG/PNG), então os
 // ícones precisam estar embutidos como path — o <UIcon>, que resolve o ícone em
@@ -22,33 +22,51 @@ const WANTED = {
     'building-2',
     'chart-column',
     'chart-line',
+    'check-check',
+    'circle-check-big',
+    'container',
+    'database',
     'dna',
+    'drama',
     'file-text',
     'fingerprint',
     'flask-conical',
     'globe',
     'image',
+    'layers',
     'library-big',
     'list-end',
+    'mail',
     'plug',
+    'route',
     'scroll-text',
+    'send',
+    'server',
+    'shield-check',
+    'split',
+    'test-tube-diagonal',
     'waypoints',
-    'webhook'
+    'webhook',
+    'zap'
   ],
   'simple-icons': [
     'caddy',
     'cloudflare',
+    'docker',
     'dotnet',
     'githubactions',
     'google',
     'grafana',
+    'keycloak',
     'linkedin',
+    'minio',
     'nuxt',
     'opentelemetry',
     'postgresql',
     'posthog',
     'railway',
-    'scalar'
+    'scalar',
+    'vitest'
   ]
 }
 

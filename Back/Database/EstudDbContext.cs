@@ -1,8 +1,8 @@
 using Npgsql;
 using System.Data.Common;
 using System.Diagnostics;
-using Estud.Back.Auth.Users;
 using Audit.EntityFramework;
+using Estud.Back.Auth.Users;
 using Estud.Back.Domain.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;

@@ -1,5 +1,5 @@
-using System.Reflection;
 using Scalar.AspNetCore;
+using System.Reflection;
 using Microsoft.OpenApi.Any;
 using Estud.Back.Auth.Schemes;
 using Microsoft.OpenApi.Models;

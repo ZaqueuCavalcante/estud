@@ -9,16 +9,16 @@ using Estud.Back.Features.Students.GetEnrollmentProofs;
 using Estud.Back.Features.Students.AssignStudentToClass;
 using Estud.Back.Features.Students.GetStudentClassLesson;
 using Estud.Back.Features.Students.GetStudentClassLessons;
-using Estud.Back.Features.Students.CreateClassActivityWorkComment;
 using Estud.Back.Features.Students.GetStudentClassActivity;
 using Estud.Back.Features.Students.GetStudentCourseDetails;
 using Estud.Back.Features.Students.ValidateEnrollmentProof;
 using Estud.Back.Features.Students.GetStudentCurrentClasses;
 using Estud.Back.Features.Students.GetStudentClassActivities;
-using Estud.Back.Features.Students.GetStudentPendingActivities;
 using Estud.Back.Features.Students.CreateClassActivityWorkFile;
+using Estud.Back.Features.Students.GetStudentPendingActivities;
 using Estud.Back.Features.Students.GetStudentAttendanceCalendar;
 using Estud.Back.Features.Students.EnrollStudentInCourseOffering;
+using Estud.Back.Features.Students.CreateClassActivityWorkComment;
 
 namespace Estud.Tests.Integration.Clients;
 

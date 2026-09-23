@@ -4,8 +4,6 @@ interface NodeContent {
   sub: string
   color: string
   icon: string
-  chips?: string[]
-  chipText?: string
 }
 
 interface ItemContent {
@@ -79,7 +77,6 @@ interface Point {
   id: string
   icon: IconMark
   title: Label
-  sub?: string
 }
 
 interface Pill {
@@ -89,11 +86,13 @@ interface Pill {
   label: string
 }
 
-interface MiniCard {
-  id: string
-  rect: Frame
-  icon: IconMark
-  title: Label
+interface Container {
+  node: NodeContent
+  drop: string
+  chips: string[]
+  chipText: string
+  mirror: string
+  prod: ItemContent
 }
 
 const W = 1080
@@ -127,89 +126,104 @@ const ESTUD_E = 'M 10.98 20.5Q 9.46 20.5 8.27 19.61Q 7.08 18.72 6.4 17.13Q 5.73 
 
 const LINKEDIN = { handle: '/in/zaqueu-cavalcante', icon: 'i-simple-icons-linkedin', color: '#4aa3f0' }
 
-const TITLE = { lead: 'Como o Estud roda ', accent: 'em produção?' }
+const TITLE = { lead: 'Como o Estud é ', accent: 'testado?' }
 
-const DOCS: ItemContent[] = [
-  { title: 'Documentação', sub: '/docs · Nuxt Content', color: '#c4b5fd', icon: 'i-lucide-book-open-text' },
-  { title: 'Referência da API', sub: '/api/docs · Scalar', color: '#e4e4e7', icon: 'i-simple-icons-scalar' }
+const RUNNER: NodeContent = { title: 'NUnit', sub: 'dotnet test', color: '#34d399', icon: 'i-lucide-flask-conical' }
+const BACK: NodeContent = { title: 'Back', sub: 'WebApplicationFactory', color: '#9B7BFF', icon: 'i-simple-icons-dotnet' }
+
+const ASSERTS = {
+  title: 'Asserts',
+  icon: 'i-lucide-check-check',
+  items: [
+    { title: 'FluentAssertions', sub: '.Should().Be(...)', color: '#34d399', icon: 'i-lucide-circle-check-big' },
+    { title: 'Result Pattern', sub: 'ShouldBeError()', color: '#c4b5fd', icon: 'i-lucide-shield-check' }
+  ] as ItemContent[]
+}
+
+const MOCKS = {
+  title: 'Mocks',
+  icon: 'i-lucide-drama',
+  items: [
+    { title: 'Mocks API', sub: 'OIDC · DNS · Webhooks', color: ROSE, icon: 'i-lucide-server' },
+    { title: 'Fakes', sub: 'E-mails em memória', color: AMBER, icon: 'i-lucide-mail' }
+  ] as ItemContent[]
+}
+
+const TESTCONTAINERS = { title: 'Testcontainers', hint: 'Docker · infra real, sem mocks', icon: 'i-simple-icons-docker', color: '#2496ED' }
+
+const POSTGRES: Container = {
+  node: { title: 'Postgres', sub: 'postgres:18', color: '#5B8DEF', icon: 'i-simple-icons-postgresql' },
+  drop: 'EF Core · Dapper',
+  chips: ['Banco recriado', 'Reuse'],
+  chipText: '#bfdbfe',
+  mirror: 'mesmo engine',
+  prod: { title: 'Postgres', sub: 'produção · Railway', color: '#5B8DEF', icon: 'i-simple-icons-postgresql' }
+}
+
+const MINIO: Container = {
+  node: { title: 'MinIO', sub: 'minio:latest', color: '#f0506e', icon: 'i-simple-icons-minio' },
+  drop: 'AWSSDK.S3',
+  chips: ['Buckets', 'Presigned URL'],
+  chipText: '#fecdd3',
+  mirror: 'mesma API S3',
+  prod: { title: 'Cloudflare R2', sub: 'produção · Storage', color: '#F38020', icon: 'i-estud-r2' }
+}
+
+const KEYCLOAK: Container = {
+  node: { title: 'Keycloak', sub: 'keycloak:26.4', color: '#38bdf8', icon: 'i-simple-icons-keycloak' },
+  drop: 'OpenID Connect',
+  chips: ['SSO happy path', 'Realm JSON'],
+  chipText: '#bae6fd',
+  mirror: 'mesmo OIDC',
+  prod: { title: 'Okta · Azure · Auth0', sub: 'produção · SSO', color: TEAL, icon: 'i-lucide-building-2' }
+}
+
+const CONCEPTS = [
+  {
+    title: 'Arrange via API',
+    icon: 'i-lucide-route',
+    color: TEAL,
+    chipText: '#99f6e4',
+    chips: ['Arrange', 'Act', 'Assert'],
+    rows: [
+      { title: 'TestsHttpClient', sub: 'Um helper por endpoint', color: TEAL, icon: 'i-lucide-send' },
+      { title: 'Shortcuts', sub: 'Cenários prontos', color: '#fcd34d', icon: 'i-lucide-zap' }
+    ] as ItemContent[]
+  },
+  {
+    title: 'Isolamento',
+    icon: 'i-lucide-layers',
+    color: AMBER,
+    chipText: '#fcd34d',
+    chips: ['DataSeeder', 'Por classe'],
+    rows: [
+      { title: 'Banco por classe', sub: 'EnsureDeleted · Created', color: '#5B8DEF', icon: 'i-lucide-database' },
+      { title: 'Paralelo', sub: 'ParallelScope.Children', color: AMBER, icon: 'i-lucide-split' }
+    ] as ItemContent[]
+  },
+  {
+    title: 'Background',
+    icon: 'i-lucide-list-end',
+    color: ROSE,
+    chipText: '#fecdd3',
+    chips: ['Quartz.NET', 'Outbox'],
+    rows: [
+      { title: 'Commands', sub: 'AwaitCommandsProcessing', color: ROSE, icon: 'i-lucide-list-end' },
+      { title: 'Domain Events', sub: 'AwaitDomainEventsProcessing', color: AMBER, icon: 'i-lucide-activity' }
+    ] as ItemContent[]
+  }
 ]
 
-const R2 = {
-  title: 'Cloudflare R2',
-  icon: 'i-estud-r2',
-  color: '#F38020',
+const SUITES = {
+  title: 'Suítes',
+  icon: 'i-lucide-test-tube-diagonal',
   items: [
-    { title: 'Imagens', sub: 'Perfil · Plano de Aula', color: '#38bdf8', icon: 'i-lucide-image' },
-    { title: 'Documentos', sub: 'Atividades · Entregas', color: '#c4b5fd', icon: 'i-lucide-file-text' }
-  ] as ItemContent[]
-}
-
-const BROWSER: NodeContent = { title: 'Browser', sub: 'https://estud.com.br', color: '#e4e4e7', icon: 'i-lucide-globe' }
-const CLOUDFLARE: NodeContent = { title: 'Cloudflare', sub: 'DNS · Proxy · TLS', color: '#F38020', icon: 'i-simple-icons-cloudflare' }
-const CADDY: NodeContent = { title: 'Caddy', sub: 'Reverse Proxy', color: '#22A6E0', icon: 'i-simple-icons-caddy' }
-const WEB: NodeContent = { title: 'Web', sub: 'Vue · Nuxt', color: '#00DC82', icon: 'i-simple-icons-nuxt' }
-const BACK: NodeContent = { title: 'Back', sub: 'C# · ASP.NET', color: '#9B7BFF', icon: 'i-simple-icons-dotnet' }
-const POSTGRES: NodeContent = { title: 'Postgres', sub: 'PostgreSQL', color: '#5B8DEF', icon: 'i-simple-icons-postgresql' }
-
-const ASYNC: NodeContent = {
-  title: 'Workers',
-  sub: 'Quartz.NET · Outbox',
-  color: AMBER,
-  icon: 'i-lucide-list-end',
-  chips: ['Events', 'Commands', 'Jobs'],
-  chipText: '#fcd34d'
-}
-
-const RAILWAY = { title: 'Railway', hint: '*.railway.internal', icon: 'i-simple-icons-railway' }
-
-const OTEL = {
-  title: 'OpenTelemetry',
-  icon: 'i-simple-icons-opentelemetry',
-  color: '#8b9cff',
-  signals: [
-    { label: 'Metrics', icon: 'i-lucide-chart-line', color: '#60a5fa' },
-    { label: 'Logs', icon: 'i-lucide-scroll-text', color: '#a3e635' },
-    { label: 'Traces', icon: 'i-lucide-waypoints', color: '#f472b6' }
-  ],
-  points: [
-    { title: 'Grafana', sub: 'OTLP · Back', icon: 'i-simple-icons-grafana', color: '#F46800' },
-    { title: 'PostHog', sub: 'Analytics · Web', icon: 'i-simple-icons-posthog', color: '#F9BD2B' }
-  ]
-}
-
-const IDENTITY = {
-  title: 'Identity',
-  icon: 'i-lucide-fingerprint',
-  color: TEAL,
-  chipText: '#99f6e4',
-  chips: ['RBAC', 'JWT', '2FA', 'Magic Links'],
-  rows: [
-    { title: 'Google Sign-Up/In', sub: 'OAuth · One Tap', color: '#8ab4f8', icon: 'i-simple-icons-google' },
-    { title: 'SSO Multi-Tenant', sub: 'OIDC · Okta · Azure · Auth0', color: TEAL, icon: 'i-lucide-building-2' }
-  ] as ItemContent[]
-}
-
-const WEBHOOKS = {
-  title: 'Webhooks',
-  icon: 'i-lucide-webhook',
-  color: ROSE,
-  chipText: '#fecdd3',
-  chips: ['StudentCreated', 'ActivityPublished'],
-  rows: [
-    { title: 'Subscriptions', sub: 'Domain Events', color: ROSE, icon: 'i-lucide-arrow-up-right' },
-    { title: 'Async Callbacks', sub: 'Commands · Retry', color: AMBER, icon: 'i-lucide-activity' }
-  ] as ItemContent[]
-}
-
-const TESTS = {
-  title: 'Testing',
-  icon: 'i-lucide-flask-conical',
-  items: [
-    { title: 'Unit', sub: 'NUnit · FluentAssertions', color: '#38bdf8', icon: 'i-lucide-box' },
-    { title: 'Integration', sub: 'API · Postgres', color: '#34d399', icon: 'i-lucide-plug' },
-    { title: 'Mutation', sub: 'Stryker.NET', color: '#f472b6', icon: 'i-lucide-dna' }
+    { title: 'Unit', sub: 'NUnit · Domínio', color: '#38bdf8', icon: 'i-lucide-box' },
+    { title: 'Integration', sub: 'API · Testcontainers', color: '#34d399', icon: 'i-lucide-plug' },
+    { title: 'Mutation', sub: 'Stryker.NET', color: '#f472b6', icon: 'i-lucide-dna' },
+    { title: 'Web Unit', sub: 'Vitest · Nuxt', color: '#FCC72B', icon: 'i-simple-icons-vitest' }
   ] as ItemContent[],
-  coverage: { title: 'Coverage Report', icon: 'i-lucide-chart-column', color: '#a3e635' },
+  coverage: { title: 'Coverage ≥ 95%', icon: 'i-lucide-chart-column', color: '#a3e635' },
   actions: { title: 'GitHub Actions', icon: 'i-simple-icons-githubactions', color: '#2088FF' }
 }
 
@@ -229,16 +243,12 @@ function chipRow(x: number, y: number, labels: string[], color: string, textColo
 }
 
 function node(content: NodeContent, x: number, y: number, w: number, h = 80): Block {
-  const textW = Math.max(
-    measure(content.title, 24, 600),
-    measure(content.sub, 14, 400, MONO),
-    content.chips ? chipsWidth(content.chips) : 0
-  )
+  const textW = Math.max(measure(content.title, 24, 600), measure(content.sub, 14, 400, MONO))
   const bx = x + (w - (64 + textW)) / 2
-  const by = y + (h - (content.chips ? 80 : 48)) / 2
+  const by = y + (h - 48) / 2
 
   return {
-    id: content.title,
+    id: `node-${content.title}`,
     rect: { x, y, w, h, rx: 18, fill: C.card },
     tile: { x: bx, y: by, size: 48, rx: 13, color: content.color },
     icon: { name: content.icon, x: bx + 11, y: by + 11, size: 26, color: content.color },
@@ -247,15 +257,18 @@ function node(content: NodeContent, x: number, y: number, w: number, h = 80): Bl
   }
 }
 
-function item(content: ItemContent, x: number, y: number, variant: 'user' | 'doc' | 'row'): Block {
+function itemWidth(content: ItemContent): number {
+  return 48 + Math.max(measure(content.title, 18, 600), measure(content.sub ?? '', 13, 400, MONO))
+}
+
+function item(content: ItemContent, x: number, y: number, variant: 'doc' | 'row'): Block {
   const tile = variant === 'row' ? 34 : 36
-  const titleSize = { user: 17, doc: 18, row: 16 }[variant]
 
   return {
     id: `${variant}-${content.title}`,
     tile: { x, y, size: tile, rx: 10, color: content.color },
     icon: { name: content.icon, x: x + 8, y: y + 8, size: variant === 'row' ? 18 : 20, color: content.color },
-    title: { x: x + tile + 12, y: y + (variant === 'user' ? 24 : 15), size: titleSize, weight: 600, fill: C.text, value: content.title },
+    title: { x: x + tile + 12, y: y + 15, size: variant === 'row' ? 16 : 18, weight: 600, fill: C.text, value: content.title },
     sub: content.sub
       ? {
           x: x + tile + 12,
@@ -270,11 +283,11 @@ function item(content: ItemContent, x: number, y: number, variant: 'user' | 'doc
   }
 }
 
-function testItem(content: ItemContent, x: number, y: number, w: number, h: number): Block {
+function suiteItem(content: ItemContent, x: number, y: number, w: number, h: number): Block {
   const tileY = y + (h - 34) / 2
 
   return {
-    id: `test-${content.title}`,
+    id: `suite-${content.title}`,
     rect: { x, y, w, h, rx: 13, fill: C.surface },
     tile: { x: x + 12, y: tileY, size: 34, rx: 10, color: content.color },
     icon: { name: content.icon, x: x + 20, y: tileY + 8, size: 18, color: content.color },
@@ -293,12 +306,11 @@ function header(id: string, x: number, y: number, icon: string, title: string, c
   }
 }
 
-function point(id: string, x: number, y: number, content: { title: string, icon: string, color: string, sub?: string, mono?: boolean }, size = 17): Point {
+function point(id: string, x: number, y: number, content: { title: string, icon: string, color: string, mono?: boolean }, size = 17): Point {
   return {
     id,
     icon: { name: content.icon, x, y: y - 15, size: 19, color: content.color },
-    title: { x: x + 30, y, size, weight: 600, fill: content.mono ? C.muted : C.text, value: content.title, mono: content.mono },
-    sub: content.sub
+    title: { x: x + 30, y, size, weight: 600, fill: content.mono ? C.muted : C.text, value: content.title, mono: content.mono }
   }
 }
 
@@ -307,164 +319,122 @@ function pill(x: number, y: number, label: string): Pill {
 }
 
 const poster = computed(() => {
-  const top = [BROWSER, CLOUDFLARE, CADDY, WEB, BACK]
-  const topW = 104 + Math.max(
-    ...top.map(n => measure(n.title, 24, 600)),
-    ...top.map(n => measure(n.sub, 14, 400, MONO))
-  )
-  const topX = CX - topW / 2
-
-  const rowAH = 204
-  const rowCH = 200
-  const testsH = 132
-  const nodeH = 80
-  const lowH = 114
-  const pgH = lowH + 20
-
-  // O card da Railway tem a altura do próprio conteúdo, não a do espaço que
-  // sobra entre as linhas de cima e de baixo. O que sobra na altura do pôster é
-  // dividido igualmente entre as três folgas que separam as quatro linhas.
-  const caddyTop = 44
-  const midTop = caddyTop + nodeH + 80
-  const lowTop = midTop + nodeH + 94
-  const railwayH = lowTop + lowH + (pgH - lowH) / 2 + 28
+  const titleX = M + measure(TITLE.lead, 52, 800)
 
   const rowA = 136
-  const gap = (H - 32 - rowA - rowAH - railwayH - rowCH - testsH) / 3
-  const browserY = rowA
-  const cloudflareY = rowA + 124
+  const rowAH = 220
+  const conceptsH = 200
+  const suitesH = 132
+  const gap = 38
 
-  const sideW = Math.max(
-    88 + Math.max(...DOCS.map(d => measure(d.title, 18, 600)), ...DOCS.map(d => measure(d.sub!, 13, 400, MONO))),
-    88 + Math.max(...R2.items.map(i => measure(i.title, 18, 600)), ...R2.items.map(i => measure(i.sub!, 13, 400, MONO)))
+  const topW = 104 + Math.max(
+    ...[RUNNER, BACK].map(n => measure(n.title, 24, 600)),
+    ...[RUNNER, BACK].map(n => measure(n.sub, 14, 400, MONO))
   )
+  const topX = CX - topW / 2
+  const runnerY = rowA
+  const backY = rowA + rowAH - 80
 
-  const docs: Frame = { x: M, y: rowA, w: sideW, h: rowAH, rx: 22 }
-  const r2: Frame = { x: W - M - sideW, y: rowA, w: sideW, h: rowAH, rx: 22 }
+  const sideW = 40 + Math.max(...[...ASSERTS.items, ...MOCKS.items].map(itemWidth))
+  const asserts: Frame = { x: M, y: rowA, w: sideW, h: rowAH, rx: 22 }
+  const mocks: Frame = { x: W - M - sideW, y: rowA, w: sideW, h: rowAH, rx: 22 }
 
-  const card: Frame = { x: M, y: rowA + rowAH + gap, w: W - 2 * M, h: railwayH, rx: 28 }
-  const rowCY = card.y + railwayH + gap
-  const tests: Frame = { x: M, y: rowCY + rowCH + gap, w: W - 2 * M, h: testsH, rx: 22 }
+  const card: Frame = { x: M, y: rowA + rowAH + gap, w: W - 2 * M, h: H - 32 - rowA - rowAH - conceptsH - suitesH - 3 * gap, rx: 28 }
+
+  const nodeH = 84
+  const prodH = 76
+  const spare = card.h - 330
+  const splitY = card.y + 76
+  const nodeTop = splitY + spare / 2
+  const chipsY = nodeTop + 112
+  const mirrorTop = nodeTop + 150
+  const prodY = mirrorTop + spare / 2
+
+  const containers = [POSTGRES, MINIO, KEYCLOAK]
+  const innerX = card.x + 30
+  const tcW = (card.w - 60 - 40) / 3
+  const tcX = (i: number) => innerX + i * (tcW + 20)
+  const tcCx = (i: number) => tcX(i) + tcW / 2
+
+  const pgH = 116
+  const pgRy = 16
+  const pgY = nodeTop + nodeH / 2 - pgH / 2
+  const pgTop = pgY + (2 * pgRy + pgH) / 2 - 24
+  const pgTextW = Math.max(measure(POSTGRES.node.title, 24, 600), measure(POSTGRES.node.sub, 14, 400, MONO))
+  const pgBx = tcX(0) + (tcW - (64 + pgTextW)) / 2
+  const dropEnd = (i: number) => (i === 0 ? pgY : nodeTop)
+
+  const conceptsY = card.y + card.h + gap
   const colW = (W - 2 * M - 32) / 3
   const colX = (i: number) => M + i * (colW + 16)
 
-  const caddyY = card.y + caddyTop
-  const caddyBottom = caddyY + nodeH
-  const splitY = caddyBottom + 40
-  const webX = card.x + 44
-  const backX = card.x + card.w - 44 - 400
-  const pgW = 270
-  const pgX = backX + 200 - pgW / 2
-  const pgRy = 16
-  const dashX = backX + 200 - topW / 2 + 24
-  const midY = card.y + midTop
-  const midBottom = midY + nodeH
-  const linkY = midBottom + 39
-  const lowY = card.y + lowTop
-  const lowCy = lowY + lowH / 2
-  const pgY = lowCy - pgH / 2
-  const testW = (tests.w - 64) / 3
+  const suites: Frame = { x: M, y: conceptsY + conceptsH + gap, w: W - 2 * M, h: suitesH, rx: 22 }
+  const suiteW = (suites.w - 40 - 36) / 4
 
-  const asyncNode = node(ASYNC, webX, lowY, 400, lowH)
-
-  // O corpo visível do cilindro começa embaixo da elipse do topo (2 × ry) e vai
-  // até a base; o conteúdo se centraliza nessa faixa, não na caixa inteira.
-  const pgTop = pgY + (2 * pgRy + pgH) / 2 - 24
-  const pgTextW = Math.max(measure(POSTGRES.title, 24, 600), measure(POSTGRES.sub, 14, 400, MONO))
-  const pgBx = pgX + (pgW - (64 + pgTextW)) / 2
-
-  const covX = tests.x + tests.w - 22 - (30 + measure(TESTS.coverage.title, 17, 600))
-  const ghX = covX - 32 - (30 + measure(TESTS.actions.title, 17, 600))
-
-  const signalW = (colW - 52) / 3
+  const covX = suites.x + suites.w - 22 - (30 + measure(SUITES.coverage.title, 17, 600))
+  const ghX = covX - 32 - (30 + measure(SUITES.actions.title, 17, 600))
 
   return {
-    frames: [docs, r2, card, tests, ...[0, 1, 2].map((i): Frame => ({ x: colX(i), y: rowCY, w: colW, h: rowCH, rx: 22 }))],
+    titleGrad: { x1: titleX, x2: titleX + measure(TITLE.accent, 52, 800) },
+    frames: [asserts, mocks, card, suites, ...[0, 1, 2].map((i): Frame => ({ x: colX(i), y: conceptsY, w: colW, h: conceptsH, rx: 22 }))],
     headers: [
-      header('docs', docs.x, docs.y + 8, 'i-lucide-library-big', 'Docs', '#fff', docs.w),
-      header('r2', r2.x, r2.y + 8, R2.icon, R2.title, R2.color, r2.w),
-      header('tests', tests.x + 4, tests.y, TESTS.icon, TESTS.title, '#fff'),
-      header('otel', colX(0), rowCY, OTEL.icon, OTEL.title, OTEL.color, colW),
-      header('identity', colX(1), rowCY, IDENTITY.icon, IDENTITY.title, IDENTITY.color, colW),
-      header('webhooks', colX(2), rowCY, WEBHOOKS.icon, WEBHOOKS.title, WEBHOOKS.color, colW)
+      header('asserts', asserts.x, asserts.y + 8, ASSERTS.icon, ASSERTS.title, '#fff', asserts.w),
+      header('mocks', mocks.x, mocks.y + 8, MOCKS.icon, MOCKS.title, '#fff', mocks.w),
+      header('suites', suites.x + 4, suites.y, SUITES.icon, SUITES.title, '#fff'),
+      ...CONCEPTS.map((c, i) => header(c.title, colX(i), conceptsY, c.icon, c.title, c.color, colW))
     ],
-    railway: {
-      icon: { name: RAILWAY.icon, x: card.x + 30, y: card.y + 20, size: 30, color: '#fff' } as IconMark,
-      title: { x: card.x + 72, y: card.y + 45, size: 26, weight: 700, fill: C.text, value: RAILWAY.title } as Label
+    card: {
+      icon: { name: TESTCONTAINERS.icon, x: card.x + 30, y: card.y + 20, size: 30, color: TESTCONTAINERS.color } as IconMark,
+      title: { x: card.x + 72, y: card.y + 45, size: 26, weight: 700, fill: C.text, value: TESTCONTAINERS.title } as Label,
+      hint: { x: card.x + card.w - 30, y: card.y + 43, size: 14, weight: 400, fill: C.muted, value: TESTCONTAINERS.hint, mono: true, anchor: 'end' } as Label
     },
-    texts: [
-      { x: card.x + card.w - 30, y: card.y + 43, size: 14, weight: 400, fill: C.muted, value: RAILWAY.hint, mono: true, anchor: 'end' },
-      { x: (webX + 400 + pgX) / 2, y: lowCy - 12, size: 12, weight: 400, fill: C.violetLight, value: 'polling', mono: true, anchor: 'middle' }
-    ] as Label[],
     arrows: [
-      `M ${CX} ${browserY + 80} L ${CX} ${cloudflareY - 6}`,
-      `M ${CX} ${cloudflareY + 80} L ${CX} ${caddyY - 6}`,
-      `M ${CX} ${caddyBottom} L ${CX} ${splitY} L ${webX + 200} ${splitY} L ${webX + 200} ${midY - 6}`,
-      `M ${CX} ${caddyBottom} L ${CX} ${splitY} L ${backX + 200} ${splitY} L ${backX + 200} ${midY - 6}`,
-      `M ${backX + 200} ${midBottom} L ${backX + 200} ${pgY - 6}`
+      `M ${CX} ${runnerY + 80} L ${CX} ${backY - 6}`,
+      ...containers.map((_, i) => `M ${CX} ${backY + 80} L ${CX} ${splitY} L ${tcCx(i)} ${splitY} L ${tcCx(i)} ${dropEnd(i) - 6}`)
     ],
-    inProcess: `M ${dashX} ${midBottom} L ${dashX} ${linkY} L ${webX + 200} ${linkY} L ${webX + 200} ${lowY - 6}`,
-    polling: `M ${webX + 406} ${lowCy} L ${pgX - 6} ${lowCy}`,
+    mirrors: containers.map((_, i) => `M ${tcCx(i)} ${mirrorTop} L ${tcCx(i)} ${prodY}`),
+    prodStrip: { x: card.x + 20, y: prodY, w: card.w - 40, h: prodH, rx: 18 } as Frame,
     pills: [
-      pill((CX + webX + 200) / 2, splitY, '/*'),
-      pill((CX + backX + 200) / 2, splitY, '/api/*'),
-      pill((dashX + webX + 200) / 2, linkY, 'in-process'),
-      pill(backX + 200, (midBottom + pgY - 10) / 2, 'EF Core · Dapper')
+      pill(CX, (runnerY + 80 + backY) / 2, 'TestsHttpClient'),
+      ...containers.map((c, i) => pill(tcCx(i), (splitY + pgY) / 2, c.drop)),
+      ...containers.map((c, i) => pill(tcCx(i), (mirrorTop + prodY) / 2, c.mirror))
     ],
     cylinder: {
-      x: pgX,
-      y: pgY,
-      w: pgW,
-      h: pgH,
+      x: tcX(0),
+      w: tcW,
       ry: pgRy,
-      rx: pgW / 2,
-      cx: pgX + pgW / 2,
+      rx: tcW / 2,
+      cx: tcCx(0),
       top: pgY + pgRy,
       bottom: pgY + pgH - pgRy,
-      right: pgX + pgW,
-      color: POSTGRES.color
+      right: tcX(0) + tcW,
+      color: POSTGRES.node.color
     },
     blocks: [
-      node(BROWSER, topX, browserY, topW),
-      node(CLOUDFLARE, topX, cloudflareY, topW),
-      node(CADDY, topX, caddyY, topW),
-      node(WEB, webX + 200 - topW / 2, midY, topW),
-      node(BACK, backX + 200 - topW / 2, midY, topW),
-      asyncNode,
-      ...DOCS.map((d, i) => item(d, docs.x + 20, docs.y + 77 + i * 60, 'doc')),
-      ...R2.items.map((r, i) => item(r, r2.x + 20, r2.y + 77 + i * 60, 'doc')),
-      ...IDENTITY.rows.map((r, i) => item(r, colX(1) + 18, rowCY + 56 + i * 46, 'row')),
-      ...WEBHOOKS.rows.map((r, i) => item(r, colX(2) + 18, rowCY + 56 + i * 46, 'row')),
-      ...TESTS.items.map((t, i) => testItem(t, tests.x + 20 + i * (testW + 12), tests.y + 54, testW, 58)),
+      node(RUNNER, topX, runnerY, topW),
+      node(BACK, topX, backY, topW),
+      ...[MINIO, KEYCLOAK].map((c, i) => node(c.node, tcX(i + 1), nodeTop, tcW, nodeH)),
       {
         id: 'postgres',
-        tile: { x: pgBx, y: pgTop, size: 48, rx: 13, color: POSTGRES.color },
-        icon: { name: POSTGRES.icon, x: pgBx + 11, y: pgTop + 11, size: 26, color: POSTGRES.color },
-        title: { x: pgBx + 64, y: pgTop + 22, size: 24, weight: 600, fill: C.text, value: POSTGRES.title },
-        sub: { x: pgBx + 64, y: pgTop + 44, size: 14, weight: 400, fill: C.muted, value: POSTGRES.sub, mono: true }
-      } as Block
+        tile: { x: pgBx, y: pgTop, size: 48, rx: 13, color: POSTGRES.node.color },
+        icon: { name: POSTGRES.node.icon, x: pgBx + 11, y: pgTop + 11, size: 26, color: POSTGRES.node.color },
+        title: { x: pgBx + 64, y: pgTop + 22, size: 24, weight: 600, fill: C.text, value: POSTGRES.node.title },
+        sub: { x: pgBx + 64, y: pgTop + 44, size: 14, weight: 400, fill: C.muted, value: POSTGRES.node.sub, mono: true }
+      } as Block,
+      ...containers.map((c, i) => item(c.prod, tcCx(i) - itemWidth(c.prod) / 2, prodY + (prodH - 36) / 2, 'doc')),
+      ...ASSERTS.items.map((a, i) => item(a, asserts.x + 20, asserts.y + 84 + i * 64, 'doc')),
+      ...MOCKS.items.map((m, i) => item(m, mocks.x + 20, mocks.y + 84 + i * 64, 'doc')),
+      ...CONCEPTS.flatMap((c, ci) => c.rows.map((r, i) => item(r, colX(ci) + 18, conceptsY + 56 + i * 46, 'row'))),
+      ...SUITES.items.map((s, i) => suiteItem(s, suites.x + 20 + i * (suiteW + 12), suites.y + 54, suiteW, 58))
     ],
-    signals: OTEL.signals.map((s, i): MiniCard => {
-      const x = colX(0) + 18 + i * (signalW + 8)
-      const y = rowCY + 58
-
-      return {
-        id: s.label,
-        rect: { x, y, w: signalW, h: 58, rx: 12 },
-        icon: { name: s.icon, x: x + signalW / 2 - 10, y: y + 9, size: 20, color: s.color },
-        title: { x: x + signalW / 2, y: y + 47, size: 14, weight: 600, fill: C.text, value: s.label, anchor: 'middle' }
-      }
-    }),
     points: [
-      point('linkedin', M+4, 102, { title: LINKEDIN.handle, icon: LINKEDIN.icon, color: LINKEDIN.color, mono: true }, 16),
-      ...OTEL.points.map((p, i) => point(p.title, colX(0) + 20, rowCY + 146 + i * 30, p, 16)),
-      point('actions', ghX, tests.y + 37, TESTS.actions),
-      point('coverage', covX, tests.y + 37, TESTS.coverage)
+      point('linkedin', M + 4, 102, { title: LINKEDIN.handle, icon: LINKEDIN.icon, color: LINKEDIN.color, mono: true }, 16),
+      point('actions', ghX, suites.y + 37, SUITES.actions),
+      point('coverage', covX, suites.y + 37, SUITES.coverage)
     ],
     chips: [
-      ...chipRow(asyncNode.title.x, asyncNode.title.y + 34, ASYNC.chips!, ASYNC.color, ASYNC.chipText!),
-      ...chipRow(colX(1) + 18, rowCY + 152, IDENTITY.chips, IDENTITY.color, IDENTITY.chipText, 12),
-      ...chipRow(colX(2) + 18, rowCY + 152, WEBHOOKS.chips, WEBHOOKS.color, WEBHOOKS.chipText, 12)
+      ...containers.flatMap((c, i) => chipRow(tcCx(i) - chipsWidth(c.chips, 12) / 2, chipsY, c.chips, c.node.color, c.chipText, 12)),
+      ...CONCEPTS.flatMap((c, i) => chipRow(colX(i) + 18, conceptsY + 152, c.chips, c.color, c.chipText, 12))
     ],
     logo: { x: W - M - 52, y: 28, scale: 52 / 24 }
   }
@@ -474,15 +444,15 @@ function iconTransform(icon: IconMark): string {
   return `translate(${icon.x} ${icon.y}) scale(${icon.size / 24})`
 }
 
-const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSvg, pngItems } = usePoster(W, H, 'estud-linkedin')
+const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSvg, pngItems } = usePoster(W, H, 'estud-tests-linkedin')
 </script>
 
 <template>
-  <UDashboardPanel id="dev-arch-diagram">
+  <UDashboardPanel id="dev-tests-diagram">
     <template #header>
-      <UDashboardNavbar title="Diagrama de Arquitetura">
+      <UDashboardNavbar title="Diagrama de Testes">
         <template #leading>
-          <PageIcon icon="i-lucide-image" />
+          <PageIcon icon="i-lucide-flask-conical" />
         </template>
       </UDashboardNavbar>
     </template>
@@ -491,12 +461,12 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
       <div class="space-y-6">
         <div class="space-y-2">
           <p class="text-sm text-muted">
-            Pôster de {{ W }} × {{ H }} (proporção de post do LinkedIn) com a arquitetura do Estud em produção: da
-            borda até o banco, mais identidade, webhooks, observabilidade e a pipeline de testes.
+            Pôster de {{ W }} × {{ H }} (proporção de post do LinkedIn) com a estratégia de testes do Estud: o Back
+            sobe em memória e conversa com Postgres, MinIO e Keycloak reais, levantados via Testcontainers.
           </p>
           <p class="text-sm text-muted">
             O desenho é o próprio SVG desta página — para editar, mexa nas listas no topo de
-            <code class="text-xs">app/pages/dev/arch-diagram.vue</code>. Os botões abaixo baixam exatamente o que está
+            <code class="text-xs">app/pages/dev/tests-diagram.vue</code>. Os botões abaixo baixam exatamente o que está
             na tela, com as fontes embutidas no arquivo.
           </p>
         </div>
@@ -543,14 +513,21 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
               :viewBox="`0 0 ${W} ${H}`"
               :style="posterStyle"
               role="img"
-              aria-label="Arquitetura do Estud em produção"
+              aria-label="Estratégia de testes do Estud"
             >
               <defs>
                 <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
                   <circle cx="2" cy="2" r="1.2" fill="#ffffff" fill-opacity="0.06" />
                 </pattern>
 
-                <linearGradient id="titleGrad" gradientUnits="userSpaceOnUse" x1="520" y1="0" x2="840" y2="0">
+                <linearGradient
+                  id="titleGrad"
+                  gradientUnits="userSpaceOnUse"
+                  :x1="poster.titleGrad.x1"
+                  y1="0"
+                  :x2="poster.titleGrad.x2"
+                  y2="0"
+                >
                   <stop offset="0" stop-color="#c4b5fd" />
                   <stop offset="1" stop-color="#8b5cf6" />
                 </linearGradient>
@@ -624,14 +601,33 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
                 >{{ h.title.value }}</text>
               </g>
 
-              <g :transform="iconTransform(poster.railway.icon)" :style="{ color: poster.railway.icon.color }" v-html="archIcons[poster.railway.icon.name]" />
+              <g :transform="iconTransform(poster.card.icon)" :style="{ color: poster.card.icon.color }" v-html="archIcons[poster.card.icon.name]" />
               <text
-                :x="poster.railway.title.x"
-                :y="poster.railway.title.y"
-                :font-size="poster.railway.title.size"
-                :font-weight="poster.railway.title.weight"
-                :fill="poster.railway.title.fill"
-              >{{ poster.railway.title.value }}</text>
+                :x="poster.card.title.x"
+                :y="poster.card.title.y"
+                :font-size="poster.card.title.size"
+                :font-weight="poster.card.title.weight"
+                :fill="poster.card.title.fill"
+              >{{ poster.card.title.value }}</text>
+              <text
+                class="mono"
+                :x="poster.card.hint.x"
+                :y="poster.card.hint.y"
+                :font-size="poster.card.hint.size"
+                :fill="poster.card.hint.fill"
+                text-anchor="end"
+              >{{ poster.card.hint.value }}</text>
+
+              <rect
+                :x="poster.prodStrip.x"
+                :y="poster.prodStrip.y"
+                :width="poster.prodStrip.w"
+                :height="poster.prodStrip.h"
+                :rx="poster.prodStrip.rx"
+                :fill="C.surface"
+                :stroke="C.cardStroke"
+                stroke-width="1.5"
+              />
 
               <g v-for="a in poster.arrows" :key="a">
                 <path
@@ -654,22 +650,14 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
               </g>
 
               <path
-                :d="poster.inProcess"
+                v-for="m in poster.mirrors"
+                :key="m"
+                :d="m"
                 fill="none"
                 :stroke="C.line"
                 stroke-opacity="0.75"
                 stroke-width="2.5"
                 stroke-dasharray="7 7"
-                stroke-linejoin="round"
-                marker-end="url(#head)"
-              />
-
-              <path
-                :d="poster.polling"
-                fill="none"
-                :stroke="C.line"
-                stroke-width="2.5"
-                marker-end="url(#head)"
               />
 
               <g v-for="p in poster.pills" :key="p.label">
@@ -699,7 +687,7 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
                   :x="poster.cylinder.x"
                   :y="poster.cylinder.top"
                   :width="poster.cylinder.w"
-                  :height="poster.cylinder.h - 2 * poster.cylinder.ry"
+                  :height="poster.cylinder.bottom - poster.cylinder.top"
                   :fill="C.card"
                 />
                 <ellipse
@@ -772,28 +760,6 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
                 >{{ b.sub.value }}</text>
               </g>
 
-              <g v-for="s in poster.signals" :key="s.id">
-                <rect
-                  :x="s.rect.x"
-                  :y="s.rect.y"
-                  :width="s.rect.w"
-                  :height="s.rect.h"
-                  :rx="s.rect.rx"
-                  :fill="C.surface"
-                  :stroke="C.cardStroke"
-                  stroke-width="1.5"
-                />
-                <g :transform="iconTransform(s.icon)" :style="{ color: s.icon.color }" v-html="archIcons[s.icon.name]" />
-                <text
-                  :x="s.title.x"
-                  :y="s.title.y"
-                  text-anchor="middle"
-                  :font-size="s.title.size"
-                  :font-weight="s.title.weight"
-                  :fill="s.title.fill"
-                >{{ s.title.value }}</text>
-              </g>
-
               <g v-for="p in poster.points" :key="p.id">
                 <g :transform="iconTransform(p.icon)" :style="{ color: p.icon.color }" v-html="archIcons[p.icon.name]" />
                 <text
@@ -803,14 +769,7 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
                   :font-size="p.title.size"
                   :font-weight="p.title.weight"
                   :fill="p.title.fill"
-                >{{ p.title.value }}<tspan
-                  v-if="p.sub"
-                  class="mono"
-                  dx="10"
-                  font-size="12"
-                  font-weight="400"
-                  :fill="C.muted"
-                >{{ p.sub }}</tspan></text>
+                >{{ p.title.value }}</text>
               </g>
 
               <g v-for="c in poster.chips" :key="`${c.x}-${c.label}`">
@@ -834,17 +793,6 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
                   :fill="c.textColor"
                 >{{ c.label }}</text>
               </g>
-
-              <text
-                v-for="t in poster.texts"
-                :key="t.value"
-                :class="{ mono: t.mono }"
-                :x="t.x"
-                :y="t.y"
-                :font-size="t.size"
-                :fill="t.fill"
-                :text-anchor="t.anchor"
-              >{{ t.value }}</text>
             </svg>
 
             <div v-else class="flex items-center justify-center py-20">
