@@ -30,10 +30,12 @@ const gradeRuleLabel = computed(() =>
     </template>
 
     <template #body>
-      <div class="w-full lg:max-w-2xl mx-auto min-w-0">
-        <USkeleton v-if="status === 'pending'" class="h-56 rounded-xl" />
+      <div v-if="!data && status !== 'error'" class="flex flex-1 items-center justify-center">
+        <AppSpinner class="size-8" />
+      </div>
 
-        <template v-else-if="data">
+      <div v-else class="w-full lg:max-w-2xl mx-auto min-w-0">
+        <template v-if="data">
           <UPageCard
             title="Critérios de aprovação"
             description="Usados nas turmas da sua instituição."

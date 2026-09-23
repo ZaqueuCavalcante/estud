@@ -104,7 +104,7 @@ watch(open, (val) => {
     <template #body>
       <div class="space-y-4">
         <div v-if="loadingOptions" class="flex justify-center py-8">
-          <UIcon name="i-lucide-loader-circle" class="size-6 animate-spin text-muted" />
+          <AppSpinner class="size-6" />
         </div>
 
         <div v-else-if="!items.length" class="flex flex-col items-center gap-3 py-8 text-muted">

@@ -235,8 +235,8 @@ async function onUpdate(notify: boolean) {
         <UButton icon="i-lucide-arrow-left" label="Voltar" :to="`/classes/${props.classId}`" />
       </div>
 
-      <div v-else-if="isEdit && activityStatus !== 'success'" class="flex justify-center py-12">
-        <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
+      <div v-else-if="isEdit && activityStatus !== 'success'" class="flex flex-1 items-center justify-center">
+        <AppSpinner class="size-8" />
       </div>
 
       <div v-else class="flex flex-col gap-6 py-2">

@@ -67,10 +67,10 @@ const columns: TableColumn<RoleItem>[] = [
       <UButton icon="i-lucide-plus" label="Perfil" @click="() => { createModalOpen = true }" />
     </div>
 
-    <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">
+    <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'idle' || status === 'pending'">
       <template #empty>
         <TableEmptyState
-          :loading="status === 'pending'"
+          :loading="status === 'idle' || status === 'pending'"
           icon="i-lucide-user-cog"
           message="Nenhum perfil cadastrado"
           button-label="Perfil"

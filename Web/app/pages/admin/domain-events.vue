@@ -147,7 +147,7 @@ const { data, status: fetchStatus } = await useFetch<GetDomainEventsOut>(
   },
 )
 
-const loading = computed(() => fetchStatus.value === 'pending')
+const loading = computed(() => fetchStatus.value === 'idle' || fetchStatus.value === 'pending')
 
 function formatDateTime(value: string) {
   return new Date(value).toLocaleString('pt-BR', {

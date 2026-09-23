@@ -76,7 +76,7 @@ async function onLinkClick(notification: NotificationItem, link: NotificationLin
 
     <template #body>
       <div v-if="loading" class="flex items-center justify-center py-12">
-        <AppSpinner class="size-6 text-muted" />
+        <AppSpinner class="size-8" />
       </div>
 
       <div

@@ -33,8 +33,8 @@ const { data, status, refresh } = await useFetch<GetCampiOut>(`${config.public.b
     </template>
 
     <template #body>
-      <div v-if="status === 'pending'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        <USkeleton v-for="i in 3" :key="i" class="h-44 rounded-xl" />
+      <div v-if="!data && status !== 'error'" class="flex flex-1 items-center justify-center">
+        <AppSpinner class="size-8" />
       </div>
 
       <TableEmptyState
@@ -43,7 +43,7 @@ const { data, status, refresh } = await useFetch<GetCampiOut>(`${config.public.b
         icon="i-lucide-map-pin"
         message="Nenhum campus cadastrado"
         button-label="Campus"
-        @create="createModalOpen = true"
+        @create="() => { createModalOpen = true }"
       />
 
       <div v-else class="space-y-4">

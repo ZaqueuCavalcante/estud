@@ -15,8 +15,9 @@ const { data: pendingActivities, status: pendingActivitiesStatus } = await useFe
   server: false,
 })
 
-const isLoading = computed(() => status.value === 'pending')
-const isLoadingPendingActivities = computed(() => pendingActivitiesStatus.value === 'pending')
+const isLoading = computed(() =>
+  ['idle', 'pending'].includes(status.value) || ['idle', 'pending'].includes(pendingActivitiesStatus.value),
+)
 const hasCourse = computed(() => !!data.value)
 
 const pendingActivitiesCard = computed(() => {
@@ -88,7 +89,11 @@ const meta = computed(() => {
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div v-if="isLoading" class="flex flex-1 items-center justify-center">
+    <AppSpinner class="size-8" />
+  </div>
+
+  <div v-else class="space-y-6">
     <div>
       <h2 class="text-2xl font-semibold text-highlighted">Bem-vindo, {{ account?.name }}</h2>
       <p class="inline-flex items-center gap-1.5 text-muted text-sm mt-1">
@@ -103,8 +108,7 @@ const meta = computed(() => {
       </div>
     </div>
 
-    <USkeleton v-if="isLoadingPendingActivities" class="h-[72px] w-full" />
-    <div v-else class="flex items-center gap-3 rounded-lg p-4 ring ring-default bg-elevated/40">
+    <div class="flex items-center gap-3 rounded-lg p-4 ring ring-default bg-elevated/40">
       <div class="flex items-center justify-center p-2 rounded-lg ring ring-inset shrink-0" :class="pendingActivitiesCard.boxClass">
         <UIcon :name="pendingActivitiesCard.icon" class="size-5" :class="pendingActivitiesCard.iconClass" />
       </div>
@@ -114,11 +118,8 @@ const meta = computed(() => {
       </div>
     </div>
 
-    <!-- Loading -->
-    <USkeleton v-if="isLoading" class="h-64 w-full" />
-
     <!-- Sem matrícula em curso -->
-    <UCard v-else-if="!hasCourse">
+    <UCard v-if="!hasCourse">
       <div class="flex flex-col items-center justify-center text-center py-10 gap-3">
         <div class="p-3 rounded-full bg-primary/10 ring ring-inset ring-primary/25">
           <UIcon name="i-lucide-graduation-cap" class="size-6 text-primary" />

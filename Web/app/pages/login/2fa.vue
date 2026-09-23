@@ -57,7 +57,7 @@ async function onSubmit() {
 
         <UCard>
           <div v-if="loginSuccess" class="flex flex-col items-center justify-center py-12 gap-4">
-            <AppSpinner class="text-primary size-10" />
+            <AppSpinner class="size-10" />
             <p class="text-lg font-medium text-gray-900 dark:text-white">
               Entrando...
             </p>

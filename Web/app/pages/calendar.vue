@@ -274,7 +274,7 @@ function cellClass(cell: CalendarCell) {
         </div>
 
         <div v-if="status === 'pending'" class="flex justify-center py-16">
-          <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
+          <AppSpinner class="size-8" />
         </div>
 
         <div v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">

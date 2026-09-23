@@ -30,8 +30,8 @@ const { data, status } = await useAsyncData<GetAgendaOut>(
     </template>
 
     <template #body>
-      <div v-if="status === 'pending'" class="flex justify-center py-16">
-        <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
+      <div v-if="status === 'idle' || status === 'pending'" class="flex flex-1 items-center justify-center">
+        <AppSpinner class="size-8" />
       </div>
       <AgendaWeek v-else :days="data?.days ?? []" />
     </template>

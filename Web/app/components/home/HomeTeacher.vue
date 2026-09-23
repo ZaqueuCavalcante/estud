@@ -9,7 +9,7 @@ const { data, status } = await useFetch<GetTeacherHomeOut>(`${config.public.back
   server: false,
 })
 
-const isLoading = computed(() => status.value === 'pending')
+const isLoading = computed(() => status.value === 'idle' || status.value === 'pending')
 
 const classes = computed<TeacherHomeClassItem[]>(() => data.value?.classes ?? [])
 
@@ -30,7 +30,11 @@ const meta = computed(() => {
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div v-if="isLoading" class="flex flex-1 items-center justify-center">
+    <AppSpinner class="size-8" />
+  </div>
+
+  <div v-else class="space-y-6">
     <div>
       <h2 class="text-2xl font-semibold text-highlighted">Bem-vindo, {{ account?.name }}</h2>
       <p class="text-muted text-sm mt-1">{{ account?.institution }}</p>
@@ -42,14 +46,7 @@ const meta = computed(() => {
       </div>
     </div>
 
-    <template v-if="isLoading">
-      <div class="grid grid-cols-2 gap-3">
-        <USkeleton v-for="i in 2" :key="i" class="h-16 w-full" />
-      </div>
-      <USkeleton class="h-64 w-full" />
-    </template>
-
-    <UCard v-else-if="!classes.length">
+    <UCard v-if="!classes.length">
       <div class="flex flex-col items-center justify-center text-center py-10 gap-3">
         <div class="p-3 rounded-full bg-primary/10 ring ring-inset ring-primary/25">
           <UIcon name="i-lucide-presentation" class="size-6 text-primary" />

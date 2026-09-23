@@ -9,10 +9,12 @@ interface GetHomeStatsOut {
 const { account } = useUserAccount()
 const config = useRuntimeConfig()
 
-const { data: stats } = await useFetch<GetHomeStatsOut>(`${config.public.backendUrl}/home/stats`, {
+const { data: stats, status } = await useFetch<GetHomeStatsOut>(`${config.public.backendUrl}/home/stats`, {
   credentials: 'include',
   server: false,
 })
+
+const isLoading = computed(() => status.value === 'idle' || status.value === 'pending')
 
 const cards = computed(() => [
   { label: 'Alunos matriculados',     value: stats.value?.enrolledStudents,      icon: 'i-lucide-graduation-cap' },
@@ -23,7 +25,11 @@ const cards = computed(() => [
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div v-if="isLoading" class="flex flex-1 items-center justify-center">
+    <AppSpinner class="size-8" />
+  </div>
+
+  <div v-else class="space-y-6">
     <div>
       <h2 class="text-2xl font-semibold text-highlighted">Bem-vindo, {{ account?.name }}</h2>
       <p class="text-muted text-sm mt-1">{{ account?.institution }}</p>

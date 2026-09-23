@@ -63,7 +63,11 @@ async function toggleRole(role: TwoFactorEnforcementItem, required: boolean) {
       class="mb-4"
     />
 
-    <template v-if="data && data.items.length">
+    <div v-if="!data && (status === 'idle' || status === 'pending')" class="flex justify-center py-12">
+      <AppSpinner class="size-8" />
+    </div>
+
+    <template v-else-if="data && data.items.length">
       <UPageCard variant="subtle">
         <template v-for="(role, index) in data.items" :key="role.roleId">
           <USeparator v-if="index > 0" />

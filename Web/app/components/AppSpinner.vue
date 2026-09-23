@@ -1,7 +1,4 @@
 <script setup lang="ts">
-// Spinner de CSS puro (sem SVG) para evitar o artefato de renderização do
-// Firefox com ícones animados via `rotate` (nuxt/ui#633). Herda tamanho via
-// classes `size-*` e cor via `text-*` (currentColor).
 defineOptions({ inheritAttrs: false })
 </script>
 
@@ -10,8 +7,26 @@ defineOptions({ inheritAttrs: false })
     role="status"
     aria-label="Carregando"
     :class="[
-      'inline-block shrink-0 animate-spin rounded-full border-2 border-current border-r-transparent',
+      'inline-flex shrink-0 items-center justify-center gap-[12%] text-primary',
       $attrs.class as string,
     ]"
-  />
+  >
+    <span
+      v-for="i in 3"
+      :key="i"
+      class="app-spinner-dot w-[22%] aspect-square rounded-full bg-current"
+      :style="{ animationDelay: `${(i - 1) * 0.15}s` }"
+    />
+  </span>
 </template>
+
+<style scoped>
+.app-spinner-dot {
+  animation: app-spinner-bounce 0.9s ease-in-out infinite;
+}
+
+@keyframes app-spinner-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-80%); opacity: 1; }
+}
+</style>

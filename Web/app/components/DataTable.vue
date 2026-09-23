@@ -35,8 +35,13 @@ defineSlots<{
       tbody: '[&>tr]:last:[&>td]:border-b-0',
       th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
       td: 'border-b border-default whitespace-normal break-words',
+      loading: 'py-24 text-center',
     }"
   >
+    <template #loading>
+      <AppSpinner class="size-8" />
+    </template>
+
     <template #empty>
       <slot name="empty" />
     </template>

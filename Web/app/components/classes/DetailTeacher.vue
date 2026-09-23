@@ -138,8 +138,8 @@ const activityGroups = computed(() => groupActivitiesByNote(activities.value))
     </template>
 
     <template #body>
-      <div v-if="status === 'pending'" class="flex justify-center py-12">
-        <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
+      <div v-if="!data && status !== 'error'" class="flex flex-1 items-center justify-center">
+        <AppSpinner class="size-8" />
       </div>
 
       <div v-else-if="error || !data" class="flex flex-col items-center gap-4 py-12">
@@ -206,7 +206,7 @@ const activityGroups = computed(() => groupActivitiesByNote(activities.value))
         <!-- Alunos -->
         <section v-if="activeTab === 'students'" class="flex flex-col gap-3">
           <div v-if="studentsStatus === 'pending'" class="flex justify-center py-8">
-            <UIcon name="i-lucide-loader-circle" class="size-6 animate-spin text-muted" />
+            <AppSpinner class="size-6" />
           </div>
           <DataTable v-else :data="students" :columns="studentColumns">
             <template #empty>
@@ -242,7 +242,7 @@ const activityGroups = computed(() => groupActivitiesByNote(activities.value))
           </UInput>
 
           <div v-if="lessonsStatus === 'pending'" class="flex justify-center py-8">
-            <UIcon name="i-lucide-loader-circle" class="size-6 animate-spin text-muted" />
+            <AppSpinner class="size-6" />
           </div>
           <template v-else>
             <div v-if="lessons.length" class="flex flex-col divide-y divide-default">
@@ -301,7 +301,7 @@ const activityGroups = computed(() => groupActivitiesByNote(activities.value))
         <!-- Atividades -->
         <section v-else-if="activeTab === 'activities'" class="flex flex-col gap-3">
           <div v-if="activitiesStatus === 'pending'" class="flex justify-center py-8">
-            <UIcon name="i-lucide-loader-circle" class="size-6 animate-spin text-muted" />
+            <AppSpinner class="size-6" />
           </div>
           <template v-else>
             <div class="flex items-center gap-2">

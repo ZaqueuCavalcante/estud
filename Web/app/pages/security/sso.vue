@@ -52,7 +52,11 @@ async function verifyDomain(domain: string) {
 
 <template>
   <div class="w-full lg:max-w-2xl mx-auto min-w-0">
-    <template v-if="ssoConfig">
+    <div v-if="!ssoConfig && (status === 'idle' || status === 'pending')" class="flex justify-center py-12">
+      <AppSpinner class="size-8" />
+    </div>
+
+    <template v-else-if="ssoConfig">
       <UPageCard
         title="Configuração Single Sign-On"
         description="Provedor configurado para sua instituição."
@@ -203,7 +207,7 @@ async function verifyDomain(domain: string) {
       icon="i-lucide-key-round"
       message="Nenhuma configuração SSO cadastrada"
       button-label="Configuração"
-      @create="createModalOpen = true"
+      @create="() => { createModalOpen = true }"
     />
   </div>
 

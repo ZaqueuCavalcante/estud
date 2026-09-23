@@ -22,7 +22,7 @@ const emit = defineEmits<{
     </p>
 
     <div v-if="loading" class="flex justify-center py-4">
-      <UIcon name="i-lucide-loader-circle" class="size-5 animate-spin text-muted" />
+      <AppSpinner class="size-5" />
     </div>
 
     <p v-else-if="!items.length" class="py-1 text-sm text-dimmed">

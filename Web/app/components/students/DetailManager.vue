@@ -135,8 +135,8 @@ const classColumns: TableColumn<StudentClassItem>[] = [
     </template>
 
     <template #body>
-      <div v-if="status === 'pending'" class="flex justify-center py-12">
-        <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
+      <div v-if="!data && status !== 'error'" class="flex flex-1 items-center justify-center">
+        <AppSpinner class="size-8" />
       </div>
 
       <div v-else-if="error || !data" class="flex flex-col items-center gap-4 py-12">

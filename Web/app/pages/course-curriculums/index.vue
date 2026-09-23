@@ -108,7 +108,7 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
           class="w-full sm:max-w-sm"
           icon="i-lucide-search"
           placeholder="Buscar por nome ou curso..."
-          :loading="status === 'pending'"
+          :loading="status === 'idle' || status === 'pending'"
         >
           <template v-if="filter" #trailing>
             <UButton
@@ -138,10 +138,10 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
           </UBadge>
         </div>
       </div>
-      <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">
+      <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'idle' || status === 'pending'">
         <template #empty>
           <TableEmptyState
-            :loading="status === 'pending'"
+            :loading="status === 'idle' || status === 'pending'"
             icon="i-lucide-layout-list"
             message="Nenhuma grade curricular cadastrada"
             button-label="Grade"

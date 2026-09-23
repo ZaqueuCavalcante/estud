@@ -1008,12 +1008,12 @@ onMounted(async () => {
             </svg>
 
             <div v-else class="flex items-center justify-center py-20">
-              <AppSpinner class="size-6 text-muted" />
+              <AppSpinner class="size-6" />
             </div>
 
             <template #fallback>
               <div class="flex items-center justify-center py-20">
-                <AppSpinner class="size-6 text-muted" />
+                <AppSpinner class="size-6" />
               </div>
             </template>
           </ClientOnly>

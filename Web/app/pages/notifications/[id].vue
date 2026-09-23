@@ -63,8 +63,8 @@ const breadcrumb = [
     </template>
 
     <template #body>
-      <div v-if="!data && status !== 'error'" class="flex justify-center py-12">
-        <AppSpinner class="size-6 text-muted" />
+      <div v-if="!data && status !== 'error'" class="flex flex-1 items-center justify-center">
+        <AppSpinner class="size-8" />
       </div>
 
       <div v-else-if="error || !data" class="flex flex-col items-center gap-4 py-12">

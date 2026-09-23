@@ -55,18 +55,8 @@ function getHeaderLabel(cell: any): string {
 
 <template>
   <div>
-    <!-- Loading skeleton -->
-    <div v-if="loading" class="space-y-3">
-      <div
-        v-for="i in 3"
-        :key="i"
-        class="rounded-lg border border-default divide-y divide-default"
-      >
-        <div v-for="j in 4" :key="j" class="flex items-center justify-between px-3 py-2">
-          <USkeleton class="h-3.5 w-16" />
-          <USkeleton class="h-3.5 w-28" />
-        </div>
-      </div>
+    <div v-if="loading" class="flex justify-center py-24">
+      <AppSpinner class="size-8" />
     </div>
 
     <!-- Empty state -->

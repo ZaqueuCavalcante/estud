@@ -71,10 +71,10 @@ const columns: TableColumn<WebhookSubscriptionItem>[] = [
       <UButton icon="i-lucide-plus" label="Webhook" @click="() => { createModalOpen = true }" />
     </div>
 
-    <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">
+    <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'idle' || status === 'pending'">
       <template #empty>
         <TableEmptyState
-          :loading="status === 'pending'"
+          :loading="status === 'idle' || status === 'pending'"
           icon="i-lucide-webhook"
           message="Nenhum webhook cadastrado"
           button-label="Webhook"

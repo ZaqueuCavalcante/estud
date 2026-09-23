@@ -288,7 +288,7 @@ function toggle(id: number) {
     </div>
 
     <div v-if="loading" class="flex justify-center py-8">
-      <AppSpinner class="size-6 text-muted" />
+      <AppSpinner class="size-6" />
     </div>
 
     <slot v-else-if="!allDisciplines.length" name="empty">

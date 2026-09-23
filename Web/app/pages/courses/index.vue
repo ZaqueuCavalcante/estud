@@ -130,7 +130,7 @@ const columns: TableColumn<CourseItem>[] = [
             :ui="{ base: 'h-8' }"
             icon="i-lucide-search"
             placeholder="Buscar por nome..."
-            :loading="status === 'pending'"
+            :loading="status === 'idle' || status === 'pending'"
           >
             <template v-if="filter" #trailing>
               <UButton
@@ -171,10 +171,10 @@ const columns: TableColumn<CourseItem>[] = [
           </UBadge>
         </div>
       </div>
-      <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">
+      <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'idle' || status === 'pending'">
         <template #empty>
           <TableEmptyState
-            :loading="status === 'pending'"
+            :loading="status === 'idle' || status === 'pending'"
             icon="i-lucide-notebook"
             message="Nenhum curso cadastrado"
             button-label="Curso"

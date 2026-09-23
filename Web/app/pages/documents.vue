@@ -124,10 +124,10 @@ const columns: TableColumn<EnrollmentProofItem>[] = [
         />
       </div>
 
-      <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">
+      <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'idle' || status === 'pending'">
         <template #empty>
           <TableEmptyState
-            :loading="status === 'pending'"
+            :loading="status === 'idle' || status === 'pending'"
             icon="i-lucide-file-text"
             message="Nenhum comprovante de matrícula emitido"
             button-label="Comprovante de matrícula"

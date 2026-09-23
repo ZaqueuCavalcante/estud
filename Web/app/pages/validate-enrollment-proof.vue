@@ -95,7 +95,7 @@ onMounted(() => { validate() })
     </form>
 
     <div v-if="loading" class="flex justify-center py-16">
-      <AppSpinner class="size-8 text-primary" />
+      <AppSpinner class="size-8" />
     </div>
 
     <UPageCard v-else-if="proof" variant="subtle" class="mt-8">

@@ -347,8 +347,8 @@ const breadcrumb = [
     </template>
 
     <template #body>
-      <div v-if="status === 'pending'" class="flex justify-center py-12">
-        <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
+      <div v-if="status === 'pending'" class="flex flex-1 items-center justify-center">
+        <AppSpinner class="size-8" />
       </div>
 
       <div v-else-if="!campus" class="flex flex-col items-center gap-4 py-12">
@@ -359,7 +359,7 @@ const breadcrumb = [
         <UButton icon="i-lucide-arrow-left" label="Voltar" to="/campi" />
       </div>
 
-      <div v-else class="flex flex-col gap-6 pb-2">
+      <div v-else class="flex flex-1 flex-col gap-6 pb-2">
         <!-- Cabeçalho: as abas sobem pra linha do nome do campus onde há
              largura pra isso. No mobile elas voltam pra baixo das infos, senão
              o nome do campus fica espremido num canto. -->
@@ -389,8 +389,8 @@ const breadcrumb = [
         </div>
 
         <!-- Ocupação -->
-        <div v-if="activeTab === 'occupancy' && occupancyLoading" class="flex justify-center py-12">
-          <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
+        <div v-if="activeTab === 'occupancy' && occupancyLoading" class="flex flex-1 items-center justify-center">
+          <AppSpinner class="size-8" />
         </div>
 
         <div v-else-if="activeTab === 'occupancy' && occupancyError" class="flex flex-col items-center gap-4 py-12">
@@ -663,8 +663,8 @@ const breadcrumb = [
         </template>
 
         <!-- Horários: a configuração de que o mapa de ocupação vive -->
-        <div v-else-if="activeTab === 'schedules' && openingHoursLoading" class="flex justify-center py-12">
-          <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
+        <div v-else-if="activeTab === 'schedules' && openingHoursLoading" class="flex flex-1 items-center justify-center">
+          <AppSpinner class="size-8" />
         </div>
 
         <div v-else-if="activeTab === 'schedules' && openingHoursError" class="flex flex-col items-center gap-4 py-12">

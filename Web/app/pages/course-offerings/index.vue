@@ -110,10 +110,10 @@ const columns: TableColumn<CourseOfferingItem>[] = [
           {{ data?.total }} {{ data?.total === 1 ? 'oferta' : 'ofertas' }}
         </UBadge>
       </div>
-      <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">
+      <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'idle' || status === 'pending'">
         <template #empty>
           <TableEmptyState
-            :loading="status === 'pending'"
+            :loading="status === 'idle' || status === 'pending'"
             icon="i-lucide-library"
             message="Nenhuma oferta de curso cadastrada"
             button-label="Oferta"

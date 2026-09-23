@@ -70,7 +70,7 @@ const loggingOut = useState('loggingOut', () => false)
         v-if="loggingOut"
         class="fixed inset-0 z-9999 flex flex-col items-center justify-center gap-4 bg-white dark:bg-gray-900"
       >
-        <AppSpinner class="size-10 text-primary" />
+        <AppSpinner class="size-10" />
         <p class="text-sm text-gray-600 dark:text-gray-400">
           Saindo...
         </p>

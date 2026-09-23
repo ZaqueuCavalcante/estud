@@ -9,6 +9,8 @@ const UTooltip = resolveComponent('UTooltip')
 
 const props = defineProps<{ classroomId: string }>()
 
+const route = useRoute()
+const router = useRouter()
 const config = useRuntimeConfig()
 
 const { data, status, error, refresh } = await useFetch<GetClassroomOut>(
@@ -53,11 +55,17 @@ const usageRingClass = computed(() => (usagePercent.value > 100 ? 'text-warning'
 
 const classesRingClass = computed(() => (classesCount.value > 0 ? 'text-info' : 'text-muted'))
 
-const activeTab = ref('agenda')
+const initialTab = route.query.t as string
+const activeTab = ref(initialTab === 'classes' ? 'classes' : 'agenda')
+
+function selectTab(tab: string) {
+  activeTab.value = tab
+  router.replace({ query: tab === 'agenda' ? {} : { t: tab } })
+}
 
 const tabs = computed(() => [[
-  { label: 'Agenda', icon: 'i-lucide-calendar-days', active: activeTab.value === 'agenda', onSelect: () => { activeTab.value = 'agenda' } },
-  { label: 'Turmas', icon: 'i-lucide-presentation', active: activeTab.value === 'classes', onSelect: () => { activeTab.value = 'classes' } },
+  { label: 'Agenda', icon: 'i-lucide-calendar-days', active: activeTab.value === 'agenda', onSelect: () => { selectTab('agenda') } },
+  { label: 'Turmas', icon: 'i-lucide-presentation', active: activeTab.value === 'classes', onSelect: () => { selectTab('classes') } },
 ]] satisfies NavigationMenuItem[][])
 
 const agendaDays = computed<AgendaDay[]>(() => {
@@ -151,8 +159,8 @@ const classColumns: TableColumn<ClassroomScheduleItem>[] = [
     </template>
 
     <template #body>
-      <div v-if="status === 'pending'" class="flex justify-center py-12">
-        <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
+      <div v-if="!data && status !== 'error'" class="flex flex-1 items-center justify-center">
+        <AppSpinner class="size-8" />
       </div>
 
       <div v-else-if="error || !data" class="flex flex-col items-center gap-4 py-12">

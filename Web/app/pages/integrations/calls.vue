@@ -42,7 +42,7 @@ const { data, status: fetchStatus, refresh } = await useFetch<GetWebhookCallsOut
   },
 )
 
-const loading = computed(() => fetchStatus.value === 'pending')
+const loading = computed(() => fetchStatus.value === 'idle' || fetchStatus.value === 'pending')
 
 function formatDateTime(value: string) {
   return new Date(value).toLocaleString('pt-BR', {

@@ -113,7 +113,7 @@ const columns: TableColumn<TeacherItem>[] = [
           class="w-full sm:max-w-sm"
           icon="i-lucide-search"
           placeholder="Buscar por nome ou email..."
-          :loading="status === 'pending'"
+          :loading="status === 'idle' || status === 'pending'"
         >
           <template v-if="filter" #trailing>
             <UButton
@@ -143,10 +143,10 @@ const columns: TableColumn<TeacherItem>[] = [
           </UBadge>
         </div>
       </div>
-      <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">
+      <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'idle' || status === 'pending'">
         <template #empty>
           <TableEmptyState
-            :loading="status === 'pending'"
+            :loading="status === 'idle' || status === 'pending'"
             icon="i-lucide-user-pen"
             message="Nenhum professor cadastrado"
             button-label="Professor"

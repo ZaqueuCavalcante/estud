@@ -158,7 +158,7 @@ function statusCodeColor(statusCode: number) {
 
     <template #body>
       <div v-if="loading" class="flex items-center justify-center py-12">
-        <AppSpinner class="size-6 text-muted" />
+        <AppSpinner class="size-6" />
       </div>
 
       <div v-else-if="error" class="flex flex-col items-center justify-center gap-3 py-12 text-center">

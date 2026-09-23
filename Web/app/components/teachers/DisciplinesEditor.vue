@@ -324,7 +324,7 @@ async function save() {
 
     <template v-else>
       <div v-if="loading" class="flex justify-center py-8">
-        <AppSpinner class="size-6 text-muted" />
+        <AppSpinner class="size-6" />
       </div>
 
       <TableEmptyState

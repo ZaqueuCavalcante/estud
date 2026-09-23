@@ -97,7 +97,7 @@ const columns: TableColumn<InstitutionItem>[] = [
           :ui="{ base: 'h-8' }"
           icon="i-lucide-search"
           placeholder="Buscar por nome..."
-          :loading="status === 'pending'"
+          :loading="status === 'idle' || status === 'pending'"
         >
           <template v-if="name" #trailing>
             <UButton
@@ -112,10 +112,10 @@ const columns: TableColumn<InstitutionItem>[] = [
         </UInput>
       </div>
 
-      <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'pending'">
+      <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'idle' || status === 'pending'">
         <template #empty>
           <TableEmptyState
-            :loading="status === 'pending'"
+            :loading="status === 'idle' || status === 'pending'"
             icon="i-lucide-building-2"
             message="Nenhuma instituição cadastrada"
             :filtered="hasFilters"
