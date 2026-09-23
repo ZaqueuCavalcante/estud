@@ -7,6 +7,7 @@ const UButton = resolveComponent('UButton')
 const UTooltip = resolveComponent('UTooltip')
 
 const route = useRoute()
+const router = useRouter()
 const config = useRuntimeConfig()
 const disciplineId = route.params.disciplineId as string
 
@@ -31,10 +32,13 @@ const classes = computed(() => data.value?.classes ?? [])
 // Professores e turmas são mantidos em telas próprias, então trocar de aba
 // busca os dados de novo — voltar pra uma aba nunca pode mostrar uma lista
 // velha.
-const activeTab = ref('courses')
+const tabKeys = ['courses', 'teachers', 'classes']
+const initialTab = route.query.t as string
+const activeTab = ref(tabKeys.includes(initialTab) ? initialTab : 'courses')
 
 function selectTab(tab: string) {
   activeTab.value = tab
+  router.replace({ query: tab === 'courses' ? {} : { t: tab } })
   refresh()
 }
 
@@ -99,7 +103,7 @@ const breadcrumb = [
     </template>
 
     <template #body>
-      <div v-if="status === 'pending' && !data" class="flex justify-center py-12">
+      <div v-if="!data && status !== 'error'" class="flex justify-center py-12">
         <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
       </div>
 

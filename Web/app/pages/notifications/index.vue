@@ -61,7 +61,7 @@ const { data, status, refresh } = await useFetch<GetInstitutionNotificationsOut>
     </template>
 
     <template #body>
-      <div v-if="status === 'pending'" class="flex items-center justify-center py-12">
+      <div v-if="!data && status !== 'error'" class="flex items-center justify-center py-12">
         <AppSpinner class="size-6 text-muted" />
       </div>
 

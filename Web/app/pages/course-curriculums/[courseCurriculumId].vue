@@ -3,6 +3,7 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 import type { GetCourseCurriculumDetailsOut } from '~/types/course-curriculums'
 
 const route = useRoute()
+const router = useRouter()
 const config = useRuntimeConfig()
 const courseCurriculumId = Number(route.params.courseCurriculumId)
 
@@ -20,11 +21,18 @@ const { data, status, error, refresh } = await useFetch<GetCourseCurriculumDetai
 const disciplines = computed(() => data.value?.disciplines ?? [])
 const offerings = computed(() => data.value?.offerings ?? [])
 
-const activeTab = ref('disciplines')
+const tabKeys = ['disciplines', 'offerings']
+const initialTab = route.query.t as string
+const activeTab = ref(tabKeys.includes(initialTab) ? initialTab : 'disciplines')
+
+function selectTab(tab: string) {
+  activeTab.value = tab
+  router.replace({ query: tab === 'disciplines' ? {} : { t: tab } })
+}
 
 const tabs = computed(() => [[
-  { label: 'Disciplinas', icon: 'i-lucide-book-open', active: activeTab.value === 'disciplines', onSelect: () => { activeTab.value = 'disciplines' } },
-  { label: 'Ofertas', icon: 'i-lucide-library', active: activeTab.value === 'offerings', onSelect: () => { activeTab.value = 'offerings' } },
+  { label: 'Disciplinas', icon: 'i-lucide-book-open', active: activeTab.value === 'disciplines', onSelect: () => { selectTab('disciplines') } },
+  { label: 'Ofertas', icon: 'i-lucide-library', active: activeTab.value === 'offerings', onSelect: () => { selectTab('offerings') } },
 ]] satisfies NavigationMenuItem[][])
 
 const breadcrumb = [
@@ -44,7 +52,7 @@ const breadcrumb = [
     </template>
 
     <template #body>
-      <div v-if="status === 'pending'" class="flex justify-center py-12">
+      <div v-if="!data && status !== 'error'" class="flex justify-center py-12">
         <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
       </div>
 

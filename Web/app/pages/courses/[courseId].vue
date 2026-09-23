@@ -3,6 +3,7 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 import type { GetCourseDetailsOut } from '~/types/courses'
 
 const route = useRoute()
+const router = useRouter()
 const config = useRuntimeConfig()
 const courseId = Number(route.params.courseId)
 
@@ -31,10 +32,13 @@ const offerings = computed(() => data.value?.offerings ?? [])
 
 // Grades e ofertas são criadas em telas próprias, então trocar de aba busca os
 // dados de novo — voltar pra uma aba nunca pode mostrar uma lista velha.
-const activeTab = ref('disciplines')
+const tabKeys = ['disciplines', 'curriculums', 'offerings']
+const initialTab = route.query.t as string
+const activeTab = ref(tabKeys.includes(initialTab) ? initialTab : 'disciplines')
 
 function selectTab(tab: string) {
   activeTab.value = tab
+  router.replace({ query: tab === 'disciplines' ? {} : { t: tab } })
   refresh()
 }
 
@@ -61,7 +65,7 @@ const breadcrumb = [
     </template>
 
     <template #body>
-      <div v-if="status === 'pending' && !data" class="flex justify-center py-12">
+      <div v-if="!data && status !== 'error'" class="flex justify-center py-12">
         <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
       </div>
 

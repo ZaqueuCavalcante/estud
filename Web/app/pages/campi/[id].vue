@@ -23,6 +23,7 @@ interface ClassroomItem {
 }
 
 const route = useRoute()
+const router = useRouter()
 const config = useRuntimeConfig()
 const toast = useToast()
 const campusId = Number(route.params.id)
@@ -46,8 +47,8 @@ const classrooms = computed(() => (classroomsData.value ?? []).filter(c => c.cam
 // aba Salas mantém os dados antigos em `data`, e apagar a tela toda por causa
 // dele seria pior do que a espera.
 const status = computed(() =>
-  (campiStatus.value === 'pending' && campiData.value === null)
-  || (classroomsStatus.value === 'pending' && classroomsData.value === null)
+  (!campiData.value && campiStatus.value !== 'error')
+  || (!classroomsData.value && classroomsStatus.value !== 'error')
     ? 'pending'
     : 'success',
 )
@@ -308,23 +309,25 @@ async function onOpeningHoursSaved() {
 // Cada aba busca seus dados de novo ao ser selecionada: o mapa de ocupação e as
 // salas mudam por fora desta tela (turmas alocadas, salas criadas em outro
 // campus), então voltar pra uma aba nunca pode mostrar número velho.
-const activeTab = ref('occupancy')
-
 const tabRefreshers: Record<string, () => Promise<unknown>> = {
-  'occupancy': () => refreshOccupancy(),
-  'opening-hours': () => refreshOpeningHours(),
-  'rooms': () => refreshClassrooms(),
+  occupancy: () => refreshOccupancy(),
+  schedules: () => refreshOpeningHours(),
+  classrooms: () => refreshClassrooms(),
 }
+
+const initialTab = route.query.t as string
+const activeTab = ref(Object.hasOwn(tabRefreshers, initialTab) ?initialTab : 'occupancy')
 
 function selectTab(tab: string) {
   activeTab.value = tab
+  router.replace({ query: tab === 'occupancy' ? {} : { t: tab } })
   tabRefreshers[tab]?.()
 }
 
 const tabs = computed(() => [[
   { label: 'Ocupação', icon: 'i-lucide-layout-grid', active: activeTab.value === 'occupancy', onSelect: () => { selectTab('occupancy') } },
-  { label: 'Horários', icon: 'i-lucide-clock', active: activeTab.value === 'opening-hours', onSelect: () => { selectTab('opening-hours') } },
-  { label: 'Salas', icon: 'i-lucide-door-open', active: activeTab.value === 'rooms', onSelect: () => { selectTab('rooms') } },
+  { label: 'Horários', icon: 'i-lucide-clock', active: activeTab.value === 'schedules', onSelect: () => { selectTab('schedules') } },
+  { label: 'Salas', icon: 'i-lucide-door-open', active: activeTab.value === 'classrooms', onSelect: () => { selectTab('classrooms') } },
 ]] satisfies NavigationMenuItem[][])
 
 const breadcrumb = [
@@ -422,7 +425,7 @@ const breadcrumb = [
                   Cadastre as <button
                     type="button"
                     class="font-medium text-primary underline underline-offset-2 hover:text-primary/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    @click="() => { selectTab('rooms') }"
+                    @click="() => { selectTab('classrooms') }"
                   >salas</button> e defina
                 </template>
                 <template v-else>
@@ -660,11 +663,11 @@ const breadcrumb = [
         </template>
 
         <!-- Horários: a configuração de que o mapa de ocupação vive -->
-        <div v-else-if="activeTab === 'opening-hours' && openingHoursLoading" class="flex justify-center py-12">
+        <div v-else-if="activeTab === 'schedules' && openingHoursLoading" class="flex justify-center py-12">
           <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
         </div>
 
-        <div v-else-if="activeTab === 'opening-hours' && openingHoursError" class="flex flex-col items-center gap-4 py-12">
+        <div v-else-if="activeTab === 'schedules' && openingHoursError" class="flex flex-col items-center gap-4 py-12">
           <UIcon name="i-lucide-triangle-alert" class="size-16 text-muted" />
           <p class="text-sm text-muted">
             Não foi possível carregar os horários de funcionamento
@@ -678,7 +681,7 @@ const breadcrumb = [
           />
         </div>
 
-        <section v-else-if="activeTab === 'opening-hours'" class="flex flex-col gap-4">
+        <section v-else-if="activeTab === 'schedules'" class="flex flex-col gap-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <p class="text-sm text-muted">
               Os dias e horários em que este campus abre. É o que define o tamanho do mapa de ocupação.
@@ -723,7 +726,7 @@ const breadcrumb = [
         </section>
 
         <!-- Salas do campus: uma sala sempre vive dentro de um campus -->
-        <section v-else-if="activeTab === 'rooms'" class="flex flex-col gap-4">
+        <section v-else-if="activeTab === 'classrooms'" class="flex flex-col gap-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <p class="text-sm text-muted">
               As salas de aula deste campus.

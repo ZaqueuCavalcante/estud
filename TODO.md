@@ -12,7 +12,6 @@
 ## Planejado
 
 - notas parciais
-- test containers
 - elaboração de horários
 - lista de alunos em risco
 - coeficiente de rendimento

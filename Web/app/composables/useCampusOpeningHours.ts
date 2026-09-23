@@ -22,7 +22,7 @@ export function useCampusOpeningHours(campusId: number) {
   // então o carregando cobre os dois estados. Já com dado em tela o refresh é
   // silencioso — trocar a semana por um spinner a cada volta na aba só pisca.
   const loading = computed(() =>
-    (status.value === 'idle' || status.value === 'pending') && data.value === null,
+    (status.value === 'idle' || status.value === 'pending') && data.value == null,
   )
 
   return { openingHours: data, status, loading, error, refresh }
