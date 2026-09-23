@@ -188,5 +188,43 @@ public partial class IntegrationTests
         student.Birthdate.Should().Be(birthdate);
     }
 
+    [Test]
+    public async Task Students_CreateStudent_Should_send_invite_email()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var email = DataGen.Email;
+
+        // Act
+        var result = await client.CreateStudent(DataGen.UserName, email);
+
+        // Assert
+        result.ShouldBeSuccess();
+
+        await _back.AwaitCommandsProcessing();
+
+        var emailEntry = _back.GetFakeEmailsService().InviteEmails.FirstOrDefault(e => e.Contains(email));
+        emailEntry.Should().NotBeNull();
+        emailEntry.Should().Contain("/magic-link?token=");
+    }
+
+    [Test]
+    public async Task Students_CreateStudent_Should_allow_student_to_login_with_invite_magic_link()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var email = DataGen.Email;
+        await director.CreateStudent(DataGen.UserName, email).Success();
+
+        var token = await _back.GetMagicLinkToken(email);
+        var client = _back.GetTestsClient();
+
+        // Act
+        var result = await client.MagicLinkLogin(token);
+
+        // Assert
+        result.ShouldBeSuccess();
+    }
+
     #endregion
 }

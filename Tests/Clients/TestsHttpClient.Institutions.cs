@@ -22,10 +22,12 @@ public partial class TestsHttpClient
     public async Task<OneOf<SetupInstitutionConfigOut, ErrorOut>> SetupInstitutionConfig(
         decimal noteLimit = 7.00M,
         decimal frequencyLimit = 70.00M,
-        ClassGradeRule gradeRule = ClassGradeRule.BestTwoOfThree
+        ClassGradeRule gradeRule = ClassGradeRule.BestTwoOfThree,
+        string name = "UFPE"
     ) {
         var data = new SetupInstitutionConfigIn
         {
+            Name = name,
             NoteLimit = noteLimit,
             FrequencyLimit = frequencyLimit,
             GradeRule = gradeRule,

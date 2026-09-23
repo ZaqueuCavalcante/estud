@@ -20,3 +20,10 @@ public class InvalidClassGradeRule : EstudError
     public override string Code { get; set; } = nameof(InvalidClassGradeRule);
     public override string Message { get; set; } = "Regra de cálculo de média inválida.";
 }
+
+public class InvalidInstitutionName : EstudError
+{
+    public static readonly InvalidInstitutionName I = new();
+    public override string Code { get; set; } = nameof(InvalidInstitutionName);
+    public override string Message { get; set; } = "Nome de instituição inválido.";
+}

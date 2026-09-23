@@ -5,6 +5,11 @@ public class SetupInstitutionConfigOut : IApiDto<SetupInstitutionConfigOut>
     public int Id { get; set; }
 
     /// <summary>
+    /// Nome da instituição
+    /// </summary>
+    public string Name { get; set; }
+
+    /// <summary>
     /// Nota mínima para aprovação na disciplina (de 0 a 10)
     /// </summary>
     public decimal NoteLimit { get; set; }
@@ -25,6 +30,7 @@ public class SetupInstitutionConfigOut : IApiDto<SetupInstitutionConfigOut>
         new SetupInstitutionConfigOut
         {
             Id = 1,
+            Name = "UFPE",
             NoteLimit = 7.00M,
             FrequencyLimit = 70.00M,
             GradeRule = ClassGradeRule.BestTwoOfThree,
@@ -34,6 +40,7 @@ public class SetupInstitutionConfigOut : IApiDto<SetupInstitutionConfigOut>
         new SetupInstitutionConfigOut
         {
             Id = 1,
+            Name = "UFPE",
             NoteLimit = 8.50M,
             FrequencyLimit = 85.00M,
             GradeRule = ClassGradeRule.AverageOfThree,

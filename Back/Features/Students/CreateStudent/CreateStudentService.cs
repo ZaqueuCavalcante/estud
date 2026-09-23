@@ -1,3 +1,4 @@
+using Estud.Back.Emails;
 using Estud.Back.Domain.Identity;
 using Estud.Back.Domain.Students;
 
@@ -31,6 +32,7 @@ public class CreateStudentService(EstudDbContext ctx, UserManager<EstudUser> use
         if (emailUsed) return EmailAlreadyUsed.I;
 
         var institutionId = ctx.RequestUser.InstitutionId;
+        var institutionName = await ctx.Institutions.Where(x => x.Id == institutionId).Select(x => x.Name).FirstAsync();
         var studentRole = await ctx.Roles.Where(x => x.InstitutionId == institutionId && x.BaseType == UserType.Student).FirstAsync();
 
         var user = new EstudUser(institutionId, data.Name, email)
@@ -40,7 +42,9 @@ public class CreateStudentService(EstudDbContext ctx, UserManager<EstudUser> use
         };
         var student = new EstudStudent(user, institutionId, data.Name);
         var userRole = new EstudUserRole(institutionId, user, studentRole.Id);
-        ctx.AddRange(student, userRole);
+        var magicLink = new MagicLink(user, TimeSpan.FromDays(7));
+        ctx.AddRange(student, userRole, magicLink);
+        ctx.AddCommand(institutionId, new SendInviteEmailCommand(email, data.Name, institutionName, "aluno", magicLink.Id), maxRetries: 1);
 
         await userManager.CreateAsync(user, $"Estud@{Guid.NewGuid()}");
 

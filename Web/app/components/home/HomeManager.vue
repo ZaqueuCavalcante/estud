@@ -31,8 +31,7 @@ const cards = computed(() => [
 
   <div v-else class="space-y-6">
     <div>
-      <h2 class="text-2xl font-semibold text-highlighted">Bem-vindo, {{ account?.name }}</h2>
-      <p class="text-muted text-sm mt-1">{{ account?.institution }}</p>
+      <h2 class="text-2xl font-semibold text-highlighted">{{ account?.institution }}</h2>
     </div>
 
     <UPageGrid class="lg:grid-cols-2 xl:grid-cols-4">

@@ -4,16 +4,17 @@ namespace Estud.Back.Features.Institutions.SetupInstitutionConfig;
 
 public static class SetupInstitutionConfigMapper
 {
-    extension(InstitutionConfig config)
+    extension(Institution institution)
     {
         public SetupInstitutionConfigOut ToSetupInstitutionConfigOut()
         {
             return new()
             {
-                Id = config.Id,
-                GradeRule = config.GradeRule,
-                NoteLimit = config.NoteLimit,
-                FrequencyLimit = config.FrequencyLimit,
+                Id = institution.Config.Id,
+                Name = institution.Name,
+                GradeRule = institution.Config.GradeRule,
+                NoteLimit = institution.Config.NoteLimit,
+                FrequencyLimit = institution.Config.FrequencyLimit,
             };
         }
     }

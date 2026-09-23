@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GetTwoFactorEnforcementOut, SetTwoFactorEnforcementOut, TwoFactorEnforcementItem } from '~/types'
+import type { GetTwoFactorEnforcementOut, SetTwoFactorEnforcementIn, SetTwoFactorEnforcementOut, TwoFactorEnforcementItem } from '~/types'
 
 const config = useRuntimeConfig()
 const toast = useToast()
@@ -26,7 +26,7 @@ async function toggleRole(role: TwoFactorEnforcementItem, required: boolean) {
       {
         method: 'PUT',
         credentials: 'include',
-        body: { roleId: role.roleId, required },
+        body: { roleId: role.roleId, required } satisfies SetTwoFactorEnforcementIn,
       },
     )
 

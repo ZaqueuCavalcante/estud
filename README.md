@@ -6,7 +6,7 @@
 
 O **Estud** é um sistema open-source para gestão educacional, utilizado por gestores, professores e alunos para descomplicar sua vida acadêmica.
 
-Cadastre sua instituição de ensino em https://estud.com.br e começe a usar o Estud agora mesmo!
+Cadastre sua instituição de ensino em https://estud.com.br e comece a usar o **Estud** agora mesmo!
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/assets/campus-dark.svg">

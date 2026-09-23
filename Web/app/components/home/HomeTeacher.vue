@@ -36,8 +36,7 @@ const meta = computed(() => {
 
   <div v-else class="space-y-6">
     <div>
-      <h2 class="text-2xl font-semibold text-highlighted">Bem-vindo, {{ account?.name }}</h2>
-      <p class="text-muted text-sm mt-1">{{ account?.institution }}</p>
+      <h2 class="text-2xl font-semibold text-highlighted">{{ account?.institution }}</h2>
       <div v-if="meta.length" class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2">
         <span v-for="m in meta" :key="m.icon" class="inline-flex items-center gap-1.5 text-xs text-muted">
           <UIcon :name="m.icon" class="size-3.5 shrink-0" />

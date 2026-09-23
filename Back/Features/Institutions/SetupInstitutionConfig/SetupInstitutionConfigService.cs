@@ -6,6 +6,9 @@ public class SetupInstitutionConfigService(EstudDbContext ctx) : IEstudService
     {
         public Validator()
         {
+            RuleFor(x => x.Name).NotEmpty().WithError(InvalidInstitutionName.I);
+            RuleFor(x => x.Name).MaximumLength(100).WithError(InvalidInstitutionName.I);
+
             RuleFor(x => x.NoteLimit).InclusiveBetween(0.00M, 10.00M).WithError(InvalidNoteLimit.I);
 
             RuleFor(x => x.FrequencyLimit).InclusiveBetween(0.00M, 100.00M).WithError(InvalidFrequencyLimit.I);
@@ -21,11 +24,15 @@ public class SetupInstitutionConfigService(EstudDbContext ctx) : IEstudService
 
         var institutionId = ctx.RequestUser.InstitutionId;
 
-        var config = await ctx.InstitutionConfigs.FirstAsync(x => x.InstitutionId == institutionId);
-        config.Setup(data.NoteLimit, data.FrequencyLimit, data.GradeRule);
+        var institution = await ctx.Institutions
+            .Include(x => x.Config)
+            .FirstAsync(x => x.Id == institutionId);
+
+        institution.Rename(data.Name.Trim());
+        institution.Config.Setup(data.NoteLimit, data.FrequencyLimit, data.GradeRule);
 
         await ctx.SaveChangesAsync();
 
-        return config.ToSetupInstitutionConfigOut();
+        return institution.ToSetupInstitutionConfigOut();
     }
 }

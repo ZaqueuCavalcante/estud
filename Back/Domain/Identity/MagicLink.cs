@@ -12,12 +12,12 @@ public class MagicLink
 
     public MagicLink() {}
 
-    public MagicLink(EstudUser user)
+    public MagicLink(EstudUser user, TimeSpan? validity = null)
     {
         Id = Guid.NewGuid();
         User = user;
         CreatedAt = DateTime.UtcNow;
-        ExpiresAt = DateTime.UtcNow.Add(TimeSpan.FromHours(24));
+        ExpiresAt = DateTime.UtcNow.Add(validity ?? TimeSpan.FromHours(24));
     }
 
     public bool IsUsed() => UsedAt != null;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GetSsoConfigurationOut } from '~/types'
+import type { GetSsoConfigurationOut, VerifySsoDomainOut } from '~/types'
 
 const config = useRuntimeConfig()
 const toast = useToast()
@@ -34,7 +34,7 @@ async function verifyDomain(domain: string) {
 
   verifyingDomain.value = domain
   try {
-    await $fetch(`${config.public.backendUrl}/identity/sso/configurations/${ssoConfig.value.id}/domains/verify`, {
+    await $fetch<VerifySsoDomainOut>(`${config.public.backendUrl}/identity/sso/configurations/${ssoConfig.value.id}/domains/verify`, {
       method: 'POST',
       body: { domain },
       credentials: 'include',

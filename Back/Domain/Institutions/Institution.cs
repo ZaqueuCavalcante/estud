@@ -80,6 +80,11 @@ public class Institution
         return institution;
     }
 
+    public void Rename(string name)
+    {
+        Name = name;
+    }
+
     public EstudRole GetDirectorRole()
     {
         return Roles.Single(x => x.BaseType == UserType.Manager);

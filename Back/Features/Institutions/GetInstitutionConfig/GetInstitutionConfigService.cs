@@ -6,9 +6,10 @@ public class GetInstitutionConfigService(EstudDbContext ctx) : IEstudService
     {
         var institutionId = ctx.RequestUser.InstitutionId;
 
-        var config = await ctx.InstitutionConfigs.AsNoTracking()
-            .FirstAsync(x => x.InstitutionId == institutionId);
+        var institution = await ctx.Institutions.AsNoTracking()
+            .Include(x => x.Config)
+            .FirstAsync(x => x.Id == institutionId);
 
-        return config.ToGetInstitutionConfigOut();
+        return institution.ToGetInstitutionConfigOut();
     }
 }

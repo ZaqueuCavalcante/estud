@@ -7,7 +7,7 @@ public class SetupInstitutionConfigController(SetupInstitutionConfigService serv
     /// Configurar instituição
     /// </summary>
     /// <remarks>
-    /// Define a nota e a frequência mínimas para aprovação nas disciplinas da instituição,
+    /// Define o nome da instituição, a nota e a frequência mínimas para aprovação nas disciplinas da instituição,
     /// além da regra usada para calcular a média final dos alunos nas turmas.
     /// </remarks>
     [HttpPost("institutions/config")]
@@ -23,6 +23,7 @@ public class SetupInstitutionConfigController(SetupInstitutionConfigService serv
 internal class RequestExamples : ExamplesProvider<SetupInstitutionConfigIn>;
 internal class ResponseExamples : ExamplesProvider<SetupInstitutionConfigOut>;
 internal class ErrorsExamples : ErrorExamplesProvider<
+    InvalidInstitutionName,
     InvalidNoteLimit,
     InvalidFrequencyLimit,
     InvalidClassGradeRule

@@ -8,7 +8,7 @@ public class CreateStudentController(CreateStudentService service) : ControllerB
     /// </summary>
     /// <remarks>
     /// Cria um novo aluno.
-    /// Um link para redefinição de senha será enviado pro email informado.
+    /// Um convite com link de acesso será enviado pro email informado.
     /// </remarks>
     [HttpPost("students")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]

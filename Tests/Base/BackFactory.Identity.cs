@@ -96,8 +96,6 @@ public static class BackFactoryIdentity
         await using var ctx = factory.GetDbContext();
         ctx.Enrich($"Tests.{nameof(LoggedAsTeacher)}");
         var user = await ctx.Users.Where(u => u.Email == teacher.Email).FirstAsync();
-        var magicLink = new MagicLink(user);
-        await ctx.SaveChangesAsync(magicLink);
 
         var client = factory.GetTestsClient();
 

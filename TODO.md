@@ -2,6 +2,7 @@
 
 ## Foco atual
 
+- aluno precisa ver sua frequencia em cada turma (hoje ele so ve as notas)
 
 ## Próximo
 
@@ -12,10 +13,14 @@
 ## Planejado
 
 - notas parciais
+- diário de classe
+- onboarding guiado
 - elaboração de horários
 - lista de alunos em risco
 - coeficiente de rendimento
+- importação de dados em massa
 - SSE vs polling for notifications
+- histórico escolar e diploma digital
 - header X-Estud-Signature nos webhooks
 - webhook conditional send (custom rules)
 - backoffice (eventos, comandos, auditoria)
@@ -23,7 +28,6 @@
 - ajustar usos do DateTime.UtcNow e fusos horários
 - guia de contribuição no github, padronização de issues e PRs
 - colocar os nomes inteiros no breadcrumbs, apenas reduzir no mobile
-- aluno e professor criados pelo gestor devem receber convite por email
 - visão de opções/conflitos na hora de definir horários (professor e sala)
 
 ---------------------------------------------------------------------------------------------------

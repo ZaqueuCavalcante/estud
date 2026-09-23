@@ -39,6 +39,35 @@ public partial class IntegrationTests
     #region Validation errors
 
     [Test]
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase("   ")]
+    public async Task Institutions_SetupInstitutionConfig_Should_not_setup_institution_config_with_empty_name(string? name)
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        // Act
+        var result = await client.SetupInstitutionConfig(name: name!);
+
+        // Assert
+        result.ShouldBeError(InvalidInstitutionName.I);
+    }
+
+    [Test]
+    public async Task Institutions_SetupInstitutionConfig_Should_not_setup_institution_config_with_too_long_name()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        // Act
+        var result = await client.SetupInstitutionConfig(name: new string('a', 101));
+
+        // Assert
+        result.ShouldBeError(InvalidInstitutionName.I);
+    }
+
+    [Test]
     [TestCase(-0.01)]
     [TestCase(-1.00)]
     [TestCase(10.01)]
@@ -110,19 +139,37 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         // Act
-        var result = await client.SetupInstitutionConfig(8.50M, 85.00M, ClassGradeRule.AverageOfThree);
+        var result = await client.SetupInstitutionConfig(8.50M, 85.00M, ClassGradeRule.AverageOfThree, "Faculdade Nova Roma");
 
         // Assert
         var config = result.Success;
+        config.Name.Should().Be("Faculdade Nova Roma");
         config.NoteLimit.Should().Be(8.50M);
         config.FrequencyLimit.Should().Be(85.00M);
         config.GradeRule.Should().Be(ClassGradeRule.AverageOfThree);
 
         var saved = await client.GetInstitutionConfig().Success();
         saved.Id.Should().Be(config.Id);
+        saved.Name.Should().Be("Faculdade Nova Roma");
         saved.NoteLimit.Should().Be(8.50M);
         saved.FrequencyLimit.Should().Be(85.00M);
         saved.GradeRule.Should().Be(ClassGradeRule.AverageOfThree);
+    }
+
+    [Test]
+    public async Task Institutions_SetupInstitutionConfig_Should_rename_the_institution_for_every_user()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+        var teacherClient = await _back.LoginAs(teacher.Email);
+
+        // Act
+        await director.SetupInstitutionConfig(name: "  Instituto Federal do Piauí  ");
+
+        // Assert
+        var account = await teacherClient.GetUserAccount().Success();
+        account.Institution.Should().Be("Instituto Federal do Piauí");
     }
 
     [TestCase(ClassGradeRule.BestTwoOfThree)]

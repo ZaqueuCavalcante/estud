@@ -37,8 +37,7 @@ const gradeRuleLabel = computed(() =>
       <div v-else class="w-full lg:max-w-2xl mx-auto min-w-0">
         <template v-if="data">
           <UPageCard
-            title="Critérios de aprovação"
-            description="Usados nas turmas da sua instituição."
+            :title="data.name"
             variant="naked"
             orientation="horizontal"
             class="mb-4"

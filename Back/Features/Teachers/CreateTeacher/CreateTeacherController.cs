@@ -8,7 +8,7 @@ public class CreateTeacherController(CreateTeacherService service) : ControllerB
     /// </summary>
     /// <remarks>
     /// Cria um novo professor.
-    /// Um link para redefinição de senha será enviado pro email informado.
+    /// Um convite com link de acesso será enviado pro email informado.
     /// </remarks>
     [HttpPost("teachers")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]

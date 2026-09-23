@@ -1,3 +1,4 @@
+using Estud.Back.Emails;
 using Estud.Back.Domain.Identity;
 using Estud.Back.Domain.Teachers;
 
@@ -19,7 +20,9 @@ public class CreateTeacherService(EstudDbContext ctx, UserManager<EstudUser> use
         var institution = await ctx.Institutions.FindAsync(institutionId);
         var teacherRole = await ctx.Roles.Where(x => x.InstitutionId == institutionId && x.BaseType == UserType.Teacher).FirstAsync();
         var userRole = new EstudUserRole(institution, user, teacherRole.Id);
-        ctx.AddRange(teacher, userRole);
+        var magicLink = new MagicLink(user, TimeSpan.FromDays(7));
+        ctx.AddRange(teacher, userRole, magicLink);
+        ctx.AddCommand(institutionId, new SendInviteEmailCommand(email, data.Name, institution!.Name, "professor", magicLink.Id), maxRetries: 1);
 
         await userManager.CreateAsync(user, $"Estud@{Guid.NewGuid()}");
 

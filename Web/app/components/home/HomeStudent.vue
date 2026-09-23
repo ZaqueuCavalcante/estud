@@ -73,11 +73,6 @@ const periods = computed(() => {
     }))
 })
 
-const subtitle = computed(() => {
-  if (!data.value) return account.value?.institution
-  return data.value.course
-})
-
 const meta = computed(() => {
   if (!data.value) return []
   return [
@@ -95,10 +90,10 @@ const meta = computed(() => {
 
   <div v-else class="space-y-6">
     <div>
-      <h2 class="text-2xl font-semibold text-highlighted">Bem-vindo, {{ account?.name }}</h2>
-      <p class="inline-flex items-center gap-1.5 text-muted text-sm mt-1">
-        <UIcon v-if="hasCourse" name="i-lucide-graduation-cap" class="size-4 shrink-0" />
-        {{ subtitle }}
+      <h2 class="text-2xl font-semibold text-highlighted">{{ account?.institution }}</h2>
+      <p v-if="data" class="inline-flex items-center gap-1.5 text-muted text-sm mt-1">
+        <UIcon name="i-lucide-graduation-cap" class="size-4 shrink-0" />
+        {{ data.course }}
       </p>
       <div v-if="meta.length" class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2">
         <span v-for="m in meta" :key="m.text" class="inline-flex items-center gap-1.5 text-xs text-muted">

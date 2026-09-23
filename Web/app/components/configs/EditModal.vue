@@ -9,10 +9,15 @@ const emit = defineEmits<{ updated: [] }>()
 
 const isMobile = useIsMobile()
 const config = useRuntimeConfig()
+const { fetchAccount } = useUserAccount()
 const toast = useToast()
 const loading = ref(false)
 
 const schema = z.object({
+  name: z.string({ error: 'Nome obrigatório' })
+    .trim()
+    .min(1, 'Nome obrigatório')
+    .max(100, 'Deve ter no máximo 100 caracteres'),
   noteLimit: z.coerce.number({ error: 'Nota mínima obrigatória' })
     .min(0, 'Deve ser no mínimo 0')
     .max(10, 'Deve ser no máximo 10'),
@@ -25,6 +30,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>
 
 const formState = reactive<Partial<Schema>>({
+  name: undefined,
   noteLimit: undefined,
   frequencyLimit: undefined,
   gradeRule: undefined,
@@ -85,6 +91,7 @@ function onFrequencyInput(e: Event) {
 
 watch(open, (val) => {
   if (val && props.config) {
+    formState.name = props.config.name
     formState.noteLimit = props.config.noteLimit
     formState.frequencyLimit = props.config.frequencyLimit
     formState.gradeRule = props.config.gradeRule
@@ -104,6 +111,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     toast.add({ title: 'Configurações atualizadas com sucesso', color: 'success' })
     open.value = false
     emit('updated')
+    await fetchAccount()
   } catch (err: unknown) {
     const msg = (err as { data?: { message?: string } })?.data?.message ?? 'Erro ao atualizar as configurações.'
     toast.add({ title: 'Erro', description: msg, color: 'error' })
@@ -118,7 +126,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     v-model:open="open"
     title="Editar configurações"
     :fullscreen="isMobile"
-    description="Atualize os critérios de aprovação da sua instituição."
+    description="Atualize o nome e os critérios de aprovação da sua instituição."
   >
     <template #body>
       <UForm
@@ -127,6 +135,15 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         class="space-y-4"
         @submit="onSubmit"
       >
+        <UFormField label="Nome da instituição" name="name">
+          <UInput
+            v-model="formState.name"
+            class="w-full"
+            placeholder="Ex: Instituto Federal do Piauí"
+            :maxlength="100"
+          />
+        </UFormField>
+
         <UFormField
           label="Nota mínima"
           name="noteLimit"
