@@ -1,7 +1,5 @@
 using Npgsql;
 using Estud.Tests.Seed;
-using Estud.Back.Settings;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Estud.Tests.Base;
@@ -42,18 +40,16 @@ public abstract class IntegrationTestBase
 
     private static async Task ResetEstudDb()
     {
-        var configPath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.Testing.json");
-        var configuration = new ConfigurationBuilder().AddJsonFile(configPath).Build();
-        var connectionString = configuration.Database.ConnectionString;
+        var database = new DatabaseFactory();
+        await database.StartAsync();
 
-        var dataSource = new NpgsqlDataSourceBuilder(connectionString).Build();
+        var dataSource = new NpgsqlDataSourceBuilder(database.ConnectionString).Build();
         var options = new DbContextOptionsBuilder<EstudDbContext>().Options;
 
         using var ctx = new EstudDbContext(options, dataSource, null);
         // if (ctx.HasMissingMigration()) throw new AssertionException("EstudDbContext Has Missing Migration!");
 
-        var cnn = ctx.Database.GetDbConnection().ConnectionString;
-        if (!cnn.Contains("Host=localhost;")) throw new Exception("WRONG TESTS DB");
+        if (!database.ConnectionString.Contains("Host=localhost;")) throw new Exception("WRONG TESTS DB");
 
         await ctx.Database.EnsureDeletedAsync();
         await ctx.Database.EnsureCreatedAsync();

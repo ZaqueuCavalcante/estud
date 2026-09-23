@@ -206,7 +206,7 @@ Botão com `UTooltip` que abre um modal/slideover ao clicar mantém o foco depoi
 
 - **Backend**: ASP.NET Core (C#), PostgreSQL, EF Core + Dapper, Quartz.NET, HybridCache, OpenTelemetry, Serilog, Scalar (API docs)
 - **Frontend**: Nuxt.js (Vue 3 / TypeScript) with Nuxt UI — located in `Web/`
-- **Tests**: NUnit + FluentAssertions, `WebApplicationFactory`-based integration tests against a real local PostgreSQL DB
+- **Tests**: NUnit + FluentAssertions, `WebApplicationFactory`-based integration tests against PostgreSQL and MinIO via Testcontainers
 - **Infra**: Docker, Railway, GitHub Actions CI/CD
 
 ## Commands
@@ -431,7 +431,7 @@ public class CreateRoleOut : IApiDto<CreateRoleOut>
 
 ## Integration Tests
 
-Tests use `WebApplicationFactory<Program>` (`BackFactory`). `IntegrationTestBase.OneTimeSetUp` drops and recreates the local test DB before each test class runs.
+Tests use `WebApplicationFactory<Program>` (`BackFactory`). `IntegrationTestBase.OneTimeSetUp` sobe o Postgres via Testcontainers (`DatabaseFactory`, container reusável `estud-tests-db` em `localhost:5445`, que fica de pé após os testes) e apaga/recria o banco antes de cada classe de teste.
 
 All integration tests are partial classes of `IntegrationTests`:
 
