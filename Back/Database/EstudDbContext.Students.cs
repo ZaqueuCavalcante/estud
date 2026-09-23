@@ -8,6 +8,7 @@ public partial class EstudDbContext
 {
     public DbSet<EstudStudent> Students { get; set; }
     public DbSet<EnrollmentProof> EnrollmentProofs { get; set; }
+    public DbSet<StudentClassNote> StudentClassNotes { get; set; }
     public DbSet<StudentCourseEnrollment> StudentCourseEnrollments { get; set; }
 
     private static void ConfigureStudents(ModelBuilder modelBuilder)

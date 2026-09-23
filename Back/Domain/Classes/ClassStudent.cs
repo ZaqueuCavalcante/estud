@@ -1,4 +1,5 @@
 using Estud.Back.Domain.Students;
+using Estud.Back.Domain.Institutions;
 
 namespace Estud.Back.Domain.Classes;
 
@@ -23,5 +24,15 @@ public class ClassStudent
         ClassId = classId;
         StudentId = studentId;
         Status = StudentClassStatus.Matriculado;
+    }
+
+    public void Finalize(decimal average, decimal frequency, InstitutionConfig config)
+    {
+        if (frequency < config.FrequencyLimit)
+            Status = StudentClassStatus.ReprovadoPorFalta;
+        else if (average < config.NoteLimit)
+            Status = StudentClassStatus.ReprovadoPorNota;
+        else
+            Status = StudentClassStatus.Aprovado;
     }
 }

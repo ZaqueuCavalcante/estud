@@ -12,11 +12,11 @@ public static class BackFactoryBackground
         var count = 0;
         while (true)
         {
-            if (count == 5) break;
+            if (count == 10) break;
 
             var events = await ctx.DomainEvents.CountAsync(x => x.ProcessedAt == null);
             if (events == 0) break;
-            await Task.Delay(500);
+            await Task.Delay(200);
             count ++;
         }
     }
@@ -31,11 +31,11 @@ public static class BackFactoryBackground
         var count = 0;
         while (true)
         {
-            if (count == 5) break;
+            if (count == 10) break;
 
             var commands = await ctx.Commands.CountAsync(x => x.ProcessedAt == null);
             if (commands == 0) break;
-            await Task.Delay(500);
+            await Task.Delay(200);
             count ++;
         }
     }

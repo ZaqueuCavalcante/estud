@@ -107,7 +107,7 @@ public partial class IntegrationTests
     {
         // Arrange
         var commandId = await _back.ShortcutEnqueueTestRetryCommand(
-            failUntilAttempt: 2, maxRetries: 1, backoffStrategy: BackoffStrategy.Fixed, baseDelaySeconds: 15);
+            failUntilAttempt: 2, maxRetries: 1, backoffStrategy: BackoffStrategy.Fixed, baseDelaySeconds: 5);
 
         // Act
         await AwaitTestRetryCommandChain(commandId, processedCount: 1);
@@ -124,7 +124,7 @@ public partial class IntegrationTests
         var retry = commands[1];
         retry.Status.Should().Be(CommandStatus.Pending);
         retry.ProcessedAt.Should().BeNull();
-        retry.NotBefore.Should().BeCloseTo(original.ProcessedAt!.Value.AddSeconds(15), TimeSpan.FromSeconds(1));
+        retry.NotBefore.Should().BeCloseTo(original.ProcessedAt!.Value.AddSeconds(5), TimeSpan.FromSeconds(1));
     }
 
     [Test]
@@ -169,14 +169,14 @@ public partial class IntegrationTests
         await using var ctx = _back.GetDbContext();
         var scheduler = await _back.GetSchedulerFactory().GetScheduler();
 
-        for (var i = 0; i < 60; i++)
+        for (var i = 0; i < 100; i++)
         {
             var processed = await ctx.Commands.AsNoTracking()
                 .CountAsync(x => (x.Id == commandId || x.OriginalId == commandId) && x.ProcessedAt != null);
             if (processed >= processedCount) return;
 
             await scheduler.TriggerCommandsProcessorJob();
-            await Task.Delay(500);
+            await Task.Delay(200);
         }
     }
 

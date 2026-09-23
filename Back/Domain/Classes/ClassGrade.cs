@@ -14,6 +14,13 @@ public static class ClassGrade
             _ => throw new ArgumentOutOfRangeException(nameof(rule), rule, "Unknown ClassGradeRule!"),
         };
 
+        public Dictionary<ClassNoteType, decimal> NotesByType(IEnumerable<(ClassNoteType NoteType, int Weight, decimal Note)> works)
+        {
+            var notes = Notes(works);
+
+            return rule.NoteTypes.ToDictionary(type => type, type => notes.GetValueOrDefault(type));
+        }
+
         public decimal Average(IEnumerable<(ClassNoteType NoteType, int Weight, decimal Note)> works)
         {
             var notes = Notes(works);

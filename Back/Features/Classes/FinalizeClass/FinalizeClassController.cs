@@ -9,6 +9,8 @@ public class FinalizeClassController(FinalizeClassService service) : ControllerB
     /// <remarks>
     /// Finaliza a turma ao final do semestre, quando todas as notas e frequências já foram lançadas.
     /// A turma deve estar iniciada. Após finalizada, não é possível retroceder.
+    /// Grava as notas finais de cada aluno matriculado e define se ele foi aprovado, reprovado por nota ou reprovado por falta,
+    /// de acordo com a regra de cálculo de média, a nota mínima e a frequência mínima configuradas na instituição.
     /// </remarks>
     [HttpPut("classes/{classId}/finalize")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]

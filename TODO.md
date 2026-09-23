@@ -4,6 +4,7 @@
 
 
 
+
 ## Próximo
 
 - notificar quando um usuário for marcado em algum lugar (Basecamp like, o clique na notificação vai pro local da marcação)
@@ -24,7 +25,6 @@
 - backoffice (eventos, comandos, auditoria)
 - mural da turma com avisos e comentários da turma
 - ajustar usos do DateTime.UtcNow e fusos horários
-- finalizar turma (criar StudentClassNote pra cada aluno?)
 - guia de contribuição no github, padronização de issues e PRs
 - colocar os nomes inteiros no breadcrumbs, apenas reduzir no mobile
 - visão de opções/conflitos na hora de definir horários (professor e sala)
