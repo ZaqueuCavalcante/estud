@@ -121,5 +121,43 @@ public partial class IntegrationTests
         first.Path.Should().NotBe(second.Path);
     }
 
+    [Test]
+    public async Task Users_CreateProfilePhotoUpload_Should_create_url_that_accepts_the_declared_file()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var upload = await client.CreateProfilePhotoUpload("image/png", 245_000).Success();
+
+        // Act
+        var response = await StorageFactory.Upload(upload.UploadUrl, "image/png", 245_000);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var photo = (await client.UpdateProfilePhoto(upload.Path).Success()).ProfilePhoto;
+        var file = await StorageFactory.Download(photo);
+        file.StatusCode.Should().Be(HttpStatusCode.OK);
+        file.Content.Headers.ContentType!.MediaType.Should().Be("image/png");
+        file.Content.Headers.ContentLength.Should().Be(245_000);
+    }
+
+    [Test]
+    [TestCase("image/png", 245_001)]
+    [TestCase("image/png", 244_999)]
+    [TestCase("image/jpeg", 245_000)]
+    public async Task Users_CreateProfilePhotoUpload_Should_create_url_that_rejects_a_file_different_from_the_declared(string contentType, long sizeInBytes)
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var upload = await client.CreateProfilePhotoUpload("image/png", 245_000).Success();
+
+        // Act
+        var response = await StorageFactory.Upload(upload.UploadUrl, contentType, sizeInBytes);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        (await client.UpdateProfilePhoto(upload.Path)).ShouldBeError(ProfilePhotoNotFound.I);
+    }
+
     #endregion
 }

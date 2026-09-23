@@ -13,7 +13,7 @@ public class R2StorageService(IAmazonS3 s3, StorageSettings settings) : IStorage
             BucketName = GetBucket(container),
             Key = GetKey(container, path),
             Verb = HttpVerb.PUT,
-            Protocol = Protocol.HTTPS,
+            Protocol = GetProtocol(),
             ContentType = contentType,
             Expires = DateTime.UtcNow.Add(expiresIn),
         };
@@ -32,7 +32,7 @@ public class R2StorageService(IAmazonS3 s3, StorageSettings settings) : IStorage
             BucketName = GetBucket(container),
             Key = GetKey(container, path),
             Verb = HttpVerb.GET,
-            Protocol = Protocol.HTTPS,
+            Protocol = GetProtocol(),
             Expires = DateTime.UtcNow.Add(expiresIn),
         };
 
@@ -62,6 +62,11 @@ public class R2StorageService(IAmazonS3 s3, StorageSettings settings) : IStorage
     public async Task Delete(StorageContainer container, string path)
     {
         await s3.DeleteObjectAsync(GetBucket(container), GetKey(container, path));
+    }
+
+    private Protocol GetProtocol()
+    {
+        return new Uri(settings.ServiceUrl).Scheme == Uri.UriSchemeHttp ? Protocol.HTTP : Protocol.HTTPS;
     }
 
     private string GetBucket(StorageContainer container)

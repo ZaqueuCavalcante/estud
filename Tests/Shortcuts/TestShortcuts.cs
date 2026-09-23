@@ -1,4 +1,3 @@
-using Estud.Back.Storage;
 using Estud.Tests.Integration.Clients;
 using Estud.Back.Features.Identity.VerifySsoDomain;
 using Estud.Back.Features.Periods.GetAcademicPeriods;
@@ -57,12 +56,11 @@ public static class TestShortcuts
 
     public static async Task<CreateProfilePhotoUploadOut> ShortcutUploadProfilePhoto(
         this TestsHttpClient client,
-        FakeStorageService storage,
         string contentType = "image/png",
         long sizeInBytes = 245_000
     ) {
         var upload = await client.CreateProfilePhotoUpload(contentType, sizeInBytes).Success();
-        storage.SimulateUpload(StorageContainer.ProfilePhotos, upload.Path, contentType, sizeInBytes);
+        (await StorageFactory.Upload(upload.UploadUrl, contentType, sizeInBytes)).EnsureSuccessStatusCode();
 
         return upload;
     }

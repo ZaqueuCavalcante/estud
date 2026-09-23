@@ -25,18 +25,17 @@ public partial class IntegrationTests
     public async Task Users_RemoveProfilePhoto_Should_remove_photo()
     {
         // Arrange
-        var storage = _back.GetFakeStorageService();
         var client = await _back.LoggedAsDirector();
 
-        var upload = await client.ShortcutUploadProfilePhoto(storage);
-        await client.UpdateProfilePhoto(upload.Path).Success();
+        var upload = await client.ShortcutUploadProfilePhoto();
+        var photo = (await client.UpdateProfilePhoto(upload.Path).Success()).ProfilePhoto;
 
         // Act
         var result = await client.RemoveProfilePhoto();
 
         // Assert
         result.ShouldBeSuccess();
-        (await storage.GetMetadata(StorageContainer.ProfilePhotos, upload.Path)).Should().BeNull();
+        (await StorageFactory.Download(photo)).StatusCode.Should().Be(HttpStatusCode.NotFound);
 
         var account = await client.GetUserAccount().Success();
         account.ProfilePhoto.Should().BeNull();

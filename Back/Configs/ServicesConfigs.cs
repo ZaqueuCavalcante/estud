@@ -35,7 +35,6 @@ public static class ServicesConfigs
         {
             builder.Services.Replace(ServiceDescriptor.Singleton<IGoogleService, FakeGoogleService>());
             builder.Services.Replace(ServiceDescriptor.Singleton<IEmailsService, FakeEmailsService>());
-            builder.Services.Replace(ServiceDescriptor.Singleton<IStorageService, FakeStorageService>());
         }
         if (EnvironmentExtensions.IsDevelopment())
         {

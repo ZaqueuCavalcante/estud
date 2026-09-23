@@ -14,15 +14,17 @@
 
 - notas parciais
 - test containers
-- finalizar turma
+- drop CommandBatch
 - elaboração de horários
 - lista de alunos em risco
 - coeficiente de rendimento
+- drop ReceivedWebhookEventsProcessor
 - header X-Estud-Signature nos webhooks
 - webhook conditional send (custom rules)
 - backoffice (eventos, comandos, auditoria)
 - mural da turma com avisos e comentários da turma
 - ajustar usos do DateTime.UtcNow e fusos horários
+- finalizar turma (criar StudentClassNote pra cada aluno?)
 - guia de contribuição no github, padronização de issues e PRs
 - colocar os nomes inteiros no breadcrumbs, apenas reduzir no mobile
 - visão de opções/conflitos na hora de definir horários (professor e sala)

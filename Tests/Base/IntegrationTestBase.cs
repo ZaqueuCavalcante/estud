@@ -11,6 +11,7 @@ public abstract class IntegrationTestBase
 {
     protected BackFactory _back = null!;
     protected MocksFactory _mocks = null!;
+    protected StorageFactory _storage = null!;
     public const string FrontUrl = "http://localhost:3000";
 
     [OneTimeSetUp]
@@ -18,7 +19,8 @@ public abstract class IntegrationTestBase
     {
         EnvironmentExtensions.SetAsTesting();
 
-        await ResetEstudDb();
+        _storage = new StorageFactory();
+        await Task.WhenAll(ResetEstudDb(), _storage.Start());
 
         _mocks = new MocksFactory();
         _mocks.StartServer();
@@ -35,6 +37,7 @@ public abstract class IntegrationTestBase
     {
         await _back.DisposeAsync();
         await _mocks.DisposeAsync();
+        await _storage.DisposeAsync();
     }
 
     private static async Task ResetEstudDb()

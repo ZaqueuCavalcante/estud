@@ -348,18 +348,16 @@ public partial class IntegrationTests
     public async Task Classes_GetClass_Should_get_teacher_and_student_profile_photos()
     {
         // Arrange
-        var storage = _back.GetFakeStorageService();
-
         var director = await _back.LoggedAsDirector();
         var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         var @class = await director.ShortcutCreateStartedClass([student.Id]);
 
         var teacherClient = await _back.LoginAs(@class.TeacherEmail);
-        var teacherUpload = await teacherClient.ShortcutUploadProfilePhoto(storage);
+        var teacherUpload = await teacherClient.ShortcutUploadProfilePhoto();
         await teacherClient.UpdateProfilePhoto(teacherUpload.Path).Success();
 
         var studentClient = await _back.LoginAs(student.Email);
-        var studentUpload = await studentClient.ShortcutUploadProfilePhoto(storage);
+        var studentUpload = await studentClient.ShortcutUploadProfilePhoto();
         await studentClient.UpdateProfilePhoto(studentUpload.Path).Success();
 
         // Act
