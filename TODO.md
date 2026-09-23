@@ -15,6 +15,7 @@
 - elaboração de horários
 - lista de alunos em risco
 - coeficiente de rendimento
+- SSE vs polling for notifications
 - header X-Estud-Signature nos webhooks
 - webhook conditional send (custom rules)
 - backoffice (eventos, comandos, auditoria)

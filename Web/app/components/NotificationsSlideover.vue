@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { formatTimeAgo } from '@vueuse/core'
 import type { NotificationItem } from '~/composables/useNotifications'
 
 interface NotificationLink {
@@ -21,6 +20,28 @@ function isWelcome(notification: NotificationItem) {
 function linksOf(notification: NotificationItem): NotificationLink[] {
   const links = (notification.metadata as { links?: NotificationLink[] } | null)?.links
   return Array.isArray(links) ? links : []
+}
+
+const relativeFormatter = new Intl.RelativeTimeFormat('pt-BR', { numeric: 'auto' })
+
+function formatCreatedAt(value: string) {
+  const date = new Date(value)
+  const now = new Date()
+
+  if (date.toDateString() !== now.toDateString()) {
+    return date.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
+
+  const minutes = Math.max(0, Math.floor((now.getTime() - date.getTime()) / 60000))
+  if (minutes < 1) return 'agora mesmo'
+  if (minutes < 60) return relativeFormatter.format(-minutes, 'minute')
+  return relativeFormatter.format(-Math.floor(minutes / 60), 'hour')
 }
 
 async function markOne(id: number) {
@@ -89,15 +110,15 @@ async function onLinkClick(notification: NotificationItem, link: NotificationLin
         </p>
       </div>
 
-      <div v-else class="flex flex-col gap-1 -mx-3">
+      <div v-else class="flex flex-col gap-3">
         <div
           v-for="notification in notifications"
           :key="notification.id"
-          class="px-3 py-3 rounded-md hover:bg-elevated/50 flex items-start gap-3 transition-colors"
-          :class="!notification.viewedAt ? 'bg-elevated/30' : ''"
+          class="p-3 rounded-lg border shadow-sm hover:shadow-md flex items-start gap-3 transition-shadow"
+          :class="!notification.viewedAt ? 'bg-elevated border-primary/40' : 'bg-default border-default'"
         >
           <div class="flex-1 min-w-0">
-            <div class="flex items-start justify-between gap-2">
+            <div class="flex items-start gap-2">
               <div class="flex items-center gap-1.5 min-w-0">
                 <span
                   v-if="!notification.viewedAt"
@@ -115,12 +136,6 @@ async function onLinkClick(notification: NotificationItem, link: NotificationLin
                   class="shrink-0 size-3.5 text-primary"
                 />
               </div>
-              <time
-                :datetime="notification.createdAt"
-                class="shrink-0 text-xs text-muted whitespace-nowrap"
-              >
-                {{ formatTimeAgo(new Date(notification.createdAt)) }}
-              </time>
             </div>
             <p class="text-sm text-dimmed mt-0.5 pl-3">
               {{ notification.description }}
@@ -143,6 +158,13 @@ async function onLinkClick(notification: NotificationItem, link: NotificationLin
                 @click="() => { onLinkClick(notification, link) }"
               />
             </div>
+
+            <time
+              :datetime="notification.createdAt"
+              class="block text-xs text-muted mt-2 text-right"
+            >
+              {{ formatCreatedAt(notification.createdAt) }}
+            </time>
           </div>
 
           <UTooltip text="Marcar como lida">
