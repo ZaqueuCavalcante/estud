@@ -2,18 +2,6 @@
 
 ## Foco atual
 
-│          Service           │ Branches │
-├────────────────────────────┼──────────┤
-│ Classrooms/GetClassroom    │ 35/48    │
-├────────────────────────────┼──────────┤
-│ Teachers/GetTeacherClass   │ 20/32    │
-├────────────────────────────┼──────────┤
-│ Students/GetStudentClass   │ 25/34    │
-├────────────────────────────┼──────────┤
-│ Teachers/GetTeacherDetails │ 13/20    │
-├────────────────────────────┼──────────┤
-│ Classes/GetClass           │ 55/62    │
-
 
 
 ## Próximo

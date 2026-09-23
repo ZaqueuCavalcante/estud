@@ -157,5 +157,136 @@ public partial class IntegrationTests
         found.Schedules[0].Status.Should().Be(ClassStatus.OnPreEnrollment);
     }
 
+    [Test]
+    public async Task Classrooms_GetClassroom_Should_get_classroom_with_class_teachers_ordered_by_name()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var classroom = await client.CreateClassroom(campus.Id).Success();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
+
+        var chico = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
+        var ana = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
+        await client.AssignDisciplinesToTeacher(chico.Id, [discipline.Id]);
+        await client.AssignDisciplinesToTeacher(ana.Id, [discipline.Id]);
+
+        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
+        await client.UpdateClassTeachers(@class.Id, [chico.Id, ana.Id]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, chico.Id, classroom.Id)]);
+
+        // Act
+        var result = await client.GetClassroom(classroom.Id);
+
+        // Assert
+        var found = result.Success;
+        found.Schedules.Should().ContainSingle();
+        found.Schedules[0].Teachers.Should().Equal("Ana Lima", "Chico Ferreira");
+    }
+
+    [Test]
+    public async Task Classrooms_GetClassroom_Should_get_classroom_with_multiple_classes()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var classroom = await client.CreateClassroom(campus.Id, capacity: 40).Success();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
+
+        var geometria = await client.CreateDiscipline("Geometria").Success();
+        var calculo = await client.CreateDiscipline("Cálculo I").Success();
+
+        var morning = await client.CreateClass(geometria.Id, period.Id).Success();
+        var evening = await client.CreateClass(calculo.Id, period.Id).Success();
+
+        await client.UpdateClassSchedules(morning.Id, [(Day.Wednesday, Hour.H07_00, Hour.H10_00, null, classroom.Id)]);
+        await client.UpdateClassSchedules(evening.Id, [(Day.Monday, Hour.H19_00, Hour.H21_00, null, classroom.Id)]);
+
+        var maria = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var joao = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var ana = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        await client.AssignStudentToClass(maria.Id, morning.Id);
+        await client.AssignStudentToClass(joao.Id, morning.Id);
+        await client.AssignStudentToClass(ana.Id, evening.Id);
+
+        // Act
+        var result = await client.GetClassroom(classroom.Id);
+
+        // Assert
+        var found = result.Success;
+        found.ClassesCount.Should().Be(2);
+        found.WeeklyHours.Should().Be(5M);
+        found.PeakStudents.Should().Be(2);
+
+        found.Schedules.Should().HaveCount(2);
+        found.Schedules[0].Day.Should().Be(Day.Monday);
+        found.Schedules[0].ClassId.Should().Be(evening.Id);
+        found.Schedules[0].Discipline.Should().Be("Cálculo I");
+        found.Schedules[0].Students.Should().Be(1);
+        found.Schedules[1].Day.Should().Be(Day.Wednesday);
+        found.Schedules[1].ClassId.Should().Be(morning.Id);
+        found.Schedules[1].Discipline.Should().Be("Geometria");
+        found.Schedules[1].Students.Should().Be(2);
+    }
+
+    [Test]
+    public async Task Classrooms_GetClassroom_Should_get_classroom_with_started_class()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var classroom = await client.CreateClassroom(campus.Id).Success();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
+
+        var teacher = await client.CreateTeacher("Chico Ferreira", DataGen.Email).Success();
+        await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
+        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
+        await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
+        await client.UpdateClassSchedules(@class.Id, [(Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, classroom.Id)]);
+        await client.ReleaseClassForEnrollment(@class.Id);
+        await client.StartClass(@class.Id);
+
+        // Act
+        var result = await client.GetClassroom(classroom.Id);
+
+        // Assert
+        var found = result.Success;
+        found.Schedules.Should().ContainSingle();
+        found.Schedules[0].Status.Should().Be(ClassStatus.Started);
+        found.Schedules[0].Teachers.Should().Equal("Chico Ferreira");
+    }
+
+    [Test]
+    public async Task Classrooms_GetClassroom_Should_not_get_schedules_allocated_in_another_classroom()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var classroom = await client.CreateClassroom(campus.Id, name: "Sala 05").Success();
+        var otherClassroom = await client.CreateClassroom(campus.Id, name: "Sala 06").Success();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
+        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
+
+        await client.UpdateClassSchedules(@class.Id,
+        [
+            (Day.Monday, Hour.H07_00, Hour.H10_00, null, classroom.Id),
+            (Day.Tuesday, Hour.H07_00, Hour.H09_00, null, otherClassroom.Id),
+        ]);
+
+        // Act
+        var result = await client.GetClassroom(classroom.Id);
+
+        // Assert
+        var found = result.Success;
+        found.Schedules.Should().ContainSingle();
+        found.Schedules[0].Day.Should().Be(Day.Monday);
+        found.ClassesCount.Should().Be(1);
+        found.WeeklyHours.Should().Be(3M);
+    }
+
     #endregion
 }

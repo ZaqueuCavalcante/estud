@@ -274,5 +274,34 @@ public partial class IntegrationTests
         call.Subscription.Id.Should().Be(subscribed.Id);
     }
 
+    [Test]
+    public async Task Webhooks_CallWebhook_Should_register_error_when_target_is_unreachable()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        var subscription = await client.CreateWebhookSubscription(
+            url: $"{MocksFactory.Url}/webhooks/target/unreachable",
+            events: [WebhookEventType.StudentCreated]).Success();
+
+        await client.CreateStudent(DataGen.UserName, DataGen.Email);
+
+        // Act
+        await _back.AwaitDomainEventsProcessing();
+        await _back.AwaitCommandsProcessing();
+
+        // Assert
+        await using var ctx = _back.GetDbContext();
+        var call = await ctx.WebhookCalls.Include(x => x.Attempts)
+            .AsNoTracking().FirstAsync(x => x.WebhookSubscriptionId == subscription.Id);
+
+        call.Status.Should().Be(WebhookCallStatus.Error);
+
+        var attempt = call.Attempts.Single();
+        attempt.Status.Should().Be(WebhookCallAttemptStatus.Error);
+        attempt.StatusCode.Should().Be(999);
+        attempt.Response.Should().NotBeEmpty();
+    }
+
     #endregion
 }

@@ -344,5 +344,81 @@ public partial class IntegrationTests
         after.AverageGrade.Should().Be(newAverage);
     }
 
+    [Test]
+    public async Task Classes_GetClass_Should_get_teacher_and_student_profile_photos()
+    {
+        // Arrange
+        var storage = _back.GetFakeStorageService();
+
+        var director = await _back.LoggedAsDirector();
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var @class = await director.ShortcutCreateStartedClass([student.Id]);
+
+        var teacherClient = await _back.LoginAs(@class.TeacherEmail);
+        var teacherUpload = await teacherClient.ShortcutUploadProfilePhoto(storage);
+        await teacherClient.UpdateProfilePhoto(teacherUpload.Path).Success();
+
+        var studentClient = await _back.LoginAs(student.Email);
+        var studentUpload = await studentClient.ShortcutUploadProfilePhoto(storage);
+        await studentClient.UpdateProfilePhoto(studentUpload.Path).Success();
+
+        // Act
+        var result = await director.GetClass(@class.Id);
+
+        // Assert
+        var details = result.Success;
+        details.Teachers.Should().ContainSingle();
+        details.Teachers[0].Photo.Should().NotBeNullOrEmpty();
+        details.Teachers[0].Photo.Should().Contain(teacherUpload.Path);
+
+        details.Students.Should().ContainSingle();
+        details.Students[0].Photo.Should().NotBeNullOrEmpty();
+        details.Students[0].Photo.Should().Contain(studentUpload.Path);
+    }
+
+    [Test]
+    public async Task Classes_GetClass_Should_get_class_campus_and_schedules_with_classroom()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus(name: "Agreste I").Success();
+        var classroom = await client.CreateClassroom(campus.Id, name: "Sala 05").Success();
+
+        var discipline = await client.CreateDiscipline().Success();
+        var teacher = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
+        await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
+        var period = await client.ShortcutGetFirstAcademicPeriod();
+        var @class = await client.CreateClass(discipline.Id, period.Id, campusId: campus.Id).Success();
+        await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
+
+        await client.UpdateClassSchedules(@class.Id,
+        [
+            (Day.Wednesday, Hour.H07_00, Hour.H09_00, null, null),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, classroom.Id),
+        ]);
+
+        // Act
+        var result = await client.GetClass(@class.Id);
+
+        // Assert
+        var details = result.Success;
+        details.CampusId.Should().Be(campus.Id);
+        details.Campus.Should().Be("Agreste I");
+
+        details.Schedules.Should().HaveCount(2);
+        details.Schedules[0].Day.Should().Be(Day.Monday);
+        details.Schedules[0].TeacherId.Should().Be(teacher.Id);
+        details.Schedules[0].Teacher.Should().Be("Ana Lima");
+        details.Schedules[0].ClassroomId.Should().Be(classroom.Id);
+        details.Schedules[0].Classroom.Should().Be("Sala 05");
+
+        details.Schedules[1].Day.Should().Be(Day.Wednesday);
+        details.Schedules[1].TeacherId.Should().BeNull();
+        details.Schedules[1].Teacher.Should().BeNull();
+        details.Schedules[1].ClassroomId.Should().BeNull();
+        details.Schedules[1].Classroom.Should().BeNull();
+    }
+
     #endregion
 }

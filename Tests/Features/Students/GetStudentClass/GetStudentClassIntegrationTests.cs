@@ -136,5 +136,63 @@ public partial class IntegrationTests
         details.Schedules.Should().ContainSingle();
     }
 
+    [Test]
+    public async Task Students_GetStudentClass_Should_get_class_schedules_with_classroom_ordered_by_day_and_time()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var teacherName = DataGen.UserName;
+        var teacher = await director.CreateTeacher(teacherName, DataGen.Email).Success();
+
+        var campus = await director.CreateCampus().Success();
+        var classroom = await director.CreateClassroom(campus.Id, name: "Sala 05").Success();
+
+        var discipline = await director.CreateDiscipline().Success();
+        await director.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+
+        var period = await director.ShortcutGetFirstAcademicPeriod();
+        var @class = await director.CreateClass(discipline.Id, period.Id).Success();
+        await director.UpdateClassTeachers(@class.Id, [teacher.Id]);
+
+        await director.UpdateClassSchedules(@class.Id,
+        [
+            (Day.Wednesday, Hour.H07_00, Hour.H09_00, null, classroom.Id),
+            (Day.Monday, Hour.H19_00, Hour.H21_00, null, null),
+            (Day.Monday, Hour.H07_00, Hour.H10_00, teacher.Id, classroom.Id),
+        ]);
+
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        await director.AssignStudentToClass(student.Id, @class.Id);
+
+        var client = await _back.LoginAs(student.Email);
+
+        // Act
+        var result = await client.GetStudentClass(@class.Id);
+
+        // Assert
+        var details = result.Success;
+        details.Teachers.Should().Equal(teacherName);
+        details.Schedules.Should().HaveCount(3);
+
+        details.Schedules[0].Day.Should().Be(Day.Monday);
+        details.Schedules[0].StartAt.Should().Be(Hour.H07_00);
+        details.Schedules[0].EndAt.Should().Be(Hour.H10_00);
+        details.Schedules[0].TeacherId.Should().Be(teacher.Id);
+        details.Schedules[0].Teacher.Should().Be(teacherName);
+        details.Schedules[0].ClassroomId.Should().Be(classroom.Id);
+        details.Schedules[0].Classroom.Should().Be("Sala 05");
+
+        details.Schedules[1].Day.Should().Be(Day.Monday);
+        details.Schedules[1].StartAt.Should().Be(Hour.H19_00);
+        details.Schedules[1].TeacherId.Should().BeNull();
+        details.Schedules[1].Teacher.Should().BeNull();
+        details.Schedules[1].ClassroomId.Should().BeNull();
+        details.Schedules[1].Classroom.Should().BeNull();
+
+        details.Schedules[2].Day.Should().Be(Day.Wednesday);
+        details.Schedules[2].Teacher.Should().BeNull();
+        details.Schedules[2].Classroom.Should().Be("Sala 05");
+    }
+
     #endregion
 }

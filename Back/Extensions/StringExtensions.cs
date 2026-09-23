@@ -5,7 +5,6 @@ using System.Globalization;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Primitives;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace Estud.Back.Extensions;
@@ -59,14 +58,6 @@ public static class StringExtensions
         {
             if (text.IsEmpty()) return false;
             return Regex.IsMatch(text!, @"^\d{10,11}$");
-        }
-    }
-
-    extension(StringValues text)
-    {
-        public bool HasValue()
-        {
-            return !string.IsNullOrEmpty(text);
         }
     }
 
@@ -135,14 +126,6 @@ public static class StringExtensions
                 .ToArray();
 
             return new string(withoutAccents).Normalize(NormalizationForm.FormC).ToUpperInvariant();
-        }
-    }
-
-    extension(decimal value)
-    {
-        public string Format()
-        {
-            return value.ToString("0.00", CultureInfo.InvariantCulture);
         }
     }
 

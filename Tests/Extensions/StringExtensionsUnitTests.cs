@@ -49,17 +49,6 @@ public class StringExtensionsUnitTests
     }
 
     [Test]
-    [TestCaseSource(nameof(DecimalsStringsForFormat))]
-    public void StringExtensions_Should_format_decimal_as_string(decimal number, string text)
-    {
-        // Arrange / Act
-        var result = number.Format();
-
-        // Assert
-        result.Should().Be(text);
-    }
-
-    [Test]
     [Repeat(100)]
     public void StringExtensions_Should_return_true_when_email_is_valid()
     {
@@ -214,21 +203,6 @@ public class StringExtensionsUnitTests
         })
         {
             yield return [text1, text2, search!];
-        }
-    }
-
-    private static IEnumerable<object[]> DecimalsStringsForFormat()
-    {
-        foreach (var (number, text) in new List<(decimal, string)>()
-        {
-            (0.00M, "0.00"),
-            (0.23M, "0.23"),
-            (9.85M, "9.85"),
-            (15.74M, "15.74"),
-            (153.87M, "153.87"),
-        })
-        {
-            yield return [number, text];
         }
     }
 

@@ -159,5 +159,55 @@ public partial class IntegrationTests
         result.Success.Classes.Should().BeEmpty();
     }
 
+    [Test]
+    public async Task Teachers_GetTeacherDetails_Should_get_class_on_enrollment_when_there_is_an_open_enrollment_period()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
+        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
+
+        var teacher = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
+        await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+        await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
+
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        await client.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2)).Success();
+        await client.ReleaseClassForEnrollment(@class.Id);
+
+        // Act
+        var result = await client.GetTeacherDetails(teacher.Id);
+
+        // Assert
+        result.Success.Classes[0].Status.Should().Be(ClassStatus.OnEnrollment);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherDetails_Should_get_class_as_awaiting_start_when_there_is_no_open_enrollment_period()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var discipline = await client.CreateDiscipline().Success();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
+        var @class = await client.CreateClass(discipline.Id, period.Id).Success();
+
+        var teacher = await client.CreateTeacher("Ana Lima", DataGen.Email).Success();
+        await client.AssignDisciplinesToTeacher(teacher.Id, [discipline.Id]);
+        await client.UpdateClassTeachers(@class.Id, [teacher.Id]);
+
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var enrollmentPeriod = await client.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2)).Success();
+        await client.ReleaseClassForEnrollment(@class.Id);
+
+        await client.UpdateEnrollmentPeriod(enrollmentPeriod.Id, startAt: today.AddDays(-2), endAt: today.AddDays(-1));
+
+        // Act
+        var result = await client.GetTeacherDetails(teacher.Id);
+
+        // Assert
+        result.Success.Classes[0].Status.Should().Be(ClassStatus.OnReview);
+    }
+
     #endregion
 }

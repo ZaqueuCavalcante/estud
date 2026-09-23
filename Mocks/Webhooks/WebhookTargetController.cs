@@ -27,4 +27,11 @@ public class WebhookTargetController : ControllerBase
     {
         return StatusCode(500, new { received = false, error = "target system unavailable" });
     }
+
+    [HttpPost("webhooks/target/unreachable")]
+    public IActionResult ReceiveAndAbort()
+    {
+        HttpContext.Abort();
+        return new EmptyResult();
+    }
 }
