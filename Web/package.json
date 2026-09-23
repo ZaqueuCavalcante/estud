@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "nuxt dev",
     "lint": "eslint .",
+    "test": "vitest run",
     "build": "nuxt build",
+    "test:watch": "vitest",
     "preview": "nuxt preview",
     "typecheck": "nuxt typecheck",
     "postinstall": "nuxt prepare"
@@ -37,6 +39,7 @@
     "@nuxt/eslint": "^1.15.2",
     "eslint": "^10.3.0",
     "typescript": "^6.0.3",
+    "vitest": "^5.0.1",
     "vue-tsc": "^3.2.8"
   },
   "packageManager": "pnpm@10.33.2",
