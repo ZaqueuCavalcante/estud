@@ -677,7 +677,7 @@ a.percentagebar {
 </tr>
 <tr>
 <th>Tag:</th>
-<td class="limit-width " title="105_35797673737">105_35797673737</td>
+<td class="limit-width " title="106_35800086820">106_35800086820</td>
 </tr>
 </table>
 </div>
@@ -693,7 +693,7 @@ a.percentagebar {
 <table>
 <tr>
 <th>Covered lines:</th>
-<td class="limit-width right" title="6">6</td>
+<td class="limit-width right" title="8">8</td>
 </tr>
 <tr>
 <th>Uncovered lines:</th>
@@ -701,15 +701,15 @@ a.percentagebar {
 </tr>
 <tr>
 <th>Coverable lines:</th>
-<td class="limit-width right" title="6">6</td>
+<td class="limit-width right" title="8">8</td>
 </tr>
 <tr>
 <th>Total lines:</th>
-<td class="limit-width right" title="30">30</td>
+<td class="limit-width right" title="37">37</td>
 </tr>
 <tr>
 <th>Line coverage:</th>
-<td class="limit-width right" title="6 of 6">100%</td>
+<td class="limit-width right" title="8 of 8">100%</td>
 </tr>
 </table>
 </div>
@@ -761,6 +761,7 @@ a.percentagebar {
 <tbody>
 <tr><td title="Receive()"><a href="#file0_line17" class="navigatetohash">Receive()</a></td><td>100%</td><td>4</td><td>4</td><td>100%</td></tr>
 <tr><td title="ReceiveWithError()"><a href="#file0_line28" class="navigatetohash">ReceiveWithError()</a></td><td>100%</td><td>1</td><td>1</td><td>100%</td></tr>
+<tr><td title="ReceiveAndAbort()"><a href="#file0_line34" class="navigatetohash">ReceiveAndAbort()</a></td><td>100%</td><td>1</td><td>1</td><td>100%</td></tr>
 </tbody>
 </table>
 </div>
@@ -799,16 +800,24 @@ a.percentagebar {
 <tr class="" title="Not coverable" data-coverage="{'AllTestMethods': {'VC': '', 'LVS': 'gray'}}"><td class="gray">&nbsp;</td><td class="leftmargin rightmargin right"></td><td class="rightmargin right"><a id="file0_line27"></a><code>27</code></td><td></td><td class="lightgray"><code>&nbsp;&nbsp;&nbsp;&nbsp;{</code></td></tr>
 <tr class="coverableline" title="Covered (2 visits)" data-coverage="{'AllTestMethods': {'VC': '2', 'LVS': 'green'}}"><td class="green">&nbsp;</td><td class="leftmargin rightmargin right">2</td><td class="rightmargin right"><a id="file0_line28"></a><code>28</code></td><td></td><td class="lightgreen"><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;StatusCode(500,&nbsp;new&nbsp;{&nbsp;received&nbsp;=&nbsp;false,&nbsp;error&nbsp;=&nbsp;&quot;target&nbsp;system&nbsp;unavailable&quot;&nbsp;});</code></td></tr>
 <tr class="" title="Not coverable" data-coverage="{'AllTestMethods': {'VC': '', 'LVS': 'gray'}}"><td class="gray">&nbsp;</td><td class="leftmargin rightmargin right"></td><td class="rightmargin right"><a id="file0_line29"></a><code>29</code></td><td></td><td class="lightgray"><code>&nbsp;&nbsp;&nbsp;&nbsp;}</code></td></tr>
-<tr class="" title="Not coverable" data-coverage="{'AllTestMethods': {'VC': '', 'LVS': 'gray'}}"><td class="gray">&nbsp;</td><td class="leftmargin rightmargin right"></td><td class="rightmargin right"><a id="file0_line30"></a><code>30</code></td><td></td><td class="lightgray"><code>}</code></td></tr>
+<tr class="" title="Not coverable" data-coverage="{'AllTestMethods': {'VC': '', 'LVS': 'gray'}}"><td class="gray">&nbsp;</td><td class="leftmargin rightmargin right"></td><td class="rightmargin right"><a id="file0_line30"></a><code>30</code></td><td></td><td class="lightgray"><code></code></td></tr>
+<tr class="" title="Not coverable" data-coverage="{'AllTestMethods': {'VC': '', 'LVS': 'gray'}}"><td class="gray">&nbsp;</td><td class="leftmargin rightmargin right"></td><td class="rightmargin right"><a id="file0_line31"></a><code>31</code></td><td></td><td class="lightgray"><code>&nbsp;&nbsp;&nbsp;&nbsp;[HttpPost(&quot;webhooks/target/unreachable&quot;)]</code></td></tr>
+<tr class="" title="Not coverable" data-coverage="{'AllTestMethods': {'VC': '', 'LVS': 'gray'}}"><td class="gray">&nbsp;</td><td class="leftmargin rightmargin right"></td><td class="rightmargin right"><a id="file0_line32"></a><code>32</code></td><td></td><td class="lightgray"><code>&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;IActionResult&nbsp;ReceiveAndAbort()</code></td></tr>
+<tr class="" title="Not coverable" data-coverage="{'AllTestMethods': {'VC': '', 'LVS': 'gray'}}"><td class="gray">&nbsp;</td><td class="leftmargin rightmargin right"></td><td class="rightmargin right"><a id="file0_line33"></a><code>33</code></td><td></td><td class="lightgray"><code>&nbsp;&nbsp;&nbsp;&nbsp;{</code></td></tr>
+<tr class="coverableline" title="Covered (2 visits)" data-coverage="{'AllTestMethods': {'VC': '2', 'LVS': 'green'}}"><td class="green">&nbsp;</td><td class="leftmargin rightmargin right">2</td><td class="rightmargin right"><a id="file0_line34"></a><code>34</code></td><td></td><td class="lightgreen"><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpContext.Abort();</code></td></tr>
+<tr class="coverableline" title="Covered (2 visits)" data-coverage="{'AllTestMethods': {'VC': '2', 'LVS': 'green'}}"><td class="green">&nbsp;</td><td class="leftmargin rightmargin right">2</td><td class="rightmargin right"><a id="file0_line35"></a><code>35</code></td><td></td><td class="lightgreen"><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;new&nbsp;EmptyResult();</code></td></tr>
+<tr class="" title="Not coverable" data-coverage="{'AllTestMethods': {'VC': '', 'LVS': 'gray'}}"><td class="gray">&nbsp;</td><td class="leftmargin rightmargin right"></td><td class="rightmargin right"><a id="file0_line36"></a><code>36</code></td><td></td><td class="lightgray"><code>&nbsp;&nbsp;&nbsp;&nbsp;}</code></td></tr>
+<tr class="" title="Not coverable" data-coverage="{'AllTestMethods': {'VC': '', 'LVS': 'gray'}}"><td class="gray">&nbsp;</td><td class="leftmargin rightmargin right"></td><td class="rightmargin right"><a id="file0_line37"></a><code>37</code></td><td></td><td class="lightgray"><code>}</code></td></tr>
 </tbody>
 </table>
 </div>
-<div class="footer">Generated by: ReportGenerator 5.4.10.0<br />09/22/2026 - 23:34:47<br /><a href="https://github.com/danielpalme/ReportGenerator">GitHub</a> | <a href="https://reportgenerator.io">reportgenerator.io</a></div></div>
+<div class="footer">Generated by: ReportGenerator 5.4.10.0<br />09/23/2026 - 00:05:46<br /><a href="https://github.com/danielpalme/ReportGenerator">GitHub</a> | <a href="https://reportgenerator.io">reportgenerator.io</a></div></div>
 <div class="containerright">
 <div class="containerrightfixed">
 <h1>Methods/Properties</h1>
 <a href="#file0_line17" class="navigatetohash percentagebar percentagebar100" title="Line coverage: 100% - Receive()"><i class="icon-cube"></i>Receive()</a><br />
 <a href="#file0_line28" class="navigatetohash percentagebar percentagebar100" title="Line coverage: 100% - ReceiveWithError()"><i class="icon-cube"></i>ReceiveWithError()</a><br />
+<a href="#file0_line34" class="navigatetohash percentagebar percentagebar100" title="Line coverage: 100% - ReceiveAndAbort()"><i class="icon-cube"></i>ReceiveAndAbort()</a><br />
 <br/></div>
 </div></div>
 <script type="text/javascript">/* <![CDATA[ */ /* Chartist.js 0.11.4
