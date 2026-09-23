@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9527085804665876" branch-rate="0.8343698854337153" lines-covered="12047" lines-valid="12645" branches-covered="2549" branches-valid="3055" complexity="4444" version="0" timestamp="1790121947">
+<coverage line-rate="0.9561466001741471" branch-rate="0.835024549918167" lines-covered="12079" lines-valid="12633" branches-covered="2551" branches-valid="3055" complexity="4436" version="0" timestamp="1790123701">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9520437721274542" branch-rate="0.831943981327109" complexity="4367">
+    <package name="Back" line-rate="0.9555412371134021" branch-rate="0.8326108702900967" complexity="4359">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -3520,9 +3520,9 @@
             <line number="61" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Configs.ServicesConfigs" filename="/home/runner/work/estud/estud/Back/Configs/ServicesConfigs.cs" line-rate="0.7096774193548387" branch-rate="0.9285714285714286" complexity="12">
+        <class name="Estud.Back.Configs.ServicesConfigs" filename="/home/runner/work/estud/estud/Back/Configs/ServicesConfigs.cs" line-rate="0.9666666666666667" branch-rate="0.9285714285714286" complexity="12">
           <methods>
-            <method name="AddServicesConfigs" signature="(Microsoft.AspNetCore.Builder.WebApplicationBuilder)" line-rate="0.6086956521739131" branch-rate="0.8333333333333334" complexity="6">
+            <method name="AddServicesConfigs" signature="(Microsoft.AspNetCore.Builder.WebApplicationBuilder)" line-rate="0.9545454545454546" branch-rate="0.8333333333333334" complexity="6">
               <lines>
                 <line number="14" hits="2" branch="false" />
                 <line number="16" hits="2" branch="false" />
@@ -3531,34 +3531,33 @@
                 <line number="20" hits="2" branch="false" />
                 <line number="22" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="23" hits="2" branch="false" />
-                <line number="24" hits="0" branch="false" />
-                <line number="25" hits="0" branch="false" />
-                <line number="26" hits="0" branch="false" />
-                <line number="27" hits="0" branch="false" />
-                <line number="28" hits="0" branch="false" />
-                <line number="29" hits="0" branch="false" />
-                <line number="30" hits="0" branch="false" />
-                <line number="31" hits="0" branch="false" />
+                <line number="24" hits="2" branch="false" />
+                <line number="25" hits="2" branch="false" />
+                <line number="26" hits="2" branch="false" />
+                <line number="27" hits="2" branch="false" />
+                <line number="28" hits="2" branch="false" />
+                <line number="29" hits="2" branch="false" />
+                <line number="30" hits="2" branch="false" />
+                <line number="31" hits="2" branch="false" />
                 <line number="32" hits="2" branch="false" />
                 <line number="34" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="36" hits="2" branch="false" />
                 <line number="37" hits="2" branch="false" />
-                <line number="38" hits="2" branch="false" />
-                <line number="40" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="42" hits="0" branch="false" />
-                <line number="44" hits="2" branch="false" />
+                <line number="39" hits="2" branch="true" condition-coverage="50% (1/2)" />
+                <line number="41" hits="0" branch="false" />
+                <line number="43" hits="2" branch="false" />
               </lines>
             </method>
             <method name="AddServices" signature="(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Type)" line-rate="1" branch-rate="1" complexity="6">
               <lines>
-                <line number="48" hits="2" branch="true" condition-coverage="100% (4/4)" />
+                <line number="47" hits="2" branch="true" condition-coverage="100% (4/4)" />
+                <line number="48" hits="2" branch="false" />
                 <line number="49" hits="2" branch="false" />
-                <line number="50" hits="2" branch="false" />
-                <line number="51" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="52" hits="2" branch="false" />
-                <line number="54" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="56" hits="2" branch="false" />
-                <line number="58" hits="2" branch="false" />
+                <line number="50" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="51" hits="2" branch="false" />
+                <line number="53" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="55" hits="2" branch="false" />
+                <line number="57" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
@@ -3570,30 +3569,29 @@
             <line number="20" hits="2" branch="false" />
             <line number="22" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="23" hits="2" branch="false" />
-            <line number="24" hits="0" branch="false" />
-            <line number="25" hits="0" branch="false" />
-            <line number="26" hits="0" branch="false" />
-            <line number="27" hits="0" branch="false" />
-            <line number="28" hits="0" branch="false" />
-            <line number="29" hits="0" branch="false" />
-            <line number="30" hits="0" branch="false" />
-            <line number="31" hits="0" branch="false" />
+            <line number="24" hits="2" branch="false" />
+            <line number="25" hits="2" branch="false" />
+            <line number="26" hits="2" branch="false" />
+            <line number="27" hits="2" branch="false" />
+            <line number="28" hits="2" branch="false" />
+            <line number="29" hits="2" branch="false" />
+            <line number="30" hits="2" branch="false" />
+            <line number="31" hits="2" branch="false" />
             <line number="32" hits="2" branch="false" />
             <line number="34" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="36" hits="2" branch="false" />
             <line number="37" hits="2" branch="false" />
-            <line number="38" hits="2" branch="false" />
-            <line number="40" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="42" hits="0" branch="false" />
-            <line number="44" hits="2" branch="false" />
-            <line number="48" hits="2" branch="true" condition-coverage="100% (4/4)" />
+            <line number="39" hits="2" branch="true" condition-coverage="50% (1/2)" />
+            <line number="41" hits="0" branch="false" />
+            <line number="43" hits="2" branch="false" />
+            <line number="47" hits="2" branch="true" condition-coverage="100% (4/4)" />
+            <line number="48" hits="2" branch="false" />
             <line number="49" hits="2" branch="false" />
-            <line number="50" hits="2" branch="false" />
-            <line number="51" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="52" hits="2" branch="false" />
-            <line number="54" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="56" hits="2" branch="false" />
-            <line number="58" hits="2" branch="false" />
+            <line number="50" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="51" hits="2" branch="false" />
+            <line number="53" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="55" hits="2" branch="false" />
+            <line number="57" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Configs.SettingsConfigs" filename="/home/runner/work/estud/estud/Back/Configs/SettingsConfigs.cs" line-rate="1" branch-rate="1" complexity="1">
@@ -39588,135 +39586,74 @@
             <line number="50" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Settings.StorageSettings" filename="/home/runner/work/estud/estud/Back/Settings/StorageSettings.cs" line-rate="0" branch-rate="1" complexity="1">
+        <class name="Estud.Back.Settings.StorageSettings" filename="/home/runner/work/estud/estud/Back/Settings/StorageSettings.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name=".ctor" signature="(Microsoft.Extensions.Configuration.IConfiguration)" line-rate="0" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(Microsoft.Extensions.Configuration.IConfiguration)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="27" hits="0" branch="false" />
-                <line number="29" hits="0" branch="false" />
-                <line number="31" hits="0" branch="false" />
-                <line number="32" hits="0" branch="false" />
-                <line number="33" hits="0" branch="false" />
-                <line number="34" hits="0" branch="false" />
-                <line number="35" hits="0" branch="false" />
-                <line number="36" hits="0" branch="false" />
-                <line number="38" hits="0" branch="false" />
-                <line number="39" hits="0" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="27" hits="0" branch="false" />
-            <line number="29" hits="0" branch="false" />
-            <line number="31" hits="0" branch="false" />
-            <line number="32" hits="0" branch="false" />
-            <line number="33" hits="0" branch="false" />
-            <line number="34" hits="0" branch="false" />
-            <line number="35" hits="0" branch="false" />
-            <line number="36" hits="0" branch="false" />
-            <line number="38" hits="0" branch="false" />
-            <line number="39" hits="0" branch="false" />
-          </lines>
-        </class>
-        <class name="Estud.Back.Settings.StorageSettingsExtensions" filename="/home/runner/work/estud/estud/Back/Settings/StorageSettings.cs" line-rate="0" branch-rate="1" complexity="1">
-          <methods>
-            <method name="get_Storage" signature="(Microsoft.Extensions.Configuration.IConfiguration)" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="46" hits="0" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="46" hits="0" branch="false" />
-          </lines>
-        </class>
-        <class name="Estud.Back.Storage.FakeStorageService" filename="/home/runner/work/estud/estud/Back/Storage/FakeStorageService.cs" line-rate="0.9166666666666666" branch-rate="0.5" complexity="10">
-          <methods>
-            <method name="CreatePreSignedUrlForUpload" signature="(Estud.Back.Domain.Enums.StorageContainer, string, string, long, System.TimeSpan)" line-rate="1" branch-rate="1" complexity="1">
-              <lines>
-                <line number="11" hits="2" branch="false" />
-              </lines>
-            </method>
-            <method name="CreatePreSignedUrlForDownload" signature="(Estud.Back.Domain.Enums.StorageContainer, string, System.TimeSpan)" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="16" hits="0" branch="false" />
-              </lines>
-            </method>
-            <method name="GetPublicUrl" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="1" branch-rate="0.5" complexity="2">
-              <lines>
-                <line number="21" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="23" hits="2" branch="false" />
-              </lines>
-            </method>
-            <method name="GetMetadata" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="1" branch-rate="1" complexity="1">
-              <lines>
-                <line number="28" hits="2" branch="false" />
-              </lines>
-            </method>
-            <method name="Delete" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="1" branch-rate="1" complexity="1">
-              <lines>
+                <line number="27" hits="2" branch="false" />
+                <line number="29" hits="2" branch="false" />
+                <line number="31" hits="2" branch="false" />
+                <line number="32" hits="2" branch="false" />
                 <line number="33" hits="2" branch="false" />
                 <line number="34" hits="2" branch="false" />
-              </lines>
-            </method>
-            <method name="SimulateUpload" signature="(Estud.Back.Domain.Enums.StorageContainer, string, string, long)" line-rate="1" branch-rate="1" complexity="1">
-              <lines>
+                <line number="35" hits="2" branch="false" />
+                <line number="36" hits="2" branch="false" />
+                <line number="38" hits="2" branch="false" />
                 <line number="39" hits="2" branch="false" />
-                <line number="40" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="GetUrl" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="1" branch-rate="1" complexity="1">
+          </methods>
+          <lines>
+            <line number="27" hits="2" branch="false" />
+            <line number="29" hits="2" branch="false" />
+            <line number="31" hits="2" branch="false" />
+            <line number="32" hits="2" branch="false" />
+            <line number="33" hits="2" branch="false" />
+            <line number="34" hits="2" branch="false" />
+            <line number="35" hits="2" branch="false" />
+            <line number="36" hits="2" branch="false" />
+            <line number="38" hits="2" branch="false" />
+            <line number="39" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Settings.StorageSettingsExtensions" filename="/home/runner/work/estud/estud/Back/Settings/StorageSettings.cs" line-rate="1" branch-rate="1" complexity="1">
+          <methods>
+            <method name="get_Storage" signature="(Microsoft.Extensions.Configuration.IConfiguration)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="44" hits="2" branch="false" />
+                <line number="46" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="GetKey" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="1" branch-rate="1" complexity="1">
-              <lines>
-                <line number="49" hits="2" branch="false" />
-              </lines>
-            </method>
-            <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
+          </methods>
+          <lines>
+            <line number="46" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Estud.Back.Storage.R2StorageService" filename="/home/runner/work/estud/estud/Back/Storage/R2StorageService.cs" line-rate="0.7142857142857143" branch-rate="0.5" complexity="12">
+          <methods>
+            <method name=".ctor" signature="(Amazon.S3.IAmazonS3, Estud.Back.Settings.StorageSettings)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="7" hits="2" branch="false" />
               </lines>
             </method>
-          </methods>
-          <lines>
-            <line number="7" hits="2" branch="false" />
-            <line number="11" hits="2" branch="false" />
-            <line number="16" hits="0" branch="false" />
-            <line number="21" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="23" hits="2" branch="false" />
-            <line number="28" hits="2" branch="false" />
-            <line number="33" hits="2" branch="false" />
-            <line number="34" hits="2" branch="false" />
-            <line number="39" hits="2" branch="false" />
-            <line number="40" hits="2" branch="false" />
-            <line number="44" hits="2" branch="false" />
-            <line number="49" hits="2" branch="false" />
-          </lines>
-        </class>
-        <class name="Estud.Back.Storage.R2StorageService" filename="/home/runner/work/estud/estud/Back/Storage/R2StorageService.cs" line-rate="0" branch-rate="0" complexity="10">
-          <methods>
-            <method name=".ctor" signature="(Amazon.S3.IAmazonS3, Estud.Back.Settings.StorageSettings)" line-rate="0" branch-rate="1" complexity="1">
+            <method name="GetPublicUrl" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="1" branch-rate="0.5" complexity="2">
               <lines>
-                <line number="7" hits="0" branch="false" />
+                <line number="44" hits="2" branch="true" condition-coverage="50% (1/2)" />
+                <line number="46" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="GetPublicUrl" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="0" branch-rate="0" complexity="2">
+            <method name="GetProtocol" signature="()" line-rate="1" branch-rate="0.5" complexity="2">
               <lines>
-                <line number="44" hits="0" branch="true" condition-coverage="0% (0/2)" />
-                <line number="46" hits="0" branch="false" />
+                <line number="69" hits="2" branch="true" condition-coverage="50% (1/2)" />
               </lines>
             </method>
-            <method name="GetBucket" signature="(Estud.Back.Domain.Enums.StorageContainer)" line-rate="0" branch-rate="0" complexity="2">
+            <method name="GetBucket" signature="(Estud.Back.Domain.Enums.StorageContainer)" line-rate="1" branch-rate="0.5" complexity="2">
               <lines>
-                <line number="69" hits="0" branch="true" condition-coverage="0% (0/2)" />
+                <line number="74" hits="2" branch="true" condition-coverage="50% (1/2)" />
               </lines>
             </method>
-            <method name="GetKey" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="0" branch-rate="1" complexity="1">
+            <method name="GetKey" signature="(Estud.Back.Domain.Enums.StorageContainer, string)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="74" hits="0" branch="false" />
+                <line number="79" hits="2" branch="false" />
               </lines>
             </method>
             <method name="CreatePreSignedUrlForDownload" signature="()" line-rate="0" branch-rate="1" complexity="1">
@@ -39733,52 +39670,52 @@
                 <line number="40" hits="0" branch="false" />
               </lines>
             </method>
-            <method name="CreatePreSignedUrlForUpload" signature="()" line-rate="0" branch-rate="1" complexity="1">
+            <method name="CreatePreSignedUrlForUpload" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="11" hits="0" branch="false" />
-                <line number="12" hits="0" branch="false" />
-                <line number="13" hits="0" branch="false" />
-                <line number="14" hits="0" branch="false" />
-                <line number="15" hits="0" branch="false" />
-                <line number="16" hits="0" branch="false" />
-                <line number="17" hits="0" branch="false" />
-                <line number="18" hits="0" branch="false" />
-                <line number="19" hits="0" branch="false" />
-                <line number="23" hits="0" branch="false" />
-                <line number="25" hits="0" branch="false" />
-                <line number="26" hits="0" branch="false" />
+                <line number="11" hits="2" branch="false" />
+                <line number="12" hits="2" branch="false" />
+                <line number="13" hits="2" branch="false" />
+                <line number="14" hits="2" branch="false" />
+                <line number="15" hits="2" branch="false" />
+                <line number="16" hits="2" branch="false" />
+                <line number="17" hits="2" branch="false" />
+                <line number="18" hits="2" branch="false" />
+                <line number="19" hits="2" branch="false" />
+                <line number="23" hits="2" branch="false" />
+                <line number="25" hits="2" branch="false" />
+                <line number="26" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="Delete" signature="()" line-rate="0" branch-rate="1" complexity="1">
+            <method name="Delete" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="64" hits="0" branch="false" />
-                <line number="65" hits="0" branch="false" />
+                <line number="64" hits="2" branch="false" />
+                <line number="65" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="GetMetadata" signature="()" line-rate="0" branch-rate="1" complexity="1">
+            <method name="GetMetadata" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="53" hits="0" branch="false" />
-                <line number="54" hits="0" branch="false" />
-                <line number="56" hits="0" branch="false" />
-                <line number="58" hits="0" branch="false" />
-                <line number="60" hits="0" branch="false" />
+                <line number="53" hits="2" branch="false" />
+                <line number="54" hits="2" branch="false" />
+                <line number="56" hits="2" branch="false" />
+                <line number="58" hits="2" branch="false" />
+                <line number="60" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="7" hits="0" branch="false" />
-            <line number="11" hits="0" branch="false" />
-            <line number="12" hits="0" branch="false" />
-            <line number="13" hits="0" branch="false" />
-            <line number="14" hits="0" branch="false" />
-            <line number="15" hits="0" branch="false" />
-            <line number="16" hits="0" branch="false" />
-            <line number="17" hits="0" branch="false" />
-            <line number="18" hits="0" branch="false" />
-            <line number="19" hits="0" branch="false" />
-            <line number="23" hits="0" branch="false" />
-            <line number="25" hits="0" branch="false" />
-            <line number="26" hits="0" branch="false" />
+            <line number="7" hits="2" branch="false" />
+            <line number="11" hits="2" branch="false" />
+            <line number="12" hits="2" branch="false" />
+            <line number="13" hits="2" branch="false" />
+            <line number="14" hits="2" branch="false" />
+            <line number="15" hits="2" branch="false" />
+            <line number="16" hits="2" branch="false" />
+            <line number="17" hits="2" branch="false" />
+            <line number="18" hits="2" branch="false" />
+            <line number="19" hits="2" branch="false" />
+            <line number="23" hits="2" branch="false" />
+            <line number="25" hits="2" branch="false" />
+            <line number="26" hits="2" branch="false" />
             <line number="30" hits="0" branch="false" />
             <line number="31" hits="0" branch="false" />
             <line number="32" hits="0" branch="false" />
@@ -39789,17 +39726,18 @@
             <line number="37" hits="0" branch="false" />
             <line number="39" hits="0" branch="false" />
             <line number="40" hits="0" branch="false" />
-            <line number="44" hits="0" branch="true" condition-coverage="0% (0/2)" />
-            <line number="46" hits="0" branch="false" />
-            <line number="53" hits="0" branch="false" />
-            <line number="54" hits="0" branch="false" />
-            <line number="56" hits="0" branch="false" />
-            <line number="58" hits="0" branch="false" />
-            <line number="60" hits="0" branch="false" />
-            <line number="64" hits="0" branch="false" />
-            <line number="65" hits="0" branch="false" />
-            <line number="69" hits="0" branch="true" condition-coverage="0% (0/2)" />
-            <line number="74" hits="0" branch="false" />
+            <line number="44" hits="2" branch="true" condition-coverage="50% (1/2)" />
+            <line number="46" hits="2" branch="false" />
+            <line number="53" hits="2" branch="false" />
+            <line number="54" hits="2" branch="false" />
+            <line number="56" hits="2" branch="false" />
+            <line number="58" hits="2" branch="false" />
+            <line number="60" hits="2" branch="false" />
+            <line number="64" hits="2" branch="false" />
+            <line number="65" hits="2" branch="false" />
+            <line number="69" hits="2" branch="true" condition-coverage="50% (1/2)" />
+            <line number="74" hits="2" branch="true" condition-coverage="50% (1/2)" />
+            <line number="79" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Storage.StorageFileMetadata" filename="/home/runner/work/estud/estud/Back/Storage/StorageFileMetadata.cs" line-rate="1" branch-rate="1" complexity="1">
