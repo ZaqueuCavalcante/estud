@@ -181,7 +181,7 @@ public partial class IntegrationTests
     public async Task Identity_CreateSsoConfiguration_Should_not_create_sso_configuration_when_domain_already_configured()
     {
         // Arrange
-        var client = await _back.LoggedAsDirector("director@sso-duplicate-domain.com");
+        var client = await _back.LoggedAsDirector($"director@sso-duplicate-domain-{DataGen.Numbers}.com");
         await client.CreateSsoConfiguration();
 
         // Act
@@ -217,7 +217,7 @@ public partial class IntegrationTests
     public async Task Identity_CreateSsoConfiguration_Should_create_sso_configuration()
     {
         // Arrange
-        var client = await _back.LoggedAsDirector("director@sso-happy-path.com");
+        var client = await _back.LoggedAsDirector($"director@sso-happy-path-{DataGen.Numbers}.com");
 
         // Act
         var result = await client.CreateSsoConfiguration();

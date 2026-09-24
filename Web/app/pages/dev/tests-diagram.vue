@@ -6,11 +6,9 @@ interface NodeContent {
   icon: string
 }
 
-interface ItemContent {
-  title: string
-  sub?: string
-  color: string
-  icon: string
+interface Service extends NodeContent {
+  light: string
+  address: string
 }
 
 interface Frame {
@@ -48,16 +46,6 @@ interface Label {
   anchor?: 'start' | 'middle' | 'end'
 }
 
-interface Chip {
-  x: number
-  y: number
-  w: number
-  size: number
-  color: string
-  textColor: string
-  label: string
-}
-
 interface Block {
   id: string
   rect?: Frame & { fill: string }
@@ -65,6 +53,7 @@ interface Block {
   icon: IconMark
   title: Label
   sub?: Label
+  corner?: Label
 }
 
 interface Header {
@@ -77,22 +66,7 @@ interface Point {
   id: string
   icon: IconMark
   title: Label
-}
-
-interface Pill {
-  x: number
-  y: number
-  w: number
-  label: string
-}
-
-interface Container {
-  node: NodeContent
-  drop: string
-  chips: string[]
-  chipText: string
-  mirror: string
-  prod: ItemContent
+  sub?: Label
 }
 
 const W = 1080
@@ -100,26 +74,17 @@ const H = 1350
 const CX = W / 2
 const M = 64
 
-const MONO = POSTER_MONO
-
 const measure = measurePosterText
 
 const C = {
   bg: '#2f1c51',
   card: '#211439',
   surface: 'rgba(255,255,255,0.06)',
-  cardTop: '#35205b',
   cardStroke: 'rgba(255,255,255,0.09)',
   text: '#fafafa',
   muted: '#a1a1aa',
-  violet: '#8b5cf6',
-  violetLight: '#c4b5fd',
   line: '#a78bfa'
 }
-
-const TEAL = '#2dd4bf'
-const ROSE = '#fb7185'
-const AMBER = '#F59E0B'
 
 // Mesmo path do <EstudIcon>, em viewBox 24x24.
 const ESTUD_E = 'M 10.98 20.5Q 9.46 20.5 8.27 19.61Q 7.08 18.72 6.4 17.13Q 5.73 15.53 5.73 13.49Q 5.73 11.37 6.34 9.54Q 6.96 7.72 8.08 6.37Q 9.2 5.02 10.71 4.26Q 12.22 3.5 13.97 3.5Q 16.09 3.5 17.18 4.56Q 18.27 5.62 18.27 7.66Q 18.27 9.19 17.44 10.41Q 16.61 11.63 15.16 12.32Q 13.71 13.01 11.84 13.01Q 10.92 13.01 10.12 12.9Q 9.32 12.8 8.57 12.63L 8.65 11.63H 9.72Q 11.38 11.63 12.62 11.07Q 13.85 10.51 14.54 9.47Q 15.23 8.44 15.23 7.09Q 15.23 6.08 14.76 5.54Q 14.28 4.99 13.42 4.99Q 12.33 4.99 11.47 5.81Q 10.61 6.63 10.0 7.94Q 9.4 9.24 9.09 10.74Q 8.77 12.23 8.77 13.58Q 8.77 16.11 9.53 17.38Q 10.29 18.66 11.78 18.66Q 14.6 18.66 16.41 15.85Q 17.47 16.02 17.47 16.62Q 16.24 18.63 14.67 19.57Q 13.11 20.5 10.98 20.5Z'
@@ -128,182 +93,70 @@ const LINKEDIN = { handle: '/in/zaqueu-cavalcante', icon: 'i-simple-icons-linked
 
 const TITLE = { lead: 'Como o Estud é ', accent: 'testado?' }
 
-const RUNNER: NodeContent = { title: 'NUnit', sub: 'dotnet test', color: '#34d399', icon: 'i-lucide-flask-conical' }
-const BACK: NodeContent = { title: 'Back', sub: 'WebApplicationFactory', color: '#9B7BFF', icon: 'i-simple-icons-dotnet' }
+const BACK: Service = { title: 'Back', sub: 'WebApplicationFactory', color: '#9B7BFF', icon: 'i-simple-icons-dotnet', light: '#ddd6fe', address: 'localhost:5100' }
 
-const ASSERTS = {
-  title: 'Asserts',
-  icon: 'i-lucide-check-check',
+const FAKES = {
+  title: 'Fakes',
+  hint: 'localhost:5678',
+  icon: 'i-simple-icons-dotnet',
+  color: '#F59E0B',
   items: [
-    { title: 'FluentAssertions', sub: '.Should().Be(...)', color: '#34d399', icon: 'i-lucide-circle-check-big' },
-    { title: 'Result Pattern', sub: 'ShouldBeError()', color: '#c4b5fd', icon: 'i-lucide-shield-check' }
-  ] as ItemContent[]
+    { title: 'Brevo', sub: 'E-mails', icon: 'i-lucide-mail' },
+    { title: 'OIDC', sub: 'Login SSO', icon: 'i-lucide-fingerprint' },
+    { title: 'DNS', sub: 'Registros TXT', icon: 'i-lucide-globe' },
+    { title: 'Google', sub: 'Social login', icon: 'i-simple-icons-google' },
+    { title: 'Webhooks', sub: 'Callbacks', icon: 'i-lucide-webhook' }
+  ]
 }
 
-const MOCKS = {
-  title: 'Mocks',
-  icon: 'i-lucide-drama',
+const TESTCONTAINERS = {
+  title: 'Testcontainers',
+  hint: 'Docker',
+  icon: 'i-simple-icons-docker',
+  color: '#2496ED',
   items: [
-    { title: 'Mocks API', sub: 'OIDC · DNS · Webhooks', color: ROSE, icon: 'i-lucide-server' },
-    { title: 'Fakes', sub: 'E-mails em memória', color: AMBER, icon: 'i-lucide-mail' }
-  ] as ItemContent[]
+    { title: 'Postgres', sub: 'postgres:18', color: '#5B8DEF', icon: 'i-simple-icons-postgresql', light: '#bfdbfe', address: 'localhost:5445' },
+    { title: 'MinIO', sub: 'minio:latest', color: '#f0506e', icon: 'i-simple-icons-minio', light: '#fecdd3', address: 'localhost:5300' },
+    { title: 'Keycloak', sub: 'keycloak:26.4', color: '#38bdf8', icon: 'i-simple-icons-keycloak', light: '#bae6fd', address: 'localhost:5446' }
+  ] as Service[]
 }
 
-const TESTCONTAINERS = { title: 'Testcontainers', hint: 'Docker · infra real, sem mocks', icon: 'i-simple-icons-docker', color: '#2496ED' }
-
-const POSTGRES: Container = {
-  node: { title: 'Postgres', sub: 'postgres:18', color: '#5B8DEF', icon: 'i-simple-icons-postgresql' },
-  drop: 'EF Core · Dapper',
-  chips: ['Banco recriado', 'Reuse'],
-  chipText: '#bfdbfe',
-  mirror: 'mesmo engine',
-  prod: { title: 'Postgres', sub: 'produção · Railway', color: '#5B8DEF', icon: 'i-simple-icons-postgresql' }
+const TAGLINE = {
+  title: 'O Back não sabe que está em teste',
+  sub: 'roda o mesmo código de produção, só apontando pra outros endereços'
 }
 
-const MINIO: Container = {
-  node: { title: 'MinIO', sub: 'minio:latest', color: '#f0506e', icon: 'i-simple-icons-minio' },
-  drop: 'AWSSDK.S3',
-  chips: ['Buckets', 'Presigned URL'],
-  chipText: '#fecdd3',
-  mirror: 'mesma API S3',
-  prod: { title: 'Cloudflare R2', sub: 'produção · Storage', color: '#F38020', icon: 'i-estud-r2' }
-}
-
-const KEYCLOAK: Container = {
-  node: { title: 'Keycloak', sub: 'keycloak:26.4', color: '#38bdf8', icon: 'i-simple-icons-keycloak' },
-  drop: 'OpenID Connect',
-  chips: ['SSO happy path', 'Realm JSON'],
-  chipText: '#bae6fd',
-  mirror: 'mesmo OIDC',
-  prod: { title: 'Okta · Azure · Auth0', sub: 'produção · SSO', color: TEAL, icon: 'i-lucide-building-2' }
-}
-
-const CONCEPTS = [
-  {
-    title: 'Arrange via API',
-    icon: 'i-lucide-route',
-    color: TEAL,
-    chipText: '#99f6e4',
-    chips: ['Arrange', 'Act', 'Assert'],
-    rows: [
-      { title: 'TestsHttpClient', sub: 'Um helper por endpoint', color: TEAL, icon: 'i-lucide-send' },
-      { title: 'Shortcuts', sub: 'Cenários prontos', color: '#fcd34d', icon: 'i-lucide-zap' }
-    ] as ItemContent[]
-  },
-  {
-    title: 'Isolamento',
-    icon: 'i-lucide-layers',
-    color: AMBER,
-    chipText: '#fcd34d',
-    chips: ['DataSeeder', 'Por classe'],
-    rows: [
-      { title: 'Banco por classe', sub: 'EnsureDeleted · Created', color: '#5B8DEF', icon: 'i-lucide-database' },
-      { title: 'Paralelo', sub: 'ParallelScope.Children', color: AMBER, icon: 'i-lucide-split' }
-    ] as ItemContent[]
-  },
-  {
-    title: 'Background',
-    icon: 'i-lucide-list-end',
-    color: ROSE,
-    chipText: '#fecdd3',
-    chips: ['Quartz.NET', 'Outbox'],
-    rows: [
-      { title: 'Commands', sub: 'AwaitCommandsProcessing', color: ROSE, icon: 'i-lucide-list-end' },
-      { title: 'Domain Events', sub: 'AwaitDomainEventsProcessing', color: AMBER, icon: 'i-lucide-activity' }
-    ] as ItemContent[]
-  }
-]
-
-const SUITES = {
-  title: 'Suítes',
-  icon: 'i-lucide-test-tube-diagonal',
-  items: [
-    { title: 'Unit', sub: 'NUnit · Domínio', color: '#38bdf8', icon: 'i-lucide-box' },
-    { title: 'Integration', sub: 'API · Testcontainers', color: '#34d399', icon: 'i-lucide-plug' },
-    { title: 'Mutation', sub: 'Stryker.NET', color: '#f472b6', icon: 'i-lucide-dna' },
-    { title: 'Web Unit', sub: 'Vitest · Nuxt', color: '#FCC72B', icon: 'i-simple-icons-vitest' }
-  ] as ItemContent[],
-  coverage: { title: 'Coverage ≥ 95%', icon: 'i-lucide-chart-column', color: '#a3e635' },
-  actions: { title: 'GitHub Actions', icon: 'i-simple-icons-githubactions', color: '#2088FF' }
-}
-
-function chipsWidth(labels: string[], size = 13): number {
-  return labels.reduce((sum, label) => sum + label.length * size * 0.6 + 18, 0) + 6 * (labels.length - 1)
-}
-
-function chipRow(x: number, y: number, labels: string[], color: string, textColor: string, size = 13): Chip[] {
-  let cursor = x
-
-  return labels.map((label) => {
-    const w = label.length * size * 0.6 + 18
-    const chip: Chip = { x: cursor, y, w, size, color, textColor, label }
-    cursor += w + 6
-    return chip
-  })
-}
-
-function node(content: NodeContent, x: number, y: number, w: number, h = 80): Block {
-  const textW = Math.max(measure(content.title, 24, 600), measure(content.sub, 14, 400, MONO))
-  const bx = x + (w - (64 + textW)) / 2
-  const by = y + (h - 48) / 2
+function stackedNode(content: NodeContent, x: number, y: number, w: number, h: number): Block {
+  const cx = x + w / 2
+  const top = y + (h - 146) / 2
 
   return {
     id: `node-${content.title}`,
     rect: { x, y, w, h, rx: 18, fill: C.card },
-    tile: { x: bx, y: by, size: 48, rx: 13, color: content.color },
-    icon: { name: content.icon, x: bx + 11, y: by + 11, size: 26, color: content.color },
-    title: { x: bx + 64, y: by + 22, size: 24, weight: 600, fill: C.text, value: content.title },
-    sub: { x: bx + 64, y: by + 46, size: 14, weight: 400, fill: C.muted, value: content.sub, mono: true }
+    tile: { x: cx - 36, y: top, size: 72, rx: 18, color: content.color },
+    icon: { name: content.icon, x: cx - 20, y: top + 16, size: 40, color: content.color },
+    title: { x: cx, y: top + 114, size: 28, weight: 700, fill: C.text, value: content.title, anchor: 'middle' },
+    sub: { x: cx, y: top + 142, size: 15, weight: 400, fill: C.muted, value: content.sub, mono: true, anchor: 'middle' }
   }
 }
 
-function itemWidth(content: ItemContent): number {
-  return 48 + Math.max(measure(content.title, 18, 600), measure(content.sub ?? '', 13, 400, MONO))
-}
-
-function item(content: ItemContent, x: number, y: number, variant: 'doc' | 'row'): Block {
-  const tile = variant === 'row' ? 34 : 36
-
+function withAddress(block: Block, service: Service, right: number, top: number): Block {
   return {
-    id: `${variant}-${content.title}`,
-    tile: { x, y, size: tile, rx: 10, color: content.color },
-    icon: { name: content.icon, x: x + 8, y: y + 8, size: variant === 'row' ? 18 : 20, color: content.color },
-    title: { x: x + tile + 12, y: y + 15, size: variant === 'row' ? 16 : 18, weight: 600, fill: C.text, value: content.title },
-    sub: content.sub
-      ? {
-          x: x + tile + 12,
-          y: y + (variant === 'row' ? 32 : 33),
-          size: variant === 'row' ? 12 : 13,
-          weight: 400,
-          fill: C.muted,
-          value: content.sub,
-          mono: true
-        }
-      : undefined
+    ...block,
+    corner: { x: right - 16, y: top + 26, size: 13, weight: 400, fill: service.light, value: service.address, mono: true, anchor: 'end' }
   }
 }
 
-function suiteItem(content: ItemContent, x: number, y: number, w: number, h: number): Block {
-  const tileY = y + (h - 34) / 2
-
-  return {
-    id: `suite-${content.title}`,
-    rect: { x, y, w, h, rx: 13, fill: C.surface },
-    tile: { x: x + 12, y: tileY, size: 34, rx: 10, color: content.color },
-    icon: { name: content.icon, x: x + 20, y: tileY + 8, size: 18, color: content.color },
-    title: { x: x + 58, y: y + h / 2 - 3, size: 17, weight: 600, fill: C.text, value: content.title },
-    sub: { x: x + 58, y: y + h / 2 + 15, size: 12, weight: 400, fill: C.muted, value: content.sub!, mono: true }
-  }
-}
-
-function header(id: string, x: number, y: number, icon: string, title: string, color: string, centerIn?: number): Header {
-  const bx = centerIn ? x + (centerIn - (34 + measure(title, 22, 700))) / 2 : x + 18
-
+function header(id: string, frame: Frame, icon: string, title: string, color: string): Header {
   return {
     id,
-    icon: { name: icon, x: bx, y: y + 16, size: 24, color },
-    title: { x: bx + 34, y: y + 37, size: 22, weight: 700, fill: C.text, value: title }
+    icon: { name: icon, x: frame.x + 18, y: frame.y + 24, size: 24, color },
+    title: { x: frame.x + 52, y: frame.y + 45, size: 22, weight: 700, fill: C.text, value: title }
   }
+}
+
+function hint(frame: Frame, value: string): Label {
+  return { x: frame.x + frame.w - 22, y: frame.y + 43, size: 14, weight: 400, fill: C.muted, value, mono: true, anchor: 'end' }
 }
 
 function point(id: string, x: number, y: number, content: { title: string, icon: string, color: string, mono?: boolean }, size = 17): Point {
@@ -314,127 +167,64 @@ function point(id: string, x: number, y: number, content: { title: string, icon:
   }
 }
 
-function pill(x: number, y: number, label: string): Pill {
-  return { x, y, w: label.length * 9.4 + 28, label }
-}
-
 const poster = computed(() => {
   const titleX = M + measure(TITLE.lead, 52, 800)
+  const innerW = W - 2 * M
 
-  const rowA = 136
-  const rowAH = 220
-  const conceptsH = 200
-  const suitesH = 132
-  const gap = 38
+  const rowY = 140
+  const fakeH = 42
+  const fakesH = 72 + FAKES.items.length * fakeH + 14
 
-  const topW = 104 + Math.max(
-    ...[RUNNER, BACK].map(n => measure(n.title, 24, 600)),
-    ...[RUNNER, BACK].map(n => measure(n.sub, 14, 400, MONO))
-  )
-  const topX = CX - topW / 2
-  const runnerY = rowA
-  const backY = rowA + rowAH - 80
+  const backW = 300
+  const backH = 220
+  const fakes: Frame = { x: M + backW + 80, y: rowY, w: innerW - backW - 80, h: fakesH, rx: 22 }
+  const back = { x: M, y: rowY + fakesH / 2 - backH / 2 }
 
-  const sideW = 40 + Math.max(...[...ASSERTS.items, ...MOCKS.items].map(itemWidth))
-  const asserts: Frame = { x: M, y: rowA, w: sideW, h: rowAH, rx: 22 }
-  const mocks: Frame = { x: W - M - sideW, y: rowA, w: sideW, h: rowAH, rx: 22 }
-
-  const card: Frame = { x: M, y: rowA + rowAH + gap, w: W - 2 * M, h: H - 32 - rowA - rowAH - conceptsH - suitesH - 3 * gap, rx: 28 }
-
-  const nodeH = 84
-  const prodH = 76
-  const spare = card.h - 330
-  const splitY = card.y + 76
-  const nodeTop = splitY + spare / 2
-  const chipsY = nodeTop + 112
-  const mirrorTop = nodeTop + 150
-  const prodY = mirrorTop + spare / 2
-
-  const containers = [POSTGRES, MINIO, KEYCLOAK]
-  const innerX = card.x + 30
-  const tcW = (card.w - 60 - 40) / 3
-  const tcX = (i: number) => innerX + i * (tcW + 20)
-  const tcCx = (i: number) => tcX(i) + tcW / 2
-
-  const pgH = 116
-  const pgRy = 16
-  const pgY = nodeTop + nodeH / 2 - pgH / 2
-  const pgTop = pgY + (2 * pgRy + pgH) / 2 - 24
-  const pgTextW = Math.max(measure(POSTGRES.node.title, 24, 600), measure(POSTGRES.node.sub, 14, 400, MONO))
-  const pgBx = tcX(0) + (tcW - (64 + pgTextW)) / 2
-  const dropEnd = (i: number) => (i === 0 ? pgY : nodeTop)
-
-  const conceptsY = card.y + card.h + gap
-  const colW = (W - 2 * M - 32) / 3
-  const colX = (i: number) => M + i * (colW + 16)
-
-  const suites: Frame = { x: M, y: conceptsY + conceptsH + gap, w: W - 2 * M, h: suitesH, rx: 22 }
-  const suiteW = (suites.w - 40 - 36) / 4
-
-  const covX = suites.x + suites.w - 22 - (30 + measure(SUITES.coverage.title, 17, 600))
-  const ghX = covX - 32 - (30 + measure(SUITES.actions.title, 17, 600))
+  const tagline: Frame = { x: M, y: H - 32 - 190, w: innerW, h: 190, rx: 22 }
+  const tcY = rowY + fakesH + 70
+  const tc: Frame = { x: M, y: tcY, w: innerW, h: tagline.y - 40 - tcY, rx: 22 }
+  const tcW = (tc.w - 60 - 40) / 3
+  const tcX = (i: number) => tc.x + 30 + i * (tcW + 20)
 
   return {
     titleGrad: { x1: titleX, x2: titleX + measure(TITLE.accent, 52, 800) },
-    frames: [asserts, mocks, card, suites, ...[0, 1, 2].map((i): Frame => ({ x: colX(i), y: conceptsY, w: colW, h: conceptsH, rx: 22 }))],
+    frames: [fakes, tc, tagline],
     headers: [
-      header('asserts', asserts.x, asserts.y + 8, ASSERTS.icon, ASSERTS.title, '#fff', asserts.w),
-      header('mocks', mocks.x, mocks.y + 8, MOCKS.icon, MOCKS.title, '#fff', mocks.w),
-      header('suites', suites.x + 4, suites.y, SUITES.icon, SUITES.title, '#fff'),
-      ...CONCEPTS.map((c, i) => header(c.title, colX(i), conceptsY, c.icon, c.title, c.color, colW))
+      header('fakes', fakes, FAKES.icon, FAKES.title, FAKES.color),
+      header('tc', tc, TESTCONTAINERS.icon, TESTCONTAINERS.title, TESTCONTAINERS.color)
     ],
-    card: {
-      icon: { name: TESTCONTAINERS.icon, x: card.x + 30, y: card.y + 20, size: 30, color: TESTCONTAINERS.color } as IconMark,
-      title: { x: card.x + 72, y: card.y + 45, size: 26, weight: 700, fill: C.text, value: TESTCONTAINERS.title } as Label,
-      hint: { x: card.x + card.w - 30, y: card.y + 43, size: 14, weight: 400, fill: C.muted, value: TESTCONTAINERS.hint, mono: true, anchor: 'end' } as Label
-    },
+    hints: [hint(fakes, FAKES.hint), hint(tc, TESTCONTAINERS.hint)],
     arrows: [
-      `M ${CX} ${runnerY + 80} L ${CX} ${backY - 6}`,
-      ...containers.map((_, i) => `M ${CX} ${backY + 80} L ${CX} ${splitY} L ${tcCx(i)} ${splitY} L ${tcCx(i)} ${dropEnd(i) - 6}`)
+      `M ${back.x + backW} ${back.y + backH / 2} L ${fakes.x - 6} ${back.y + backH / 2}`,
+      `M ${back.x + backW / 2} ${back.y + backH} L ${back.x + backW / 2} ${tc.y - 6}`
     ],
-    mirrors: containers.map((_, i) => `M ${tcCx(i)} ${mirrorTop} L ${tcCx(i)} ${prodY}`),
-    prodStrip: { x: card.x + 20, y: prodY, w: card.w - 40, h: prodH, rx: 18 } as Frame,
-    pills: [
-      pill(CX, (runnerY + 80 + backY) / 2, 'TestsHttpClient'),
-      ...containers.map((c, i) => pill(tcCx(i), (splitY + pgY) / 2, c.drop)),
-      ...containers.map((c, i) => pill(tcCx(i), (mirrorTop + prodY) / 2, c.mirror))
-    ],
-    cylinder: {
-      x: tcX(0),
-      w: tcW,
-      ry: pgRy,
-      rx: tcW / 2,
-      cx: tcCx(0),
-      top: pgY + pgRy,
-      bottom: pgY + pgH - pgRy,
-      right: tcX(0) + tcW,
-      color: POSTGRES.node.color
-    },
     blocks: [
-      node(RUNNER, topX, runnerY, topW),
-      node(BACK, topX, backY, topW),
-      ...[MINIO, KEYCLOAK].map((c, i) => node(c.node, tcX(i + 1), nodeTop, tcW, nodeH)),
-      {
-        id: 'postgres',
-        tile: { x: pgBx, y: pgTop, size: 48, rx: 13, color: POSTGRES.node.color },
-        icon: { name: POSTGRES.node.icon, x: pgBx + 11, y: pgTop + 11, size: 26, color: POSTGRES.node.color },
-        title: { x: pgBx + 64, y: pgTop + 22, size: 24, weight: 600, fill: C.text, value: POSTGRES.node.title },
-        sub: { x: pgBx + 64, y: pgTop + 44, size: 14, weight: 400, fill: C.muted, value: POSTGRES.node.sub, mono: true }
-      } as Block,
-      ...containers.map((c, i) => item(c.prod, tcCx(i) - itemWidth(c.prod) / 2, prodY + (prodH - 36) / 2, 'doc')),
-      ...ASSERTS.items.map((a, i) => item(a, asserts.x + 20, asserts.y + 84 + i * 64, 'doc')),
-      ...MOCKS.items.map((m, i) => item(m, mocks.x + 20, mocks.y + 84 + i * 64, 'doc')),
-      ...CONCEPTS.flatMap((c, ci) => c.rows.map((r, i) => item(r, colX(ci) + 18, conceptsY + 56 + i * 46, 'row'))),
-      ...SUITES.items.map((s, i) => suiteItem(s, suites.x + 20 + i * (suiteW + 12), suites.y + 54, suiteW, 58))
+      withAddress(stackedNode(BACK, back.x, back.y, backW, backH), BACK, back.x + backW, back.y),
+      ...TESTCONTAINERS.items.map((c, i) => {
+        const x = tcX(i)
+        const y = tc.y + 72
+        const h = tc.h - 94
+
+        return withAddress(stackedNode(c, x, y, tcW, h), c, x + tcW, y)
+      })
     ],
+    tagline: [
+      { x: CX, y: tagline.y + tagline.h / 2 - 6, size: 30, weight: 700, fill: C.text, value: TAGLINE.title, anchor: 'middle' },
+      { x: CX, y: tagline.y + tagline.h / 2 + 32, size: 19, weight: 400, fill: C.muted, value: TAGLINE.sub, anchor: 'middle' }
+    ] as Label[],
     points: [
       point('linkedin', M + 4, 102, { title: LINKEDIN.handle, icon: LINKEDIN.icon, color: LINKEDIN.color, mono: true }, 16),
-      point('actions', ghX, suites.y + 37, SUITES.actions),
-      point('coverage', covX, suites.y + 37, SUITES.coverage)
-    ],
-    chips: [
-      ...containers.flatMap((c, i) => chipRow(tcCx(i) - chipsWidth(c.chips, 12) / 2, chipsY, c.chips, c.node.color, c.chipText, 12)),
-      ...CONCEPTS.flatMap((c, i) => chipRow(colX(i) + 18, conceptsY + 152, c.chips, c.color, c.chipText, 12))
+      ...FAKES.items.map((f, i) => {
+        const x = fakes.x + 32
+        const y = rowY + 96 + i * fakeH
+
+        return {
+          id: `fake-${f.title}`,
+          icon: { name: f.icon, x, y: y - 18, size: 22, color: FAKES.color },
+          title: { x: x + 36, y, size: 20, weight: 600, fill: C.text, value: f.title },
+          sub: { x: x + 36 + measure(f.title, 20, 600) + 12, y, size: 15, weight: 400, fill: C.muted, value: f.sub, mono: true }
+        }
+      })
     ],
     logo: { x: W - M - 52, y: 28, scale: 52 / 24 }
   }
@@ -462,7 +252,8 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
         <div class="space-y-2">
           <p class="text-sm text-muted">
             Dois pôsteres de {{ W }} × {{ H }} (proporção de post do LinkedIn): a estratégia de testes do Estud — o
-            Back sobe em memória e conversa com Postgres, MinIO e Keycloak reais, levantados via Testcontainers — e o
+            Back e o Fakes sobem em memória, o Testcontainers levanta Postgres, MinIO e Keycloak, e o Back só aponta
+            pra eles via configuração — e o
             gráfico de ritmo de desenvolvimento com e sem testes, baseado no livro do Vladimir Khorikov.
           </p>
           <p class="text-sm text-muted">
@@ -609,33 +400,16 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
                     >{{ h.title.value }}</text>
                   </g>
 
-                  <g :transform="iconTransform(poster.card.icon)" :style="{ color: poster.card.icon.color }" v-html="archIcons[poster.card.icon.name]" />
                   <text
-                    :x="poster.card.title.x"
-                    :y="poster.card.title.y"
-                    :font-size="poster.card.title.size"
-                    :font-weight="poster.card.title.weight"
-                    :fill="poster.card.title.fill"
-                  >{{ poster.card.title.value }}</text>
-                  <text
+                    v-for="h in poster.hints"
+                    :key="h.value"
                     class="mono"
-                    :x="poster.card.hint.x"
-                    :y="poster.card.hint.y"
-                    :font-size="poster.card.hint.size"
-                    :fill="poster.card.hint.fill"
+                    :x="h.x"
+                    :y="h.y"
+                    :font-size="h.size"
+                    :fill="h.fill"
                     text-anchor="end"
-                  >{{ poster.card.hint.value }}</text>
-
-                  <rect
-                    :x="poster.prodStrip.x"
-                    :y="poster.prodStrip.y"
-                    :width="poster.prodStrip.w"
-                    :height="poster.prodStrip.h"
-                    :rx="poster.prodStrip.rx"
-                    :fill="C.surface"
-                    :stroke="C.cardStroke"
-                    stroke-width="1.5"
-                  />
+                  >{{ h.value }}</text>
 
                   <g v-for="a in poster.arrows" :key="a">
                     <path
@@ -656,75 +430,6 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
                       marker-end="url(#head)"
                     />
                   </g>
-
-                  <path
-                    v-for="m in poster.mirrors"
-                    :key="m"
-                    :d="m"
-                    fill="none"
-                    :stroke="C.line"
-                    stroke-opacity="0.75"
-                    stroke-width="2.5"
-                    stroke-dasharray="7 7"
-                  />
-
-                  <g v-for="p in poster.pills" :key="p.label">
-                    <rect
-                      :x="p.x - p.w / 2"
-                      :y="p.y - 15"
-                      :width="p.w"
-                      height="30"
-                      rx="15"
-                      fill="#1c1830"
-                      :stroke="C.violet"
-                      stroke-opacity="0.55"
-                    />
-                    <text
-                      class="mono"
-                      :x="p.x"
-                      :y="p.y + 5"
-                      text-anchor="middle"
-                      font-size="15"
-                      font-weight="600"
-                      :fill="C.violetLight"
-                    >{{ p.label }}</text>
-                  </g>
-
-                  <g filter="url(#shadow)">
-                    <rect
-                      :x="poster.cylinder.x"
-                      :y="poster.cylinder.top"
-                      :width="poster.cylinder.w"
-                      :height="poster.cylinder.bottom - poster.cylinder.top"
-                      :fill="C.card"
-                    />
-                    <ellipse
-                      :cx="poster.cylinder.cx"
-                      :cy="poster.cylinder.bottom"
-                      :rx="poster.cylinder.rx"
-                      :ry="poster.cylinder.ry"
-                      :fill="C.card"
-                    />
-                  </g>
-
-                  <path
-                    :d="`M ${poster.cylinder.x} ${poster.cylinder.top} L ${poster.cylinder.x} ${poster.cylinder.bottom} A ${poster.cylinder.rx} ${poster.cylinder.ry} 0 0 0 ${poster.cylinder.right} ${poster.cylinder.bottom} L ${poster.cylinder.right} ${poster.cylinder.top}`"
-                    fill="none"
-                    stroke="#ffffff"
-                    stroke-opacity="0.16"
-                    stroke-width="1.5"
-                  />
-
-                  <ellipse
-                    :cx="poster.cylinder.cx"
-                    :cy="poster.cylinder.top"
-                    :rx="poster.cylinder.rx"
-                    :ry="poster.cylinder.ry"
-                    :fill="C.cardTop"
-                    :stroke="poster.cylinder.color"
-                    stroke-opacity="0.45"
-                    stroke-width="1.5"
-                  />
 
                   <g v-for="b in poster.blocks" :key="b.id">
                     <rect
@@ -757,6 +462,7 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
                       :font-size="b.title.size"
                       :font-weight="b.title.weight"
                       :fill="b.title.fill"
+                      :text-anchor="b.title.anchor ?? 'start'"
                     >{{ b.title.value }}</text>
                     <text
                       v-if="b.sub"
@@ -765,8 +471,29 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
                       :y="b.sub.y"
                       :font-size="b.sub.size"
                       :fill="b.sub.fill"
+                      :text-anchor="b.sub.anchor ?? 'start'"
                     >{{ b.sub.value }}</text>
+                    <text
+                      v-if="b.corner"
+                      class="mono"
+                      :x="b.corner.x"
+                      :y="b.corner.y"
+                      :font-size="b.corner.size"
+                      :fill="b.corner.fill"
+                      text-anchor="end"
+                    >{{ b.corner.value }}</text>
                   </g>
+
+                  <text
+                    v-for="t in poster.tagline"
+                    :key="t.value"
+                    :x="t.x"
+                    :y="t.y"
+                    :font-size="t.size"
+                    :font-weight="t.weight"
+                    :fill="t.fill"
+                    text-anchor="middle"
+                  >{{ t.value }}</text>
 
                   <g v-for="p in poster.points" :key="p.id">
                     <g :transform="iconTransform(p.icon)" :style="{ color: p.icon.color }" v-html="archIcons[p.icon.name]" />
@@ -778,30 +505,17 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
                       :font-weight="p.title.weight"
                       :fill="p.title.fill"
                     >{{ p.title.value }}</text>
+                    <text
+                      v-if="p.sub"
+                      class="mono"
+                      :x="p.sub.x"
+                      :y="p.sub.y"
+                      :font-size="p.sub.size"
+                      :fill="p.sub.fill"
+                    >{{ p.sub.value }}</text>
                   </g>
 
-                  <g v-for="c in poster.chips" :key="`${c.x}-${c.label}`">
-                    <rect
-                      :x="c.x"
-                      :y="c.y"
-                      :width="c.w"
-                      height="24"
-                      rx="7"
-                      :fill="c.color"
-                      fill-opacity="0.1"
-                      :stroke="c.color"
-                      stroke-opacity="0.35"
-                    />
-                    <text
-                      class="mono"
-                      :x="c.x + c.w / 2"
-                      :y="c.y + 12 + c.size * 0.36"
-                      text-anchor="middle"
-                      :font-size="c.size"
-                      :fill="c.textColor"
-                    >{{ c.label }}</text>
-                  </g>
-                </svg>
+                  </svg>
 
                 <div v-else class="flex items-center justify-center py-20">
                   <AppSpinner class="size-6" />

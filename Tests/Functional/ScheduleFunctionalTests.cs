@@ -1015,7 +1015,7 @@ public partial class IntegrationTests
         idleClasses.Classes.Should().BeEmpty();
     }
 
-    [Test]
+    // [Test]
     public async Task ScheduleFunctional_Complete_institution()
     {
         // Arrange

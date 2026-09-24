@@ -64,13 +64,14 @@ public partial class IntegrationTests
     public async Task Identity_CheckSsoAvailability_Should_return_sso_enabled_when_domain_has_configuration()
     {
         // Arrange
-        var director = await _back.LoggedAsDirector("director@sso-check-available.com");
+        var domain = $"sso-check-available-{DataGen.Numbers}.com";
+        var director = await _back.LoggedAsDirector($"director@{domain}");
         await director.ShortcutCreateVerifiedSsoConfiguration(providerType: SsoProviderType.AzureAd);
 
         var client = _back.GetTestsClient();
 
         // Act
-        var result = await client.CheckSsoAvailability("someone@sso-check-available.com");
+        var result = await client.CheckSsoAvailability($"someone@{domain}");
 
         // Assert
         var availability = result.Success;

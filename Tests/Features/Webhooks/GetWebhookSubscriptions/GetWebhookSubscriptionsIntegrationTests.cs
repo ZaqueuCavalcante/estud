@@ -42,7 +42,7 @@ public partial class IntegrationTests
     public async Task Webhooks_GetWebhookSubscriptions_Should_get_webhook_subscriptions()
     {
         // Arrange
-        var client = await _back.LoggedAsDirector("director@webhooks-get-all.com");
+        var client = await _back.LoggedAsDirector();
         await client.CreateWebhookSubscription(name: "Aluno criado", events: [WebhookEventType.StudentCreated]);
         await client.CreateWebhookSubscription(name: "Atividade publicada", events: [WebhookEventType.ClassActivityPublished]);
 
@@ -61,7 +61,7 @@ public partial class IntegrationTests
     public async Task Webhooks_GetWebhookSubscriptions_Should_get_empty_list_when_no_webhook_subscriptions_exist()
     {
         // Arrange
-        var client = await _back.LoggedAsDirector("director@webhooks-get-empty.com");
+        var client = await _back.LoggedAsDirector();
 
         // Act
         var result = await client.GetWebhookSubscriptions();

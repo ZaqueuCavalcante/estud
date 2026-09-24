@@ -42,7 +42,8 @@ public partial class IntegrationTests
     public async Task Identity_GetSsoConfiguration_Should_get_sso_configuration()
     {
         // Arrange
-        var client = await _back.LoggedAsDirector("director@sso-get-happy-path.com");
+        var emailDomain = $"sso-get-happy-path-{DataGen.Numbers}.com";
+        var client = await _back.LoggedAsDirector($"director@{emailDomain}");
         var created = await client.CreateSsoConfiguration(
             providerType: SsoProviderType.AzureAd,
             authority: "https://login.microsoftonline.com/tenant-id/v2.0",
@@ -61,9 +62,9 @@ public partial class IntegrationTests
         config.RequireSso.Should().BeFalse();
 
         var domain = config.Domains.Should().ContainSingle().Subject;
-        domain.Domain.Should().Be("sso-get-happy-path.com");
+        domain.Domain.Should().Be(emailDomain);
         domain.Status.Should().Be(SsoDomainStatus.Pending);
-        domain.TxtRecordName.Should().Be("_estud-challenge.sso-get-happy-path.com");
+        domain.TxtRecordName.Should().Be($"_estud-challenge.{emailDomain}");
         domain.TxtRecordValue.Should().StartWith("estud-domain-verification=");
     }
 
@@ -91,7 +92,7 @@ public partial class IntegrationTests
     public async Task Identity_GetSsoConfiguration_Should_get_null_when_no_sso_configuration_exists()
     {
         // Arrange
-        var client = await _back.LoggedAsDirector("director@sso-get-empty.com");
+        var client = await _back.LoggedAsDirector($"director@sso-get-empty-{DataGen.Numbers}.com");
 
         // Act
         var result = await client.GetSsoConfiguration();

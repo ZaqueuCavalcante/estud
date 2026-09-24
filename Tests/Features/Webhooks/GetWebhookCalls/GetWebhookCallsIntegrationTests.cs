@@ -42,7 +42,7 @@ public partial class IntegrationTests
     public async Task Webhooks_GetWebhookCalls_Should_get_empty_list_when_no_webhook_calls_exist()
     {
         // Arrange
-        var client = await _back.LoggedAsDirector("director@webhook-calls-empty.com");
+        var client = await _back.LoggedAsDirector();
 
         // Act
         var result = await client.GetWebhookCalls();
@@ -59,7 +59,7 @@ public partial class IntegrationTests
     public async Task Webhooks_GetWebhookCalls_Should_get_webhook_calls()
     {
         // Arrange
-        var client = await _back.LoggedAsDirector("director@webhook-calls-get.com");
+        var client = await _back.LoggedAsDirector();
 
         await client.CreateWebhookSubscription(
             url: $"{FakesFactory.Url}/webhooks/target",
@@ -91,7 +91,7 @@ public partial class IntegrationTests
     public async Task Webhooks_GetWebhookCalls_Should_get_webhook_calls_paginated_ordered_by_created_at_desc()
     {
         // Arrange
-        var client = await _back.LoggedAsDirector("director@webhook-calls-paginated.com");
+        var client = await _back.LoggedAsDirector();
 
         await client.CreateWebhookSubscription(
             url: $"{FakesFactory.Url}/webhooks/target",
@@ -125,13 +125,13 @@ public partial class IntegrationTests
     public async Task Webhooks_GetWebhookCalls_Should_get_only_own_institution_webhook_calls()
     {
         // Arrange
-        var client1 = await _back.LoggedAsDirector("director@webhook-calls-tenant-1.com");
+        var client1 = await _back.LoggedAsDirector();
         await client1.CreateWebhookSubscription(
             url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]);
         await client1.CreateStudent(DataGen.UserName, DataGen.Email);
 
-        var client2 = await _back.LoggedAsDirector("director@webhook-calls-tenant-2.com");
+        var client2 = await _back.LoggedAsDirector();
         await client2.CreateWebhookSubscription(
             url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]);

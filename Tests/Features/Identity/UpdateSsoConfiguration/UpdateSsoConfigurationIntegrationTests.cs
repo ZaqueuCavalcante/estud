@@ -141,7 +141,7 @@ public partial class IntegrationTests
     public async Task Identity_UpdateSsoConfiguration_Should_update_sso_configuration()
     {
         // Arrange
-        var client = await _back.LoggedAsDirector("director@sso-update-happy-path.com");
+        var client = await _back.LoggedAsDirector($"director@sso-update-happy-path-{DataGen.Numbers}.com");
         var config = await client.CreateSsoConfiguration().Success();
 
         // Act

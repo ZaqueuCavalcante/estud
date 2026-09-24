@@ -2,6 +2,8 @@
 
 ## Foco atual
 
+// [Test]
+
 - aluno precisa ver sua frequencia em cada turma (hoje ele so ve as notas)
 
 ## Próximo
