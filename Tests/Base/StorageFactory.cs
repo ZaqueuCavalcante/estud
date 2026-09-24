@@ -103,9 +103,10 @@ public class StorageFactory : IAsyncDisposable
         });
     }
 
-    public async ValueTask DisposeAsync()
+    // O container não é descartado: com reuso, o DisposeAsync do Testcontainers faz StopAsync e derruba ele.
+    public ValueTask DisposeAsync()
     {
         _s3?.Dispose();
-        await _container.DisposeAsync();
+        return ValueTask.CompletedTask;
     }
 }

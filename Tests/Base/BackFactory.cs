@@ -3,6 +3,7 @@ using System.Diagnostics;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.TestHost;
 using Estud.Tests.Integration.Clients;
 using System.Runtime.CompilerServices;
@@ -46,6 +47,8 @@ public class BackFactory : WebApplicationFactory<Back::Program>
         {
             services.AddSingleton<IStartupFilter, ThrowExceptionStartupFilter>();
             services.AddSingleton<IStartupFilter, RequestsCounterStartupFilter>();
+
+            services.Configure<PasswordHasherOptions>(o => o.IterationCount = 1);
 
             services.ConfigureOpenTelemetryTracerProvider(tracing => tracing
                 .AddSource(BackFactoryTelemetry.TestsActivitySource.Name)
