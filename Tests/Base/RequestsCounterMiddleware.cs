@@ -5,20 +5,24 @@ namespace Estud.Tests.Base;
 
 public class RequestsCounterMiddleware(RequestDelegate next)
 {
-    private static readonly ConcurrentDictionary<int, int> _counts = new();
+    private static readonly ConcurrentDictionary<int, int> _byStatusCode = new();
+    private static readonly ConcurrentDictionary<string, int> _byMethod = new();
 
-    public static IReadOnlyDictionary<int, int> Counts => _counts;
+    public static IReadOnlyDictionary<int, int> ByStatusCode => _byStatusCode;
+    public static IReadOnlyDictionary<string, int> ByMethod => _byMethod;
 
     public async Task InvokeAsync(HttpContext context)
     {
+        _byMethod.AddOrUpdate(context.Request.Method, 1, (_, count) => count + 1);
+
         try
         {
             await next(context);
-            _counts.AddOrUpdate(context.Response.StatusCode, 1, (_, count) => count + 1);
+            _byStatusCode.AddOrUpdate(context.Response.StatusCode, 1, (_, count) => count + 1);
         }
         catch
         {
-            _counts.AddOrUpdate(StatusCodes.Status500InternalServerError, 1, (_, count) => count + 1);
+            _byStatusCode.AddOrUpdate(StatusCodes.Status500InternalServerError, 1, (_, count) => count + 1);
             throw;
         }
     }

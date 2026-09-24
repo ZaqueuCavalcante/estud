@@ -105,6 +105,18 @@ public partial class TestsHttpClient
         return await response.Resolve<CreateRoleOut>();
     }
 
+    public async Task<OneOf<CreateRoleOut, ErrorOut>> CreateRoleWithRawBaseType(object? baseType)
+    {
+        var data = new { Name = "Admin", Description = "Administrador com acesso total", BaseType = baseType, Permissions = new List<int>() };
+        var response = await http.PostAsJsonAsync("identity/roles", data);
+        return await response.Resolve<CreateRoleOut>();
+    }
+
+    public async Task<HttpResponseMessage> GetRoleRaw(int roleId)
+    {
+        return await http.GetAsync($"identity/roles/{roleId}");
+    }
+
     public async Task<OneOf<GetRolesOut, ErrorOut>> GetRoles()
     {
         var response = await http.GetAsync("identity/roles");

@@ -56,6 +56,20 @@ interface Block {
   corner?: Label
 }
 
+interface ListItem {
+  title: string
+  sub: string
+  icon: string
+}
+
+interface Bar {
+  id: string
+  code: Label
+  track: Frame
+  fill: Frame & { color: string }
+  value: Label
+}
+
 interface Header {
   id: string
   icon: IconMark
@@ -76,6 +90,11 @@ const M = 64
 
 const measure = measurePosterText
 
+const LIST_ROW = 44
+const BAR_ROW = 23
+
+const formatNumber = (value: number) => value.toLocaleString('pt-BR')
+
 const C = {
   bg: '#2f1c51',
   card: '#211439',
@@ -93,7 +112,19 @@ const LINKEDIN = { handle: '/in/zaqueu-cavalcante', icon: 'i-simple-icons-linked
 
 const TITLE = { lead: 'Como o Estud é ', accent: 'testado?' }
 
-const BACK: Service = { title: 'Back', sub: 'WebApplicationFactory', color: '#9B7BFF', icon: 'i-simple-icons-dotnet', light: '#ddd6fe', address: 'localhost:5100' }
+const BACK = {
+  title: 'Back',
+  hint: 'localhost:5100',
+  icon: 'i-simple-icons-dotnet',
+  color: '#9B7BFF',
+  items: [
+    { title: 'Auth', sub: 'JWT · Policies', icon: 'i-lucide-shield-check' },
+    { title: 'Validações', sub: 'FluentValidation', icon: 'i-lucide-check-check' },
+    { title: 'Regras de negócio', sub: 'Domínio', icon: 'i-lucide-book-open-text' },
+    { title: 'Integrações', sub: 'E-mail · R2 · OIDC', icon: 'i-lucide-plug' },
+    { title: 'Processamento assíncrono', sub: 'Commands', icon: 'i-lucide-list-end' }
+  ]
+}
 
 const FAKES = {
   title: 'Fakes',
@@ -109,16 +140,57 @@ const FAKES = {
   ]
 }
 
-const TESTCONTAINERS = {
-  title: 'Testcontainers',
-  hint: 'Docker',
-  icon: 'i-simple-icons-docker',
-  color: '#2496ED',
+const DOCKER = { title: 'Docker', icon: 'i-simple-icons-docker', color: '#2496ED', mono: true }
+
+const CONTAINERS: Service[] = [
+  { title: 'PostgreSQL', sub: 'postgres:18', color: '#5B8DEF', icon: 'i-simple-icons-postgresql', light: '#bfdbfe', address: 'localhost:5445' },
+  { title: 'MinIO', sub: 'minio:latest', color: '#f0506e', icon: 'i-simple-icons-minio', light: '#fecdd3', address: 'localhost:5300' },
+  { title: 'Keycloak', sub: 'keycloak:26.4', color: '#38bdf8', icon: 'i-simple-icons-keycloak', light: '#bae6fd', address: 'localhost:5446' }
+]
+
+const STATS = {
+  title: 'Números',
+  icon: 'i-lucide-chart-column',
+  duration: { title: '40s', icon: 'i-lucide-hourglass', color: '#fcd34d', mono: true },
   items: [
-    { title: 'Postgres', sub: 'postgres:18', color: '#5B8DEF', icon: 'i-simple-icons-postgresql', light: '#bfdbfe', address: 'localhost:5445' },
-    { title: 'MinIO', sub: 'minio:latest', color: '#f0506e', icon: 'i-simple-icons-minio', light: '#fecdd3', address: 'localhost:5300' },
-    { title: 'Keycloak', sub: 'keycloak:26.4', color: '#38bdf8', icon: 'i-simple-icons-keycloak', light: '#bae6fd', address: 'localhost:5446' }
-  ] as Service[]
+    { value: formatNumber(611), label: 'Unit Tests', color: '#38bdf8', icon: 'i-lucide-box' },
+    { value: formatNumber(1551), label: 'Integration Tests', color: '#34d399', icon: 'i-lucide-plug' },
+    { value: '98%', label: 'Line Coverage', color: '#a3e635', icon: 'i-lucide-align-left' },
+    { value: '87%', label: 'Branch Coverage', color: '#fcd34d', icon: 'i-lucide-split' },
+    { value: '7%', label: 'Mutation Score', color: '#f472b6', icon: 'i-lucide-dna' }
+  ],
+  methods: {
+    title: 'Requests por método',
+    rows: [
+      { label: 'POST', value: 7733, color: '#34d399' },
+      { label: 'PUT', value: 2276, color: '#fcd34d' },
+      { label: 'GET', value: 1712, color: '#38bdf8' },
+      { label: 'DELETE', value: 10, color: '#fb7185' },
+      { label: 'Total', value: 11731, color: C.text }
+    ]
+  },
+  database: {
+    title: 'Operações no banco',
+    rows: [
+      { label: 'Fetched', value: 499016, color: '#38bdf8' },
+      { label: 'Inserted', value: 63103, color: '#34d399' },
+      { label: 'Updated', value: 13728, color: '#fcd34d' },
+      { label: 'Deleted', value: 397, color: '#fb7185' },
+      { label: 'Total', value: 576244, color: C.text }
+    ]
+  },
+  requests: {
+    title: 'Requests por status',
+    rows: [
+      { code: '200 Ok', value: 10726, color: '#34d399' },
+      { code: '400 BadRequest', value: 625, color: '#fcd34d' },
+      { code: '401 Unauthorized', value: 149, color: '#fb923c' },
+      { code: '403 Forbidden', value: 146, color: '#fb7185' },
+      { code: '302 Found', value: 84, color: '#38bdf8' },
+      { code: '500 ServerError', value: 1, color: '#ef4444' },
+      { code: 'Total', value: 11731, color: '#a78bfa' }
+    ]
+  }
 }
 
 const TAGLINE = {
@@ -126,25 +198,86 @@ const TAGLINE = {
   sub: 'roda o mesmo código de produção, só apontando pra outros endereços'
 }
 
-function stackedNode(content: NodeContent, x: number, y: number, w: number, h: number): Block {
-  const cx = x + w / 2
-  const top = y + (h - 146) / 2
+function containerNode(content: Service, x: number, y: number, w: number, h: number): Block {
+  const textW = Math.max(measure(content.title, 24, 600), measure(content.sub, 14, 400, POSTER_MONO))
+  const bx = x + (w - (64 + textW)) / 2
+  const by = y + 40 + (h - 40 - 48) / 2 - 6
 
   return {
     id: `node-${content.title}`,
     rect: { x, y, w, h, rx: 18, fill: C.card },
-    tile: { x: cx - 36, y: top, size: 72, rx: 18, color: content.color },
-    icon: { name: content.icon, x: cx - 20, y: top + 16, size: 40, color: content.color },
-    title: { x: cx, y: top + 114, size: 28, weight: 700, fill: C.text, value: content.title, anchor: 'middle' },
-    sub: { x: cx, y: top + 142, size: 15, weight: 400, fill: C.muted, value: content.sub, mono: true, anchor: 'middle' }
+    tile: { x: bx, y: by, size: 48, rx: 13, color: content.color },
+    icon: { name: content.icon, x: bx + 11, y: by + 11, size: 26, color: content.color },
+    title: { x: bx + 64, y: by + 22, size: 24, weight: 600, fill: C.text, value: content.title },
+    sub: { x: bx + 64, y: by + 46, size: 14, weight: 400, fill: C.muted, value: content.sub, mono: true },
+    corner: { x: x + w - 16, y: y + 30, size: 13, weight: 400, fill: content.light, value: content.address, mono: true, anchor: 'end' }
   }
 }
 
-function withAddress(block: Block, service: Service, right: number, top: number): Block {
+function statTile(stat: typeof STATS.items[number], x: number, y: number, w: number, h: number): Block {
   return {
-    ...block,
-    corner: { x: right - 16, y: top + 26, size: 13, weight: 400, fill: service.light, value: service.address, mono: true, anchor: 'end' }
+    id: `stat-${stat.label}`,
+    rect: { x, y, w, h, rx: 14, fill: C.card },
+    tile: { x: x + 14, y: y + 14, size: 32, rx: 9, color: stat.color },
+    icon: { name: stat.icon, x: x + 22, y: y + 22, size: 16, color: stat.color },
+    title: { x: x + 56, y: y + 41, size: 30, weight: 800, fill: C.text, value: stat.value }
   }
+}
+
+function table(x: number, w: number, top: number, content: { title: string, rows: { label: string, value: number, color: string }[] }): Label[] {
+  return [
+    { x, y: top, size: 16, weight: 700, fill: C.text, value: content.title },
+    ...content.rows.flatMap((r, i): Label[] => {
+      const y = top + 32 + i * BAR_ROW
+      const isTotal = i === content.rows.length - 1
+
+      return [
+        { x, y, size: 15, weight: 700, fill: r.color, value: r.label, mono: true },
+        { x: x + w, y, size: 15, weight: isTotal ? 700 : 400, fill: isTotal ? C.text : C.muted, value: formatNumber(r.value), mono: true, anchor: 'end' }
+      ]
+    })
+  ]
+}
+
+function bars(frame: Frame, top: number): Bar[] {
+  const rows = STATS.requests.rows
+  const max = Math.max(...rows.map(r => r.value))
+  const codeW = Math.max(...rows.map(r => measure(r.code, 15, 600, POSTER_MONO)))
+  const valueW = Math.max(...rows.map(r => measure(formatNumber(r.value), 15, 400, POSTER_MONO)))
+  const trackX = frame.x + 22 + codeW + 18
+  const trackW = frame.x + frame.w - 22 - valueW - 18 - trackX
+
+  // Escala em raiz quadrada: na linear, 149, 84 e 1 ficam todos no tamanho mínimo.
+  return rows.map((r, i) => {
+    const y = top + i * BAR_ROW
+    const isTotal = i === rows.length - 1
+
+    return {
+      id: `bar-${r.code}`,
+      code: { x: frame.x + 22, y, size: 15, weight: isTotal ? 700 : 600, fill: isTotal ? C.text : C.muted, value: r.code, mono: true },
+      track: { x: trackX, y: y - 12, w: trackW, h: 12, rx: 6 },
+      fill: { x: trackX, y: y - 12, w: Math.max(trackW * Math.sqrt(r.value / max), 8), h: 12, rx: 6, color: r.color },
+      value: { x: frame.x + frame.w - 22, y, size: 15, weight: isTotal ? 700 : 400, fill: isTotal ? C.text : C.muted, value: formatNumber(r.value), mono: true, anchor: 'end' }
+    }
+  })
+}
+
+function listWidth(items: ListItem[]): number {
+  return 54 + 36 + Math.max(...items.map(i => measure(i.title, 20, 600) + 32 + measure(i.sub, 15, 400, POSTER_MONO)))
+}
+
+function list(id: string, items: ListItem[], frame: Frame, color: string): Point[] {
+  return items.map((item, i) => {
+    const x = frame.x + 32
+    const y = frame.y + 96 + i * LIST_ROW
+
+    return {
+      id: `${id}-${item.title}`,
+      icon: { name: item.icon, x, y: y - 18, size: 22, color },
+      title: { x: x + 36, y, size: 20, weight: 600, fill: C.text, value: item.title },
+      sub: { x: frame.x + frame.w - 22, y, size: 15, weight: 400, fill: C.muted, value: item.sub, mono: true, anchor: 'end' }
+    }
+  })
 }
 
 function header(id: string, frame: Frame, icon: string, title: string, color: string): Header {
@@ -172,59 +305,64 @@ const poster = computed(() => {
   const innerW = W - 2 * M
 
   const rowY = 140
-  const fakeH = 42
-  const fakesH = 72 + FAKES.items.length * fakeH + 14
+  const rowH = 72 + Math.max(BACK.items.length, FAKES.items.length) * LIST_ROW + 14
 
-  const backW = 300
-  const backH = 220
-  const fakes: Frame = { x: M + backW + 80, y: rowY, w: innerW - backW - 80, h: fakesH, rx: 22 }
-  const back = { x: M, y: rowY + fakesH / 2 - backH / 2 }
+  const fakesW = listWidth(FAKES.items)
+  const fakes: Frame = { x: W - M - fakesW, y: rowY, w: fakesW, h: rowH, rx: 22 }
+  const back: Frame = { x: M, y: rowY, w: listWidth(BACK.items), h: rowH, rx: 22 }
 
-  const tagline: Frame = { x: M, y: H - 32 - 190, w: innerW, h: 190, rx: 22 }
-  const tcY = rowY + fakesH + 70
-  const tc: Frame = { x: M, y: tcY, w: innerW, h: tagline.y - 40 - tcY, rx: 22 }
-  const tcW = (tc.w - 60 - 40) / 3
-  const tcX = (i: number) => tc.x + 30 + i * (tcW + 20)
+  const tagline: Frame = { x: M, y: H - 32 - 150, w: innerW, h: 150, rx: 22 }
+
+  const bx = back.x + back.w / 2
+  const splitY = back.y + back.h + 52
+  const nodeY = splitY + 54
+  const nodeH = 150
+  const nodeW = (innerW - 40) / 3
+  const nodeX = (i: number) => M + i * (nodeW + 20)
+
+  const statsY = nodeY + nodeH + 40
+  const stats: Frame = { x: M, y: statsY, w: innerW, h: tagline.y - 40 - statsY, rx: 22 }
+  const statW = (stats.w - 44 - 4 * 14) / STATS.items.length
+  const statX = (i: number) => stats.x + 22 + i * (statW + 14)
+  const statTop = stats.y + 68
+  const statH = 84
+  const requestsY = statTop + statH + 36
+  const tableW = 165
+  const tableGap = 56
+  const requests: Frame = { ...stats, x: stats.x + tableW + tableGap, w: stats.w - 2 * (tableW + tableGap) }
 
   return {
     titleGrad: { x1: titleX, x2: titleX + measure(TITLE.accent, 52, 800) },
-    frames: [fakes, tc, tagline],
+    frames: [back, fakes, stats, tagline],
     headers: [
+      header('back', back, BACK.icon, BACK.title, BACK.color),
       header('fakes', fakes, FAKES.icon, FAKES.title, FAKES.color),
-      header('tc', tc, TESTCONTAINERS.icon, TESTCONTAINERS.title, TESTCONTAINERS.color)
+      header('stats', stats, STATS.icon, STATS.title, '#fff')
     ],
-    hints: [hint(fakes, FAKES.hint), hint(tc, TESTCONTAINERS.hint)],
+    hints: [hint(back, BACK.hint), hint(fakes, FAKES.hint)],
     arrows: [
-      `M ${back.x + backW} ${back.y + backH / 2} L ${fakes.x - 6} ${back.y + backH / 2}`,
-      `M ${back.x + backW / 2} ${back.y + backH} L ${back.x + backW / 2} ${tc.y - 6}`
+      `M ${back.x + back.w} ${back.y + back.h / 2} L ${fakes.x - 6} ${back.y + back.h / 2}`,
+      ...CONTAINERS.map((_, i) => `M ${bx} ${back.y + back.h} L ${bx} ${splitY} L ${nodeX(i) + nodeW / 2} ${splitY} L ${nodeX(i) + nodeW / 2} ${nodeY - 6}`)
     ],
     blocks: [
-      withAddress(stackedNode(BACK, back.x, back.y, backW, backH), BACK, back.x + backW, back.y),
-      ...TESTCONTAINERS.items.map((c, i) => {
-        const x = tcX(i)
-        const y = tc.y + 72
-        const h = tc.h - 94
-
-        return withAddress(stackedNode(c, x, y, tcW, h), c, x + tcW, y)
-      })
+      ...CONTAINERS.map((c, i) => containerNode(c, nodeX(i), nodeY, nodeW, nodeH)),
+      ...STATS.items.map((st, i) => statTile(st, statX(i), statTop, statW, statH))
     ],
-    tagline: [
-      { x: CX, y: tagline.y + tagline.h / 2 - 6, size: 30, weight: 700, fill: C.text, value: TAGLINE.title, anchor: 'middle' },
-      { x: CX, y: tagline.y + tagline.h / 2 + 32, size: 19, weight: 400, fill: C.muted, value: TAGLINE.sub, anchor: 'middle' }
+    texts: [
+      ...STATS.items.map((st, i): Label => ({ x: statX(i) + 14, y: statTop + statH - 14, size: 14, weight: 600, fill: C.muted, value: st.label })),
+      ...table(stats.x + 22, tableW, requestsY, STATS.methods),
+      ...table(stats.x + stats.w - 22 - tableW, tableW, requestsY, STATS.database),
+      { x: requests.x + 22, y: requestsY, size: 16, weight: 700, fill: C.text, value: STATS.requests.title },
+      { x: CX, y: tagline.y + tagline.h / 2 - 10, size: 30, weight: 700, fill: C.text, value: TAGLINE.title, anchor: 'middle' },
+      { x: CX, y: tagline.y + tagline.h / 2 + 28, size: 19, weight: 400, fill: C.muted, value: TAGLINE.sub, anchor: 'middle' }
     ] as Label[],
+    bars: bars(requests, requestsY + 32),
     points: [
       point('linkedin', M + 4, 102, { title: LINKEDIN.handle, icon: LINKEDIN.icon, color: LINKEDIN.color, mono: true }, 16),
-      ...FAKES.items.map((f, i) => {
-        const x = fakes.x + 32
-        const y = rowY + 96 + i * fakeH
-
-        return {
-          id: `fake-${f.title}`,
-          icon: { name: f.icon, x, y: y - 18, size: 22, color: FAKES.color },
-          title: { x: x + 36, y, size: 20, weight: 600, fill: C.text, value: f.title },
-          sub: { x: x + 36 + measure(f.title, 20, 600) + 12, y, size: 15, weight: 400, fill: C.muted, value: f.sub, mono: true }
-        }
-      })
+      ...list('back', BACK.items, back, BACK.color),
+      ...list('fake', FAKES.items, fakes, FAKES.color),
+      ...CONTAINERS.map((c, i) => point(`docker-${c.title}`, nodeX(i) + 16, nodeY + 31, DOCKER, 14)),
+      point('duration', stats.x + stats.w - 22 - measure(STATS.duration.title, 16, 600, POSTER_MONO) - 30, stats.y + 43, STATS.duration, 16)
     ],
     logo: { x: W - M - 52, y: 28, scale: 52 / 24 }
   }
@@ -485,15 +623,52 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
                   </g>
 
                   <text
-                    v-for="t in poster.tagline"
-                    :key="t.value"
+                    v-for="(t, i) in poster.texts"
+                    :key="`text-${i}`"
+                    :class="{ mono: t.mono }"
                     :x="t.x"
                     :y="t.y"
                     :font-size="t.size"
                     :font-weight="t.weight"
                     :fill="t.fill"
-                    text-anchor="middle"
+                    :text-anchor="t.anchor ?? 'start'"
                   >{{ t.value }}</text>
+
+                  <g v-for="b in poster.bars" :key="b.id">
+                    <text
+                      class="mono"
+                      :x="b.code.x"
+                      :y="b.code.y"
+                      :font-size="b.code.size"
+                      :font-weight="b.code.weight"
+                      :fill="b.code.fill"
+                    >{{ b.code.value }}</text>
+                    <rect
+                      :x="b.track.x"
+                      :y="b.track.y"
+                      :width="b.track.w"
+                      :height="b.track.h"
+                      :rx="b.track.rx"
+                      :fill="C.surface"
+                    />
+                    <rect
+                      :x="b.fill.x"
+                      :y="b.fill.y"
+                      :width="b.fill.w"
+                      :height="b.fill.h"
+                      :rx="b.fill.rx"
+                      :fill="b.fill.color"
+                    />
+                    <text
+                      class="mono"
+                      :x="b.value.x"
+                      :y="b.value.y"
+                      :font-size="b.value.size"
+                      :font-weight="b.value.weight"
+                      :fill="b.value.fill"
+                      text-anchor="end"
+                    >{{ b.value.value }}</text>
+                  </g>
 
                   <g v-for="p in poster.points" :key="p.id">
                     <g :transform="iconTransform(p.icon)" :style="{ color: p.icon.color }" v-html="archIcons[p.icon.name]" />
@@ -512,6 +687,7 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
                       :y="p.sub.y"
                       :font-size="p.sub.size"
                       :fill="p.sub.fill"
+                      :text-anchor="p.sub.anchor ?? 'start'"
                     >{{ p.sub.value }}</text>
                   </g>
 

@@ -44,6 +44,7 @@ public class BackFactory : WebApplicationFactory<Back::Program>
 
         builder.ConfigureTestServices(services =>
         {
+            services.AddSingleton<IStartupFilter, ThrowExceptionStartupFilter>();
             services.AddSingleton<IStartupFilter, RequestsCounterStartupFilter>();
 
             services.ConfigureOpenTelemetryTracerProvider(tracing => tracing

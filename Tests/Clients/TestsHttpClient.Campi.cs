@@ -31,6 +31,13 @@ public partial class TestsHttpClient
         return await response.Resolve<UpdateCampusOut>();
     }
 
+    public async Task<OneOf<CreateCampusOut, ErrorOut>> CreateCampusWithRawState(object? state)
+    {
+        var data = new { Name = "Agreste I", State = state, City = "Caruaru" };
+        var response = await http.PostAsJsonAsync("/campi", data);
+        return await response.Resolve<CreateCampusOut>();
+    }
+
     public async Task<OneOf<GetCampiOut, ErrorOut>> GetCampi()
     {
         var response = await http.GetAsync("/campi");

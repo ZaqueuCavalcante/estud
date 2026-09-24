@@ -34,4 +34,9 @@ public partial class TestsHttpClient
     {
         return await http.GetAsync("openapi/v1.json");
     }
+
+    public async Task<HttpResponseMessage> ThrowException()
+    {
+        return await http.GetAsync(ThrowExceptionStartupFilter.Path);
+    }
 }

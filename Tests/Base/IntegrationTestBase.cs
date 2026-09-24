@@ -47,7 +47,6 @@ public abstract class IntegrationTestBase
         var options = new DbContextOptionsBuilder<EstudDbContext>().Options;
 
         using var ctx = new EstudDbContext(options, dataSource, null);
-        // if (ctx.HasMissingMigration()) throw new AssertionException("EstudDbContext Has Missing Migration!");
 
         if (!database.ConnectionString.Contains("Host=localhost;")) throw new Exception("WRONG TESTS DB");
 
