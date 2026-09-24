@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9850626405396723" branch-rate="0.8952125878808169" lines-covered="12266" lines-valid="12452" branches-covered="2674" branches-valid="2987" complexity="4336" version="0" timestamp="1790253812">
+<coverage line-rate="0.9870443389394061" branch-rate="0.8958821560093739" lines-covered="12266" lines-valid="12427" branches-covered="2676" branches-valid="2987" complexity="4324" version="0" timestamp="1790294190">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.98502332433096" branch-rate="0.8952969447305184" complexity="4239">
+    <package name="Back" line-rate="0.9870428079383303" branch-rate="0.8959835221421215" complexity="4227">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -2653,7 +2653,6 @@
                 <line number="10" hits="2" branch="false" />
                 <line number="12" hits="2" branch="false" />
                 <line number="13" hits="2" branch="false" />
-                <line number="14" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
@@ -2661,7 +2660,6 @@
             <line number="10" hits="2" branch="false" />
             <line number="12" hits="2" branch="false" />
             <line number="13" hits="2" branch="false" />
-            <line number="14" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Configs.DataProtectionConfigs" filename="/home/runner/work/estud/estud/Back/Configs/DataProtectionConfigs.cs" line-rate="1" branch-rate="1" complexity="1">
@@ -5982,30 +5980,6 @@
             <line number="19" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Database.EstudDbContextFactory" filename="/home/runner/work/estud/estud/Back/Database/EstudDbContextFactory.cs" line-rate="0" branch-rate="1" complexity="1">
-          <methods>
-            <method name="CreateDbContext" signature="(string[])" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="10" hits="0" branch="false" />
-                <line number="12" hits="0" branch="false" />
-                <line number="13" hits="0" branch="false" />
-                <line number="14" hits="0" branch="false" />
-                <line number="15" hits="0" branch="false" />
-                <line number="17" hits="0" branch="false" />
-                <line number="19" hits="0" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="10" hits="0" branch="false" />
-            <line number="12" hits="0" branch="false" />
-            <line number="13" hits="0" branch="false" />
-            <line number="14" hits="0" branch="false" />
-            <line number="15" hits="0" branch="false" />
-            <line number="17" hits="0" branch="false" />
-            <line number="19" hits="0" branch="false" />
-          </lines>
-        </class>
         <class name="Estud.Back.Database.Identity.DataProtectionKeyDbConfig" filename="/home/runner/work/estud/estud/Back/Database/Identity/DataProtectionKeyDbConfig.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="Configure" signature="(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder&lt;Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey&gt;)" line-rate="1" branch-rate="1" complexity="1">
@@ -6528,26 +6502,6 @@
           </methods>
           <lines>
             <line number="10" hits="2" branch="false" />
-            <line number="15" hits="0" branch="false" />
-            <line number="16" hits="0" branch="false" />
-          </lines>
-        </class>
-        <class name="Estud.Back.Database.Mappers.StringListTypeHandler" filename="/home/runner/work/estud/estud/Back/Database/Mappers/StringListTypeHandler.cs" line-rate="0" branch-rate="1" complexity="2">
-          <methods>
-            <method name="Parse" signature="(object)" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="10" hits="0" branch="false" />
-              </lines>
-            </method>
-            <method name="SetValue" signature="(System.Data.IDbDataParameter, System.Collections.Generic.List&lt;string&gt;)" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="15" hits="0" branch="false" />
-                <line number="16" hits="0" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="10" hits="0" branch="false" />
             <line number="15" hits="0" branch="false" />
             <line number="16" hits="0" branch="false" />
           </lines>
@@ -9275,7 +9229,7 @@
             <line number="90" hits="2" branch="true" condition-coverage="100% (2/2)" />
           </lines>
         </class>
-        <class name="Estud.Back.Domain.Institutions.InstitutionConfig" filename="/home/runner/work/estud/estud/Back/Domain/Institutions/InstitutionConfig.cs" line-rate="0.6428571428571429" branch-rate="1" complexity="4">
+        <class name="Estud.Back.Domain.Institutions.InstitutionConfig" filename="/home/runner/work/estud/estud/Back/Domain/Institutions/InstitutionConfig.cs" line-rate="0.8181818181818182" branch-rate="1" complexity="3">
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -9286,19 +9240,12 @@
                 <line number="32" hits="2" branch="false" />
               </lines>
             </method>
-            <method name=".ctor" signature="(int)" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="34" hits="0" branch="false" />
-                <line number="36" hits="0" branch="false" />
-                <line number="37" hits="0" branch="false" />
-              </lines>
-            </method>
             <method name="Setup" signature="(decimal, decimal, Estud.Back.Domain.Enums.ClassGradeRule)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="41" hits="2" branch="false" />
-                <line number="42" hits="2" branch="false" />
-                <line number="43" hits="2" branch="false" />
-                <line number="44" hits="2" branch="false" />
+                <line number="36" hits="2" branch="false" />
+                <line number="37" hits="2" branch="false" />
+                <line number="38" hits="2" branch="false" />
+                <line number="39" hits="2" branch="false" />
               </lines>
             </method>
             <method name=".cctor" signature="()" line-rate="0" branch-rate="1" complexity="1">
@@ -9316,13 +9263,10 @@
             <line number="30" hits="2" branch="false" />
             <line number="31" hits="2" branch="false" />
             <line number="32" hits="2" branch="false" />
-            <line number="34" hits="0" branch="false" />
-            <line number="36" hits="0" branch="false" />
-            <line number="37" hits="0" branch="false" />
-            <line number="41" hits="2" branch="false" />
-            <line number="42" hits="2" branch="false" />
-            <line number="43" hits="2" branch="false" />
-            <line number="44" hits="2" branch="false" />
+            <line number="36" hits="2" branch="false" />
+            <line number="37" hits="2" branch="false" />
+            <line number="38" hits="2" branch="false" />
+            <line number="39" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Domain.Notifications.Notification" filename="/home/runner/work/estud/estud/Back/Domain/Notifications/Notification.cs" line-rate="0.9818181818181818" branch-rate="1" complexity="7">
@@ -10878,7 +10822,7 @@
             <line number="21" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Errors.ClassMustBeOnPreEnrollment" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Classes.cs" line-rate="0.6666666666666666" branch-rate="1" complexity="2">
+        <class name="Estud.Back.Errors.ClassMustBeOnPreEnrollment" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Classes.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -10886,14 +10830,14 @@
                 <line number="14" hits="2" branch="false" />
               </lines>
             </method>
-            <method name=".cctor" signature="()" line-rate="0" branch-rate="1" complexity="1">
+            <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="12" hits="0" branch="false" />
+                <line number="12" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="12" hits="0" branch="false" />
+            <line number="12" hits="2" branch="false" />
             <line number="13" hits="2" branch="false" />
             <line number="14" hits="2" branch="false" />
           </lines>
@@ -11432,46 +11376,28 @@
             <line number="105" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Errors.ErrorOut" filename="/home/runner/work/estud/estud/Back/Errors/ErrorOut.cs" line-rate="0" branch-rate="1" complexity="1">
+        <class name="Estud.Back.Errors.EstudError" filename="/home/runner/work/estud/estud/Back/Errors/EstudError.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name="ToString" signature="()" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="8" hits="0" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="8" hits="0" branch="false" />
-          </lines>
-        </class>
-        <class name="Estud.Back.Errors.EstudError" filename="/home/runner/work/estud/estud/Back/Errors/EstudError.cs" line-rate="0.5" branch-rate="1" complexity="2">
-          <methods>
-            <method name="ToString" signature="()" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="8" hits="0" branch="false" />
-              </lines>
-            </method>
             <method name="ToSwaggerExampleErrorOut" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="12" hits="2" branch="false" />
+                <line number="10" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="8" hits="0" branch="false" />
-            <line number="12" hits="2" branch="false" />
+            <line number="10" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Errors.EstudSuccess" filename="/home/runner/work/estud/estud/Back/Errors/EstudError.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="18" hits="2" branch="false" />
+                <line number="16" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="18" hits="2" branch="false" />
+            <line number="16" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Errors.ExamplesProvider&lt;T&gt;" filename="/home/runner/work/estud/estud/Back/Errors/ExamplesProvider.cs" line-rate="1" branch-rate="1" complexity="2">
@@ -12438,20 +12364,20 @@
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="195" hits="2" branch="false" />
-                <line number="196" hits="2" branch="false" />
+                <line number="185" hits="2" branch="false" />
+                <line number="186" hits="2" branch="false" />
               </lines>
             </method>
             <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="194" hits="2" branch="false" />
+                <line number="184" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="194" hits="2" branch="false" />
-            <line number="195" hits="2" branch="false" />
-            <line number="196" hits="2" branch="false" />
+            <line number="184" hits="2" branch="false" />
+            <line number="185" hits="2" branch="false" />
+            <line number="186" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Errors.InvalidPermissionsList" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Identity.cs" line-rate="1" branch-rate="1" complexity="2">
@@ -12558,20 +12484,20 @@
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="181" hits="2" branch="false" />
-                <line number="182" hits="2" branch="false" />
+                <line number="171" hits="2" branch="false" />
+                <line number="172" hits="2" branch="false" />
               </lines>
             </method>
             <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="180" hits="2" branch="false" />
+                <line number="170" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="180" hits="2" branch="false" />
-            <line number="181" hits="2" branch="false" />
-            <line number="182" hits="2" branch="false" />
+            <line number="170" hits="2" branch="false" />
+            <line number="171" hits="2" branch="false" />
+            <line number="172" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Errors.InvalidRoleDescription" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Identity.cs" line-rate="1" branch-rate="1" complexity="2">
@@ -12618,20 +12544,20 @@
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="188" hits="2" branch="false" />
-                <line number="189" hits="2" branch="false" />
+                <line number="178" hits="2" branch="false" />
+                <line number="179" hits="2" branch="false" />
               </lines>
             </method>
             <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="187" hits="2" branch="false" />
+                <line number="177" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="187" hits="2" branch="false" />
-            <line number="188" hits="2" branch="false" />
-            <line number="189" hits="2" branch="false" />
+            <line number="177" hits="2" branch="false" />
+            <line number="178" hits="2" branch="false" />
+            <line number="179" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Errors.InvalidSchedule" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Classes.cs" line-rate="1" branch-rate="1" complexity="2">
@@ -13118,120 +13044,80 @@
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="174" hits="2" branch="false" />
-                <line number="175" hits="2" branch="false" />
+                <line number="164" hits="2" branch="false" />
+                <line number="165" hits="2" branch="false" />
               </lines>
             </method>
             <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="173" hits="2" branch="false" />
+                <line number="163" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="173" hits="2" branch="false" />
-            <line number="174" hits="2" branch="false" />
-            <line number="175" hits="2" branch="false" />
+            <line number="163" hits="2" branch="false" />
+            <line number="164" hits="2" branch="false" />
+            <line number="165" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Errors.RoleNotFound" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Identity.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="167" hits="2" branch="false" />
-                <line number="168" hits="2" branch="false" />
+                <line number="157" hits="2" branch="false" />
+                <line number="158" hits="2" branch="false" />
               </lines>
             </method>
             <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="166" hits="2" branch="false" />
+                <line number="156" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="166" hits="2" branch="false" />
-            <line number="167" hits="2" branch="false" />
-            <line number="168" hits="2" branch="false" />
+            <line number="156" hits="2" branch="false" />
+            <line number="157" hits="2" branch="false" />
+            <line number="158" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Errors.SocialLoginEmailNotVerified" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Identity.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="209" hits="2" branch="false" />
-                <line number="210" hits="2" branch="false" />
+                <line number="194" hits="2" branch="false" />
+                <line number="195" hits="2" branch="false" />
               </lines>
             </method>
             <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="208" hits="2" branch="false" />
+                <line number="193" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="208" hits="2" branch="false" />
-            <line number="209" hits="2" branch="false" />
-            <line number="210" hits="2" branch="false" />
-          </lines>
-        </class>
-        <class name="Estud.Back.Errors.SocialLoginFailed" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Identity.cs" line-rate="0" branch-rate="1" complexity="2">
-          <methods>
-            <method name=".ctor" signature="()" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="202" hits="0" branch="false" />
-                <line number="203" hits="0" branch="false" />
-              </lines>
-            </method>
-            <method name=".cctor" signature="()" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="201" hits="0" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="201" hits="0" branch="false" />
-            <line number="202" hits="0" branch="false" />
-            <line number="203" hits="0" branch="false" />
+            <line number="193" hits="2" branch="false" />
+            <line number="194" hits="2" branch="false" />
+            <line number="195" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Errors.SocialLoginSsoRequired" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Identity.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="216" hits="2" branch="false" />
-                <line number="217" hits="2" branch="false" />
+                <line number="201" hits="2" branch="false" />
+                <line number="202" hits="2" branch="false" />
               </lines>
             </method>
             <method name=".cctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="215" hits="2" branch="false" />
+                <line number="200" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="215" hits="2" branch="false" />
-            <line number="216" hits="2" branch="false" />
-            <line number="217" hits="2" branch="false" />
-          </lines>
-        </class>
-        <class name="Estud.Back.Errors.SsoAuthenticationFailed" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Identity.cs" line-rate="0" branch-rate="1" complexity="2">
-          <methods>
-            <method name=".ctor" signature="()" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="153" hits="0" branch="false" />
-                <line number="154" hits="0" branch="false" />
-              </lines>
-            </method>
-            <method name=".cctor" signature="()" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="152" hits="0" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="152" hits="0" branch="false" />
-            <line number="153" hits="0" branch="false" />
-            <line number="154" hits="0" branch="false" />
+            <line number="200" hits="2" branch="false" />
+            <line number="201" hits="2" branch="false" />
+            <line number="202" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Errors.SsoAuthorityHasUserInfo" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Identity.cs" line-rate="1" branch-rate="1" complexity="2">
@@ -13452,26 +13338,6 @@
             <line number="131" hits="2" branch="false" />
             <line number="132" hits="2" branch="false" />
             <line number="133" hits="2" branch="false" />
-          </lines>
-        </class>
-        <class name="Estud.Back.Errors.SsoLoginUserNotFound" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Identity.cs" line-rate="0" branch-rate="1" complexity="2">
-          <methods>
-            <method name=".ctor" signature="()" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="160" hits="0" branch="false" />
-                <line number="161" hits="0" branch="false" />
-              </lines>
-            </method>
-            <method name=".cctor" signature="()" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="159" hits="0" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="159" hits="0" branch="false" />
-            <line number="160" hits="0" branch="false" />
-            <line number="161" hits="0" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Errors.SsoNotConfiguredForDomain" filename="/home/runner/work/estud/estud/Back/Errors/EstudErrors.Identity.cs" line-rate="1" branch-rate="1" complexity="2">
@@ -18440,19 +18306,19 @@
             <line number="20" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Features.Classes.ReleaseClassForEnrollment.ReleaseClassForEnrollmentService" filename="/home/runner/work/estud/estud/Back/Features/Classes/ReleaseClassForEnrollment/ReleaseClassForEnrollmentService.cs" line-rate="1" branch-rate="0.5" complexity="5">
+        <class name="Estud.Back.Features.Classes.ReleaseClassForEnrollment.ReleaseClassForEnrollmentService" filename="/home/runner/work/estud/estud/Back/Features/Classes/ReleaseClassForEnrollment/ReleaseClassForEnrollmentService.cs" line-rate="1" branch-rate="1" complexity="5">
           <methods>
             <method name=".ctor" signature="(Estud.Back.Database.EstudDbContext)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="3" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="Release" signature="()" line-rate="1" branch-rate="0.5" complexity="4">
+            <method name="Release" signature="()" line-rate="1" branch-rate="1" complexity="4">
               <lines>
                 <line number="7" hits="2" branch="false" />
                 <line number="9" hits="2" branch="false" />
-                <line number="10" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="12" hits="2" branch="true" condition-coverage="50% (1/2)" />
+                <line number="10" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="12" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="14" hits="2" branch="false" />
                 <line number="15" hits="2" branch="false" />
                 <line number="17" hits="2" branch="false" />
@@ -18464,8 +18330,8 @@
             <line number="3" hits="2" branch="false" />
             <line number="7" hits="2" branch="false" />
             <line number="9" hits="2" branch="false" />
-            <line number="10" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="12" hits="2" branch="true" condition-coverage="50% (1/2)" />
+            <line number="10" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="12" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="14" hits="2" branch="false" />
             <line number="15" hits="2" branch="false" />
             <line number="17" hits="2" branch="false" />
