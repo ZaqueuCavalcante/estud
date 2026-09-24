@@ -30,8 +30,9 @@ public static class OpenTelemetryConfigs
 
                 metrics
                     .AddMeter("Microsoft.AspNetCore.Hosting")
-                    .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
-                    .AddOtlpExporter();
+                    .AddMeter("Microsoft.AspNetCore.Server.Kestrel");
+
+                if (settings.OtlpExporterEnabled) metrics.AddOtlpExporter();
             })
             .WithTracing(tracing =>
             {
@@ -41,9 +42,9 @@ public static class OpenTelemetryConfigs
                     .AddAspNetCoreInstrumentation()
                     .AddSource(CommandsProcessing, DomainEventsProcessing);
 
-                tracing
-                    .SetSampler(new TraceIdRatioBasedSampler(settings.TracingSamplingRatio))
-                    .AddOtlpExporter();
+                tracing.SetSampler(new TraceIdRatioBasedSampler(settings.TracingSamplingRatio));
+
+                if (settings.OtlpExporterEnabled) tracing.AddOtlpExporter();
             });
     }
 }

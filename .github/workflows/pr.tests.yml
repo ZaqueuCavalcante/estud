@@ -45,18 +45,34 @@ jobs:
         --coverage-output coverage.cobertura.xml \
         --results-directory ./TestResults
 
+    - name: Checkout master coverage history
+      uses: actions/checkout@v4
+      with:
+        ref: gh-pages
+        path: gh-pages
+        sparse-checkout: history
+
+    - name: Restore master coverage history
+      run: |
+        mkdir -p master-history
+        cp -r gh-pages/history/. master-history/ 2>/dev/null || true
+
     - name: Combine Coverage Reports
+      id: coverage
       uses: danielpalme/ReportGenerator-GitHub-Action@v5.4.10
       with:
         reports: "**/*.cobertura.xml"
         targetdir: "coverage-html"
+        historydir: "master-history"
         reporttypes: "HtmlInline_AzurePipelines;Cobertura"
         verbosity: "Info"
         title: "PR #${{ github.event.number }}"
         tag: "${{ github.run_number }}_${{ github.run_id }}"
+        customSettings: "minimumCoverageThresholds:lineCoverage=96;minimumCoverageThresholds:branchCoverage=85"
         toolpath: "reportgeneratortool"
 
     - name: Upload Combined Coverage XML
+      if: ${{ !cancelled() && steps.coverage.outcome != 'skipped' }}
       uses: actions/upload-artifact@v4
       with:
         name: coverage-html-pr-${{ github.event.number }}
@@ -64,6 +80,7 @@ jobs:
         retention-days: 5
 
     - name: Publish Code Coverage Report
+      if: ${{ !cancelled() && steps.coverage.outcome != 'skipped' }}
       uses: irongut/CodeCoverageSummary@v1.3.0
       with:
         filename: "coverage-html/Cobertura.xml"
@@ -77,17 +94,18 @@ jobs:
         thresholds: "95 99"
 
     - name: Add Coverage PR Comment
+      if: ${{ !cancelled() && steps.coverage.outcome != 'skipped' && github.event_name == 'pull_request' }}
       uses: marocchino/sticky-pull-request-comment@v2
-      if: github.event_name == 'pull_request'
       with:
         recreate: true
         path: code-coverage-results.md
 
     - name: Write to Job Summary
+      if: ${{ !cancelled() && steps.coverage.outcome != 'skipped' }}
       run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
 
     - name: Publish Coverage to https://zaqueucavalcante.github.io/estud/pr/<PR_NUMBER>
-      if: github.event.pull_request.head.repo.fork == false
+      if: ${{ !cancelled() && steps.coverage.outcome != 'skipped' && github.event.pull_request.head.repo.fork == false }}
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -97,7 +115,7 @@ jobs:
         keep_files: true
 
     - name: Comment link to Coverage (Pages)
-      if: github.event.pull_request.head.repo.fork == false
+      if: ${{ !cancelled() && steps.coverage.outcome != 'skipped' && github.event.pull_request.head.repo.fork == false }}
       uses: marocchino/sticky-pull-request-comment@v2
       with:
         header: coverage-pages-link

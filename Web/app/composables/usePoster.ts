@@ -78,7 +78,7 @@ function save(blob: Blob, name: string) {
   URL.revokeObjectURL(url)
 }
 
-export function usePoster(width: number, height: number, fileName: string) {
+export function usePoster(width: number, height: number, fileName: string, zoom: Ref<number> = ref(0)) {
   // Todo o layout é medido em cima do Saira e do JetBrains Mono, então o pôster só
   // é montado depois que as webfonts carregam: com a fonte de fallback as larguras
   // mudam e o desenho inteiro desalinha.
@@ -93,8 +93,6 @@ export function usePoster(width: number, height: number, fileName: string) {
     { label: '75%', value: 0.75 },
     { label: '100%', value: 1 }
   ]
-
-  const zoom = ref(0)
 
   const posterStyle = computed(() => zoom.value === 0
     ? { width: '100%', maxWidth: `${width}px`, height: 'auto' }

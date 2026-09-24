@@ -1,5 +1,4 @@
 using BrazilHolidays.Net;
-using System.Globalization;
 
 namespace Estud.Back.Extensions;
 
@@ -14,22 +13,9 @@ public static class DateOnlyExtensions
             return date.ToDateTime(TimeOnly.Parse("12:00")).IsHoliday();
         }
 
-        public string FormatBr()
-        {
-            return date.ToString("dd/MM/yyyy");
-        }
-
         public bool IsValidBirthdate()
         {
             return date >= MinBirthdate && date <= DateOnly.FromDateTime(DateTime.UtcNow);
-        }
-    }
-
-    extension(string date)
-    {
-        public DateOnly ToDateOnly()
-        {
-            return DateOnly.ParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
         }
     }
 

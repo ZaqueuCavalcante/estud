@@ -1,5 +1,8 @@
 using Quartz;
 using Estud.Back.Emails;
+using System.Diagnostics;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Estud.Tests.Integration.Clients;
@@ -14,6 +17,10 @@ extern alias Back;
 
 public class BackFactory : WebApplicationFactory<Back::Program>
 {
+    // Só guarda spans de traces abertos pelos testes; senão a suíte inteira fica em memória.
+    public TelemetryCollection<MetricSnapshot> Metrics { get; } = new();
+    public TelemetryCollection<Activity> Spans { get; } = new(BackFactoryTelemetry.IsTestTrace);
+
     public BackFactory() : base()
     {
         UseKestrel(o => o.ListenLocalhost(5100));
@@ -39,6 +46,13 @@ public class BackFactory : WebApplicationFactory<Back::Program>
         builder.ConfigureTestServices(services =>
         {
             services.AddSingleton<IStartupFilter, RequestsCounterStartupFilter>();
+
+            services.ConfigureOpenTelemetryTracerProvider(tracing => tracing
+                .AddSource(BackFactoryTelemetry.TestsActivitySource.Name)
+                .AddInMemoryExporter(Spans));
+
+            services.ConfigureOpenTelemetryMeterProvider(metrics => metrics
+                .AddInMemoryExporter(Metrics));
         });
     }
 

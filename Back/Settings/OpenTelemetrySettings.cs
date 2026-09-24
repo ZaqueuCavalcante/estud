@@ -4,6 +4,7 @@ public class OpenTelemetrySettings
 {
     public bool Enabled { get; set; }
     public double TracingSamplingRatio { get; set; }
+    public bool OtlpExporterEnabled { get; set; } = true;
 
     public OpenTelemetrySettings(IConfiguration configuration)
     {

@@ -461,12 +461,14 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
       <div class="space-y-6">
         <div class="space-y-2">
           <p class="text-sm text-muted">
-            Pôster de {{ W }} × {{ H }} (proporção de post do LinkedIn) com a estratégia de testes do Estud: o Back
-            sobe em memória e conversa com Postgres, MinIO e Keycloak reais, levantados via Testcontainers.
+            Dois pôsteres de {{ W }} × {{ H }} (proporção de post do LinkedIn): a estratégia de testes do Estud — o
+            Back sobe em memória e conversa com Postgres, MinIO e Keycloak reais, levantados via Testcontainers — e o
+            gráfico de ritmo de desenvolvimento com e sem testes, baseado no livro do Vladimir Khorikov.
           </p>
           <p class="text-sm text-muted">
             O desenho é o próprio SVG desta página — para editar, mexa nas listas no topo de
-            <code class="text-xs">app/pages/dev/tests-diagram.vue</code>. Os botões abaixo baixam exatamente o que está
+            <code class="text-xs">app/pages/dev/tests-diagram.vue</code> e de
+            <code class="text-xs">app/components/dev/TestsPacePoster.vue</code>. Os botões abaixo baixam exatamente o que está
             na tela, com as fontes embutidas no arquivo.
           </p>
         </div>
@@ -480,331 +482,341 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
             class="w-44"
           />
           <span class="text-xs text-dimmed">Ícones em <code>app/utils/arch-icons.ts</code></span>
-
-          <div class="ml-auto flex items-center gap-2">
-            <UButton
-              label="SVG"
-              icon="i-lucide-download"
-              color="neutral"
-              variant="outline"
-              :loading="busy === 'svg'"
-              @click="() => { downloadSvg() }"
-            />
-
-            <UDropdownMenu :items="pngItems">
-              <UButton
-                label="PNG"
-                icon="i-lucide-download"
-                color="neutral"
-                :loading="busy === 'png'"
-              />
-            </UDropdownMenu>
-          </div>
         </div>
 
-        <div class="overflow-auto rounded-lg border border-default" :style="{ backgroundColor: C.bg }">
-          <ClientOnly>
-            <svg
-              v-if="fontsLoaded"
-              ref="posterEl"
-              class="poster block"
-              :width="W"
-              :height="H"
-              :viewBox="`0 0 ${W} ${H}`"
-              :style="posterStyle"
-              role="img"
-              aria-label="Estratégia de testes do Estud"
-            >
-              <defs>
-                <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
-                  <circle cx="2" cy="2" r="1.2" fill="#ffffff" fill-opacity="0.06" />
-                </pattern>
+        <div class="grid grid-cols-1 items-start gap-6 2xl:grid-cols-2">
+          <div class="space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium">Arquitetura dos testes</span>
 
-                <linearGradient
-                  id="titleGrad"
-                  gradientUnits="userSpaceOnUse"
-                  :x1="poster.titleGrad.x1"
-                  y1="0"
-                  :x2="poster.titleGrad.x2"
-                  y2="0"
-                >
-                  <stop offset="0" stop-color="#c4b5fd" />
-                  <stop offset="1" stop-color="#8b5cf6" />
-                </linearGradient>
-
-                <linearGradient id="railStroke" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#a78bfa" stop-opacity="0.7" />
-                  <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.08" />
-                  <stop offset="1" stop-color="#6366f1" stop-opacity="0.5" />
-                </linearGradient>
-
-                <filter id="shadow" x="-20%" y="-30%" width="140%" height="180%">
-                  <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity="0.45" />
-                </filter>
-
-                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="4" />
-                </filter>
-
-                <marker
-                  id="head"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="5"
-                  markerHeight="5"
-                  orient="auto"
-                  markerUnits="strokeWidth"
-                >
-                  <path d="M0 0 L10 5 L0 10 z" :fill="C.line" />
-                </marker>
-              </defs>
-
-              <rect :width="W" :height="H" :fill="C.bg" />
-              <rect :width="W" :height="H" fill="url(#dots)" />
-
-              <text
-                :x="M"
-                y="72"
-                font-size="52"
-                font-weight="800"
-                :fill="C.text"
-              >{{ TITLE.lead }}<tspan fill="url(#titleGrad)">{{ TITLE.accent }}</tspan></text>
-
-              <g :transform="`translate(${poster.logo.x} ${poster.logo.y}) scale(${poster.logo.scale})`">
-                <rect width="24" height="24" rx="6" fill="#7c3aed" />
-                <path fill="#fff" :d="ESTUD_E" />
-              </g>
-
-              <rect
-                v-for="(f, i) in poster.frames"
-                :key="`frame-${i}`"
-                :x="f.x"
-                :y="f.y"
-                :width="f.w"
-                :height="f.h"
-                :rx="f.rx"
-                fill="#ffffff"
-                fill-opacity="0.025"
-                stroke="url(#railStroke)"
-                stroke-width="2"
-              />
-
-              <g v-for="h in poster.headers" :key="h.id">
-                <g :transform="iconTransform(h.icon)" :style="{ color: h.icon.color }" v-html="archIcons[h.icon.name]" />
-                <text
-                  :x="h.title.x"
-                  :y="h.title.y"
-                  :font-size="h.title.size"
-                  :font-weight="h.title.weight"
-                  :fill="h.title.fill"
-                >{{ h.title.value }}</text>
-              </g>
-
-              <g :transform="iconTransform(poster.card.icon)" :style="{ color: poster.card.icon.color }" v-html="archIcons[poster.card.icon.name]" />
-              <text
-                :x="poster.card.title.x"
-                :y="poster.card.title.y"
-                :font-size="poster.card.title.size"
-                :font-weight="poster.card.title.weight"
-                :fill="poster.card.title.fill"
-              >{{ poster.card.title.value }}</text>
-              <text
-                class="mono"
-                :x="poster.card.hint.x"
-                :y="poster.card.hint.y"
-                :font-size="poster.card.hint.size"
-                :fill="poster.card.hint.fill"
-                text-anchor="end"
-              >{{ poster.card.hint.value }}</text>
-
-              <rect
-                :x="poster.prodStrip.x"
-                :y="poster.prodStrip.y"
-                :width="poster.prodStrip.w"
-                :height="poster.prodStrip.h"
-                :rx="poster.prodStrip.rx"
-                :fill="C.surface"
-                :stroke="C.cardStroke"
-                stroke-width="1.5"
-              />
-
-              <g v-for="a in poster.arrows" :key="a">
-                <path
-                  :d="a"
-                  fill="none"
-                  :stroke="C.line"
-                  stroke-width="8"
-                  stroke-opacity="0.18"
-                  stroke-linejoin="round"
-                  filter="url(#glow)"
+              <div class="ml-auto flex items-center gap-2">
+                <UButton
+                  label="SVG"
+                  icon="i-lucide-download"
+                  color="neutral"
+                  variant="outline"
+                  :loading="busy === 'svg'"
+                  @click="() => { downloadSvg() }"
                 />
-                <path
-                  :d="a"
-                  fill="none"
-                  :stroke="C.line"
-                  stroke-width="2.5"
-                  stroke-linejoin="round"
-                  marker-end="url(#head)"
-                />
-              </g>
 
-              <path
-                v-for="m in poster.mirrors"
-                :key="m"
-                :d="m"
-                fill="none"
-                :stroke="C.line"
-                stroke-opacity="0.75"
-                stroke-width="2.5"
-                stroke-dasharray="7 7"
-              />
-
-              <g v-for="p in poster.pills" :key="p.label">
-                <rect
-                  :x="p.x - p.w / 2"
-                  :y="p.y - 15"
-                  :width="p.w"
-                  height="30"
-                  rx="15"
-                  fill="#1c1830"
-                  :stroke="C.violet"
-                  stroke-opacity="0.55"
-                />
-                <text
-                  class="mono"
-                  :x="p.x"
-                  :y="p.y + 5"
-                  text-anchor="middle"
-                  font-size="15"
-                  font-weight="600"
-                  :fill="C.violetLight"
-                >{{ p.label }}</text>
-              </g>
-
-              <g filter="url(#shadow)">
-                <rect
-                  :x="poster.cylinder.x"
-                  :y="poster.cylinder.top"
-                  :width="poster.cylinder.w"
-                  :height="poster.cylinder.bottom - poster.cylinder.top"
-                  :fill="C.card"
-                />
-                <ellipse
-                  :cx="poster.cylinder.cx"
-                  :cy="poster.cylinder.bottom"
-                  :rx="poster.cylinder.rx"
-                  :ry="poster.cylinder.ry"
-                  :fill="C.card"
-                />
-              </g>
-
-              <path
-                :d="`M ${poster.cylinder.x} ${poster.cylinder.top} L ${poster.cylinder.x} ${poster.cylinder.bottom} A ${poster.cylinder.rx} ${poster.cylinder.ry} 0 0 0 ${poster.cylinder.right} ${poster.cylinder.bottom} L ${poster.cylinder.right} ${poster.cylinder.top}`"
-                fill="none"
-                stroke="#ffffff"
-                stroke-opacity="0.16"
-                stroke-width="1.5"
-              />
-
-              <ellipse
-                :cx="poster.cylinder.cx"
-                :cy="poster.cylinder.top"
-                :rx="poster.cylinder.rx"
-                :ry="poster.cylinder.ry"
-                :fill="C.cardTop"
-                :stroke="poster.cylinder.color"
-                stroke-opacity="0.45"
-                stroke-width="1.5"
-              />
-
-              <g v-for="b in poster.blocks" :key="b.id">
-                <rect
-                  v-if="b.rect"
-                  :x="b.rect.x"
-                  :y="b.rect.y"
-                  :width="b.rect.w"
-                  :height="b.rect.h"
-                  :rx="b.rect.rx"
-                  :fill="b.rect.fill"
-                  :stroke="C.cardStroke"
-                  stroke-width="1.5"
-                  filter="url(#shadow)"
-                />
-                <rect
-                  :x="b.tile.x"
-                  :y="b.tile.y"
-                  :width="b.tile.size"
-                  :height="b.tile.size"
-                  :rx="b.tile.rx"
-                  :fill="b.tile.color"
-                  fill-opacity="0.14"
-                  :stroke="b.tile.color"
-                  stroke-opacity="0.4"
-                />
-                <g :transform="iconTransform(b.icon)" :style="{ color: b.icon.color }" v-html="archIcons[b.icon.name]" />
-                <text
-                  :x="b.title.x"
-                  :y="b.title.y"
-                  :font-size="b.title.size"
-                  :font-weight="b.title.weight"
-                  :fill="b.title.fill"
-                >{{ b.title.value }}</text>
-                <text
-                  v-if="b.sub"
-                  class="mono"
-                  :x="b.sub.x"
-                  :y="b.sub.y"
-                  :font-size="b.sub.size"
-                  :fill="b.sub.fill"
-                >{{ b.sub.value }}</text>
-              </g>
-
-              <g v-for="p in poster.points" :key="p.id">
-                <g :transform="iconTransform(p.icon)" :style="{ color: p.icon.color }" v-html="archIcons[p.icon.name]" />
-                <text
-                  :class="{ mono: p.title.mono }"
-                  :x="p.title.x"
-                  :y="p.title.y"
-                  :font-size="p.title.size"
-                  :font-weight="p.title.weight"
-                  :fill="p.title.fill"
-                >{{ p.title.value }}</text>
-              </g>
-
-              <g v-for="c in poster.chips" :key="`${c.x}-${c.label}`">
-                <rect
-                  :x="c.x"
-                  :y="c.y"
-                  :width="c.w"
-                  height="24"
-                  rx="7"
-                  :fill="c.color"
-                  fill-opacity="0.1"
-                  :stroke="c.color"
-                  stroke-opacity="0.35"
-                />
-                <text
-                  class="mono"
-                  :x="c.x + c.w / 2"
-                  :y="c.y + 12 + c.size * 0.36"
-                  text-anchor="middle"
-                  :font-size="c.size"
-                  :fill="c.textColor"
-                >{{ c.label }}</text>
-              </g>
-            </svg>
-
-            <div v-else class="flex items-center justify-center py-20">
-              <AppSpinner class="size-6" />
+                <UDropdownMenu :items="pngItems">
+                  <UButton
+                    label="PNG"
+                    icon="i-lucide-download"
+                    color="neutral"
+                    :loading="busy === 'png'"
+                  />
+                </UDropdownMenu>
+              </div>
             </div>
 
-            <template #fallback>
-              <div class="flex items-center justify-center py-20">
-                <AppSpinner class="size-6" />
-              </div>
-            </template>
-          </ClientOnly>
+            <div class="overflow-auto rounded-lg border border-default" :style="{ backgroundColor: C.bg }">
+              <ClientOnly>
+                <svg
+                  v-if="fontsLoaded"
+                  ref="posterEl"
+                  class="poster block"
+                  :width="W"
+                  :height="H"
+                  :viewBox="`0 0 ${W} ${H}`"
+                  :style="posterStyle"
+                  role="img"
+                  aria-label="Estratégia de testes do Estud"
+                >
+                  <defs>
+                    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+                      <circle cx="2" cy="2" r="1.2" fill="#ffffff" fill-opacity="0.06" />
+                    </pattern>
+
+                    <linearGradient
+                      id="titleGrad"
+                      gradientUnits="userSpaceOnUse"
+                      :x1="poster.titleGrad.x1"
+                      y1="0"
+                      :x2="poster.titleGrad.x2"
+                      y2="0"
+                    >
+                      <stop offset="0" stop-color="#c4b5fd" />
+                      <stop offset="1" stop-color="#8b5cf6" />
+                    </linearGradient>
+
+                    <linearGradient id="railStroke" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#a78bfa" stop-opacity="0.7" />
+                      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.08" />
+                      <stop offset="1" stop-color="#6366f1" stop-opacity="0.5" />
+                    </linearGradient>
+
+                    <filter id="shadow" x="-20%" y="-30%" width="140%" height="180%">
+                      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity="0.45" />
+                    </filter>
+
+                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="4" />
+                    </filter>
+
+                    <marker
+                      id="head"
+                      viewBox="0 0 10 10"
+                      refX="8"
+                      refY="5"
+                      markerWidth="5"
+                      markerHeight="5"
+                      orient="auto"
+                      markerUnits="strokeWidth"
+                    >
+                      <path d="M0 0 L10 5 L0 10 z" :fill="C.line" />
+                    </marker>
+                  </defs>
+
+                  <rect :width="W" :height="H" :fill="C.bg" />
+                  <rect :width="W" :height="H" fill="url(#dots)" />
+
+                  <text
+                    :x="M"
+                    y="72"
+                    font-size="52"
+                    font-weight="800"
+                    :fill="C.text"
+                  >{{ TITLE.lead }}<tspan fill="url(#titleGrad)">{{ TITLE.accent }}</tspan></text>
+
+                  <g :transform="`translate(${poster.logo.x} ${poster.logo.y}) scale(${poster.logo.scale})`">
+                    <rect width="24" height="24" rx="6" fill="#7c3aed" />
+                    <path fill="#fff" :d="ESTUD_E" />
+                  </g>
+
+                  <rect
+                    v-for="(f, i) in poster.frames"
+                    :key="`frame-${i}`"
+                    :x="f.x"
+                    :y="f.y"
+                    :width="f.w"
+                    :height="f.h"
+                    :rx="f.rx"
+                    fill="#ffffff"
+                    fill-opacity="0.025"
+                    stroke="url(#railStroke)"
+                    stroke-width="2"
+                  />
+
+                  <g v-for="h in poster.headers" :key="h.id">
+                    <g :transform="iconTransform(h.icon)" :style="{ color: h.icon.color }" v-html="archIcons[h.icon.name]" />
+                    <text
+                      :x="h.title.x"
+                      :y="h.title.y"
+                      :font-size="h.title.size"
+                      :font-weight="h.title.weight"
+                      :fill="h.title.fill"
+                    >{{ h.title.value }}</text>
+                  </g>
+
+                  <g :transform="iconTransform(poster.card.icon)" :style="{ color: poster.card.icon.color }" v-html="archIcons[poster.card.icon.name]" />
+                  <text
+                    :x="poster.card.title.x"
+                    :y="poster.card.title.y"
+                    :font-size="poster.card.title.size"
+                    :font-weight="poster.card.title.weight"
+                    :fill="poster.card.title.fill"
+                  >{{ poster.card.title.value }}</text>
+                  <text
+                    class="mono"
+                    :x="poster.card.hint.x"
+                    :y="poster.card.hint.y"
+                    :font-size="poster.card.hint.size"
+                    :fill="poster.card.hint.fill"
+                    text-anchor="end"
+                  >{{ poster.card.hint.value }}</text>
+
+                  <rect
+                    :x="poster.prodStrip.x"
+                    :y="poster.prodStrip.y"
+                    :width="poster.prodStrip.w"
+                    :height="poster.prodStrip.h"
+                    :rx="poster.prodStrip.rx"
+                    :fill="C.surface"
+                    :stroke="C.cardStroke"
+                    stroke-width="1.5"
+                  />
+
+                  <g v-for="a in poster.arrows" :key="a">
+                    <path
+                      :d="a"
+                      fill="none"
+                      :stroke="C.line"
+                      stroke-width="8"
+                      stroke-opacity="0.18"
+                      stroke-linejoin="round"
+                      filter="url(#glow)"
+                    />
+                    <path
+                      :d="a"
+                      fill="none"
+                      :stroke="C.line"
+                      stroke-width="2.5"
+                      stroke-linejoin="round"
+                      marker-end="url(#head)"
+                    />
+                  </g>
+
+                  <path
+                    v-for="m in poster.mirrors"
+                    :key="m"
+                    :d="m"
+                    fill="none"
+                    :stroke="C.line"
+                    stroke-opacity="0.75"
+                    stroke-width="2.5"
+                    stroke-dasharray="7 7"
+                  />
+
+                  <g v-for="p in poster.pills" :key="p.label">
+                    <rect
+                      :x="p.x - p.w / 2"
+                      :y="p.y - 15"
+                      :width="p.w"
+                      height="30"
+                      rx="15"
+                      fill="#1c1830"
+                      :stroke="C.violet"
+                      stroke-opacity="0.55"
+                    />
+                    <text
+                      class="mono"
+                      :x="p.x"
+                      :y="p.y + 5"
+                      text-anchor="middle"
+                      font-size="15"
+                      font-weight="600"
+                      :fill="C.violetLight"
+                    >{{ p.label }}</text>
+                  </g>
+
+                  <g filter="url(#shadow)">
+                    <rect
+                      :x="poster.cylinder.x"
+                      :y="poster.cylinder.top"
+                      :width="poster.cylinder.w"
+                      :height="poster.cylinder.bottom - poster.cylinder.top"
+                      :fill="C.card"
+                    />
+                    <ellipse
+                      :cx="poster.cylinder.cx"
+                      :cy="poster.cylinder.bottom"
+                      :rx="poster.cylinder.rx"
+                      :ry="poster.cylinder.ry"
+                      :fill="C.card"
+                    />
+                  </g>
+
+                  <path
+                    :d="`M ${poster.cylinder.x} ${poster.cylinder.top} L ${poster.cylinder.x} ${poster.cylinder.bottom} A ${poster.cylinder.rx} ${poster.cylinder.ry} 0 0 0 ${poster.cylinder.right} ${poster.cylinder.bottom} L ${poster.cylinder.right} ${poster.cylinder.top}`"
+                    fill="none"
+                    stroke="#ffffff"
+                    stroke-opacity="0.16"
+                    stroke-width="1.5"
+                  />
+
+                  <ellipse
+                    :cx="poster.cylinder.cx"
+                    :cy="poster.cylinder.top"
+                    :rx="poster.cylinder.rx"
+                    :ry="poster.cylinder.ry"
+                    :fill="C.cardTop"
+                    :stroke="poster.cylinder.color"
+                    stroke-opacity="0.45"
+                    stroke-width="1.5"
+                  />
+
+                  <g v-for="b in poster.blocks" :key="b.id">
+                    <rect
+                      v-if="b.rect"
+                      :x="b.rect.x"
+                      :y="b.rect.y"
+                      :width="b.rect.w"
+                      :height="b.rect.h"
+                      :rx="b.rect.rx"
+                      :fill="b.rect.fill"
+                      :stroke="C.cardStroke"
+                      stroke-width="1.5"
+                      filter="url(#shadow)"
+                    />
+                    <rect
+                      :x="b.tile.x"
+                      :y="b.tile.y"
+                      :width="b.tile.size"
+                      :height="b.tile.size"
+                      :rx="b.tile.rx"
+                      :fill="b.tile.color"
+                      fill-opacity="0.14"
+                      :stroke="b.tile.color"
+                      stroke-opacity="0.4"
+                    />
+                    <g :transform="iconTransform(b.icon)" :style="{ color: b.icon.color }" v-html="archIcons[b.icon.name]" />
+                    <text
+                      :x="b.title.x"
+                      :y="b.title.y"
+                      :font-size="b.title.size"
+                      :font-weight="b.title.weight"
+                      :fill="b.title.fill"
+                    >{{ b.title.value }}</text>
+                    <text
+                      v-if="b.sub"
+                      class="mono"
+                      :x="b.sub.x"
+                      :y="b.sub.y"
+                      :font-size="b.sub.size"
+                      :fill="b.sub.fill"
+                    >{{ b.sub.value }}</text>
+                  </g>
+
+                  <g v-for="p in poster.points" :key="p.id">
+                    <g :transform="iconTransform(p.icon)" :style="{ color: p.icon.color }" v-html="archIcons[p.icon.name]" />
+                    <text
+                      :class="{ mono: p.title.mono }"
+                      :x="p.title.x"
+                      :y="p.title.y"
+                      :font-size="p.title.size"
+                      :font-weight="p.title.weight"
+                      :fill="p.title.fill"
+                    >{{ p.title.value }}</text>
+                  </g>
+
+                  <g v-for="c in poster.chips" :key="`${c.x}-${c.label}`">
+                    <rect
+                      :x="c.x"
+                      :y="c.y"
+                      :width="c.w"
+                      height="24"
+                      rx="7"
+                      :fill="c.color"
+                      fill-opacity="0.1"
+                      :stroke="c.color"
+                      stroke-opacity="0.35"
+                    />
+                    <text
+                      class="mono"
+                      :x="c.x + c.w / 2"
+                      :y="c.y + 12 + c.size * 0.36"
+                      text-anchor="middle"
+                      :font-size="c.size"
+                      :fill="c.textColor"
+                    >{{ c.label }}</text>
+                  </g>
+                </svg>
+
+                <div v-else class="flex items-center justify-center py-20">
+                  <AppSpinner class="size-6" />
+                </div>
+
+                <template #fallback>
+                  <div class="flex items-center justify-center py-20">
+                    <AppSpinner class="size-6" />
+                  </div>
+                </template>
+              </ClientOnly>
+            </div>
+          </div>
+
+          <DevTestsPacePoster :zoom="zoom" />
         </div>
       </div>
     </template>

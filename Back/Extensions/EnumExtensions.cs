@@ -39,22 +39,6 @@ public static class EnumExtensions
         }
     }
 
-    extension(string value)
-    {
-        public T ToEnum<T>()
-        {
-            return (T)Enum.Parse(typeof(T), value, true);
-        }
-    }
-
-    extension(short value)
-    {
-        public T ToEnum<T>()
-        {
-            return (T)Enum.Parse(typeof(T), value.ToString(), true);
-        }
-    }
-
     extension(int value)
     {
         public T IntToEnum<T>()
@@ -68,11 +52,6 @@ public static class EnumExtensions
         public int ToInt()
         {
             return Convert.ToInt32(enumValue);
-        }
-
-        public short ToShort()
-        {
-            return (short) enumValue.ToInt();
         }
     }
 

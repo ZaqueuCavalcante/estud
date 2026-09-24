@@ -8,7 +8,9 @@ public static class HostConfigs
         {
             config.ReadFrom.Configuration(context.Configuration);
 
-            if (context.Configuration.OpenTelemetry.Enabled)
+            var settings = context.Configuration.OpenTelemetry;
+
+            if (settings.Enabled && settings.OtlpExporterEnabled)
             {
                 config.WriteTo.OpenTelemetry(options =>
                 {

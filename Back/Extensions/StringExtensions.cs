@@ -129,21 +129,6 @@ public static class StringExtensions
         }
     }
 
-    extension(int value)
-    {
-        public string MinutesToString()
-        {
-            var hours = value / 60;
-            var minutes = value % 60;
-
-            if (hours == 0 && minutes == 0) return "0";
-            if (hours == 0) return $"{minutes}min";
-            if (minutes == 0) return $"{hours}h";
-
-            return $"{hours}h e {minutes}min";
-        }
-    }
-
     extension(object obj)
     {
         public string Serialize()

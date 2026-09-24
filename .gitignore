@@ -49,3 +49,4 @@ crash.*.log
 
 # Fontes baixadas pelo gen-campus-svg
 /Scripts/.fonts
+/Scripts/.renders
