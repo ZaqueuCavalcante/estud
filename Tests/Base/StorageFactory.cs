@@ -25,6 +25,8 @@ public class StorageFactory : IAsyncDisposable
             .WithPassword(_settings.SecretAccessKey)
             .WithPortBinding(new Uri(_settings.ServiceUrl).Port, 9000)
             .WithEnvironment("MINIO_SITE_REGION", "auto")
+            .WithName("estud-tests-storage")
+            .WithReuse(true)
             .Build();
     }
 
@@ -40,8 +42,8 @@ public class StorageFactory : IAsyncDisposable
         };
         _s3 = new AmazonS3Client(_settings.AccessKeyId, _settings.SecretAccessKey, config);
 
-        await _s3.PutBucketAsync(_settings.PublicBucket);
-        await _s3.PutBucketAsync(_settings.PrivateBucket);
+        await EnsureBucket(_settings.PublicBucket);
+        await EnsureBucket(_settings.PrivateBucket);
 
         // Sem o s3:ListBucket o MinIO responde 403 para arquivo inexistente; o R2 público responde 404.
         await _s3.PutBucketPolicyAsync(_settings.PublicBucket, $$"""
@@ -63,6 +65,15 @@ public class StorageFactory : IAsyncDisposable
             ]
         }
         """);
+    }
+
+    private async Task EnsureBucket(string name)
+    {
+        try
+        {
+            await _s3.PutBucketAsync(name);
+        }
+        catch (BucketAlreadyOwnedByYouException) { }
     }
 
     public static async Task<HttpResponseMessage> Upload(string uploadUrl, string contentType, long sizeInBytes)

@@ -31,11 +31,6 @@ public class InstitutionConfig
         GradeRule = DefaultGradeRule;
     }
 
-    public InstitutionConfig(int institutionId) : this()
-    {
-        InstitutionId = institutionId;
-    }
-
     public void Setup(decimal noteLimit, decimal frequencyLimit, ClassGradeRule gradeRule)
     {
         NoteLimit = noteLimit;

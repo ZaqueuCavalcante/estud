@@ -147,19 +147,9 @@ public class SsoDomainDnsLookupFailed : EstudError
     public override string Message { get; set; } = "Não foi possível consultar o DNS do domínio. Tente novamente em alguns minutos.";
 }
 
-public class SsoAuthenticationFailed : EstudError
-{
-    public static readonly SsoAuthenticationFailed I = new();
-    public override string Code { get; set; } = nameof(SsoAuthenticationFailed);
-    public override string Message { get; set; } = "Falha na autenticação SSO.";
-}
+public class SsoAuthenticationFailed { }
 
-public class SsoLoginUserNotFound : EstudError
-{
-    public static readonly SsoLoginUserNotFound I = new();
-    public override string Code { get; set; } = nameof(SsoLoginUserNotFound);
-    public override string Message { get; set; } = "Usuário não pertence à organização.";
-}
+public class SsoLoginUserNotFound { }
 
 public class RoleNotFound : EstudError
 {
@@ -196,12 +186,7 @@ public class InvalidPermissionsForUserType : EstudError
     public override string Message { get; set; } = "Uma ou mais permissões não são permitidas para o tipo de usuário selecionado.";
 }
 
-public class SocialLoginFailed : EstudError
-{
-    public static readonly SocialLoginFailed I = new();
-    public override string Code { get; set; } = nameof(SocialLoginFailed);
-    public override string Message { get; set; } = "Falha na autenticação social. Tente novamente.";
-}
+public class SocialLoginFailed {}
 
 public class SocialLoginEmailNotVerified : EstudError
 {

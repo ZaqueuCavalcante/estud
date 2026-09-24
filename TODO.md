@@ -3,11 +3,12 @@
 ## Foco atual
 
 // [Test]
-
-- aluno precisa ver sua frequencia em cada turma (hoje ele so ve as notas)
+- post sobre testes
+- testes precisam rodar rapido pra viabilizar mutation tests
 
 ## Próximo
 
+- aluno precisa ver sua frequencia em cada turma (hoje ele so ve as notas)
 - notificar quando um usuário for marcado em algum lugar (Basecamp like, o clique na notificação vai pro local da marcação)
 - notificar aluno quando o professor adicionar nota de alguma atividade que ele entregou ou quando o professor comentar na entrega, mesmo sem mencao
 - professor e apenas o professor pode marcar todo mundo da turma usando o atalho @turma

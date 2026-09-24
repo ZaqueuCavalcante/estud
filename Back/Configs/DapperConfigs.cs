@@ -10,6 +10,5 @@ public static class DapperConfigs
         DefaultTypeMap.MatchNamesWithUnderscores = true;
 
         SqlMapper.AddTypeHandler(new IntListTypeHandler());
-        SqlMapper.AddTypeHandler(new StringListTypeHandler());
     }
 }
