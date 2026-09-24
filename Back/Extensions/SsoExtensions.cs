@@ -24,23 +24,7 @@ public static partial class SsoExtensions
                 return SsoAuthorityHasUserInfo.I;
 
             // Parse and validate the host
-            return uri.Host.ValidateSsoHost();
-        }
-
-        public EstudError? ValidateSsoHost()
-        {
-            // Try to parse as IP address
-            if (IPAddress.TryParse(value, out var ip))
-                return ip.ValidateSsoIpAddress();
-
-            // It's a hostname - check for dangerous hostnames
-            var lowerHost = value.ToLowerInvariant();
-
-            // Block localhost variants (allow in dev/testing)
-            if (lowerHost is "localhost" or "localhost.localdomain")
-                return EnvironmentExtensions.IsDevelopmentOrTesting() ? null : SsoAuthorityLocalhostNotAllowed.I;
-
-            return null;
+            return ValidateSsoHost(uri.Host);
         }
 
         public string? NormalizeSsoDomain()
@@ -63,57 +47,70 @@ public static partial class SsoExtensions
         public bool IsPublicEmailDomain() => PublicEmailDomains.Contains(value);
     }
 
-    extension(IPAddress ip)
+    private static EstudError? ValidateSsoHost(string host)
     {
-        public EstudError? ValidateSsoIpAddress()
+        // Try to parse as IP address
+        if (IPAddress.TryParse(host, out var ip))
+            return ValidateSsoIpAddress(ip);
+
+        // It's a hostname - check for dangerous hostnames
+        var lowerHost = host.ToLowerInvariant();
+
+        // Block localhost variants (allow in dev/testing)
+        if (lowerHost is "localhost" or "localhost.localdomain")
+            return EnvironmentExtensions.IsDevelopmentOrTesting() ? null : SsoAuthorityLocalhostNotAllowed.I;
+
+        return null;
+    }
+
+    private static EstudError? ValidateSsoIpAddress(IPAddress ip)
+    {
+        var resolved = ip;
+        var isDevOrTest = EnvironmentExtensions.IsDevelopmentOrTesting();
+
+        // Handle IPv4-mapped IPv6 addresses (::ffff:127.0.0.1)
+        if (resolved.IsIPv4MappedToIPv6)
+            resolved = resolved.MapToIPv4();
+
+        // IPv6 checks
+        if (resolved.AddressFamily == AddressFamily.InterNetworkV6)
         {
-            var resolved = ip;
-            var isDevOrTest = EnvironmentExtensions.IsDevelopmentOrTesting();
-
-            // Handle IPv4-mapped IPv6 addresses (::ffff:127.0.0.1)
-            if (resolved.IsIPv4MappedToIPv6)
-                resolved = resolved.MapToIPv4();
-
-            // IPv6 checks
-            if (resolved.AddressFamily == AddressFamily.InterNetworkV6)
-            {
-                // Block IPv6 loopback (::1) — allow in dev/testing
-                if (IPAddress.IPv6Loopback.Equals(resolved))
-                    return isDevOrTest ? null : SsoAuthorityLoopbackNotAllowed.I;
-
-                // Block IPv6 link-local (fe80::/10) — always blocked (cloud metadata risk)
-                if (resolved.IsIPv6LinkLocal)
-                    return SsoAuthorityLinkLocalNotAllowed.I;
-
-                // Block IPv6 unique local addresses (fc00::/7 = fc00:: and fd00::) — allow in dev/testing
-                var bytes = resolved.GetAddressBytes();
-                if ((bytes[0] & 0xFE) == 0xFC) // fc00::/7
-                    return isDevOrTest ? null : SsoAuthorityPrivateIpNotAllowed.I;
-
-                return null;
-            }
-
-            // IPv4 checks
-            var ipBytes = resolved.GetAddressBytes();
-
-            // Block 0.0.0.0 — always blocked
-            if (ipBytes[0] == 0 && ipBytes[1] == 0 && ipBytes[2] == 0 && ipBytes[3] == 0)
-                return SsoAuthorityLoopbackNotAllowed.I;
-
-            // Block entire loopback range 127.0.0.0/8 — allow in dev/testing
-            if (ipBytes[0] == 127)
+            // Block IPv6 loopback (::1) — allow in dev/testing
+            if (IPAddress.IPv6Loopback.Equals(resolved))
                 return isDevOrTest ? null : SsoAuthorityLoopbackNotAllowed.I;
 
-            // Block entire link-local range 169.254.0.0/16 — always blocked (cloud metadata risk)
-            if (ipBytes[0] == 169 && ipBytes[1] == 254)
+            // Block IPv6 link-local (fe80::/10) — always blocked (cloud metadata risk)
+            if (resolved.IsIPv6LinkLocal)
                 return SsoAuthorityLinkLocalNotAllowed.I;
 
-            // Block private IP ranges — allow in dev/testing
-            if (IsPrivateSsoIpV4(ipBytes))
+            // Block IPv6 unique local addresses (fc00::/7 = fc00:: and fd00::) — allow in dev/testing
+            var bytes = resolved.GetAddressBytes();
+            if ((bytes[0] & 0xFE) == 0xFC) // fc00::/7
                 return isDevOrTest ? null : SsoAuthorityPrivateIpNotAllowed.I;
 
             return null;
         }
+
+        // IPv4 checks
+        var ipBytes = resolved.GetAddressBytes();
+
+        // Block 0.0.0.0 — always blocked
+        if (ipBytes[0] == 0 && ipBytes[1] == 0 && ipBytes[2] == 0 && ipBytes[3] == 0)
+            return SsoAuthorityLoopbackNotAllowed.I;
+
+        // Block entire loopback range 127.0.0.0/8 — allow in dev/testing
+        if (ipBytes[0] == 127)
+            return isDevOrTest ? null : SsoAuthorityLoopbackNotAllowed.I;
+
+        // Block entire link-local range 169.254.0.0/16 — always blocked (cloud metadata risk)
+        if (ipBytes[0] == 169 && ipBytes[1] == 254)
+            return SsoAuthorityLinkLocalNotAllowed.I;
+
+        // Block private IP ranges — allow in dev/testing
+        if (IsPrivateSsoIpV4(ipBytes))
+            return isDevOrTest ? null : SsoAuthorityPrivateIpNotAllowed.I;
+
+        return null;
     }
 
     private static readonly FrozenSet<string> PublicEmailDomains = new[]
