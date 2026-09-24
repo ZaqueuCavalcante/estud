@@ -1,5 +1,4 @@
 using Quartz;
-using Estud.Back.Emails;
 using System.Diagnostics;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
@@ -79,10 +78,5 @@ public class BackFactory : WebApplicationFactory<Back::Program>
     {
         var scope = Services.CreateScope();
         return scope.ServiceProvider.GetRequiredService<ISchedulerFactory>();
-    }
-
-    public FakeEmailsService GetFakeEmailsService()
-    {
-        return (FakeEmailsService)Services.GetRequiredService<IEmailsService>();
     }
 }

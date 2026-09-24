@@ -62,17 +62,3 @@ public class EnrollmentPeriodAlreadyExists : EstudError
     public override string Code { get; set; } = nameof(EnrollmentPeriodAlreadyExists);
     public override string Message { get; set; } = "Já existe um período de matrícula com esse nome.";
 }
-
-public class NoCurrentEnrollmentPeriod : EstudError
-{
-    public static readonly NoCurrentEnrollmentPeriod I = new();
-    public override string Code { get; set; } = nameof(NoCurrentEnrollmentPeriod);
-    public override string Message { get; set; } = "Não há período de matrícula vigente.";
-}
-
-public class EnrollmentPeriodMustBeFinalized : EstudError
-{
-    public static readonly EnrollmentPeriodMustBeFinalized I = new();
-    public override string Code { get; set; } = nameof(EnrollmentPeriodMustBeFinalized);
-    public override string Message { get; set; } = "O período de matrícula deve estar encerrado.";
-}

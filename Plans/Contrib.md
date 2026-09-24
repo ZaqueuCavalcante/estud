@@ -24,7 +24,7 @@ até a app de pé. Resolvido isso, o resto são melhorias incrementais.
 O `CLAUDE.md` manda rodar `docker-compose up`, mas **não existe compose no repo**. Criar um com:
 
 - Postgres (obrigatório, é o que o back e os testes precisam);
-- Back, Web e `Mocks`, para quem quer só subir tudo e olhar.
+- Back, Web e `Fakes`, para quem quer só subir tudo e olhar.
 
 ### 2. Template de settings
 
@@ -43,7 +43,7 @@ em dev.
 Na raiz, cobrindo:
 
 - pré-requisitos: .NET 10.0.200 (`global.json`), Node + pnpm, Postgres;
-- setup do back, do front (`Web/`) e do projeto `Mocks`: o que ele simula e quando subir;
+- setup do back, do front (`Web/`) e do projeto `Fakes`: o que ele simula e quando subir;
 - como rodar os testes, com o aviso de que eles apagam e recriam o banco local
   `estud-tests-db`;
 - como criar migrations;

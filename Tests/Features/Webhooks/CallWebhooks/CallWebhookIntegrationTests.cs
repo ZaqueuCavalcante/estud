@@ -13,7 +13,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         var subscription = await client.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated],
             customHeaders: new() { ["X-Api-Key"] = "secret-key-123" }).Success();
 
@@ -44,7 +44,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         var subscription = await client.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target/error",
+            url: $"{FakesFactory.Url}/webhooks/target/error",
             events: [WebhookEventType.StudentCreated],
             customHeaders: new() { ["X-Api-Key"] = "secret-key-123" }).Success();
 
@@ -73,7 +73,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         var subscription = await client.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]).Success();
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
@@ -100,7 +100,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         await client.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]).Success();
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
@@ -131,12 +131,12 @@ public partial class IntegrationTests
 
         await client.CreateWebhookSubscription(
             name: "Assinatura 1",
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]).Success();
 
         await client.CreateWebhookSubscription(
             name: "Assinatura 2",
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]).Success();
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
@@ -161,7 +161,7 @@ public partial class IntegrationTests
 
         var subscription = await director.CreateWebhookSubscription(
             name: "Atividade publicada",
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.ClassActivityPublished],
             customHeaders: new() { ["X-Api-Key"] = "secret-key-123" }).Success();
 
@@ -220,7 +220,7 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
 
         await director.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]).Success();
 
         var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
@@ -251,12 +251,12 @@ public partial class IntegrationTests
 
         var subscribed = await client.CreateWebhookSubscription(
             name: "Aluno criado",
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]).Success();
 
         await client.CreateWebhookSubscription(
             name: "Atividade publicada",
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.ClassActivityPublished]).Success();
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
@@ -281,7 +281,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         var subscription = await client.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target/unreachable",
+            url: $"{FakesFactory.Url}/webhooks/target/unreachable",
             events: [WebhookEventType.StudentCreated]).Success();
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);

@@ -21,13 +21,6 @@ public class InvalidTeachersList : EstudError
     public override string Message { get; set; } = "Lista de professores inválida.";
 }
 
-public class TeacherNotAssignedToCampus : EstudError
-{
-    public static readonly TeacherNotAssignedToCampus I = new();
-    public override string Code { get; set; } = nameof(TeacherNotAssignedToCampus);
-    public override string Message { get; set; } = "Professor não está vinculado ao campus.";
-}
-
 public class TeacherNotAssignedToDiscipline : EstudError
 {
     public static readonly TeacherNotAssignedToDiscipline I = new();

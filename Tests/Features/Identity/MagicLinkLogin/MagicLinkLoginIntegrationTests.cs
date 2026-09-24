@@ -154,10 +154,10 @@ public partial class IntegrationTests : IntegrationTestBase
 
         await _back.AwaitCommandsProcessing();
 
-        var emailService = _back.GetFakeEmailsService();
-        var emailEntry = emailService.FirstAccessMagicLinkEmails.FirstOrDefault(e => e.Contains(email));
-        emailEntry.Should().NotBeNull();
-        emailEntry.Should().Contain("/magic-link?token=");
+        var emails = await FakesFactory.GetBrevoEmails(email);
+        emails.Should().ContainSingle();
+        emails[0].Subject.Should().Be("Acesse sua conta");
+        emails[0].HtmlContent.Should().Contain($"{FrontUrl}/magic-link?token=");
     }
 
     #endregion

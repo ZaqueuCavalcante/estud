@@ -1,0 +1,29 @@
+using Microsoft.AspNetCore.Mvc;
+
+namespace Estud.Fakes.SocialLogin.Google.UserInfo;
+
+/// <summary>
+/// Fake Google OAuth userinfo endpoint.
+/// Returns the claims of the user bound to the access token.
+/// </summary>
+[ApiController]
+public class GoogleUserInfoController : ControllerBase
+{
+    [HttpGet("social-login/google/userinfo")]
+    public IActionResult UserInfo()
+    {
+        var accessToken = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+
+        if (!GoogleFakeUsers.ByAccessToken.TryGetValue(accessToken, out var user)) return Unauthorized();
+
+        return Ok(new
+        {
+            name = user.Name,
+            sub = user.Subject,
+            email = user.Email,
+            given_name = user.GivenName,
+            family_name = user.FamilyName,
+            email_verified = user.EmailVerified,
+        });
+    }
+}

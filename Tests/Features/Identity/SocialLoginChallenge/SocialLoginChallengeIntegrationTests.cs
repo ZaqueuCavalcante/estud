@@ -147,7 +147,7 @@ public partial class IntegrationTests
 
         // Assert
         var location = challenge.Headers.Location?.ToString();
-        location.Should().StartWith($"{MocksFactory.Url}/social-login/google/authorize?");
+        location.Should().StartWith($"{FakesFactory.Url}/social-login/google/authorize?");
         location.Should().Contain("response_type=code");
         location.Should().Contain("client_id=test-google-client-id");
         location.Should().Contain("identity%2Fsocial-login%2Fcallback%2Fgoogle");

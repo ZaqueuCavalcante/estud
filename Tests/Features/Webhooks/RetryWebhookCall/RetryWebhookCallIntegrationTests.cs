@@ -126,7 +126,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         await client.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]);
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
 
@@ -181,7 +181,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
         var (subscriptionId, callId) = await CreateFailedWebhookCall(client);
 
-        await client.UpdateWebhookSubscription(subscriptionId, url: $"{MocksFactory.Url}/webhooks/target").Success();
+        await client.UpdateWebhookSubscription(subscriptionId, url: $"{FakesFactory.Url}/webhooks/target").Success();
 
         // Act
         var result = await client.RetryWebhookCall(callId);
@@ -254,7 +254,7 @@ public partial class IntegrationTests
     private async Task<(int SubscriptionId, int CallId)> CreateFailedWebhookCall(TestsHttpClient client)
     {
         var subscription = await client.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target/error",
+            url: $"{FakesFactory.Url}/webhooks/target/error",
             events: [WebhookEventType.StudentCreated]).Success();
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);

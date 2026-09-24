@@ -20,6 +20,16 @@ services:
       timeout: 3s
       retries: 40
 
+  fakes:
+    build:
+      context: .
+      dockerfile: Dockerfile.fakes
+    ports:
+      - "5678:5678"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "5678"
+
   back:
     build:
       context: .
@@ -27,10 +37,11 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      fakes:
+        condition: service_started
     ports:
       - "5000:5000"
     environment:
-      # Development troca o envio de e-mails (Brevo) por um fake que escreve os links no log.
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: "5000"
       Database__ConnectionString: "Host=db;Port=5432;Database=estud;Username=postgres;Password=postgres;Pooling=true"
@@ -40,7 +51,8 @@ services:
       Auth__ExpirationTimeInMinutes: "6000"
       Auth__SecurityKey: "4f1c2a9d8e7b6c5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a"
       Frontend__Url: http://localhost:3000
-      Email__ApiUrl: http://localhost
+      # O fake do Brevo loga os links dos e-mails no container `fakes`.
+      Email__ApiUrl: http://fakes:5678/brevo/v3/smtp/email
       Email__ApiKey: disabled
       Email__FrontUrl: http://localhost:3000
       # O scheme do Google é registrado mesmo desligado e o AuthenticationMiddleware valida as options dele em toda request.

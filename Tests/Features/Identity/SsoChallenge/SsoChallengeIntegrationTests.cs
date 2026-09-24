@@ -40,7 +40,7 @@ public partial class IntegrationTests
         // Arrange
         var domain = $"sso-pendente-{DataGen.Numbers}.com";
         var director = await _back.LoggedAsDirector($"director@{domain}");
-        await director.CreateSsoConfiguration(authority: MocksFactory.OidcAuthority).Success();
+        await director.CreateSsoConfiguration(authority: FakesFactory.OidcAuthority).Success();
 
         var client = _back.GetTestsClient(followRedirects: false);
 
@@ -58,8 +58,8 @@ public partial class IntegrationTests
         var domain = $"sso-inativo-{DataGen.Numbers}.com";
         var director = await _back.LoggedAsDirector($"director@{domain}");
 
-        var config = await director.ShortcutCreateVerifiedSsoConfiguration(authority: MocksFactory.OidcAuthority);
-        await director.UpdateSsoConfiguration(config.Id, authority: MocksFactory.OidcAuthority, isActive: false);
+        var config = await director.ShortcutCreateVerifiedSsoConfiguration(authority: FakesFactory.OidcAuthority);
+        await director.UpdateSsoConfiguration(config.Id, authority: FakesFactory.OidcAuthority, isActive: false);
 
         var client = _back.GetTestsClient(followRedirects: false);
 
@@ -83,7 +83,7 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector(email);
 
         var config = await director.ShortcutCreateVerifiedSsoConfiguration(
-            authority: MocksFactory.OidcAuthority,
+            authority: FakesFactory.OidcAuthority,
             clientId: "estud-oidc-client");
 
         var client = _back.GetTestsClient(followRedirects: false);
@@ -93,7 +93,7 @@ public partial class IntegrationTests
 
         // Assert
         var location = challenge.Headers.Location?.ToString();
-        location.Should().StartWith($"{MocksFactory.OidcAuthority}/connect/authorize?");
+        location.Should().StartWith($"{FakesFactory.OidcAuthority}/connect/authorize?");
         location.Should().Contain("response_type=code");
         location.Should().Contain("client_id=estud-oidc-client");
         location.Should().Contain($"identity%2Fsso%2Fcallback%2F{config.Id}");

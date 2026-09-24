@@ -34,11 +34,6 @@ public static class ServicesConfigs
         if (EnvironmentExtensions.IsTesting())
         {
             builder.Services.Replace(ServiceDescriptor.Singleton<IGoogleService, FakeGoogleService>());
-            builder.Services.Replace(ServiceDescriptor.Singleton<IEmailsService, FakeEmailsService>());
-        }
-        if (EnvironmentExtensions.IsDevelopment())
-        {
-            builder.Services.Replace(ServiceDescriptor.Singleton<IEmailsService, FakeEmailsService>());
         }
     }
 

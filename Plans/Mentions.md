@@ -315,7 +315,7 @@ Duas opções:
 - Adotar um motor de template (Scriban, Fluid). É mais limpo, mas é dependência nova.
 
 A primeira basta. Novo método `SendNotificationsDigestEmail(to, name, items)` e template
-`NotificationsDigest.html`. O `FakeEmailsService` ganha o mesmo método, para os testes.
+`NotificationsDigest.html`.
 
 ### Preferências
 
@@ -385,9 +385,6 @@ Cenários que importam:
   `unread-count` conta 1.
 - Marcar por assunto zera o grupo e não toca nos outros.
 - Editar adicionando menção notifica só o novo. Editar removendo menção não apaga a notificação.
-- E-mail: com a notificação lida antes do `AwaitCommandsProcessing`, o `FakeEmailsService` não
-  registra envio; com ela não lida, registra **um** envio para dois comentários. O atraso de 600s
-  atrapalha aqui. O handler deve ler o delay de configuração, com 0 nos testes.
 - `UpdateSubscription` num assunto sem acesso → erro.
 
 ## Faseamento

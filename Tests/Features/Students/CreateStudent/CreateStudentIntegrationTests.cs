@@ -203,9 +203,10 @@ public partial class IntegrationTests
 
         await _back.AwaitCommandsProcessing();
 
-        var emailEntry = _back.GetFakeEmailsService().InviteEmails.FirstOrDefault(e => e.Contains(email));
-        emailEntry.Should().NotBeNull();
-        emailEntry.Should().Contain("/magic-link?token=");
+        var emails = await FakesFactory.GetBrevoEmails(email);
+        emails.Should().ContainSingle();
+        emails[0].Subject.Should().Be("Convite para acessar o Estud");
+        emails[0].HtmlContent.Should().Contain($"{FrontUrl}/magic-link?token=");
     }
 
     [Test]

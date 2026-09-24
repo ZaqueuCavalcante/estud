@@ -76,7 +76,7 @@ const diagrams: Diagram[] = [
       { id: 'postgres', label: 'PostgreSQL', sub: 'EF Core + Dapper', group: 'data', x: 790, y: 390, note: 'Schema estud, naming snake_case. Guarda também commands, domain events, auditoria e chaves do Data Protection.' },
       { id: 'google', label: 'Google Identity', sub: 'OAuth 2.0 · One Tap', group: 'external', x: 1035, y: 50, w: 175, note: 'Social login (fluxo OAuth com cookie temporário) e One Tap (validação do id_token).' },
       { id: 'oidc', label: 'Provedor OIDC', sub: 'SSO da instituição', group: 'external', x: 1035, y: 134, w: 175, note: 'Cada instituição configura seu próprio provedor (SsoConfiguration + domínios permitidos).' },
-      { id: 'brevo', label: 'Brevo', sub: 'Envio de e-mails', group: 'external', x: 1035, y: 218, w: 175, note: 'Em dev e nos testes é trocado pelo FakeEmailsService.' },
+      { id: 'brevo', label: 'Brevo', sub: 'Envio de e-mails', group: 'external', x: 1035, y: 218, w: 175, note: 'Em dev e nos testes é trocado pelo Fakes Server.' },
       { id: 'otlp', label: 'Collector OTLP', sub: 'Traces e métricas', group: 'external', x: 1035, y: 302, w: 175, note: 'OTEL_EXPORTER_OTLP_ENDPOINT. Hoje só é ligado quando OpenTelemetry:Enabled = true.' },
       { id: 'blob', label: 'Cloudflare R2', sub: 'Uploads', group: 'planned', x: 1035, y: 386, w: 175, planned: true, note: 'API compatível com S3, acessada pelo AWSSDK.S3 no R2StorageService. O upload vai direto do navegador para o bucket por URL pré-assinada. Em dev e nos testes é trocado pelo FakeStorageService.' },
     ],

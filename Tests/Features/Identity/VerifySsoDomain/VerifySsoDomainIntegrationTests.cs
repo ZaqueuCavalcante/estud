@@ -123,7 +123,7 @@ public partial class IntegrationTests
         var config = await director.CreateSsoConfiguration().Success();
         var domain = (await director.GetSsoConfiguration().Success()).Domains.Single();
 
-        await MocksFactory.PublishDnsTxtRecords(domain.TxtRecordName, "estud-domain-verification=token-de-outra-instituicao");
+        await FakesFactory.PublishDnsTxtRecords(domain.TxtRecordName, "estud-domain-verification=token-de-outra-instituicao");
 
         // Act
         var result = await director.VerifySsoDomain(config.Id, domain.Domain);
@@ -140,7 +140,7 @@ public partial class IntegrationTests
         var config = await director.CreateSsoConfiguration().Success();
         var domain = (await director.GetSsoConfiguration().Success()).Domains.Single();
 
-        await MocksFactory.PublishDnsTxtRecords(domain.Domain, domain.TxtRecordValue);
+        await FakesFactory.PublishDnsTxtRecords(domain.Domain, domain.TxtRecordValue);
 
         // Act
         var result = await director.VerifySsoDomain(config.Id, domain.Domain);
@@ -157,7 +157,7 @@ public partial class IntegrationTests
         var config = await director.CreateSsoConfiguration().Success();
         var domain = (await director.GetSsoConfiguration().Success()).Domains.Single();
 
-        await MocksFactory.PublishDnsServerFailure(domain.TxtRecordName);
+        await FakesFactory.PublishDnsServerFailure(domain.TxtRecordName);
 
         // Act
         var result = await director.VerifySsoDomain(config.Id, domain.Domain);
@@ -182,7 +182,7 @@ public partial class IntegrationTests
         var owner = await _back.LoggedAsDirector($"owner@{domain}");
         await owner.ShortcutCreateVerifiedSsoConfiguration();
 
-        await MocksFactory.PublishDnsTxtRecords(claimed.TxtRecordName, claimed.TxtRecordValue);
+        await FakesFactory.PublishDnsTxtRecords(claimed.TxtRecordName, claimed.TxtRecordValue);
 
         // Act
         var result = await claimant.VerifySsoDomain(config.Id, domain);
@@ -203,7 +203,7 @@ public partial class IntegrationTests
         var config = await director.CreateSsoConfiguration().Success();
         var domain = (await director.GetSsoConfiguration().Success()).Domains.Single();
 
-        await MocksFactory.PublishDnsTxtRecords(domain.TxtRecordName, domain.TxtRecordValue);
+        await FakesFactory.PublishDnsTxtRecords(domain.TxtRecordName, domain.TxtRecordValue);
 
         // Act
         var result = await director.VerifySsoDomain(config.Id, domain.Domain);
@@ -227,7 +227,7 @@ public partial class IntegrationTests
         var config = await director.CreateSsoConfiguration().Success();
         var domain = (await director.GetSsoConfiguration().Success()).Domains.Single();
 
-        await MocksFactory.PublishDnsTxtRecords(
+        await FakesFactory.PublishDnsTxtRecords(
             domain.TxtRecordName,
             "v=spf1 include:_spf.google.com ~all",
             domain.TxtRecordValue,
@@ -248,7 +248,7 @@ public partial class IntegrationTests
         var config = await director.CreateSsoConfiguration().Success();
         var domain = (await director.GetSsoConfiguration().Success()).Domains.Single();
 
-        await MocksFactory.PublishDnsTxtRecords(domain.TxtRecordName, domain.TxtRecordValue);
+        await FakesFactory.PublishDnsTxtRecords(domain.TxtRecordName, domain.TxtRecordValue);
 
         // Act
         var result = await director.VerifySsoDomain(config.Id, $" {domain.Domain.ToUpperInvariant()} ");
@@ -266,7 +266,7 @@ public partial class IntegrationTests
         var config = await director.ShortcutCreateVerifiedSsoConfiguration();
         var domain = (await director.GetSsoConfiguration().Success()).Domains.Single();
 
-        await MocksFactory.PublishDnsTxtRecords(domain.TxtRecordName);
+        await FakesFactory.PublishDnsTxtRecords(domain.TxtRecordName);
 
         // Act
         var result = await director.VerifySsoDomain(config.Id, domain.Domain);
@@ -289,7 +289,7 @@ public partial class IntegrationTests
         var config = await owner.CreateSsoConfiguration().Success();
         var claimed = (await owner.GetSsoConfiguration().Success()).Domains.Single();
 
-        await MocksFactory.PublishDnsTxtRecords(claimed.TxtRecordName, claimed.TxtRecordValue);
+        await FakesFactory.PublishDnsTxtRecords(claimed.TxtRecordName, claimed.TxtRecordValue);
 
         // Act
         var result = await owner.VerifySsoDomain(config.Id, domain);

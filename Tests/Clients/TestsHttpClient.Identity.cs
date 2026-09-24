@@ -187,19 +187,19 @@ public partial class TestsHttpClient
     ) {
         var challenge = await SsoChallenge(email);
 
-        var mockParams = new Dictionary<string, string?>
+        var fakeParams = new Dictionary<string, string?>
         {
-            ["mock_subject"] = subject,
-            ["mock_email"] = idpEmail,
-            ["mock_no_email"] = noEmail ? "true" : null,
-            ["mock_email_verified"] = emailVerified ? "true" : "false",
-            ["mock_name"] = name,
-            ["mock_userinfo_subject"] = userInfoSubject,
-            ["mock_error"] = providerError,
-            ["mock_invalid_code"] = invalidCode ? "true" : null,
+            ["fake_subject"] = subject,
+            ["fake_email"] = idpEmail,
+            ["fake_no_email"] = noEmail ? "true" : null,
+            ["fake_email_verified"] = emailVerified ? "true" : "false",
+            ["fake_name"] = name,
+            ["fake_userinfo_subject"] = userInfoSubject,
+            ["fake_error"] = providerError,
+            ["fake_invalid_code"] = invalidCode ? "true" : null,
         };
 
-        var query = mockParams
+        var query = fakeParams
             .Where(x => x.Value != null)
             .Select(x => $"{x.Key}={Uri.EscapeDataString(x.Value!)}");
 
@@ -277,19 +277,19 @@ public partial class TestsHttpClient
     ) {
         var challenge = await SocialLoginChallenge("Google");
 
-        var mockParams = new Dictionary<string, string?>
+        var fakeParams = new Dictionary<string, string?>
         {
             ["login_hint"] = email,
-            ["mock_subject"] = subject,
-            ["mock_email_verified"] = emailVerified ? "true" : "false",
-            ["mock_name"] = name,
-            ["mock_given_name"] = givenName,
-            ["mock_family_name"] = familyName,
-            ["mock_error"] = providerError,
-            ["mock_invalid_code"] = invalidCode ? "true" : null,
+            ["fake_subject"] = subject,
+            ["fake_email_verified"] = emailVerified ? "true" : "false",
+            ["fake_name"] = name,
+            ["fake_given_name"] = givenName,
+            ["fake_family_name"] = familyName,
+            ["fake_error"] = providerError,
+            ["fake_invalid_code"] = invalidCode ? "true" : null,
         };
 
-        var query = mockParams
+        var query = fakeParams
             .Where(x => x.Value != null)
             .Select(x => $"{x.Key}={Uri.EscapeDataString(x.Value!)}");
 

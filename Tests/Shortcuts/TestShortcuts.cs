@@ -26,7 +26,7 @@ public static class TestShortcuts
     public static async Task<VerifySsoDomainOut> ShortcutVerifySsoDomain(this TestsHttpClient client, Guid ssoConfigurationId)
     {
         var domain = (await client.GetSsoConfiguration().Success()).Domains.Single();
-        await MocksFactory.PublishDnsTxtRecords(domain.TxtRecordName, domain.TxtRecordValue);
+        await FakesFactory.PublishDnsTxtRecords(domain.TxtRecordName, domain.TxtRecordValue);
 
         return await client.VerifySsoDomain(ssoConfigurationId, domain.Domain).Success();
     }

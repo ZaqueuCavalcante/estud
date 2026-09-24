@@ -17,23 +17,18 @@ reportgenerator -reports:"./TestResults/coverage.cobertura.xml" -targetdir:"./Te
 
 # Mutation
 
-dotnet tool restore
+Roda localmente (unit + integration tests) e publica em https://zaqueucavalcante.github.io/estud/mutation,
+atualizando a badge do README:
 
-cd Tests
-dotnet stryker
+.\Scripts\mutation-tests.ps1
 
-Hoje a config roda **só os unit tests** (`test-case-filter`), mutando `Domain/`,
-`Extensions/` e `Commands/` — os unit tests sao puros, entao nao sobem Postgres,
-Kestrel nem o banco compartilhado, e `concurrency` pode ser > 1.
+Só gerar o relatório, sem publicar:
 
-Pra colocar os testes de integracao de volta, em `stryker-config.json`:
+.\Scripts\mutation-tests.ps1 -NoPublish
 
-- tirar o `test-case-filter`
-- baixar `concurrency` pra **1** — `BackFactory` fixa a porta 5100,
-  `MocksFactory` a 5678 e o banco `estud-tests-db` tem nome fixo, entao dois
-  workers do Stryker disputam os tres
-- ampliar o `mutate` (ex: `**/Features/**/*Service.cs`)
+Argumentos extras vão direto pro Stryker; um recorte pontual sobrescreve o `mutate` da config:
 
-Um recorte pontual sobrescreve o `mutate` da config:
+.\Scripts\mutation-tests.ps1 -NoPublish -m "**/Extensions/**/*.cs"
 
-dotnet stryker -m "**/Extensions/**/*.cs"
+Precisa do Docker de pé (Testcontainers). `concurrency` fica em **1**: `BackFactory` fixa a porta 5100,
+`FakesFactory` a 5678 e o banco `estud-tests-db` tem nome fixo, então dois workers do Stryker disputam os três.

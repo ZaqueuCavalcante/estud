@@ -62,7 +62,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector("director@webhook-calls-get.com");
 
         await client.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]);
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
@@ -94,7 +94,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector("director@webhook-calls-paginated.com");
 
         await client.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]);
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
@@ -127,13 +127,13 @@ public partial class IntegrationTests
         // Arrange
         var client1 = await _back.LoggedAsDirector("director@webhook-calls-tenant-1.com");
         await client1.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]);
         await client1.CreateStudent(DataGen.UserName, DataGen.Email);
 
         var client2 = await _back.LoggedAsDirector("director@webhook-calls-tenant-2.com");
         await client2.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]);
         await client2.CreateStudent(DataGen.UserName, DataGen.Email);
 
@@ -159,11 +159,11 @@ public partial class IntegrationTests
 
         await client.CreateWebhookSubscription(
             name: "Destino ok",
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]);
         await client.CreateWebhookSubscription(
             name: "Destino com erro",
-            url: $"{MocksFactory.Url}/webhooks/target/error",
+            url: $"{FakesFactory.Url}/webhooks/target/error",
             events: [WebhookEventType.StudentCreated]);
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
@@ -188,11 +188,11 @@ public partial class IntegrationTests
 
         await client.CreateWebhookSubscription(
             name: "Destino ok",
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]);
         await client.CreateWebhookSubscription(
             name: "Destino com erro",
-            url: $"{MocksFactory.Url}/webhooks/target/error",
+            url: $"{FakesFactory.Url}/webhooks/target/error",
             events: [WebhookEventType.StudentCreated]);
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
@@ -216,7 +216,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         await client.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]);
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);

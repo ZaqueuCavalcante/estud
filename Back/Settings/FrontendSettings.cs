@@ -27,11 +27,3 @@ public class FrontendSettings
         return $"{Url}{(path.StartsWith('/') ? path : $"/{path}")}";
     }
 }
-
-public static class FrontendSettingsExtensions
-{
-    extension(IConfiguration configuration)
-    {
-        public FrontendSettings Frontend => new(configuration);
-    }
-}

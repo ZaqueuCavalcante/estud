@@ -57,7 +57,7 @@ public partial class IntegrationTests
         // Arrange
         var client1 = await _back.LoggedAsDirector();
         await client1.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]);
         await client1.CreateStudent(DataGen.UserName, DataGen.Email);
 
@@ -88,7 +88,7 @@ public partial class IntegrationTests
 
         var subscription = await client.CreateWebhookSubscription(
             name: "Aluno criado",
-            url: $"{MocksFactory.Url}/webhooks/target",
+            url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated],
             customHeaders: new() { ["X-Api-Key"] = "secret-key-123" }).Success();
 
@@ -116,11 +116,11 @@ public partial class IntegrationTests
 
         call.Subscription.Id.Should().Be(subscription.Id);
         call.Subscription.Name.Should().Be("Aluno criado");
-        call.Subscription.Url.Should().Be($"{MocksFactory.Url}/webhooks/target");
+        call.Subscription.Url.Should().Be($"{FakesFactory.Url}/webhooks/target");
         call.Subscription.IsActive.Should().BeTrue();
 
         call.Request.Method.Should().Be("POST");
-        call.Request.Url.Should().Be($"{MocksFactory.Url}/webhooks/target");
+        call.Request.Url.Should().Be($"{FakesFactory.Url}/webhooks/target");
         call.Request.Headers.Should().Contain(new KeyValuePair<string, string>("X-Api-Key", "secret-key-123"));
         call.Request.Body.Should().Be(call.Payload);
 
@@ -140,7 +140,7 @@ public partial class IntegrationTests
         var client = await _back.LoggedAsDirector();
 
         await client.CreateWebhookSubscription(
-            url: $"{MocksFactory.Url}/webhooks/target/error",
+            url: $"{FakesFactory.Url}/webhooks/target/error",
             events: [WebhookEventType.StudentCreated]);
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);

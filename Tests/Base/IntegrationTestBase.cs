@@ -8,7 +8,7 @@ namespace Estud.Tests.Base;
 public abstract class IntegrationTestBase
 {
     protected BackFactory _back = null!;
-    protected MocksFactory _mocks = null!;
+    protected FakesFactory _fakes = null!;
     protected StorageFactory _storage = null!;
     public const string FrontUrl = "http://localhost:3000";
 
@@ -20,8 +20,8 @@ public abstract class IntegrationTestBase
         _storage = new StorageFactory();
         await Task.WhenAll(ResetEstudDb(), _storage.Start());
 
-        _mocks = new MocksFactory();
-        _mocks.StartServer();
+        _fakes = new FakesFactory();
+        _fakes.StartServer();
 
         _back = new BackFactory();
         using var scope = _back.Services.CreateScope();
@@ -34,7 +34,7 @@ public abstract class IntegrationTestBase
     public async Task OneTimeTearDown()
     {
         await _back.DisposeAsync();
-        await _mocks.DisposeAsync();
+        await _fakes.DisposeAsync();
         await _storage.DisposeAsync();
     }
 
