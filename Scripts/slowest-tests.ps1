@@ -40,7 +40,14 @@ try {
     $total = ($results | Measure-Object Seconds -Sum).Sum
     $failed = @($results | Where-Object { $_.Outcome -ne 'Passed' -and $_.Outcome -ne 'NotExecuted' }).Count
 
-    $lines = @("$($results.Count) testes em $('{0:N1}' -f $total)s ($failed falhando)", '')
+    $attr = Select-String -Path (Join-Path $repo 'Tests\Base\IntegrationTestBase.cs') -Pattern 'LevelOfParallelism\((\d+)\)'
+    $workers = if ($attr) { [int]$attr.Matches[0].Groups[1].Value } else { [Environment]::ProcessorCount }
+
+    $lines = @(
+        "$($results.Count) testes em $('{0:N1}' -f $total)s ($failed falhando)",
+        "Ideal com $workers workers: $('{0:N1}' -f ($total / $workers))s",
+        ''
+    )
     $lines += $results | ForEach-Object {
         '{0,9:N3}s  {1,-11} {2}' -f $_.Seconds, $_.Outcome, $_.Name
     }

@@ -3,7 +3,7 @@
 dotnet test --filter TestCategory=Integration
 dotnet test --filter "FullyQualifiedName~UnitTests"
 dotnet test --filter "FullyQualifiedName!~UnitTests"
-dotnet test --filter "FullyQualifiedName~Courses_CreateCourse_Should_not_create_course_when_not_authenticated" --output Detailed
+dotnet test --filter "FullyQualifiedName~Calendar_CreateCalendarDay_Should_not_create_day_that_already_exists"
 dotnet test --filter "FullyQualifiedName~Dev_Should_create_initial_institution_data_for_easy_development_debugging"
 
 

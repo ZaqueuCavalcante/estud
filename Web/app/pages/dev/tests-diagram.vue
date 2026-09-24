@@ -85,13 +85,12 @@ interface Point {
 
 const W = 1080
 const H = 1350
-const CX = W / 2
 const M = 64
 
 const measure = measurePosterText
 
 const LIST_ROW = 44
-const BAR_ROW = 23
+const BAR_ROW = 30
 
 const formatNumber = (value: number) => value.toLocaleString('pt-BR')
 
@@ -144,7 +143,7 @@ const DOCKER = { title: 'Docker', icon: 'i-simple-icons-docker', color: '#2496ED
 
 const CONTAINERS: Service[] = [
   { title: 'PostgreSQL', sub: 'postgres:18', color: '#5B8DEF', icon: 'i-simple-icons-postgresql', light: '#bfdbfe', address: 'localhost:5445' },
-  { title: 'MinIO', sub: 'minio:latest', color: '#f0506e', icon: 'i-simple-icons-minio', light: '#fecdd3', address: 'localhost:5300' },
+  { title: 'RustFS', sub: 'rustfs:1.0.0', color: '#0062FF', icon: 'i-estud-rustfs', light: '#bfdbfe', address: 'localhost:5300' },
   { title: 'Keycloak', sub: 'keycloak:26.4', color: '#38bdf8', icon: 'i-simple-icons-keycloak', light: '#bae6fd', address: 'localhost:5446' }
 ]
 
@@ -193,11 +192,6 @@ const STATS = {
   }
 }
 
-const TAGLINE = {
-  title: 'O Back não sabe que está em teste',
-  sub: 'roda o mesmo código de produção, só apontando pra outros endereços'
-}
-
 function containerNode(content: Service, x: number, y: number, w: number, h: number): Block {
   const textW = Math.max(measure(content.title, 24, 600), measure(content.sub, 14, 400, POSTER_MONO))
   const bx = x + (w - (64 + textW)) / 2
@@ -218,22 +212,22 @@ function statTile(stat: typeof STATS.items[number], x: number, y: number, w: num
   return {
     id: `stat-${stat.label}`,
     rect: { x, y, w, h, rx: 14, fill: C.card },
-    tile: { x: x + 14, y: y + 14, size: 32, rx: 9, color: stat.color },
-    icon: { name: stat.icon, x: x + 22, y: y + 22, size: 16, color: stat.color },
-    title: { x: x + 56, y: y + 41, size: 30, weight: 800, fill: C.text, value: stat.value }
+    tile: { x: x + 14, y: y + 16, size: 38, rx: 11, color: stat.color },
+    icon: { name: stat.icon, x: x + 23, y: y + 25, size: 20, color: stat.color },
+    title: { x: x + 64, y: y + 48, size: 34, weight: 800, fill: C.text, value: stat.value }
   }
 }
 
 function table(x: number, w: number, top: number, content: { title: string, rows: { label: string, value: number, color: string }[] }): Label[] {
   return [
-    { x, y: top, size: 16, weight: 700, fill: C.text, value: content.title },
+    { x, y: top, size: 18, weight: 700, fill: C.text, value: content.title },
     ...content.rows.flatMap((r, i): Label[] => {
-      const y = top + 32 + i * BAR_ROW
+      const y = top + 40 + i * BAR_ROW
       const isTotal = i === content.rows.length - 1
 
       return [
-        { x, y, size: 15, weight: 700, fill: r.color, value: r.label, mono: true },
-        { x: x + w, y, size: 15, weight: isTotal ? 700 : 400, fill: isTotal ? C.text : C.muted, value: formatNumber(r.value), mono: true, anchor: 'end' }
+        { x, y, size: 16, weight: 700, fill: r.color, value: r.label, mono: true },
+        { x: x + w, y, size: 16, weight: isTotal ? 700 : 400, fill: isTotal ? C.text : C.muted, value: formatNumber(r.value), mono: true, anchor: 'end' }
       ]
     })
   ]
@@ -242,8 +236,8 @@ function table(x: number, w: number, top: number, content: { title: string, rows
 function bars(frame: Frame, top: number): Bar[] {
   const rows = STATS.requests.rows
   const max = Math.max(...rows.map(r => r.value))
-  const codeW = Math.max(...rows.map(r => measure(r.code, 15, 600, POSTER_MONO)))
-  const valueW = Math.max(...rows.map(r => measure(formatNumber(r.value), 15, 400, POSTER_MONO)))
+  const codeW = Math.max(...rows.map(r => measure(r.code, 16, 600, POSTER_MONO)))
+  const valueW = Math.max(...rows.map(r => measure(formatNumber(r.value), 16, 400, POSTER_MONO)))
   const trackX = frame.x + 22 + codeW + 18
   const trackW = frame.x + frame.w - 22 - valueW - 18 - trackX
 
@@ -254,10 +248,10 @@ function bars(frame: Frame, top: number): Bar[] {
 
     return {
       id: `bar-${r.code}`,
-      code: { x: frame.x + 22, y, size: 15, weight: isTotal ? 700 : 600, fill: isTotal ? C.text : C.muted, value: r.code, mono: true },
-      track: { x: trackX, y: y - 12, w: trackW, h: 12, rx: 6 },
-      fill: { x: trackX, y: y - 12, w: Math.max(trackW * Math.sqrt(r.value / max), 8), h: 12, rx: 6, color: r.color },
-      value: { x: frame.x + frame.w - 22, y, size: 15, weight: isTotal ? 700 : 400, fill: isTotal ? C.text : C.muted, value: formatNumber(r.value), mono: true, anchor: 'end' }
+      code: { x: frame.x + 22, y, size: 16, weight: isTotal ? 700 : 600, fill: isTotal ? C.text : C.muted, value: r.code, mono: true },
+      track: { x: trackX, y: y - 14, w: trackW, h: 16, rx: 8 },
+      fill: { x: trackX, y: y - 14, w: Math.max(trackW * Math.sqrt(r.value / max), 10), h: 16, rx: 8, color: r.color },
+      value: { x: frame.x + frame.w - 22, y, size: 16, weight: isTotal ? 700 : 400, fill: isTotal ? C.text : C.muted, value: formatNumber(r.value), mono: true, anchor: 'end' }
     }
   })
 }
@@ -311,7 +305,6 @@ const poster = computed(() => {
   const fakes: Frame = { x: W - M - fakesW, y: rowY, w: fakesW, h: rowH, rx: 22 }
   const back: Frame = { x: M, y: rowY, w: listWidth(BACK.items), h: rowH, rx: 22 }
 
-  const tagline: Frame = { x: M, y: H - 32 - 150, w: innerW, h: 150, rx: 22 }
 
   const bx = back.x + back.w / 2
   const splitY = back.y + back.h + 52
@@ -321,19 +314,20 @@ const poster = computed(() => {
   const nodeX = (i: number) => M + i * (nodeW + 20)
 
   const statsY = nodeY + nodeH + 40
-  const stats: Frame = { x: M, y: statsY, w: innerW, h: tagline.y - 40 - statsY, rx: 22 }
+  const stats: Frame = { x: M, y: statsY, w: innerW, h: H - 32 - statsY, rx: 22 }
   const statW = (stats.w - 44 - 4 * 14) / STATS.items.length
   const statX = (i: number) => stats.x + 22 + i * (statW + 14)
   const statTop = stats.y + 68
-  const statH = 84
-  const requestsY = statTop + statH + 36
-  const tableW = 165
-  const tableGap = 56
+  const statH = 120
+  const tablesH = 18 + 40 + (STATS.requests.rows.length - 1) * BAR_ROW
+  const requestsY = statTop + statH + (stats.y + stats.h - statTop - statH - tablesH) / 2 + 18
+  const tableW = 185
+  const tableGap = 50
   const requests: Frame = { ...stats, x: stats.x + tableW + tableGap, w: stats.w - 2 * (tableW + tableGap) }
 
   return {
     titleGrad: { x1: titleX, x2: titleX + measure(TITLE.accent, 52, 800) },
-    frames: [back, fakes, stats, tagline],
+    frames: [back, fakes, stats],
     headers: [
       header('back', back, BACK.icon, BACK.title, BACK.color),
       header('fakes', fakes, FAKES.icon, FAKES.title, FAKES.color),
@@ -349,14 +343,12 @@ const poster = computed(() => {
       ...STATS.items.map((st, i) => statTile(st, statX(i), statTop, statW, statH))
     ],
     texts: [
-      ...STATS.items.map((st, i): Label => ({ x: statX(i) + 14, y: statTop + statH - 14, size: 14, weight: 600, fill: C.muted, value: st.label })),
+      ...STATS.items.map((st, i): Label => ({ x: statX(i) + 14, y: statTop + statH - 20, size: 16, weight: 600, fill: C.muted, value: st.label })),
       ...table(stats.x + 22, tableW, requestsY, STATS.methods),
       ...table(stats.x + stats.w - 22 - tableW, tableW, requestsY, STATS.database),
-      { x: requests.x + 22, y: requestsY, size: 16, weight: 700, fill: C.text, value: STATS.requests.title },
-      { x: CX, y: tagline.y + tagline.h / 2 - 10, size: 30, weight: 700, fill: C.text, value: TAGLINE.title, anchor: 'middle' },
-      { x: CX, y: tagline.y + tagline.h / 2 + 28, size: 19, weight: 400, fill: C.muted, value: TAGLINE.sub, anchor: 'middle' }
+      { x: requests.x + 22, y: requestsY, size: 18, weight: 700, fill: C.text, value: STATS.requests.title }
     ] as Label[],
-    bars: bars(requests, requestsY + 32),
+    bars: bars(requests, requestsY + 40),
     points: [
       point('linkedin', M + 4, 102, { title: LINKEDIN.handle, icon: LINKEDIN.icon, color: LINKEDIN.color, mono: true }, 16),
       ...list('back', BACK.items, back, BACK.color),
@@ -390,7 +382,7 @@ const { fontsLoaded, posterEl, busy, zooms: ZOOMS, zoom, posterStyle, downloadSv
         <div class="space-y-2">
           <p class="text-sm text-muted">
             Dois pôsteres de {{ W }} × {{ H }} (proporção de post do LinkedIn): a estratégia de testes do Estud — o
-            Back e o Fakes sobem em memória, o Testcontainers levanta Postgres, MinIO e Keycloak, e o Back só aponta
+            Back e o Fakes sobem em memória, o Testcontainers levanta PostgreSQL, RustFS e Keycloak, e o Back só aponta
             pra eles via configuração — e o
             gráfico de ritmo de desenvolvimento com e sem testes, baseado no livro do Vladimir Khorikov.
           </p>

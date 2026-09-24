@@ -1,8 +1,9 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using Estud.Back.Settings;
-using Testcontainers.Minio;
 using System.Net.Http.Headers;
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
 using Microsoft.Extensions.Configuration;
 
 namespace Estud.Tests.Base;
@@ -12,7 +13,7 @@ public class StorageFactory : IAsyncDisposable
     private static readonly HttpClient Http = new();
 
     private readonly StorageSettings _settings;
-    private readonly MinioContainer _container;
+    private readonly IContainer _container;
     private AmazonS3Client _s3 = null!;
 
     public StorageFactory()
@@ -20,11 +21,12 @@ public class StorageFactory : IAsyncDisposable
         var configPath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.Testing.json");
         _settings = new ConfigurationBuilder().AddJsonFile(configPath).Build().Storage;
 
-        _container = new MinioBuilder("quay.io/minio/minio:latest")
-            .WithUsername(_settings.AccessKeyId)
-            .WithPassword(_settings.SecretAccessKey)
+        _container = new ContainerBuilder("rustfs/rustfs:1.0.0")
+            .WithEnvironment("RUSTFS_ACCESS_KEY", _settings.AccessKeyId)
+            .WithEnvironment("RUSTFS_SECRET_KEY", _settings.SecretAccessKey)
             .WithPortBinding(new Uri(_settings.ServiceUrl).Port, 9000)
-            .WithEnvironment("MINIO_SITE_REGION", "auto")
+            .WithWaitStrategy(Wait.ForUnixContainer()
+                .UntilHttpRequestIsSucceeded(r => r.ForPort(9000).ForPath("/health")))
             .WithName("estud-tests-storage")
             .WithReuse(true)
             .Build();
@@ -45,7 +47,7 @@ public class StorageFactory : IAsyncDisposable
         await EnsureBucket(_settings.PublicBucket);
         await EnsureBucket(_settings.PrivateBucket);
 
-        // Sem o s3:ListBucket o MinIO responde 403 para arquivo inexistente; o R2 público responde 404.
+        // Sem o s3:ListBucket o RustFS responde 403 para arquivo inexistente; o R2 público responde 404.
         await _s3.PutBucketPolicyAsync(_settings.PublicBucket, $$"""
         {
             "Version": "2012-10-17",

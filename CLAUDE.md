@@ -206,7 +206,7 @@ Botão com `UTooltip` que abre um modal/slideover ao clicar mantém o foco depoi
 
 - **Backend**: ASP.NET Core (C#), PostgreSQL, EF Core + Dapper, Quartz.NET, HybridCache, OpenTelemetry, Serilog, Scalar (API docs)
 - **Frontend**: Nuxt.js (Vue 3 / TypeScript) with Nuxt UI — located in `Web/`
-- **Tests**: NUnit + FluentAssertions, `WebApplicationFactory`-based integration tests against PostgreSQL and MinIO via Testcontainers
+- **Tests**: NUnit + FluentAssertions, `WebApplicationFactory`-based integration tests against PostgreSQL and RustFS via Testcontainers
 - **Infra**: Docker, Railway, GitHub Actions CI/CD
 
 ## Commands

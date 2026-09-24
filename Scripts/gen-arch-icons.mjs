@@ -16,6 +16,7 @@ const OUT = join(ROOT, 'Web', 'app', 'utils', 'arch-icons.ts')
 const WANTED = {
   'lucide': [
     'activity',
+    'align-left',
     'arrow-up-right',
     'bell-ring',
     'book-open-text',
@@ -66,7 +67,6 @@ const WANTED = {
     'grafana',
     'keycloak',
     'linkedin',
-    'minio',
     'nuxt',
     'opentelemetry',
     'postgresql',
@@ -79,7 +79,9 @@ const WANTED = {
 
 // O R2 não tem ícone em nenhuma das duas coleções, então este é desenhado à mão
 // no traço do Lucide (24x24, stroke 2, currentColor) a partir da marca da Cloudflare.
+// O do RustFS no simple-icons é o logotipo por extenso, ilegível em 24x24.
 const CUSTOM = {
+  'i-estud-rustfs': '<path fill="currentColor" fill-rule="evenodd" d="M0 0h17.25c3 0 4.5 1.875 4.5 4.875V8.25c0 1.875-1.125 3.375-3 4.125L24 24h-7.5L12 15H6v9H0zm6 4.5h7.875c1.125 0 1.875.75 1.875 1.875v2.25c0 1.125-.75 1.875-1.875 1.875H6z"/>',
   'i-estud-r2': '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">'
     + '<ellipse cx="12" cy="4" rx="9" ry="3"/>'
     + '<path d="M3 4v16a9 3 0 0 0 18 0V4"/>'
