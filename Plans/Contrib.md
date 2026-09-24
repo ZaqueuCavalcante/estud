@@ -84,12 +84,7 @@ naturalmente. Bons candidatos a primeira contribuição:
 - header `X-Estud-Signature` nos webhooks;
 - nomes inteiros no breadcrumbs, reduzindo só no mobile.
 
-### 7. Um lockfile só no `Web/`
-
-Hoje estão versionados `package-lock.json` e `pnpm-lock.yaml`. O projeto usa pnpm: remover o do
-npm e fixar `packageManager` no `package.json`, para ninguém instalar com versões divergentes.
-
-### 8. Formatação automática no CI
+### 7. Formatação automática no CI
 
 Só existe `.editorconfig` em `Web/`. Criar um na raiz com as regras de C# e rodar no workflow de
 PR:
