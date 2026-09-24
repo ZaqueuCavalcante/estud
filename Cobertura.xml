@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9838153994070988" branch-rate="0.8934179752756432" lines-covered="12279" lines-valid="12481" branches-covered="2674" branches-valid="2993" complexity="4343" version="0" timestamp="1790252592">
+<coverage line-rate="0.9850626405396723" branch-rate="0.8952125878808169" lines-covered="12266" lines-valid="12452" branches-covered="2674" branches-valid="2987" complexity="4336" version="0" timestamp="1790253812">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9837524493794906" branch-rate="0.893456663240836" complexity="4246">
+    <package name="Back" line-rate="0.98502332433096" branch-rate="0.8952969447305184" complexity="4239">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -843,7 +843,7 @@
             <line number="12" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Auth.Policies.Policies" filename="/home/runner/work/estud/estud/Back/Auth/Policies/Policies.cs" line-rate="0.75" branch-rate="0.7" complexity="9">
+        <class name="Estud.Back.Auth.Policies.Policies" filename="/home/runner/work/estud/estud/Back/Auth/Policies/Policies.cs" line-rate="1" branch-rate="1" complexity="7">
           <methods>
             <method name="AddEstudPolicy" signature="(Microsoft.AspNetCore.Authorization.AuthorizationBuilder, string)" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -859,30 +859,21 @@
                 <line number="25" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="AddEstudPolicy" signature="(Microsoft.AspNetCore.Authorization.AuthorizationBuilder, string, Estud.Back.Auth.Permissions.EstudPermission[])" line-rate="0" branch-rate="0" complexity="2">
-              <lines>
-                <line number="33" hits="0" branch="true" condition-coverage="0% (0/2)" />
-                <line number="35" hits="0" branch="true" condition-coverage="0% (0/2)" />
-                <line number="36" hits="0" branch="false" />
-                <line number="37" hits="0" branch="true" condition-coverage="0% (0/2)" />
-                <line number="38" hits="0" branch="false" />
-              </lines>
-            </method>
             <method name="AddEstudPolicy" signature="(Microsoft.AspNetCore.Authorization.AuthorizationBuilder, string, Estud.Back.Domain.Enums.UserType, Estud.Back.Auth.Permissions.EstudPermission[])" line-rate="1" branch-rate="1" complexity="2">
               <lines>
-                <line number="46" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="48" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="49" hits="2" branch="false" />
-                <line number="50" hits="2" branch="true" condition-coverage="100% (6/6)" />
-                <line number="51" hits="2" branch="false" />
+                <line number="33" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="35" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="36" hits="2" branch="false" />
+                <line number="37" hits="2" branch="true" condition-coverage="100% (6/6)" />
+                <line number="38" hits="2" branch="false" />
               </lines>
             </method>
             <method name="AddEstudAdminPolicy" signature="(Microsoft.AspNetCore.Authorization.AuthorizationBuilder, string)" line-rate="1" branch-rate="1" complexity="2">
               <lines>
-                <line number="59" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="60" hits="2" branch="false" />
-                <line number="61" hits="2" branch="false" />
-                <line number="62" hits="2" branch="false" />
+                <line number="46" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="47" hits="2" branch="false" />
+                <line number="48" hits="2" branch="false" />
+                <line number="49" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
@@ -893,20 +884,15 @@
             <line number="23" hits="2" branch="false" />
             <line number="24" hits="2" branch="false" />
             <line number="25" hits="2" branch="false" />
-            <line number="33" hits="0" branch="true" condition-coverage="0% (0/2)" />
-            <line number="35" hits="0" branch="true" condition-coverage="0% (0/2)" />
-            <line number="36" hits="0" branch="false" />
-            <line number="37" hits="0" branch="true" condition-coverage="0% (0/2)" />
-            <line number="38" hits="0" branch="false" />
+            <line number="33" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="35" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="36" hits="2" branch="false" />
+            <line number="37" hits="2" branch="true" condition-coverage="100% (6/6)" />
+            <line number="38" hits="2" branch="false" />
             <line number="46" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="48" hits="2" branch="true" condition-coverage="100% (2/2)" />
+            <line number="47" hits="2" branch="false" />
+            <line number="48" hits="2" branch="false" />
             <line number="49" hits="2" branch="false" />
-            <line number="50" hits="2" branch="true" condition-coverage="100% (6/6)" />
-            <line number="51" hits="2" branch="false" />
-            <line number="59" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="60" hits="2" branch="false" />
-            <line number="61" hits="2" branch="false" />
-            <line number="62" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Auth.Policies.Policies" filename="/home/runner/work/estud/estud/Back/Auth/Policies/Policies.Disciplines.cs" line-rate="1" branch-rate="1" complexity="1">
@@ -4246,38 +4232,6 @@
             <line number="17" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Database.Classrooms.ClassroomClassDbConfig" filename="/home/runner/work/estud/estud/Back/Database/Classrooms/ClassroomClassDbConfig.cs" line-rate="1" branch-rate="1" complexity="1">
-          <methods>
-            <method name="Configure" signature="(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder&lt;Estud.Back.Domain.Classrooms.ClassroomClass&gt;)" line-rate="1" branch-rate="1" complexity="1">
-              <lines>
-                <line number="10" hits="2" branch="false" />
-                <line number="12" hits="2" branch="false" />
-                <line number="14" hits="2" branch="false" />
-                <line number="15" hits="2" branch="false" />
-                <line number="16" hits="2" branch="false" />
-                <line number="17" hits="2" branch="false" />
-                <line number="19" hits="2" branch="false" />
-                <line number="20" hits="2" branch="false" />
-                <line number="21" hits="2" branch="false" />
-                <line number="22" hits="2" branch="false" />
-                <line number="23" hits="2" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="10" hits="2" branch="false" />
-            <line number="12" hits="2" branch="false" />
-            <line number="14" hits="2" branch="false" />
-            <line number="15" hits="2" branch="false" />
-            <line number="16" hits="2" branch="false" />
-            <line number="17" hits="2" branch="false" />
-            <line number="19" hits="2" branch="false" />
-            <line number="20" hits="2" branch="false" />
-            <line number="21" hits="2" branch="false" />
-            <line number="22" hits="2" branch="false" />
-            <line number="23" hits="2" branch="false" />
-          </lines>
-        </class>
         <class name="Estud.Back.Database.Classrooms.ClassroomDbConfig" filename="/home/runner/work/estud/estud/Back/Database/Classrooms/ClassroomDbConfig.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="Configure" signature="(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder&lt;Estud.Back.Domain.Classrooms.Classroom&gt;)" line-rate="1" branch-rate="1" complexity="1">
@@ -4686,14 +4640,12 @@
               <lines>
                 <line number="12" hits="2" branch="false" />
                 <line number="13" hits="2" branch="false" />
-                <line number="14" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
             <line number="12" hits="2" branch="false" />
             <line number="13" hits="2" branch="false" />
-            <line number="14" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Database.EstudDbContext" filename="/home/runner/work/estud/estud/Back/Database/EstudDbContext.Commands.cs" line-rate="1" branch-rate="0.75" complexity="6">
@@ -5456,14 +5408,12 @@
               <lines>
                 <line number="12" hits="2" branch="false" />
                 <line number="13" hits="2" branch="false" />
-                <line number="14" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
             <line number="12" hits="2" branch="false" />
             <line number="13" hits="2" branch="false" />
-            <line number="14" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Database.EstudDbContext&lt;TEntity&gt;" filename="/home/runner/work/estud/estud/Back/Database/EstudDbContext.Commands.cs" line-rate="1" branch-rate="0.75" complexity="6">
@@ -8272,38 +8222,6 @@
             <line number="38" hits="2" branch="false" />
             <line number="39" hits="2" branch="false" />
             <line number="40" hits="2" branch="false" />
-          </lines>
-        </class>
-        <class name="Estud.Back.Domain.Classrooms.ClassroomClass" filename="/home/runner/work/estud/estud/Back/Domain/Classrooms/ClassroomClass.cs" line-rate="0" branch-rate="1" complexity="2">
-          <methods>
-            <method name=".ctor" signature="()" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="12" hits="0" branch="false" />
-              </lines>
-            </method>
-            <method name=".ctor" signature="(int, int)" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="14" hits="0" branch="false" />
-                <line number="15" hits="0" branch="false" />
-                <line number="16" hits="0" branch="false" />
-                <line number="17" hits="0" branch="false" />
-                <line number="18" hits="0" branch="false" />
-                <line number="19" hits="0" branch="false" />
-                <line number="20" hits="0" branch="false" />
-                <line number="21" hits="0" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="12" hits="0" branch="false" />
-            <line number="14" hits="0" branch="false" />
-            <line number="15" hits="0" branch="false" />
-            <line number="16" hits="0" branch="false" />
-            <line number="17" hits="0" branch="false" />
-            <line number="18" hits="0" branch="false" />
-            <line number="19" hits="0" branch="false" />
-            <line number="20" hits="0" branch="false" />
-            <line number="21" hits="0" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Domain.Commands.Command" filename="/home/runner/work/estud/estud/Back/Domain/Commands/Command.cs" line-rate="1" branch-rate="0.8333333333333334" complexity="8">
@@ -38902,18 +38820,6 @@
             <line number="15" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Settings.DnsSettingsExtensions" filename="/home/runner/work/estud/estud/Back/Settings/DnsSettings.cs" line-rate="0" branch-rate="1" complexity="1">
-          <methods>
-            <method name="get_Dns" signature="(Microsoft.Extensions.Configuration.IConfiguration)" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="22" hits="0" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="22" hits="0" branch="false" />
-          </lines>
-        </class>
         <class name="Estud.Back.Settings.EmailSettings" filename="/home/runner/work/estud/estud/Back/Settings/EmailSettings.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name=".ctor" signature="(Microsoft.Extensions.Configuration.IConfiguration)" line-rate="1" branch-rate="1" complexity="1">
@@ -38934,18 +38840,6 @@
             <line number="14" hits="2" branch="false" />
             <line number="15" hits="2" branch="false" />
             <line number="16" hits="2" branch="false" />
-          </lines>
-        </class>
-        <class name="Estud.Back.Settings.EmailSettingsExtensions" filename="/home/runner/work/estud/estud/Back/Settings/EmailSettings.cs" line-rate="0" branch-rate="1" complexity="1">
-          <methods>
-            <method name="get_Email" signature="(Microsoft.Extensions.Configuration.IConfiguration)" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="23" hits="0" branch="false" />
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="23" hits="0" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Settings.FrontendSettings" filename="/home/runner/work/estud/estud/Back/Settings/FrontendSettings.cs" line-rate="1" branch-rate="0.5" complexity="8">
