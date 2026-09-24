@@ -15,11 +15,3 @@ public class EmailSettings : SettingsBase
         RequireNonEmpty(FrontUrl);
     }
 }
-
-public static class EmailSettingsExtensions
-{
-    extension(IConfiguration configuration)
-    {
-        public EmailSettings Email => new(configuration);
-    }
-}

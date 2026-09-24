@@ -14,11 +14,3 @@ public class DnsSettings : SettingsBase
         RequireNonEmpty(ResolverUrl);
     }
 }
-
-public static class DnsSettingsExtensions
-{
-    extension(IConfiguration configuration)
-    {
-        public DnsSettings Dns => new(configuration);
-    }
-}

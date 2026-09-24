@@ -10,6 +10,5 @@ public partial class EstudDbContext
     private static void ConfigureClassrooms(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new ClassroomDbConfig());
-        modelBuilder.ApplyConfiguration(new ClassroomClassDbConfig());
     }
 }
