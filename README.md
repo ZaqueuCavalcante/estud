@@ -58,6 +58,26 @@ O projeto utiliza diversas tecnologias e conceitos de design de sistemas:
   <img alt="Diagrama de arquitetura do Estud." src=".github/assets/estud-arch.png">
 </picture>
 
+## Qualidade e Testes
+
+O sistema possui diversas funcionalidades e integrações com serviços externos, o que leva a uma grande quantidade de casos de uso que precisam ser validados continuamente conforme a evolução do projeto.
+
+São +2.000 testes divididos entre unidade (30%) e integração (70%). Os de integração rodam contra dependências reais sempre que possível, pra testar o sistema do jeito que ele roda em produção:
+
+- 𝗣𝗼𝘀𝘁𝗴𝗿𝗲𝗦𝗤𝗟 (banco com estrutura igual ao de produção)
+- 𝗥𝘂𝘀𝘁𝗙𝗦 (possui a mesma API do Cloudflare R2 usado em produção)
+- 𝗞𝗲𝘆𝗰𝗹𝗼𝗮𝗸 (IdP real, do mesmo tipo dos usados no SSO em produção)
+- 𝗙𝗮𝗸𝗲𝘀 (servidor HTTP usado para simular Brevo, Google, IdP...)
+
+Cada execução da suíte de testes gera +12k requests HTTP e +600k linhas lidas/escritas no banco de dados. Os altos índices de cobertura servem como quality gate para evitar que novas funcionalidades sejam introduzidas sem os devidos testes no projeto.
+
+Todo commit na branch master ou PR aberto dispara um workflow no GitHub Actions, que roda os testes e gera relatórios de cobertura sobre a nova versão do código.
+
+<picture>
+  <source srcset=".github/assets/estud-tests.png">
+  <img alt="Diagrama de testes do Estud." src=".github/assets/estud-tests.png">
+</picture>
+
 ## Rodando localmente
 
 Com o Docker instalado, basta rodar na raiz do repositório:
