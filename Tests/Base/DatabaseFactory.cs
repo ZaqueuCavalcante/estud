@@ -22,6 +22,7 @@ public class DatabaseFactory
             .WithUsername(_settings.Username!)
             .WithPassword(_settings.Password!)
             .WithPortBinding(_settings.Port, 5432)
+            .WithTmpfsMount("/var/lib/postgresql")
             .WithReuse(true)
             .Build();
     }

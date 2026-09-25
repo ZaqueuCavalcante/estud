@@ -24,7 +24,7 @@ public class CommandsProcessor(IServiceScopeFactory serviceScopeFactory) : IJob
 
         while (true)
         {
-            var commands = await ctx.Commands.FromSqlRaw(Sql, processorId).AsNoTracking().ToListAsync();
+            var commands = await ctx.Commands.FromSqlRaw(Sql, processorId, DateTime.UtcNow).AsNoTracking().ToListAsync();
             if (commands.Count == 0) break;
 
             foreach (var command in commands)
@@ -135,7 +135,7 @@ public class CommandsProcessor(IServiceScopeFactory serviceScopeFactory) : IJob
         WHERE ctid IN (
             SELECT ctid
             FROM estud.commands
-            WHERE processor_id IS NULL AND status = 0 AND (not_before IS NULL OR not_before < NOW())
+            WHERE processor_id IS NULL AND status = 0 AND (not_before IS NULL OR not_before < {1})
             ORDER BY created_at
             FOR UPDATE SKIP LOCKED
             LIMIT 10
