@@ -150,7 +150,7 @@ const CONTAINERS: Service[] = [
 const STATS = {
   title: 'Números',
   icon: 'i-lucide-chart-column',
-  duration: { title: '40s', icon: 'i-lucide-hourglass', color: '#fcd34d', mono: true },
+  duration: { title: '30s', icon: 'i-lucide-hourglass', color: '#fcd34d', mono: true },
   items: [
     { value: formatNumber(611), label: 'Unit Tests', color: '#38bdf8', icon: 'i-lucide-box' },
     { value: formatNumber(1551), label: 'Integration Tests', color: '#34d399', icon: 'i-lucide-plug' },
@@ -159,7 +159,7 @@ const STATS = {
     { value: '7%', label: 'Mutation Score', color: '#f472b6', icon: 'i-lucide-dna' }
   ],
   methods: {
-    title: 'Requests por método',
+    title: 'Requests by method',
     rows: [
       { label: 'POST', value: 7733, color: '#34d399' },
       { label: 'PUT', value: 2276, color: '#fcd34d' },
@@ -169,7 +169,7 @@ const STATS = {
     ]
   },
   database: {
-    title: 'Operações no banco',
+    title: 'Database rows',
     rows: [
       { label: 'Fetched', value: 499016, color: '#38bdf8' },
       { label: 'Inserted', value: 63103, color: '#34d399' },
@@ -179,7 +179,7 @@ const STATS = {
     ]
   },
   requests: {
-    title: 'Requests por status',
+    title: 'Requests by status',
     rows: [
       { code: '200 Ok', value: 10726, color: '#34d399' },
       { code: '400 BadRequest', value: 625, color: '#fcd34d' },
@@ -317,7 +317,7 @@ const poster = computed(() => {
   const stats: Frame = { x: M, y: statsY, w: innerW, h: H - 32 - statsY, rx: 22 }
   const statW = (stats.w - 44 - 4 * 14) / STATS.items.length
   const statX = (i: number) => stats.x + 22 + i * (statW + 14)
-  const statTop = stats.y + 68
+  const statTop = stats.y + 84
   const statH = 120
   const tablesH = 18 + 40 + (STATS.requests.rows.length - 1) * BAR_ROW
   const requestsY = statTop + statH + (stats.y + stats.h - statTop - statH - tablesH) / 2 + 18

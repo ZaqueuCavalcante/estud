@@ -1,5 +1,5 @@
-using System.Diagnostics;
 using Estud.Back.Configs;
+using System.Diagnostics;
 
 namespace Estud.Tests.Integration;
 
