@@ -152,42 +152,42 @@ const STATS = {
   icon: 'i-lucide-chart-column',
   duration: { title: 'roda em 30s', icon: 'i-lucide-hourglass', color: '#fcd34d', mono: true },
   items: [
-    { value: formatNumber(611), label: 'Unit Tests', color: '#38bdf8', icon: 'i-lucide-box' },
-    { value: formatNumber(1551), label: 'Integration Tests', color: '#34d399', icon: 'i-lucide-plug' },
+    { value: formatNumber(661), label: 'Unit Tests', color: '#38bdf8', icon: 'i-lucide-box' },
+    { value: formatNumber(1582), label: 'Integration Tests', color: '#34d399', icon: 'i-lucide-plug' },
     { value: '98%', label: 'Line Coverage', color: '#a3e635', icon: 'i-lucide-align-left' },
-    { value: '87%', label: 'Branch Coverage', color: '#fcd34d', icon: 'i-lucide-split' },
-    { value: '7%', label: 'Mutation Score', color: '#f472b6', icon: 'i-lucide-dna' }
+    { value: '89%', label: 'Branch Coverage', color: '#fcd34d', icon: 'i-lucide-split' },
+    { value: '61%', label: 'Mutation Score', color: '#f472b6', icon: 'i-lucide-dna' }
   ],
   methods: {
     title: 'Requests by method',
     rows: [
-      { label: 'POST', value: 7733, color: '#34d399' },
-      { label: 'PUT', value: 2276, color: '#fcd34d' },
-      { label: 'GET', value: 1712, color: '#38bdf8' },
+      { label: 'POST', value: 8381, color: '#34d399' },
+      { label: 'PUT', value: 2397, color: '#fcd34d' },
+      { label: 'GET', value: 1741, color: '#38bdf8' },
       { label: 'DELETE', value: 10, color: '#fb7185' },
-      { label: 'Total', value: 11731, color: C.text }
+      { label: 'Total', value: 12529, color: C.text }
     ]
   },
   database: {
     title: 'Database rows',
     rows: [
-      { label: 'Fetched', value: 499016, color: '#38bdf8' },
-      { label: 'Inserted', value: 63103, color: '#34d399' },
-      { label: 'Updated', value: 13728, color: '#fcd34d' },
-      { label: 'Deleted', value: 397, color: '#fb7185' },
-      { label: 'Total', value: 576244, color: C.text }
+      { label: 'Fetched', value: 545893, color: '#38bdf8' },
+      { label: 'Inserted', value: 65889, color: '#34d399' },
+      { label: 'Updated', value: 14577, color: '#fcd34d' },
+      { label: 'Deleted', value: 461, color: '#fb7185' },
+      { label: 'Total', value: 626820, color: C.text }
     ]
   },
   requests: {
     title: 'Requests by status',
     rows: [
-      { code: '200 Ok', value: 10726, color: '#34d399' },
-      { code: '400 BadRequest', value: 625, color: '#fcd34d' },
-      { code: '401 Unauthorized', value: 149, color: '#fb923c' },
-      { code: '403 Forbidden', value: 146, color: '#fb7185' },
+      { code: '200 Ok', value: 11518, color: '#34d399' },
+      { code: '400 BadRequest', value: 629, color: '#fcd34d' },
+      { code: '401 Unauthorized', value: 150, color: '#fb923c' },
+      { code: '403 Forbidden', value: 147, color: '#fb7185' },
       { code: '302 Found', value: 84, color: '#38bdf8' },
       { code: '500 ServerError', value: 1, color: '#ef4444' },
-      { code: 'Total', value: 11731, color: '#a78bfa' }
+      { code: 'Total', value: 12529, color: '#a78bfa' }
     ]
   }
 }
