@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc.Testing.Handlers;
 
 namespace Estud.Tests.Base;
 
@@ -20,6 +21,10 @@ public class BackFactory : WebApplicationFactory<Back::Program>
     // Só guarda spans de traces abertos pelos testes; senão a suíte inteira fica em memória.
     public TelemetryCollection<MetricSnapshot> Metrics { get; } = new();
     public TelemetryCollection<Activity> Spans { get; } = new(BackFactoryTelemetry.IsTestTrace);
+
+    // O CreateClient sobre Kestrel cria um handler (e um pool de conexões) por client e só os descarta junto com a factory.
+    // Na suíte inteira isso esgota as portas efêmeras do Windows (WSAENOBUFS), então todos os clients dividem este pool.
+    private readonly SocketsHttpHandler _connections = new() { AllowAutoRedirect = false, UseCookies = false };
 
     public BackFactory() : base()
     {
@@ -61,12 +66,15 @@ public class BackFactory : WebApplicationFactory<Back::Program>
 
     public TestsHttpClient GetTestsClient(bool followRedirects = true)
     {
-        // WebApplicationFactoryClientOptions.AllowAutoRedirect só desliga o RedirectHandler dela;
-        // sobre Kestrel quem segue os redirects é o HttpClientHandler interno, que ela não expõe.
-        var client = followRedirects ? CreateClient()
-            : new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { BaseAddress = ClientOptions.BaseAddress };
+        HttpMessageHandler handler = new CookieContainerHandler { InnerHandler = _connections };
+        if (followRedirects) handler = new RedirectHandler { InnerHandler = handler };
 
-        client.Timeout = TimeSpan.FromHours(1);
+        var client = new HttpClient(handler, disposeHandler: false)
+        {
+            BaseAddress = ClientOptions.BaseAddress,
+            Timeout = TimeSpan.FromHours(1),
+        };
+
         return new TestsHttpClient(client);
     }
 
@@ -76,6 +84,12 @@ public class BackFactory : WebApplicationFactory<Back::Program>
         var ctx = scope.ServiceProvider.GetRequiredService<EstudDbContext>();
         ctx.Enrich($"Tests.{operation}");
         return ctx;
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        await base.DisposeAsync();
+        _connections.Dispose();
     }
 
     public ISchedulerFactory GetSchedulerFactory()
