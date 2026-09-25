@@ -2,9 +2,7 @@
 
 ## Foco atual
 
-// [Test]
-- post sobre testes
-- testes precisam rodar rapido pra viabilizar mutation tests
+- 
 
 ## Próximo
 

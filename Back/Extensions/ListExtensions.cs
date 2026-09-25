@@ -2,22 +2,6 @@ namespace Estud.Back.Extensions;
 
 public static class ListExtensions
 {
-    extension(List<Guid> selfs)
-    {
-        public bool IsSubsetOf(List<Guid> others)
-        {
-            HashSet<Guid> set = [];
-            foreach (var self in selfs)
-            {
-                if (!set.Add(self)) return false;
-
-                if (!others.Contains(self)) return false;
-            }
-
-            return true;
-        }
-    }
-
     extension(List<int> selfs)
     {
         public bool IsSubsetOf(List<int> others)

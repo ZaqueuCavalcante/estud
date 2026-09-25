@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Roda o Stryker (unit + integration tests) e publica o relatório em https://zaqueucavalcante.github.io/estud/mutation.
+Roda o Stryker (só unit tests) e publica o relatório em https://zaqueucavalcante.github.io/estud/mutation.
 
 .EXAMPLE
 .\Scripts\mutation-tests.ps1

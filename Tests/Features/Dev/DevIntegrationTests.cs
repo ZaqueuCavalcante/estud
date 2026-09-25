@@ -5,7 +5,7 @@ namespace Estud.Tests.Integration;
 
 public partial class IntegrationTests
 {
-    // [Test]
+    [Test]
     public async Task Dev_Should_create_initial_institution_data_for_easy_development_debugging()
     {
         const string email = "zaqueu@gmail.com";

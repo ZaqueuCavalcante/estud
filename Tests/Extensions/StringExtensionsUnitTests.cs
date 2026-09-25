@@ -27,28 +27,6 @@ public class StringExtensionsUnitTests
     }
 
     [Test]
-    [TestCaseSource(nameof(TextsContains))]
-    public void StringExtensions_Should_return_true_because_serch_is_inside_some_text(string text1, string text2, string? search)
-    {
-        // Arrange / Act
-        var result = search.IsIn(text1, text2);
-
-        // Assert
-        result.Should().BeTrue();
-    }
-
-    [Test]
-    [TestCaseSource(nameof(TextsNotContains))]
-    public void StringExtensions_Should_return_false_because_serch_is_not_inside_some_text(string text1, string text2, string search)
-    {
-        // Arrange / Act
-        var result = search.IsIn(text1, text2);
-
-        // Assert
-        result.Should().BeFalse();
-    }
-
-    [Test]
     [Repeat(100)]
     public void StringExtensions_Should_return_true_when_email_is_valid()
     {
@@ -117,6 +95,81 @@ public class StringExtensionsUnitTests
         result.Should().BeFalse();
     }
 
+    [Test]
+    [TestCase("SELECT * FROM estud.courses", "SELECT")]
+    [TestCase("INSERT INTO estud.courses (name) VALUES (@p0)", "INSERT")]
+    [TestCase("UPDATE estud.courses SET name = @p0 WHERE id = @p1", "UPDATE")]
+    [TestCase("DELETE FROM estud.courses WHERE id = @p0", "DELETE")]
+    public void StringExtensions_GetSqlSpanName_Should_return_single_command(string sql, string expected)
+    {
+        // Arrange / Act
+        var result = sql.GetSqlSpanName();
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Test]
+    [TestCase("select * from estud.courses", "SELECT")]
+    [TestCase("insert into estud.courses (name) values (@p0)", "INSERT")]
+    [TestCase("update estud.courses set name = @p0", "UPDATE")]
+    [TestCase("delete from estud.courses", "DELETE")]
+    [TestCase("Select * From estud.courses", "SELECT")]
+    [TestCase("InSeRt INTO estud.courses (name) VALUES (@p0)", "INSERT")]
+    public void StringExtensions_GetSqlSpanName_Should_ignore_case(string sql, string expected)
+    {
+        // Arrange / Act
+        var result = sql.GetSqlSpanName();
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Test]
+    [TestCase("INSERT INTO estud.courses (name) SELECT name FROM estud.old_courses", "INSERT")]
+    [TestCase("UPDATE estud.courses SET name = (SELECT name FROM estud.old_courses LIMIT 1)", "UPDATE")]
+    [TestCase("DELETE FROM estud.courses WHERE id IN (SELECT id FROM estud.old_courses)", "DELETE")]
+    public void StringExtensions_GetSqlSpanName_Should_ignore_select_when_there_is_a_write_command(string sql, string expected)
+    {
+        // Arrange / Act
+        var result = sql.GetSqlSpanName();
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Test]
+    [TestCase("INSERT INTO estud.courses (id, name) VALUES (@p0, @p1) ON CONFLICT (id) DO UPDATE SET name = @p1", "INSERT UPDATE")]
+    [TestCase("INSERT INTO estud.courses (name) VALUES (@p0); DELETE FROM estud.old_courses", "INSERT DELETE")]
+    [TestCase("UPDATE estud.courses SET name = @p0; DELETE FROM estud.old_courses", "UPDATE DELETE")]
+    [TestCase("INSERT INTO estud.a VALUES (1); UPDATE estud.b SET x = 1; DELETE FROM estud.c", "INSERT UPDATE DELETE")]
+    [TestCase("DELETE FROM estud.c; UPDATE estud.b SET x = 1; INSERT INTO estud.a VALUES (1)", "INSERT UPDATE DELETE")]
+    [TestCase("SELECT 1; INSERT INTO estud.a VALUES (1); UPDATE estud.b SET x = 1; DELETE FROM estud.c", "INSERT UPDATE DELETE")]
+    public void StringExtensions_GetSqlSpanName_Should_join_write_commands_in_fixed_order(string sql, string expected)
+    {
+        // Arrange / Act
+        var result = sql.GetSqlSpanName();
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Test]
+    [TestCase("")]
+    [TestCase(" ")]
+    [TestCase("BEGIN")]
+    [TestCase("COMMIT")]
+    [TestCase("SAVEPOINT __EFSavePoint")]
+    [TestCase("CREATE TABLE estud.courses (id integer)")]
+    public void StringExtensions_GetSqlSpanName_Should_return_empty_when_there_is_no_known_command(string sql)
+    {
+        // Arrange / Act
+        var result = sql.GetSqlSpanName();
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
     private static IEnumerable<object[]> CamelCaseNames()
     {
         foreach (var (camel, snake) in new List<(string, string)>()
@@ -148,61 +201,6 @@ public class StringExtensionsUnitTests
         })
         {
             yield return [text, numbers];
-        }
-    }
-
-    private static IEnumerable<object[]> TextsContains()
-    {
-        foreach (var (text1, text2, search) in new List<(string, string, string?)>()
-        {
-            ("Banco de Dados", "72", null),
-            ("Banco de Dados", "72", ""),
-            ("Banco de Dados", "72", " "),
-            ("Banco de Dados", "72", "dados"),
-            ("Banco de Dados", "72", "72"),
-            ("Informática e Sociedade", "Chat GPT", "Informáti"),
-            ("Informática e Sociedade", "Chat GPT", "chat"),
-            ("Estatística Aplicada", "50", "estatística"),
-            ("Computação em Nuvem e Web Services", "web", "nuvem"),
-            ("Projeto Integrador I: Concepção e Prototipação", "60", "Projeto Integrador I"),
-            ("Direito e Economia", "", "econo"),
-            ("Sociologia Jurídica", "leis", "socio"),
-            ("Direito Empresarial II", "80", "II"),
-            ("Direito Empresarial II", "80", "80"),
-            ("Monografia Final", "final", "grafia"),
-            ("3681515", "6816", "515"),
-            ("8681918485", "Lalala", "681"),
-            ("1681616851651", "57681", "6168"),
-            ("6841861", "68416", "84"),
-        })
-        {
-            yield return [text1, text2, search!];
-        }
-    }
-
-    private static IEnumerable<object[]> TextsNotContains()
-    {
-        foreach (var (text1, text2, search) in new List<(string, string, string)>()
-        {
-            ("Banco de Dados", "72", "objeto"),
-            ("Banco de Dados", "72", "sociedade"),
-            ("Informática e Sociedade", "Chat GPT", "bard"),
-            ("Informática e Sociedade", "Chat GPT", "dados"),
-            ("Estatística Aplicada", "50", "51"),
-            ("Computação em Nuvem e Web Services", "web", "mobile"),
-            ("Projeto Integrador I: Concepção e Prototipação", "60", "II"),
-            ("Direito e Economia", "", "80"),
-            ("Sociologia Jurídica", "leis", "poo"),
-            ("Direito Empresarial II", "80", "socio"),
-            ("Direito Empresarial II", "80", "leis"),
-            ("Monografia Final", "final", "tcc"),
-            ("3681515", "6816", "8641"),
-            ("8681918485", "Lalala", "0"),
-            ("1681616851651", "57681", "684"),
-            ("6841861", "68416", "68419"),
-        })
-        {
-            yield return [text1, text2, search!];
         }
     }
 
@@ -319,24 +317,6 @@ public class StringExtensionsUnitTests
         foreach (var phoneNumber in phoneNumbers)
         {
             yield return [phoneNumber];
-        }
-    }
-
-    private static IEnumerable<object[]> MinutesForFormat()
-    {
-        foreach (var (minutes, text) in new List<(int, string)>()
-        {
-            (0, "0"),
-            (15, "15min"),
-            (30, "30min"),
-            (45, "45min"),
-            (60, "1h"),
-            (90, "1h e 30min"),
-            (105, "1h e 45min"),
-            (135, "2h e 15min"),
-        })
-        {
-            yield return [minutes, text];
         }
     }
 }

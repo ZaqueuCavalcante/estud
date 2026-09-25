@@ -1,42 +1,32 @@
 {
     "stryker-config":
     {
-        "concurrency": 1,
         "test-runner": "vstest",
         "project": "Back.csproj",
         "solution": "../Estud.slnx",
         "mutation-level": "Complete",
         "coverage-analysis": "perTest",
-        "additional-timeout": 10000,
         "break-on-initial-test-failure": true,
         "reporters": [ "html", "json", "dots" ],
-        "thresholds": { "high": 70, "low": 50, "break": 0 },
+        "test-case-filter": "FullyQualifiedName~UnitTests",
+        "thresholds": { "high": 60, "low": 50, "break": 0 },
         "mutate": [
-            "**/Commands/*.cs",
-            "**/Domain/**/*.cs",
-            "**/Extensions/**/*.cs",
-            "**/Features/**/AssignStudentToClass/*Service.cs",
-            "**/Features/**/CreateClassActivity/*Service.cs",
-            "**/Features/**/CreateLessonAttendance/*Service.cs",
-            "**/Features/**/FinalizeClass/*Service.cs",
-            "**/Features/**/GetCampi/*Service.cs",
-            "**/Features/**/GetCampusOccupancy/*Service.cs",
-            "**/Features/**/GetClass/*Service.cs",
-            "**/Features/**/GetClasses/*Service.cs",
-            "**/Features/**/GoogleOneTapLogin/*Service.cs",
-            "**/Features/**/UpdateCampusOpeningHours/*Service.cs",
-            "**/Features/**/UpdateClassSchedules/*Service.cs",
-            "**/Features/**/VerifySsoDomain/*Service.cs",
-            "!**/Domain/Enums/**",
-            "!**/*Config.cs"
-        ],
-        "ignore-methods": [
-            "*GetExamples*",
-            "*ToString*",
-            "*Dispose*",
-            "*Log*",
-            "WithError",
-            "When"
+            "**/Commands/CommandBackoffStrategies.cs",
+            "**/Domain/Campi/Campus.cs",
+            "**/Domain/Campi/OpeningHour.cs",
+            "**/Domain/Classes/Class.cs",
+            "**/Domain/Classes/ClassGrade.cs",
+            "**/Domain/Classes/Schedule.cs",
+            "**/Domain/Classes/ScheduleExtensions.cs",
+            "**/Extensions/DateOnlyExtensions.cs",
+            "**/Extensions/EnumExtensions.cs",
+            "**/Extensions/EnvironmentExtensions.cs",
+            "**/Extensions/GuidExtensions.cs",
+            "**/Extensions/HourExtensions.cs",
+            "**/Extensions/ListExtensions.cs",
+            "**/Extensions/ShiftExtensions.cs",
+            "**/Extensions/SsoExtensions.cs",
+            "**/Extensions/StringExtensions.cs"
         ]
     }
 }

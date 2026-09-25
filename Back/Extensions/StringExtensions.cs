@@ -40,20 +40,6 @@ public static class StringExtensions
             return !string.IsNullOrEmpty(text);
         }
 
-        public bool IsIn(params string[] others)
-        {
-            if (text.IsEmpty())
-                return true;
-
-            foreach (var other in others)
-            {
-                if (other.Contains(text!, StringComparison.OrdinalIgnoreCase))
-                    return true;
-            }
-
-            return false;
-        }
-
         public bool IsValidPhoneNumber()
         {
             if (text.IsEmpty()) return false;

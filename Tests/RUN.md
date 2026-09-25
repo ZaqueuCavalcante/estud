@@ -19,7 +19,7 @@ reportgenerator -reports:"./TestResults/coverage.cobertura.xml" -targetdir:"./Te
 
 # Mutation
 
-Roda localmente (unit + integration tests) e publica em https://zaqueucavalcante.github.io/estud/mutation,
+Roda localmente (só unit tests, mutando só o código que eles cobrem) e publica em https://zaqueucavalcante.github.io/estud/mutation,
 atualizando a badge do README:
 
 .\Scripts\mutation-tests.ps1
@@ -32,5 +32,5 @@ Argumentos extras vão direto pro Stryker; um recorte pontual sobrescreve o `mut
 
 .\Scripts\mutation-tests.ps1 -NoPublish -m "**/Extensions/**/*.cs"
 
-Precisa do Docker de pé (Testcontainers). `concurrency` fica em **1**: `BackFactory` fixa a porta 5100,
-`FakesFactory` a 5678 e o banco `estud-tests-db` tem nome fixo, então dois workers do Stryker disputam os três.
+Não precisa de Docker: o `test-case-filter` deixa só os `*UnitTests`, então o Stryker usa a concorrência padrão
+(metade dos núcleos). Ao criar unit tests pra um arquivo novo, adicione-o ao `mutate` do `stryker-config.json`.

@@ -84,13 +84,13 @@ interface Point {
 }
 
 const W = 1080
-const H = 1350
+const H = 1150
 const M = 64
 
 const measure = measurePosterText
 
-const LIST_ROW = 44
-const BAR_ROW = 30
+const LIST_ROW = 38
+const BAR_ROW = 26
 
 const formatNumber = (value: number) => value.toLocaleString('pt-BR')
 
@@ -148,9 +148,9 @@ const CONTAINERS: Service[] = [
 ]
 
 const STATS = {
-  title: 'Números',
+  title: 'Suíte em números',
   icon: 'i-lucide-chart-column',
-  duration: { title: '30s', icon: 'i-lucide-hourglass', color: '#fcd34d', mono: true },
+  duration: { title: 'roda em 30s', icon: 'i-lucide-hourglass', color: '#fcd34d', mono: true },
   items: [
     { value: formatNumber(611), label: 'Unit Tests', color: '#38bdf8', icon: 'i-lucide-box' },
     { value: formatNumber(1551), label: 'Integration Tests', color: '#34d399', icon: 'i-lucide-plug' },
@@ -222,7 +222,7 @@ function table(x: number, w: number, top: number, content: { title: string, rows
   return [
     { x, y: top, size: 18, weight: 700, fill: C.text, value: content.title },
     ...content.rows.flatMap((r, i): Label[] => {
-      const y = top + 40 + i * BAR_ROW
+      const y = top + 34 + i * BAR_ROW
       const isTotal = i === content.rows.length - 1
 
       return [
@@ -305,22 +305,21 @@ const poster = computed(() => {
   const fakes: Frame = { x: W - M - fakesW, y: rowY, w: fakesW, h: rowH, rx: 22 }
   const back: Frame = { x: M, y: rowY, w: listWidth(BACK.items), h: rowH, rx: 22 }
 
-
-  const bx = back.x + back.w / 2
-  const splitY = back.y + back.h + 52
-  const nodeY = splitY + 54
-  const nodeH = 150
-  const nodeW = (innerW - 40) / 3
-  const nodeX = (i: number) => M + i * (nodeW + 20)
-
-  const statsY = nodeY + nodeH + 40
-  const stats: Frame = { x: M, y: statsY, w: innerW, h: H - 32 - statsY, rx: 22 }
+  const statH = 96
+  const statsH = 70 + statH + 40 + 34 + (STATS.requests.rows.length - 1) * BAR_ROW + 24
+  const stats: Frame = { x: M, y: H - 32 - statsH, w: innerW, h: statsH, rx: 22 }
   const statW = (stats.w - 44 - 4 * 14) / STATS.items.length
   const statX = (i: number) => stats.x + 22 + i * (statW + 14)
-  const statTop = stats.y + 84
-  const statH = 120
-  const tablesH = 18 + 40 + (STATS.requests.rows.length - 1) * BAR_ROW
-  const requestsY = statTop + statH + (stats.y + stats.h - statTop - statH - tablesH) / 2 + 18
+  const statTop = stats.y + 70
+  const requestsY = statTop + statH + 40
+
+  const nodeH = 120
+  const nodeW = (innerW - 40) / 3
+  const nodeX = (i: number) => M + i * (nodeW + 20)
+  const nodeY = stats.y - 28 - nodeH
+  const bx = back.x + back.w / 2
+  const splitY = (back.y + back.h + nodeY) / 2
+
   const tableW = 185
   const tableGap = 50
   const requests: Frame = { ...stats, x: stats.x + tableW + tableGap, w: stats.w - 2 * (tableW + tableGap) }
@@ -348,7 +347,7 @@ const poster = computed(() => {
       ...table(stats.x + stats.w - 22 - tableW, tableW, requestsY, STATS.database),
       { x: requests.x + 22, y: requestsY, size: 18, weight: 700, fill: C.text, value: STATS.requests.title }
     ] as Label[],
-    bars: bars(requests, requestsY + 40),
+    bars: bars(requests, requestsY + 34),
     points: [
       point('linkedin', M + 4, 102, { title: LINKEDIN.handle, icon: LINKEDIN.icon, color: LINKEDIN.color, mono: true }, 16),
       ...list('back', BACK.items, back, BACK.color),
