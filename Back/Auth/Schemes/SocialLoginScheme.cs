@@ -113,7 +113,7 @@ public static class SocialLoginScheme
         if (existingUser != null)
         {
             // Link social account to existing user
-            existingUser.EmailConfirmed = true;
+            existingUser.ConfirmEmail();
             ctx.Add(new UserSocialLogin(existingUser.Id, provider, providerKey, email));
             await ctx.SaveChangesAsync();
 

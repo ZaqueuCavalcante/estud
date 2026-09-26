@@ -15,7 +15,7 @@ public class ResetPasswordService(EstudDbContext ctx, UserManager<EstudUser> use
 
         var user = await userManager.FindByIdAsync(reset.UserId.ToString());
 
-        var result = await userManager.ResetPasswordAsync(user!, reset.Token, body.Password);
+        var result = await userManager.ResetPasswordAsync(user, reset.Token, body.Password);
         if (!result.Succeeded)
         {
             if (result.Errors.Any(e => e.Code == "InvalidToken")) return InvalidResetPasswordToken.I;
@@ -23,7 +23,7 @@ public class ResetPasswordService(EstudDbContext ctx, UserManager<EstudUser> use
         }
 
         reset.Use();
-        user!.EmailConfirmed = true;
+        user.ConfirmEmail();
         await ctx.SaveChangesAsync();
 
         return EstudSuccess.I;

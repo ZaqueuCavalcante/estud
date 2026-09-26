@@ -64,7 +64,7 @@
 
 ## Caso de Uso de Ponta a Ponta
 
-- Registrar no sistema
+- ✅ Registrar no sistema
 
 - Criar campus e salas
 

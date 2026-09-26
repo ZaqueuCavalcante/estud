@@ -10,13 +10,10 @@ de `HandleTicketReceived` e `HandleRemoteFailure` terminam em `context.HandleRes
 `RemoteAuthenticationHandler` pular o `SignInAsync(SignInScheme, ...)`. Resultado:
 
 - o handler de cookie desses schemes nunca é instanciado;
-- o lambda de opções do `AddCookie` nunca roda. É por isso que as 4 linhas de cada scheme aparecem sem
-  cobertura no report;
-- nenhum outro código usa os schemes: as policies só usam `JwtBearerScheme`, e não há
-  `AuthenticateAsync`, `SignInAsync` nem `SignOutAsync` com eles.
+- o lambda de opções do `AddCookie` nunca roda. É por isso que as 4 linhas de cada scheme aparecem sem cobertura no report;
+- nenhum outro código usa os schemes: as policies só usam `JwtBearerScheme`, e não há `AuthenticateAsync`, `SignInAsync` nem `SignOutAsync` com eles.
 
-A proposta é remover os schemes e também o `SignInScheme` que aponta para eles, deixando o
-`SignInScheme` dos handlers remotos como `null`.
+A proposta é remover os schemes e também o `SignInScheme` que aponta para eles, deixando o `SignInScheme` dos handlers remotos como `null`.
 
 ## Mudanças
 

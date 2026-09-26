@@ -154,7 +154,7 @@ public static class SsoOidcScheme
         var emailVerifiedClaim = context.Principal?.FindFirst("email_verified")?.Value;
         if (emailVerifiedClaim is "true" or "True" && !user.EmailConfirmed)
         {
-            user.EmailConfirmed = true;
+            user.ConfirmEmail();
             await ctx.SaveChangesAsync();
         }
 
