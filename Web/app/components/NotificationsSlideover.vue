@@ -100,15 +100,17 @@ async function onLinkClick(notification: NotificationItem, link: NotificationLin
         <AppSpinner class="size-8" />
       </div>
 
-      <div
+      <TableEmptyState
         v-else-if="notifications.length === 0"
-        class="flex flex-col items-center justify-center gap-2 py-12 text-center"
-      >
-        <UIcon name="i-lucide-bell-off" class="size-8 text-muted" />
-        <p class="text-sm text-muted">
-          {{ onlyUnread ? 'Nenhuma notificação não lida' : 'Nenhuma notificação' }}
-        </p>
-      </div>
+        :loading="false"
+        icon="i-lucide-bell-off"
+        message="Nenhuma notificação"
+        :filtered="onlyUnread"
+        not-found-icon="i-lucide-bell-off"
+        not-found-message="Nenhuma notificação não lida"
+        clear-filters-label="Ver todas"
+        @clear-filters="() => { onlyUnread = false }"
+      />
 
       <div v-else class="flex flex-col gap-3">
         <div

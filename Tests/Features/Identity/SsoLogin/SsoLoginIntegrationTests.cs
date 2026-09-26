@@ -333,5 +333,43 @@ public partial class IntegrationTests
         status.ShouldBeError(HttpStatusCode.Unauthorized);
     }
 
+    [Test]
+    public async Task Identity_SsoLogin_Should_not_login_when_the_id_token_nonce_does_not_match()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: FakesFactory.OidcAuthority);
+        var email = director.User.Email;
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(email, nonce: "nonce-de-outro-login");
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/login?sso_error={nameof(SsoAuthenticationFailed)}");
+
+        var status = await client.GetAuthStatus();
+        status.ShouldBeError(HttpStatusCode.Unauthorized);
+    }
+
+    [Test]
+    public async Task Identity_SsoLogin_Should_not_login_when_the_code_verifier_does_not_match_the_code_challenge()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        await director.ShortcutCreateVerifiedSsoConfiguration(authority: FakesFactory.OidcAuthority);
+        var email = director.User.Email;
+        var client = _back.GetTestsClient(followRedirects: false);
+
+        // Act
+        var callback = await client.SsoLogin(email, codeChallenge: "code-challenge-de-outro-login");
+
+        // Assert
+        callback.Headers.Location?.ToString().Should().Be($"{FrontUrl}/login?sso_error={nameof(SsoAuthenticationFailed)}");
+
+        var status = await client.GetAuthStatus();
+        status.ShouldBeError(HttpStatusCode.Unauthorized);
+    }
+
     #endregion
 }

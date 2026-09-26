@@ -62,9 +62,9 @@ function getHeaderLabel(cell: any): string {
     <!-- Empty state -->
     <div v-else-if="rows.length === 0">
       <slot name="empty">
-        <div class="flex flex-col items-center justify-center py-8 text-center">
-          <UIcon name="i-lucide-inbox" class="size-10 text-muted mb-2" />
-          <p class="text-muted">
+        <div class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+          <UIcon name="i-lucide-inbox" class="size-8 text-muted" />
+          <p class="text-sm text-muted">
             Nenhum item encontrado
           </p>
         </div>

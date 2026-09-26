@@ -195,6 +195,8 @@ public partial class TestsHttpClient
         string? userInfoSubject = null,
         string? providerError = null,
         bool invalidCode = false,
+        string? nonce = null,
+        string? codeChallenge = null,
         bool withCorrelationCookie = true
     ) {
         var challenge = await SsoChallenge(email);
@@ -209,6 +211,8 @@ public partial class TestsHttpClient
             ["fake_userinfo_subject"] = userInfoSubject,
             ["fake_error"] = providerError,
             ["fake_invalid_code"] = invalidCode ? "true" : null,
+            ["fake_nonce"] = nonce,
+            ["fake_code_challenge"] = codeChallenge,
         };
 
         var query = fakeParams

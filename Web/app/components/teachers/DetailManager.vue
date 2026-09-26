@@ -101,6 +101,7 @@ const classColumns: TableColumn<TeacherClassItem>[] = [
   {
     accessorKey: 'students',
     header: 'Alunos',
+    meta: { class: { th: 'text-right', td: 'text-right tabular-nums' } },
     cell: ({ row }) => `${row.original.students} / ${row.original.vacancies}`,
   },
   {

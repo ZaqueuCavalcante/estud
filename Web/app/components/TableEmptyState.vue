@@ -20,8 +20,8 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div v-if="!props.loading" class="flex flex-col items-center gap-4 py-12">
-    <UIcon :name="props.filtered ? props.notFoundIcon : props.icon" class="size-16 text-muted" />
+  <div v-if="!props.loading" class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+    <UIcon :name="props.filtered ? props.notFoundIcon : props.icon" class="size-8 text-muted" />
     <p class="text-muted text-sm">
       {{ props.filtered ? props.notFoundMessage : props.message }}
     </p>

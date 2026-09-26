@@ -21,7 +21,6 @@ public static class SocialLoginScheme
         {
             options.ClientId = settings.Google.ClientId;
             options.ClientSecret = settings.Google.ClientSecret;
-            options.SignInScheme = SocialTempScheme.Name;
             options.CallbackPath = "/identity/social-login/callback/google";
             options.SaveTokens = false;
             options.CorrelationCookie.SameSite = SameSiteMode.Lax;

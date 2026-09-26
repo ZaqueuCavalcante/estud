@@ -119,6 +119,7 @@ const classColumns: TableColumn<ClassroomScheduleItem>[] = [
   {
     accessorKey: 'students',
     header: 'Alunos',
+    meta: { class: { th: 'text-right', td: 'text-right tabular-nums' } },
     cell: ({ row }) => {
       const students = row.original.students
       const color = capacity.value > 0 && students > capacity.value ? 'text-error' : 'text-highlighted'

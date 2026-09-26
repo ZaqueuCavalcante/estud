@@ -9,6 +9,9 @@
 
 - 
 
+1. Tamanhos de fonte fora da escala
+6. Bordas e fundo ao mesmo tempo (cap. 8, "use menos bordas").
+
 ## Próximo
 
 - aluno precisa ver sua frequencia em cada turma (hoje ele so ve as notas)

@@ -107,9 +107,9 @@ watch(open, (val) => {
           <AppSpinner class="size-6" />
         </div>
 
-        <div v-else-if="!items.length" class="flex flex-col items-center gap-3 py-8 text-muted">
-          <UIcon name="i-lucide-user-x" class="size-10" />
-          <p class="text-sm text-center">
+        <div v-else-if="!items.length" class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+          <UIcon name="i-lucide-user-x" class="size-8 text-muted" />
+          <p class="text-sm text-muted">
             Nenhum professor vinculado a esta disciplina
           </p>
         </div>

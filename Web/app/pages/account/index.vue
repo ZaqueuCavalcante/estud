@@ -133,8 +133,8 @@ function formatSize(bytes: number) {
     <div class="flex flex-col divide-y divide-default">
       <div class="flex max-sm:flex-col justify-between items-start sm:items-center gap-4 py-4 first:pt-0 last:pb-0">
         <div>
-          <p class="text-sm font-medium text-highlighted">Foto</p>
-          <p class="text-xs text-muted">PNG, JPEG ou WebP.</p>
+          <p class="text-sm text-muted">Foto</p>
+          <p class="text-xs text-dimmed">PNG, JPEG ou WebP.</p>
         </div>
         <div class="flex items-center gap-3">
           <UAvatar :src="account?.profilePhoto ?? undefined" :alt="account?.name" size="3xl" />
@@ -168,10 +168,10 @@ function formatSize(bytes: number) {
 
       <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0">
         <div>
-          <p class="text-sm font-medium text-highlighted">Nome</p>
+          <p class="text-sm text-muted">Nome</p>
         </div>
         <div class="flex items-center gap-2">
-          <p class="text-sm text-muted">{{ account?.name }}</p>
+          <p class="text-sm font-medium text-highlighted">{{ account?.name }}</p>
           <UButton
             icon="i-lucide-pencil"
             size="xs"
@@ -185,37 +185,37 @@ function formatSize(bytes: number) {
 
       <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0">
         <div>
-          <p class="text-sm font-medium text-highlighted">Email</p>
+          <p class="text-sm text-muted">Email</p>
         </div>
-        <p class="text-sm text-muted">{{ account?.email }}</p>
+        <p class="text-sm font-medium text-highlighted">{{ account?.email }}</p>
       </div>
 
       <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0">
         <div>
-          <p class="text-sm font-medium text-highlighted">Instituição</p>
+          <p class="text-sm text-muted">Instituição</p>
         </div>
-        <p class="text-sm text-muted">{{ account?.institution }}</p>
+        <p class="text-sm font-medium text-highlighted">{{ account?.institution }}</p>
       </div>
 
       <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0">
         <div>
-          <p class="text-sm font-medium text-highlighted">Perfil de acesso</p>
+          <p class="text-sm text-muted">Perfil de acesso</p>
         </div>
-        <p class="text-sm text-muted">{{ account?.role }}</p>
+        <p class="text-sm font-medium text-highlighted">{{ account?.role }}</p>
       </div>
 
       <div v-if="account?.course" class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0">
         <div>
-          <p class="text-sm font-medium text-highlighted">Curso</p>
+          <p class="text-sm text-muted">Curso</p>
         </div>
-        <p class="text-sm text-muted">{{ account?.course }}</p>
+        <p class="text-sm font-medium text-highlighted">{{ account?.course }}</p>
       </div>
 
       <div class="flex justify-end py-4 first:pt-0 last:pb-0">
         <UButton
           label="Sair"
           icon="i-lucide-log-out"
-          color="error"
+          color="neutral"
           variant="subtle"
           :loading="loggingOut"
           @click="logout"

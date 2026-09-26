@@ -47,9 +47,7 @@ const meta = computed(() => {
 
     <UCard v-if="!classes.length">
       <div class="flex flex-col items-center justify-center text-center py-10 gap-3">
-        <div class="p-3 rounded-full bg-primary/10 ring ring-inset ring-primary/25">
-          <UIcon name="i-lucide-presentation" class="size-6 text-primary" />
-        </div>
+        <UIcon name="i-lucide-presentation" class="size-8 text-muted" />
         <div>
           <p class="font-medium text-highlighted">Você ainda não tem turmas atribuídas</p>
           <p class="text-sm text-muted mt-1">Assim que uma turma for atribuída a você, ela aparecerá aqui.</p>

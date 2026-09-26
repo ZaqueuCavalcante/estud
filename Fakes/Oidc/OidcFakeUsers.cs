@@ -7,6 +7,7 @@ public record OidcFakeUser(
     string Subject,
     string ClientId,
     string? Nonce,
+    string? CodeChallenge,
     bool EmailVerified = true,
     string? Name = null,
     string? UserInfoSubject = null

@@ -4,6 +4,7 @@ import type { InstitutionConfig } from '~/types/configs'
 import type { GetStudentDetailsOut, StudentClassItem } from '~/types/students'
 
 const UBadge = resolveComponent('UBadge')
+const LimitValue = resolveComponent('LimitValue')
 const UButton = resolveComponent('UButton')
 const UTooltip = resolveComponent('UTooltip')
 
@@ -76,20 +77,20 @@ const classColumns: TableColumn<StudentClassItem>[] = [
   {
     accessorKey: 'averageGrade',
     header: 'Nota média',
+    meta: { class: { th: 'text-right', td: 'text-right' } },
     cell: ({ row }) => {
       const grade = row.original.averageGrade
-      const color = grade < noteLimit.value ? 'text-error' : 'text-success'
-      return h('span', { class: `font-medium ${color}` }, grade.toFixed(1).replace('.', ','))
+      return h(LimitValue, { label: grade.toFixed(1).replace('.', ','), below: grade < noteLimit.value })
     },
   },
   {
     accessorKey: 'averageAttendance',
     header: 'Frequência média',
+    meta: { class: { th: 'text-right', td: 'text-right' } },
     cell: ({ row }) => {
       const attendance = row.original.averageAttendance
       if (attendance == null) return h('span', { class: 'text-muted' }, '—')
-      const color = attendance < frequencyLimit.value ? 'text-error' : 'text-success'
-      return h('span', { class: `font-medium ${color}` }, `${Math.round(attendance)}%`)
+      return h(LimitValue, { label: `${Math.round(attendance)}%`, below: attendance < frequencyLimit.value })
     },
   },
   {

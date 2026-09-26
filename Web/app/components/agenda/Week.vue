@@ -269,8 +269,8 @@ const nowLine = computed(() => {
     </div>
   </div>
 
-  <div v-else class="flex flex-col items-center justify-center py-16 text-center">
-    <UIcon name="i-lucide-calendar-x" class="size-10 text-muted mb-3" />
-    <p class="text-muted">Nenhuma aula na sua agenda.</p>
+  <div v-else class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+    <UIcon name="i-lucide-calendar-x" class="size-8 text-muted" />
+    <p class="text-sm text-muted">Nenhuma aula na sua agenda.</p>
   </div>
 </template>

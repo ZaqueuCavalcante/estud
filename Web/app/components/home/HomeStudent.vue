@@ -116,9 +116,7 @@ const meta = computed(() => {
     <!-- Sem matrícula em curso -->
     <UCard v-if="!hasCourse">
       <div class="flex flex-col items-center justify-center text-center py-10 gap-3">
-        <div class="p-3 rounded-full bg-primary/10 ring ring-inset ring-primary/25">
-          <UIcon name="i-lucide-graduation-cap" class="size-6 text-primary" />
-        </div>
+        <UIcon name="i-lucide-graduation-cap" class="size-8 text-muted" />
         <div>
           <p class="font-medium text-highlighted">Você ainda não está matriculado em um curso</p>
           <p class="text-sm text-muted mt-1">Assim que sua matrícula for feita, sua grade curricular aparecerá aqui.</p>

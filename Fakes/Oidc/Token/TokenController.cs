@@ -1,7 +1,10 @@
+using System.Text;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Estud.Fakes.Oidc.Token;
 
@@ -14,9 +17,14 @@ namespace Estud.Fakes.Oidc.Token;
 public class TokenController : ControllerBase
 {
     [HttpPost("oidc/connect/token")]
-    public IActionResult Token([FromForm] string code)
+    public IActionResult Token([FromForm] string code, [FromForm(Name = "code_verifier")] string? codeVerifier = null)
     {
         if (!OidcFakeUsers.ByCode.TryRemove(code, out var user)) return BadRequest(new { error = "invalid_grant" });
+
+        if (user.CodeChallenge != null && !MatchesCodeChallenge(codeVerifier, user.CodeChallenge))
+        {
+            return BadRequest(new { error = "invalid_grant" });
+        }
 
         var accessToken = Guid.NewGuid().ToString("N");
 
@@ -29,6 +37,15 @@ public class TokenController : ControllerBase
             access_token = accessToken,
             id_token = BuildIdToken(user),
         });
+    }
+
+    private static bool MatchesCodeChallenge(string? codeVerifier, string codeChallenge)
+    {
+        if (codeVerifier == null) return false;
+
+        var hash = SHA256.HashData(Encoding.ASCII.GetBytes(codeVerifier));
+
+        return WebEncoders.Base64UrlEncode(hash) == codeChallenge;
     }
 
     private string BuildIdToken(OidcFakeUser user)

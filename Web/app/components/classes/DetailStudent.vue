@@ -144,12 +144,12 @@ const tabItems = [
                 />
               </div>
             </div>
-            <div v-else class="flex flex-col items-center gap-3 py-6">
-              <UIcon name="i-lucide-chart-column" class="size-10 text-muted" />
-              <p class="text-sm text-muted">
-                Nenhuma nota lançada
-              </p>
-            </div>
+            <TableEmptyState
+              v-else
+              :loading="false"
+              icon="i-lucide-chart-column"
+              message="Nenhuma nota lançada"
+            />
           </template>
 
           <template #activities>
@@ -178,12 +178,12 @@ const tabItems = [
                 </div>
               </section>
             </div>
-            <div v-else class="flex flex-col items-center gap-3 py-6">
-              <UIcon name="i-lucide-clipboard-list" class="size-10 text-muted" />
-              <p class="text-sm text-muted">
-                Nenhuma atividade cadastrada
-              </p>
-            </div>
+            <TableEmptyState
+              v-else
+              :loading="false"
+              icon="i-lucide-clipboard-list"
+              message="Nenhuma atividade cadastrada"
+            />
           </template>
 
           <template #lessons>
@@ -248,12 +248,12 @@ const tabItems = [
                 not-found-message="Nenhuma aula encontrada com esse conteúdo no plano"
                 @clear-filters="() => { lessonsSearch = ''; appliedLessonsSearch = '' }"
               />
-              <div v-else class="flex flex-col items-center gap-3 py-6">
-                <UIcon name="i-lucide-calendar-days" class="size-10 text-muted" />
-                <p class="text-sm text-muted">
-                  Nenhuma aula cadastrada
-                </p>
-              </div>
+              <TableEmptyState
+                v-else
+                :loading="false"
+                icon="i-lucide-calendar-days"
+                message="Nenhuma aula cadastrada"
+              />
             </div>
           </template>
         </UTabs>

@@ -72,8 +72,8 @@ const { data, status, error } = await useFetch<GetStudentClassLessonOut>(
           </h2>
 
           <RichEditor v-if="data.plannedContent" :model-value="data.plannedContent" readonly />
-          <div v-else class="flex flex-col items-center gap-3 py-6">
-            <UIcon name="i-lucide-notebook-pen" class="size-10 text-muted" />
+          <div v-else class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+            <UIcon name="i-lucide-notebook-pen" class="size-8 text-muted" />
             <p class="text-sm text-muted">
               O professor ainda não planejou esta aula
             </p>

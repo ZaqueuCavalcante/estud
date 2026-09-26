@@ -64,7 +64,6 @@ public static class SsoOidcScheme
         options.UsePkce = true;
         options.SaveTokens = false;
         options.GetClaimsFromUserInfoEndpoint = true;
-        options.SignInScheme = SsoTempScheme.Name;
         options.CallbackPath = $"/identity/sso/callback/{config.PublicId}";
 
         options.RequireHttpsMetadata = !EnvironmentExtensions.IsDevelopmentOrTesting();

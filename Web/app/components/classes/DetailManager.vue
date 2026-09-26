@@ -5,6 +5,7 @@ import type { ClassStatusTransition, ClassStudentItem, GetClassOut } from '~/typ
 
 const UAvatar = resolveComponent('UAvatar')
 const UBadge = resolveComponent('UBadge')
+const LimitValue = resolveComponent('LimitValue')
 
 const props = defineProps<{ classId: string }>()
 
@@ -151,19 +152,19 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
   {
     accessorKey: 'averageGrade',
     header: 'Nota média',
+    meta: { class: { th: 'text-right', td: 'text-right' } },
     cell: ({ row }) => {
       const grade = row.original.averageGrade
-      const color = grade < noteLimit.value ? 'text-error' : 'text-success'
-      return h('span', { class: `font-medium ${color}` }, grade.toFixed(1).replace('.', ','))
+      return h(LimitValue, { label: grade.toFixed(1).replace('.', ','), below: grade < noteLimit.value })
     },
   },
   {
     accessorKey: 'averageAttendance',
     header: 'Frequência média',
+    meta: { class: { th: 'text-right', td: 'text-right' } },
     cell: ({ row }) => {
       const attendance = row.original.averageAttendance
-      const color = attendance < frequencyLimit.value ? 'text-error' : 'text-success'
-      return h('span', { class: `font-medium ${color}` }, `${Math.round(attendance)}%`)
+      return h(LimitValue, { label: `${Math.round(attendance)}%`, below: attendance < frequencyLimit.value })
     },
   },
   {
@@ -271,9 +272,16 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
               <span class="text-sm text-highlighted">{{ teacher.name }}</span>
             </div>
           </div>
-          <div v-else class="flex items-center gap-2 text-sm text-muted">
+          <div v-else class="flex flex-wrap items-center gap-2 text-sm text-muted">
             <UIcon name="i-lucide-user-x" class="size-4" />
-            Nenhum professor definido
+            <span>Nenhum professor definido</span>
+            <UButton
+              v-if="canUpdateTeachers"
+              label="Definir professores"
+              variant="link"
+              class="p-0"
+              @click="() => { teachersModalOpen = true }"
+            />
           </div>
         </section>
 
@@ -320,9 +328,16 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
               </span>
             </div>
           </div>
-          <div v-else class="flex items-center gap-2 text-sm text-muted">
+          <div v-else class="flex flex-wrap items-center gap-2 text-sm text-muted">
             <UIcon name="i-lucide-clock" class="size-4" />
-            Nenhum horário cadastrado
+            <span>Nenhum horário cadastrado</span>
+            <UButton
+              v-if="showEditSchedules"
+              label="Cadastrar horários"
+              variant="link"
+              class="p-0"
+              @click="() => { schedulesModalOpen = true }"
+            />
           </div>
         </section>
 
@@ -368,10 +383,13 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
 
           <DataTable :data="data.students" :columns="studentColumns">
             <template #empty>
-              <div class="flex items-center justify-center gap-2 py-6 text-sm text-muted">
-                <UIcon name="i-lucide-users" class="size-4" />
-                Nenhum aluno matriculado
-              </div>
+              <TableEmptyState
+                :loading="false"
+                icon="i-lucide-users"
+                message="Nenhum aluno matriculado"
+                button-label="Matricular aluno"
+                @create="() => { assignStudentModalOpen = true }"
+              />
             </template>
           </DataTable>
 

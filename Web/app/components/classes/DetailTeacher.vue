@@ -6,6 +6,7 @@ import type { ClassStudentItem, GetTeacherClassActivitiesOut, GetTeacherClassLes
 
 const UAvatar = resolveComponent('UAvatar')
 const UBadge = resolveComponent('UBadge')
+const LimitValue = resolveComponent('LimitValue')
 
 const props = defineProps<{ classId: string }>()
 
@@ -63,19 +64,19 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
   {
     accessorKey: 'averageGrade',
     header: 'Nota média',
+    meta: { class: { th: 'text-right', td: 'text-right' } },
     cell: ({ row }) => {
       const grade = row.original.averageGrade
-      const color = grade < noteLimit.value ? 'text-error' : 'text-success'
-      return h('span', { class: `font-medium ${color}` }, grade.toFixed(1).replace('.', ','))
+      return h(LimitValue, { label: grade.toFixed(1).replace('.', ','), below: grade < noteLimit.value })
     },
   },
   {
     accessorKey: 'averageAttendance',
     header: 'Frequência média',
+    meta: { class: { th: 'text-right', td: 'text-right' } },
     cell: ({ row }) => {
       const attendance = row.original.averageAttendance
-      const color = attendance < frequencyLimit.value ? 'text-error' : 'text-success'
-      return h('span', { class: `font-medium ${color}` }, `${Math.round(attendance)}%`)
+      return h(LimitValue, { label: `${Math.round(attendance)}%`, below: attendance < frequencyLimit.value })
     },
   },
   {
@@ -210,10 +211,11 @@ const activityGroups = computed(() => groupActivitiesByNote(activities.value))
           </div>
           <DataTable v-else :data="students" :columns="studentColumns">
             <template #empty>
-              <div class="flex items-center justify-center gap-2 py-6 text-sm text-muted">
-                <UIcon name="i-lucide-users" class="size-4" />
-                Nenhum aluno matriculado
-              </div>
+              <TableEmptyState
+                :loading="false"
+                icon="i-lucide-users"
+                message="Nenhum aluno matriculado"
+              />
             </template>
           </DataTable>
         </section>
@@ -291,10 +293,12 @@ const activityGroups = computed(() => groupActivitiesByNote(activities.value))
               not-found-message="Nenhuma aula encontrada com esse conteúdo no plano"
               @clear-filters="() => { lessonsSearch = ''; appliedLessonsSearch = '' }"
             />
-            <div v-else class="flex items-center gap-2 text-sm text-muted">
-              <UIcon name="i-lucide-calendar-days" class="size-4" />
-              Nenhuma aula cadastrada
-            </div>
+            <TableEmptyState
+              v-else
+              :loading="false"
+              icon="i-lucide-calendar-days"
+              message="Nenhuma aula cadastrada"
+            />
           </template>
         </section>
 
@@ -338,12 +342,12 @@ const activityGroups = computed(() => groupActivitiesByNote(activities.value))
                 </div>
               </section>
             </div>
-            <div v-else class="flex flex-col items-center gap-3 py-6">
-              <UIcon name="i-lucide-clipboard-list" class="size-10 text-muted" />
-              <p class="text-sm text-muted">
-                Nenhuma atividade cadastrada
-              </p>
-            </div>
+            <TableEmptyState
+              v-else
+              :loading="false"
+              icon="i-lucide-clipboard-list"
+              message="Nenhuma atividade cadastrada"
+            />
           </template>
         </section>
       </div>

@@ -199,9 +199,9 @@ watch(open, (val) => {
   >
     <template #body>
       <div class="space-y-4">
-        <div v-if="!rows.length" class="flex flex-col items-center gap-3 py-8 text-muted">
-          <UIcon name="i-lucide-clock" class="size-10" />
-          <p class="text-sm text-center">
+        <div v-if="!rows.length" class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+          <UIcon name="i-lucide-clock" class="size-8 text-muted" />
+          <p class="text-sm text-muted">
             Nenhum horário definido
           </p>
         </div>

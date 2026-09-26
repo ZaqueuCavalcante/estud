@@ -160,8 +160,8 @@ function openWorkModal(work: TeacherActivityWorkItem) {
               </div>
             </div>
           </div>
-          <div v-else class="flex flex-col items-center gap-3 py-6">
-            <UIcon name="i-lucide-file-check" class="size-10 text-muted" />
+          <div v-else class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+            <UIcon name="i-lucide-file-check" class="size-8 text-muted" />
             <p class="text-sm text-muted">
               Nenhuma entrega até o momento
             </p>
