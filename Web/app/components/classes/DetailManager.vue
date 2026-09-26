@@ -266,7 +266,7 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
             <div
               v-for="teacher in data.teachers"
               :key="teacher.id"
-              class="flex items-center gap-2 rounded-full border border-default bg-elevated/40 py-1 pl-1 pr-3"
+              class="flex items-center gap-2 rounded-full bg-elevated py-1 pl-1 pr-3"
             >
               <UAvatar :src="teacher.photo ?? undefined" :alt="teacher.name" size="2xs" />
               <span class="text-sm text-highlighted">{{ teacher.name }}</span>
@@ -305,7 +305,7 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
             <div
               v-for="(s, i) in data.schedules"
               :key="i"
-              class="flex w-full flex-col gap-0.5 rounded-lg border border-default bg-elevated/40 px-3 py-2 sm:w-auto"
+              class="flex w-full flex-col gap-0.5 rounded-lg bg-elevated px-3 py-2 sm:w-auto"
             >
               <span
                 class="flex items-center gap-1 text-sm font-medium"

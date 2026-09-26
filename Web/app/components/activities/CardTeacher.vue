@@ -12,7 +12,7 @@ const deliveredPercent = computed(() => props.activity.totalWorks > 0
 <template>
   <NuxtLink
     :to="to"
-    class="flex flex-col gap-3 rounded-lg border border-default bg-elevated/40 p-4 transition-colors hover:bg-elevated"
+    class="flex flex-col gap-3 rounded-lg bg-elevated p-4 transition-colors hover:bg-accented/60"
   >
     <span class="font-medium text-highlighted">{{ activity.title }}</span>
 

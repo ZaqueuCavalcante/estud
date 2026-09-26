@@ -39,5 +39,6 @@ const emit = defineEmits<{
       :label="props.buttonLabel"
       @click="() => { emit('create') }"
     />
+    <slot v-else />
   </div>
 </template>

@@ -46,7 +46,7 @@ const dash = computed(() => {
         />
       </svg>
       <span
-        class="absolute inset-0 flex items-center justify-center text-[0.7rem] font-semibold"
+        class="absolute inset-0 flex items-center justify-center text-2xs font-semibold"
         :class="colorClass"
       >
         {{ centerText }}

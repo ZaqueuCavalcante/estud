@@ -461,7 +461,7 @@ const breadcrumb = [
               </div>
             </div>
 
-            <div class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4">
+            <div class="flex flex-col justify-center rounded-xl bg-elevated px-4 py-4">
               <span class="text-sm font-semibold" :class="hasOccupancyData && peakStudents ? 'text-highlighted' : 'text-dimmed'">
                 {{ hasOccupancyData && peakCell ? `${dayShort[peakCell.day]} · ${shiftLabels[peakCell.shift]}` : 'Sem alocação' }}
               </span>
@@ -472,7 +472,7 @@ const breadcrumb = [
               <span class="mt-2 text-xs text-muted">Horário de pico</span>
             </div>
 
-            <div class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4">
+            <div class="flex flex-col justify-center rounded-xl bg-elevated px-4 py-4">
               <span class="text-2xl font-bold tabular-nums leading-none text-highlighted">{{ data.totalClassrooms }}</span>
               <span class="mt-2 text-xs text-muted">Salas no campus</span>
             </div>
@@ -513,7 +513,7 @@ const breadcrumb = [
                   class="flex flex-col items-center pb-1 leading-tight"
                 >
                   <span class="text-sm font-semibold text-highlighted">{{ shift.label }}</span>
-                  <span class="text-[11px] text-muted tabular-nums">{{ shift.window }}</span>
+                  <span class="text-2xs text-muted tabular-nums">{{ shift.window }}</span>
                 </div>
 
                 <!-- Linhas por dia -->
@@ -535,7 +535,7 @@ const breadcrumb = [
                     <button
                       v-else
                       type="button"
-                      class="flex h-14 items-center justify-center gap-5 rounded-lg border border-default bg-elevated/40 transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      class="flex h-14 items-center justify-center gap-5 rounded-lg bg-elevated transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                       :class="isSelected(day.key, shift.key) ? 'ring-2 ring-primary' : ''"
                       :aria-label="cellLabel(day.key, shift.key)"
                       @click="() => { selectCell(day.key, shift.key) }"
@@ -567,7 +567,7 @@ const breadcrumb = [
                   <!-- Eixo esquerdo: rótulo do turno e a janela dele -->
                   <div class="flex flex-col justify-center pr-3 text-right">
                     <span class="text-sm font-medium text-highlighted">{{ shift.label }}</span>
-                    <span class="text-[11px] text-muted tabular-nums">{{ shift.window }}</span>
+                    <span class="text-2xs text-muted tabular-nums">{{ shift.window }}</span>
                   </div>
 
                   <!-- Célula do mapa de calor -->
@@ -581,7 +581,7 @@ const breadcrumb = [
                     <button
                       v-else
                       type="button"
-                      class="flex h-16 items-center justify-center gap-6 rounded-lg border border-default bg-elevated/40 transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      class="flex h-16 items-center justify-center gap-6 rounded-lg bg-elevated transition-shadow hover:ring-2 hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                       :class="isSelected(day.key, shift.key) ? 'ring-2 ring-primary' : ''"
                       :aria-label="cellLabel(day.key, shift.key)"
                       @click="() => { selectCell(day.key, shift.key) }"

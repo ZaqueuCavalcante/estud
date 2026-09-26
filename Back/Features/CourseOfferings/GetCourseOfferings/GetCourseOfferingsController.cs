@@ -7,7 +7,7 @@ public class GetCourseOfferingsController(GetCourseOfferingsService service) : C
     /// Ofertas de curso
     /// </summary>
     /// <remarks>
-    /// Retorna a lista paginada de ofertas de curso da instituição.
+    /// Retorna a lista paginada de ofertas de curso da instituição, podendo filtrar por campus, período acadêmico e turno.
     /// </remarks>
     [HttpGet("course-offerings")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]

@@ -2,6 +2,7 @@
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { CourseCurriculumDisciplineSelection, CreateCourseCurriculumOut } from '~/types/course-curriculums'
+import type { GetCourseDetailsOut } from '~/types/courses'
 
 interface CourseItem {
   id: number
@@ -14,6 +15,7 @@ interface CourseDiscipline {
   code: string
 }
 
+const route = useRoute()
 const config = useRuntimeConfig()
 const toast = useToast()
 const loading = ref(false)
@@ -59,7 +61,25 @@ async function fetchCourses() {
   courses.value = result.items
 }
 
-onMounted(() => { fetchCourses() })
+async function fetchPreselectedCourse(): Promise<CourseItem | null> {
+  const courseId = Number(route.query.course)
+  if (!Number.isInteger(courseId) || courseId <= 0) return null
+  try {
+    const course = await $fetch<GetCourseDetailsOut>(`${config.public.backendUrl}/courses/${courseId}/details`, {
+      credentials: 'include',
+    })
+    return { id: course.id, name: course.name }
+  } catch {
+    return null
+  }
+}
+
+onMounted(async () => {
+  const [, preselected] = await Promise.all([fetchCourses(), fetchPreselectedCourse()])
+  if (!preselected) return
+  if (!courses.value.some(c => c.id === preselected.id)) courses.value.push(preselected)
+  formState.courseId = preselected.id
+})
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true

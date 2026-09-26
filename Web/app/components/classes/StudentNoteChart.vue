@@ -94,7 +94,7 @@ function barLabel(bar: Bar) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 rounded-lg border border-default bg-elevated/40 p-4">
+  <div class="flex flex-col gap-2 rounded-lg bg-elevated p-4">
     <div class="flex items-start justify-between gap-2">
       <h3 class="font-medium text-highlighted">
         {{ note }}
@@ -131,7 +131,7 @@ function barLabel(bar: Bar) {
               :x2="MARGIN.left + plotWidth"
               :y1="yScale(tick)"
               :y2="yScale(tick)"
-              stroke="var(--ui-border)"
+              stroke="var(--ui-border-accented)"
             />
             <text
               :x="MARGIN.left - 6"
@@ -139,7 +139,7 @@ function barLabel(bar: Bar) {
               text-anchor="end"
               dominant-baseline="middle"
               fill="var(--ui-text-dimmed)"
-              class="text-[10px]"
+              class="text-2xs"
             >
               {{ tick }}
             </text>
@@ -193,7 +193,7 @@ function barLabel(bar: Bar) {
             :y="bar.labelY"
             text-anchor="middle"
             fill="var(--ui-text-muted)"
-            class="text-[10px]"
+            class="text-2xs"
           >
             {{ formatNote(bar.value) }}
           </text>
@@ -207,7 +207,7 @@ function barLabel(bar: Bar) {
             :y="MARGIN.top + plotHeight + 16"
             text-anchor="middle"
             fill="var(--ui-text-dimmed)"
-            class="text-[10px]"
+            class="text-2xs"
           >
             {{ tick }}%
           </text>

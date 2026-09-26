@@ -230,22 +230,26 @@ const classColumns: TableColumn<ClassroomScheduleItem>[] = [
 
         <section v-if="activeTab === 'agenda'" class="flex flex-col gap-3">
           <AgendaWeek v-if="data.schedules.length" :days="agendaDays" />
-          <div v-else class="flex items-center gap-2 text-sm text-muted">
-            <UIcon name="i-lucide-calendar-x" class="size-4" />
-            Nenhuma turma alocada nesta sala
-          </div>
+          <TableEmptyState
+            v-else
+            :loading="false"
+            icon="i-lucide-presentation"
+            message="Nenhuma turma alocada nesta sala"
+          >
+            <UButton icon="i-lucide-presentation" label="Turmas" to="/classes" />
+          </TableEmptyState>
         </section>
 
         <section v-else class="flex flex-col gap-3">
-          <DataTable :data="allocatedClasses" :columns="classColumns">
-            <template #empty>
-              <TableEmptyState
-                :loading="false"
-                icon="i-lucide-presentation"
-                message="Nenhuma turma alocada nesta sala"
-              />
-            </template>
-          </DataTable>
+          <DataTable v-if="allocatedClasses.length" :data="allocatedClasses" :columns="classColumns" />
+          <TableEmptyState
+            v-else
+            :loading="false"
+            icon="i-lucide-presentation"
+            message="Nenhuma turma alocada nesta sala"
+          >
+            <UButton icon="i-lucide-presentation" label="Turmas" to="/classes" />
+          </TableEmptyState>
         </section>
       </div>
     </template>

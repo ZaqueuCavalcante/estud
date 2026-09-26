@@ -12,6 +12,15 @@ public class GetCourseOfferingsService(EstudDbContext ctx) : IEstudService
         var offeringsQuery = ctx.CourseOfferings.AsNoTracking()
             .Where(o => o.InstitutionId == ctx.RequestUser.InstitutionId);
 
+        if (query.CampusId is int campusId)
+            offeringsQuery = offeringsQuery.Where(o => o.CampusId == campusId);
+
+        if (query.PeriodId is int periodId)
+            offeringsQuery = offeringsQuery.Where(o => o.AcademicPeriodId == periodId);
+
+        if (query.Session is CourseSession session)
+            offeringsQuery = offeringsQuery.Where(o => o.Session == session);
+
         var total = await offeringsQuery.CountAsync();
 
         var offerings = await offeringsQuery

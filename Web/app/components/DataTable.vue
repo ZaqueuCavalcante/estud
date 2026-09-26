@@ -31,7 +31,7 @@ defineSlots<{
     :loading="loading"
     :ui="{
       base: 'table-fixed border-separate border-spacing-0',
-      thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+      thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none after:hidden',
       tbody: '[&>tr]:last:[&>td]:border-b-0',
       th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
       td: 'border-b border-default whitespace-normal break-words',

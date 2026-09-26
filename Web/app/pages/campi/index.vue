@@ -59,7 +59,7 @@ const { data, status, refresh } = await useFetch<GetCampiOut>(`${config.public.b
             v-for="campus in data.items"
             :key="campus.id"
             :to="`/campi/${campus.id}`"
-            class="rounded-xl border border-default bg-elevated/40 flex flex-col overflow-hidden hover:shadow-md hover:border-primary/50 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            class="rounded-xl bg-elevated flex flex-col overflow-hidden hover:shadow-md hover:ring hover:ring-primary/50 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <!-- Header -->
             <div class="px-4 pt-3 pb-4">

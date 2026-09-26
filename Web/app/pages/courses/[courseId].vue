@@ -19,6 +19,7 @@ const { data, status, error, refresh } = await useFetch<GetCourseDetailsOut>(
 )
 
 const editModalOpen = ref(false)
+const offeringModalOpen = ref(false)
 
 // O modal de edição espera o mesmo formato usado na listagem de cursos
 const courseRef = computed(() => data.value
@@ -36,16 +37,29 @@ const tabKeys = ['disciplines', 'curriculums', 'offerings']
 const initialTab = route.query.t as string
 const activeTab = ref(tabKeys.includes(initialTab) ? initialTab : 'disciplines')
 
-function selectTab(tab: string) {
+function setTab(tab: string) {
   activeTab.value = tab
   router.replace({ query: tab === 'disciplines' ? {} : { t: tab } })
+}
+
+function selectTab(tab: string) {
+  setTab(tab)
   refresh()
 }
 
+const curriculumsEnabled = computed(() => disciplines.value.length > 0)
+const offeringsEnabled = computed(() => curriculums.value.length > 0)
+
+watch(data, () => {
+  if (!data.value) return
+  if (activeTab.value === 'offerings' && !offeringsEnabled.value) setTab(curriculumsEnabled.value ? 'curriculums' : 'disciplines')
+  else if (activeTab.value === 'curriculums' && !curriculumsEnabled.value) setTab('disciplines')
+})
+
 const tabs = computed(() => [[
   { label: 'Disciplinas', icon: 'i-lucide-book-open', active: activeTab.value === 'disciplines', onSelect: () => { selectTab('disciplines') } },
-  { label: 'Grades', icon: 'i-lucide-layout-list', active: activeTab.value === 'curriculums', onSelect: () => { selectTab('curriculums') } },
-  { label: 'Ofertas', icon: 'i-lucide-library', active: activeTab.value === 'offerings', onSelect: () => { selectTab('offerings') } },
+  { label: 'Grades', icon: 'i-lucide-layout-list', active: activeTab.value === 'curriculums', disabled: !curriculumsEnabled.value, onSelect: () => { selectTab('curriculums') } },
+  { label: 'Ofertas', icon: 'i-lucide-library', active: activeTab.value === 'offerings', disabled: !offeringsEnabled.value, onSelect: () => { selectTab('offerings') } },
 ]] satisfies NavigationMenuItem[][])
 
 const breadcrumb = [
@@ -109,16 +123,25 @@ const breadcrumb = [
         />
 
         <section v-if="activeTab === 'curriculums'" class="flex flex-col gap-4">
-          <p class="text-sm text-muted">
-            As grades curriculares deste curso.
-          </p>
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <p class="text-sm text-muted">
+              As grades curriculares deste curso.
+            </p>
+
+            <UButton
+              v-if="curriculums.length"
+              icon="i-lucide-plus"
+              label="Grade"
+              :to="{ path: '/course-curriculums/new', query: { course: courseId } }"
+            />
+          </div>
 
           <div v-if="curriculums.length" class="grid gap-3 sm:grid-cols-2">
             <NuxtLink
               v-for="curriculum in curriculums"
               :key="curriculum.id"
               :to="`/course-curriculums/${curriculum.id}`"
-              class="flex flex-col gap-2 rounded-xl border border-default bg-elevated/40 px-4 py-3 transition-all duration-200 hover:border-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              class="flex flex-col gap-2 rounded-xl bg-elevated px-4 py-3 transition-all duration-200 hover:ring hover:ring-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               <p class="truncate text-base font-bold text-highlighted">{{ curriculum.name }}</p>
 
@@ -128,23 +151,36 @@ const breadcrumb = [
               </span>
             </NuxtLink>
           </div>
-          <div v-else class="flex items-center gap-2 text-sm text-muted">
-            <UIcon name="i-lucide-book-dashed" class="size-4" />
-            Nenhuma grade curricular cadastrada
-          </div>
+          <TableEmptyState
+            v-else
+            :loading="false"
+            icon="i-lucide-book-dashed"
+            message="Nenhuma grade curricular cadastrada"
+            button-label="Grade"
+            @create="() => { navigateTo({ path: '/course-curriculums/new', query: { course: courseId } }) }"
+          />
         </section>
 
         <section v-else-if="activeTab === 'offerings'" class="flex flex-col gap-4">
-          <p class="text-sm text-muted">
-            As ofertas deste curso, por campus e período.
-          </p>
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <p class="text-sm text-muted">
+              As ofertas deste curso, por campus e período.
+            </p>
+
+            <UButton
+              v-if="offerings.length"
+              icon="i-lucide-plus"
+              label="Oferta"
+              @click="() => { offeringModalOpen = true }"
+            />
+          </div>
 
           <div v-if="offerings.length" class="grid gap-3 sm:grid-cols-2">
             <NuxtLink
               v-for="offering in offerings"
               :key="offering.id"
               :to="`/course-offerings/${offering.id}`"
-              class="flex flex-col gap-2 rounded-xl border border-default bg-elevated/40 px-4 py-3 transition-all duration-200 hover:border-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              class="flex flex-col gap-2 rounded-xl bg-elevated px-4 py-3 transition-all duration-200 hover:ring hover:ring-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               <p class="truncate text-base font-bold text-highlighted">{{ offering.curriculum }}</p>
 
@@ -164,14 +200,19 @@ const breadcrumb = [
               </div>
             </NuxtLink>
           </div>
-          <div v-else class="flex items-center gap-2 text-sm text-muted">
-            <UIcon name="i-lucide-calendar-x" class="size-4" />
-            Nenhuma oferta cadastrada
-          </div>
+          <TableEmptyState
+            v-else
+            :loading="false"
+            icon="i-lucide-calendar-x"
+            message="Nenhuma oferta cadastrada"
+            button-label="Oferta"
+            @create="() => { offeringModalOpen = true }"
+          />
         </section>
       </div>
     </template>
   </UDashboardPanel>
 
   <CoursesEditModal v-model:open="editModalOpen" :course="courseRef" @updated="refresh()" />
+  <CourseOfferingsCreateModal v-model:open="offeringModalOpen" :course="courseRef ?? undefined" @created="refresh()" />
 </template>

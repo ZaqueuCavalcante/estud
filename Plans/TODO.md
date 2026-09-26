@@ -7,10 +7,7 @@
 
 ## Foco atual
 
-- 
-
-1. Tamanhos de fonte fora da escala
-6. Bordas e fundo ao mesmo tempo (cap. 8, "use menos bordas").
+- mapear todos os sistemas similares do mercado
 
 ## Próximo
 
@@ -69,9 +66,9 @@
 
 - ✅ Registrar no sistema
 
-- Criar campus e salas
+- ✅ Criar campus e salas
 
-- Criar cursos, disciplinas e seus vínculos
+- ✅ Criar cursos, disciplinas e seus vínculos
 
 - Montar as grades curriculares
 

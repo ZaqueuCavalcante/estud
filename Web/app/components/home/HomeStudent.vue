@@ -103,7 +103,7 @@ const meta = computed(() => {
       </div>
     </div>
 
-    <div class="flex items-center gap-3 rounded-lg p-4 ring ring-default bg-elevated/40">
+    <div class="flex items-center gap-3 rounded-lg p-4 bg-elevated">
       <div class="flex items-center justify-center p-2 rounded-lg ring ring-inset shrink-0" :class="pendingActivitiesCard.boxClass">
         <UIcon :name="pendingActivitiesCard.icon" class="size-5" :class="pendingActivitiesCard.iconClass" />
       </div>
@@ -155,8 +155,8 @@ const meta = computed(() => {
                 v-for="disc in group.items"
                 :key="disc.id"
                 :to="disc.classId ? `/classes/${disc.classId}` : undefined"
-                class="flex items-start gap-3 rounded-lg p-3 ring ring-default bg-elevated/40"
-                :class="{ 'hover:bg-elevated transition-colors': disc.classId }"
+                class="flex items-start gap-3 rounded-lg p-3 bg-elevated"
+                :class="{ 'hover:bg-accented/60 transition-colors': disc.classId }"
               >
                 <span class="mt-1.5 size-2.5 shrink-0 rounded-full" :class="studentDisciplineStatusDot[disc.status] ?? 'bg-neutral-300 dark:bg-neutral-700'" />
                 <div class="min-w-0 flex-1">

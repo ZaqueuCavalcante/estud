@@ -60,7 +60,7 @@ const meta = computed(() => {
         <div
           v-for="stat in stats"
           :key="stat.label"
-          class="flex items-center gap-3 rounded-lg p-3 ring ring-default bg-elevated/40"
+          class="flex items-center gap-3 rounded-lg p-3 bg-elevated"
         >
           <div class="flex items-center justify-center p-2 rounded-lg bg-primary/10 ring ring-inset ring-primary/20 shrink-0">
             <UIcon :name="stat.icon" class="size-4 text-primary" />
@@ -83,7 +83,7 @@ const meta = computed(() => {
             v-for="c in classes"
             :key="c.id"
             :to="`/classes/${c.id}`"
-            class="flex flex-col gap-3 rounded-lg p-3 ring ring-default bg-elevated/40 hover:bg-elevated transition-colors"
+            class="flex flex-col gap-3 rounded-lg p-3 bg-elevated hover:bg-accented/60 transition-colors"
           >
             <div class="flex items-start gap-3">
               <div class="min-w-0 flex-1">

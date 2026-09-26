@@ -106,6 +106,7 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
         <UInput
           v-model="filter"
           class="w-full sm:max-w-sm"
+          :ui="{ base: 'h-8' }"
           icon="i-lucide-search"
           placeholder="Buscar por nome ou curso..."
           :loading="status === 'idle' || status === 'pending'"
@@ -115,7 +116,7 @@ const columns: TableColumn<CourseCurriculumItem>[] = [
               icon="i-lucide-x"
               color="neutral"
               variant="link"
-              size="sm"
+              class="p-0"
               aria-label="Remover filtro"
               @click="clearFilters"
             />

@@ -52,9 +52,9 @@ const gradeRuleLabel = computed(() =>
             />
           </UPageCard>
 
-          <div class="rounded-xl border border-default bg-elevated overflow-hidden">
+          <div class="rounded-xl bg-elevated overflow-hidden">
             <div class="grid grid-cols-1 sm:grid-cols-2 py-4">
-              <div class="flex flex-col items-center px-4 sm:border-r border-default">
+              <div class="flex flex-col items-center px-4 sm:border-r border-accented">
                 <span class="text-3xl font-bold text-highlighted leading-none">{{ formatNumber(data.noteLimit) }}</span>
                 <span class="text-xs text-muted mt-1.5">Nota mínima</span>
                 <span class="text-xs text-dimmed mt-1 text-center">Abaixo disso o aluno é reprovado por nota.</span>
@@ -69,7 +69,7 @@ const gradeRuleLabel = computed(() =>
               </div>
             </div>
 
-            <div class="border-t border-default p-4">
+            <div class="border-t border-accented p-4">
               <span class="text-xs text-muted">Cálculo da média final</span>
               <p class="text-sm font-medium text-highlighted mt-1 mb-3">
                 {{ gradeRuleLabel ?? data.gradeRule }}

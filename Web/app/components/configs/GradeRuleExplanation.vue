@@ -5,13 +5,13 @@ const info = computed(() => (props.rule ? classGradeRules[props.rule] : undefine
 </script>
 
 <template>
-  <div v-if="info" :class="flat ? undefined : 'rounded-lg border border-default bg-elevated/50 overflow-hidden'">
+  <div v-if="info" :class="flat ? undefined : 'rounded-lg bg-elevated overflow-hidden'">
     <p class="pb-3 text-xs text-muted" :class="flat ? undefined : 'px-4 pt-3'">
       {{ info.description }}
     </p>
 
     <div class="pb-4" :class="flat ? undefined : 'px-4'">
-      <span class="text-[11px] font-medium uppercase tracking-wide text-dimmed">Exemplo</span>
+      <span class="text-2xs font-medium uppercase tracking-wide text-dimmed">Exemplo</span>
 
       <div class="mt-3 flex flex-wrap items-stretch gap-2">
         <div
@@ -23,7 +23,7 @@ const info = computed(() => (props.rule ? classGradeRules[props.rule] : undefine
             : 'border-error/30 bg-error/10'"
         >
           <div
-            class="flex items-center justify-center gap-1 text-[11px] font-medium"
+            class="flex items-center justify-center gap-1 text-2xs font-medium"
             :class="note.used ? 'text-success' : 'text-error'"
           >
             <UIcon :name="note.used ? 'i-lucide-check' : 'i-lucide-x'" class="size-3 shrink-0" />

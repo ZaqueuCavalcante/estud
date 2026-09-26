@@ -84,7 +84,7 @@ const { data, status, refresh } = await useFetch<GetInstitutionNotificationsOut>
             v-for="notification in data.items"
             :key="notification.id"
             :to="`/notifications/${notification.id}`"
-            class="group relative rounded-xl border border-default bg-elevated/50 p-4 flex flex-col gap-3 hover:border-primary/50 hover:bg-elevated transition-colors duration-200"
+            class="group relative rounded-xl bg-elevated p-4 flex flex-col gap-3 hover:ring hover:ring-primary/50 hover:bg-accented/60 transition-colors duration-200"
           >
             <div class="flex items-start justify-between gap-2">
               <p class="flex-1 min-w-0 font-semibold text-sm text-highlighted truncate">

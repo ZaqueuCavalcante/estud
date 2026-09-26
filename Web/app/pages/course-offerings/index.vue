@@ -32,20 +32,74 @@ const createModalOpen = ref(false)
 const route = useRoute()
 const router = useRouter()
 
+interface OptionItem {
+  id: number
+  name: string
+}
+
+const { data: campiData } = await useFetch<{ items: OptionItem[] }>(`${config.public.backendUrl}/campi`, {
+  credentials: 'include',
+  server: false,
+})
+
+const { data: periodsData } = await useFetch<{ items: OptionItem[] }>(`${config.public.backendUrl}/periods/academic`, {
+  credentials: 'include',
+  server: false,
+})
+
+const campusOptions = computed(() =>
+  (campiData.value?.items ?? []).map(c => ({ label: c.name, value: c.id })),
+)
+
+const periodOptions = computed(() =>
+  (periodsData.value?.items ?? []).map(p => ({ label: p.name, value: p.id })),
+)
+
+const sessionOptions = Object.entries(sessionLabels).map(([value, label]) => ({ label, value }))
+
+const campusId = ref<number | undefined>(Number(route.query.campusId) || undefined)
+const periodId = ref<number | undefined>(Number(route.query.periodId) || undefined)
+const session = ref<string | undefined>((route.query.session as string) || undefined)
+
+const appliedCampusId = computed(() => campusId.value || undefined)
+const appliedPeriodId = computed(() => periodId.value || undefined)
+const appliedSession = computed(() => session.value || undefined)
+
 const pageSize = 10
 const page = ref(Number(route.query.page) || 1)
 
-// Sync page to URL
-watch(page, () => {
+watch([campusId, periodId, session, page], () => {
   const query: Record<string, string> = {}
+  if (appliedCampusId.value) query.campusId = String(appliedCampusId.value)
+  if (appliedPeriodId.value) query.periodId = String(appliedPeriodId.value)
+  if (appliedSession.value) query.session = appliedSession.value
   if (page.value > 1) query.page = String(page.value)
   router.replace({ query })
 }, { flush: 'post' })
 
+watch([appliedCampusId, appliedPeriodId, appliedSession], () => { page.value = 1 })
+
+const hasFilters = computed(() => !!appliedCampusId.value
+  || !!appliedPeriodId.value
+  || !!appliedSession.value,
+)
+
+function clearFilters() {
+  campusId.value = undefined
+  periodId.value = undefined
+  session.value = undefined
+}
+
 const { data, status, refresh } = await useFetch<GetCourseOfferingsOut>(`${config.public.backendUrl}/course-offerings`, {
   credentials: 'include',
   server: false,
-  query: { page, pageSize }
+  query: {
+    campusId: appliedCampusId,
+    periodId: appliedPeriodId,
+    session: appliedSession,
+    page,
+    pageSize,
+  },
 })
 
 const columns: TableColumn<CourseOfferingItem>[] = [
@@ -99,16 +153,58 @@ const columns: TableColumn<CourseOfferingItem>[] = [
     </template>
 
     <template #body>
-      <div v-if="data?.items?.length" class="flex items-center justify-between sm:justify-end gap-2 pt-4">
-        <UButton icon="i-lucide-plus" label="Oferta" @click="() => { createModalOpen = true }" />
-        <UBadge
-          v-if="(data?.total ?? 0) > 0"
-          color="neutral"
-          variant="subtle"
-          class="h-8 px-3 sm:hidden"
-        >
-          {{ data?.total }} {{ data?.total === 1 ? 'oferta' : 'ofertas' }}
-        </UBadge>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-4">
+        <div class="flex flex-col sm:flex-row gap-2">
+          <USelectMenu
+            v-model="campusId"
+            :items="campusOptions"
+            value-key="value"
+            :search-input="false"
+            clear
+            class="w-full sm:w-46"
+            :ui="{ base: 'h-8 text-base/5' }"
+            icon="i-lucide-map-pin"
+            placeholder="Campus"
+          />
+          <USelectMenu
+            v-model="periodId"
+            :items="periodOptions"
+            value-key="value"
+            :search-input="false"
+            clear
+            class="w-full sm:w-46"
+            :ui="{ base: 'h-8 text-base/5' }"
+            icon="i-lucide-calendar-range"
+            placeholder="Período"
+          />
+          <USelectMenu
+            v-model="session"
+            :items="sessionOptions"
+            value-key="value"
+            :search-input="false"
+            clear
+            class="w-full sm:w-46"
+            :ui="{ base: 'h-8 text-base/5' }"
+            icon="i-lucide-sun-moon"
+            placeholder="Turno"
+          />
+        </div>
+        <div class="flex items-center justify-between gap-2 self-stretch sm:self-auto">
+          <UButton
+            v-if="data?.items?.length || hasFilters"
+            icon="i-lucide-plus"
+            label="Oferta"
+            @click="() => { createModalOpen = true }"
+          />
+          <UBadge
+            v-if="(data?.total ?? 0) > 0"
+            color="neutral"
+            variant="subtle"
+            class="h-8 px-3 sm:hidden"
+          >
+            {{ data?.total }} {{ data?.total === 1 ? 'oferta' : 'ofertas' }}
+          </UBadge>
+        </div>
       </div>
       <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'idle' || status === 'pending'">
         <template #empty>
@@ -117,7 +213,10 @@ const columns: TableColumn<CourseOfferingItem>[] = [
             icon="i-lucide-library"
             message="Nenhuma oferta de curso cadastrada"
             button-label="Oferta"
-            @create="createModalOpen = true"
+            :filtered="hasFilters"
+            not-found-message="Nenhuma oferta de curso encontrada com os filtros aplicados"
+            @create="() => { createModalOpen = true }"
+            @clear-filters="clearFilters"
           />
         </template>
       </DataTable>

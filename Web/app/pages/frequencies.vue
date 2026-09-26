@@ -183,7 +183,7 @@ const legend: { status: StudentDayAttendanceStatus, label: string }[] = [
                 <div
                   v-for="(label, i) in attendanceWeekDays"
                   :key="i"
-                  class="min-w-0 flex-1 text-center text-[10px] leading-none text-muted"
+                  class="min-w-0 flex-1 text-center text-2xs leading-none text-muted"
                 >
                   {{ label }}
                 </div>
@@ -195,7 +195,7 @@ const legend: { status: StudentDayAttendanceStatus, label: string }[] = [
               :key="month.key"
               class="flex items-center gap-2"
             >
-              <div class="w-7 shrink-0 text-[10px] leading-none text-muted">
+              <div class="w-7 shrink-0 text-2xs leading-none text-muted">
                 {{ month.label }}
               </div>
 
@@ -237,7 +237,7 @@ const legend: { status: StudentDayAttendanceStatus, label: string }[] = [
                   <div
                     v-for="(label, i) in attendanceWeekDays"
                     :key="i"
-                    class="flex flex-1 items-center justify-end text-[10px] leading-none text-muted"
+                    class="flex flex-1 items-center justify-end text-2xs leading-none text-muted"
                   >
                     {{ label }}
                   </div>

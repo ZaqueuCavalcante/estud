@@ -33,11 +33,17 @@ public partial class TestsHttpClient
     }
 
     public async Task<OneOf<GetCourseOfferingsOut, ErrorOut>> GetCourseOfferings(
+        int? campusId = null,
+        int? periodId = null,
+        CourseSession? session = null,
         int? page = null,
         int? pageSize = null
     ) {
         var data = new GetCourseOfferingsIn
         {
+            CampusId = campusId,
+            PeriodId = periodId,
+            Session = session,
             Page = page ?? 1,
             PageSize = pageSize ?? 10,
         };

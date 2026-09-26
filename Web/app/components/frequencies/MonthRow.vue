@@ -84,7 +84,7 @@ const labels = computed(() => props.months.map(month => ({
       <span
         v-for="label in labels"
         :key="label.key"
-        class="absolute -translate-x-1/2 whitespace-nowrap text-[10px] leading-4 text-muted"
+        class="absolute -translate-x-1/2 whitespace-nowrap text-2xs leading-4 text-muted"
         :style="{ left: `${label.left}px` }"
       >
         {{ label.label }}

@@ -35,7 +35,7 @@ function formatCapacity(digits: string): string {
   return digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
 }
 
-const ALLOWED_KEYS = new Set(['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'])
+const ALLOWED_KEYS = new Set(['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Enter'])
 
 function onCapacityKeydown(e: KeyboardEvent) {
   if (ALLOWED_KEYS.has(e.key)) return

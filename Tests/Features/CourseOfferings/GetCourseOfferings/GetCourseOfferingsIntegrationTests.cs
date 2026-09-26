@@ -123,5 +123,100 @@ public partial class IntegrationTests
         offerings.Items.Should().HaveCount(2);
     }
 
+    [Test]
+    public async Task CourseOfferings_GetCourseOfferings_Should_filter_offerings_by_campus()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campusA = await client.CreateCampus("Agreste I").Success();
+        var campusB = await client.CreateCampus("Agreste II").Success();
+        var course = await client.CreateCourse().Success();
+        var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
+
+        await client.CreateCourseOffering(campusA.Id, course.Id, curriculum.Id, period.Id);
+        await client.CreateCourseOffering(campusB.Id, course.Id, curriculum.Id, period.Id);
+        await client.CreateCourseOffering(campusB.Id, course.Id, curriculum.Id, period.Id);
+
+        // Act
+        var result = await client.GetCourseOfferings(campusId: campusB.Id);
+
+        // Assert
+        var offerings = result.Success;
+        offerings.Total.Should().Be(2);
+        offerings.Items.Should().OnlyContain(o => o.Campus == "Agreste II");
+    }
+
+    [Test]
+    public async Task CourseOfferings_GetCourseOfferings_Should_filter_offerings_by_period()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var course = await client.CreateCourse().Success();
+        var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
+        var firstPeriod = await client.ShortcutGetFirstAcademicPeriod();
+        var lastPeriod = await client.ShortcutGetLastAcademicPeriod();
+
+        await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, firstPeriod.Id);
+        await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, lastPeriod.Id);
+
+        // Act
+        var result = await client.GetCourseOfferings(periodId: lastPeriod.Id);
+
+        // Assert
+        var offerings = result.Success;
+        offerings.Total.Should().Be(1);
+        offerings.Items[0].Period.Should().Be(lastPeriod.Name);
+    }
+
+    [Test]
+    public async Task CourseOfferings_GetCourseOfferings_Should_filter_offerings_by_session()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campus = await client.CreateCampus().Success();
+        var course = await client.CreateCourse().Success();
+        var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
+
+        await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id, CourseSession.Morning);
+        await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id, CourseSession.Evening);
+
+        // Act
+        var result = await client.GetCourseOfferings(session: CourseSession.Morning);
+
+        // Assert
+        var offerings = result.Success;
+        offerings.Total.Should().Be(1);
+        offerings.Items[0].Session.Should().Be(CourseSession.Morning);
+    }
+
+    [Test]
+    public async Task CourseOfferings_GetCourseOfferings_Should_combine_filters()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var campusA = await client.CreateCampus("Agreste I").Success();
+        var campusB = await client.CreateCampus("Agreste II").Success();
+        var course = await client.CreateCourse().Success();
+        var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
+        var firstPeriod = await client.ShortcutGetFirstAcademicPeriod();
+        var lastPeriod = await client.ShortcutGetLastAcademicPeriod();
+
+        await client.CreateCourseOffering(campusA.Id, course.Id, curriculum.Id, lastPeriod.Id, CourseSession.Morning);
+        await client.CreateCourseOffering(campusB.Id, course.Id, curriculum.Id, firstPeriod.Id, CourseSession.Morning);
+        await client.CreateCourseOffering(campusB.Id, course.Id, curriculum.Id, lastPeriod.Id, CourseSession.Evening);
+        var expected = await client.CreateCourseOffering(campusB.Id, course.Id, curriculum.Id, lastPeriod.Id, CourseSession.Morning).Success();
+
+        // Act
+        var result = await client.GetCourseOfferings(campusId: campusB.Id, periodId: lastPeriod.Id, session: CourseSession.Morning);
+
+        // Assert
+        var offerings = result.Success;
+        offerings.Total.Should().Be(1);
+        offerings.Items[0].Id.Should().Be(expected.Id);
+    }
+
     #endregion
 }

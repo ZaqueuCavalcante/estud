@@ -156,7 +156,7 @@ const selectedClassrooms = computed(() => selectedCell.value?.classrooms ?? [])
           <template v-for="shift in visibleShifts" :key="shift.key">
             <div class="flex flex-col justify-center pr-3 text-right">
               <span class="text-sm font-medium text-highlighted">{{ shift.label }}</span>
-              <span class="text-[11px] text-muted tabular-nums">{{ shift.window }}</span>
+              <span class="text-2xs text-muted tabular-nums">{{ shift.window }}</span>
             </div>
 
             <button

@@ -174,7 +174,7 @@ const activityGroups = computed(() => groupActivitiesByNote(activities.value))
             <div
               v-for="(s, i) in data.schedules"
               :key="i"
-              class="flex w-full flex-col gap-0.5 rounded-lg border border-default bg-elevated/40 px-3 py-2 sm:w-auto"
+              class="flex w-full flex-col gap-0.5 rounded-lg bg-elevated px-3 py-2 sm:w-auto"
             >
               <span
                 class="flex items-center gap-1 text-sm font-medium"

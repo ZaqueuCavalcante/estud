@@ -163,7 +163,7 @@ const columns: TableColumn<DisciplineItem>[] = [
                 icon="i-lucide-x"
                 color="neutral"
                 variant="link"
-                size="sm"
+                class="p-0"
                 aria-label="Remover filtro"
                 @click="() => { filter = ''; appliedFilter = '' }"
               />

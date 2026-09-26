@@ -56,6 +56,15 @@ const breadcrumb = [
               {{ data.courseType }}
             </span>
             <NuxtLink
+              :to="`/course-curriculums/${data.courseCurriculumId}`"
+              class="flex items-center gap-1.5 transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              <UIcon name="i-lucide-layout-list" class="size-4 shrink-0" />
+              {{ data.curriculum }}
+            </NuxtLink>
+          </div>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
+            <NuxtLink
               :to="`/campi/${data.campusId}`"
               class="flex items-center gap-1.5 transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
@@ -73,23 +82,16 @@ const breadcrumb = [
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <NuxtLink
-            :to="`/course-curriculums/${data.courseCurriculumId}`"
-            class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4 transition-all duration-200 hover:border-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            <span class="truncate text-base font-bold leading-none text-highlighted">{{ data.curriculum }}</span>
-            <span class="mt-2 text-xs text-muted">Grade curricular</span>
-          </NuxtLink>
-          <div class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4">
+        <div class="grid grid-cols-3 gap-3">
+          <div class="flex flex-col justify-center rounded-xl bg-elevated px-4 py-4">
             <span class="text-2xl font-bold tabular-nums leading-none text-highlighted">{{ data.disciplines }}</span>
             <span class="mt-2 text-xs text-muted">{{ data.disciplines === 1 ? 'Disciplina' : 'Disciplinas' }}</span>
           </div>
-          <div class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4">
+          <div class="flex flex-col justify-center rounded-xl bg-elevated px-4 py-4">
             <span class="text-2xl font-bold tabular-nums leading-none text-highlighted">{{ students.length }}</span>
             <span class="mt-2 text-xs text-muted">{{ students.length === 1 ? 'Aluno' : 'Alunos' }}</span>
           </div>
-          <div class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4">
+          <div class="flex flex-col justify-center rounded-xl bg-elevated px-4 py-4">
             <span class="text-base font-bold tabular-nums leading-none text-highlighted">
               {{ formatDate(data.periodStartAt) }}
             </span>
@@ -108,7 +110,7 @@ const breadcrumb = [
               v-for="student in students"
               :key="student.id"
               :to="`/students/${student.id}`"
-              class="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg border border-default bg-elevated/40 px-3 py-2 transition-colors hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              class="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg bg-elevated px-3 py-2 transition-colors hover:ring hover:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               <span class="flex items-center gap-2 text-sm text-highlighted">
                 <UAvatar :src="student.photo ?? undefined" :alt="student.name" size="2xs" />

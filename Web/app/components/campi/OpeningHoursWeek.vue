@@ -409,7 +409,7 @@ function handleLabel(band: typeof campusShiftBands[number], edge: 'start' | 'end
                 <span class="md:hidden">{{ day.short }}</span>
                 <span class="hidden md:inline">{{ day.label }}</span>
               </span>
-              <span v-if="!editing && isClosedDay(day.key)" class="text-[10px] text-dimmed">
+              <span v-if="!editing && isClosedDay(day.key)" class="text-2xs text-dimmed">
                 fechado
               </span>
             </span>
@@ -476,7 +476,7 @@ function handleLabel(band: typeof campusShiftBands[number], edge: 'start' | 'end
                 class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-1 text-dimmed opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100"
               >
                 <UIcon name="i-lucide-plus" class="size-4" />
-                <span class="text-[11px] tabular-nums">
+                <span class="text-2xs tabular-nums">
                   {{ formatOpeningMinutes(band.defaultStart) }}–{{ formatOpeningMinutes(band.defaultEnd) }}
                 </span>
               </span>
@@ -498,12 +498,12 @@ function handleLabel(band: typeof campusShiftBands[number], edge: 'start' | 'end
                 @keydown="(e: KeyboardEvent) => { onCardKeydown(e, day.key, band.key) }"
               >
                 <div class="flex h-full flex-col items-center justify-center px-1">
-                  <div class="text-[11px] font-semibold leading-tight tabular-nums text-highlighted">
+                  <div class="text-2xs font-semibold leading-tight tabular-nums text-highlighted">
                     {{ formatOpeningMinutes(slotAt(day.key, band.key)!.start) }} – {{ formatOpeningMinutes(slotAt(day.key, band.key)!.end) }}
                   </div>
                   <div
                     v-if="!isCompact(slotAt(day.key, band.key)!)"
-                    class="text-[11px] leading-tight text-muted"
+                    class="text-2xs leading-tight text-muted"
                   >
                     {{ formatOpeningDuration(slotAt(day.key, band.key)!.end - slotAt(day.key, band.key)!.start) }}
                   </div>

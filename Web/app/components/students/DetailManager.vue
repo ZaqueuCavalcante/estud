@@ -217,7 +217,7 @@ const classColumns: TableColumn<StudentClassItem>[] = [
 
           <div
             v-if="data.course"
-            class="flex flex-col gap-2 rounded-lg border border-default bg-elevated/40 px-4 py-3"
+            class="flex flex-col gap-2 rounded-lg bg-elevated px-4 py-3"
           >
             <span class="font-medium text-highlighted">{{ data.course.course }}</span>
             <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-muted">

@@ -90,19 +90,19 @@ const breadcrumb = [
           </div>
 
           <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <div class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4">
+            <div class="flex flex-col justify-center rounded-xl bg-elevated px-4 py-4">
               <span class="text-2xl font-bold tabular-nums leading-none text-highlighted">{{ disciplines.length }}</span>
               <span class="mt-2 text-xs text-muted">{{ disciplines.length === 1 ? 'Disciplina' : 'Disciplinas' }}</span>
             </div>
-            <div class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4">
+            <div class="flex flex-col justify-center rounded-xl bg-elevated px-4 py-4">
               <span class="text-2xl font-bold tabular-nums leading-none text-highlighted">{{ data.periods }}</span>
               <span class="mt-2 text-xs text-muted">{{ data.periods === 1 ? 'Período' : 'Períodos' }}</span>
             </div>
-            <div class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4">
+            <div class="flex flex-col justify-center rounded-xl bg-elevated px-4 py-4">
               <span class="text-2xl font-bold tabular-nums leading-none text-highlighted">{{ data.totalCredits }}</span>
               <span class="mt-2 text-xs text-muted">{{ data.totalCredits === 1 ? 'Crédito' : 'Créditos' }}</span>
             </div>
-            <div class="flex flex-col justify-center rounded-xl border border-default bg-elevated/40 px-4 py-4">
+            <div class="flex flex-col justify-center rounded-xl bg-elevated px-4 py-4">
               <span class="text-2xl font-bold tabular-nums leading-none text-highlighted">{{ data.totalWorkload }}h</span>
               <span class="mt-2 text-xs text-muted">Carga horária</span>
             </div>
@@ -130,7 +130,7 @@ const breadcrumb = [
               v-for="offering in offerings"
               :key="offering.id"
               :to="`/course-offerings/${offering.id}`"
-              class="flex flex-col gap-2 rounded-xl border border-default bg-elevated/40 px-4 py-3 transition-all duration-200 hover:border-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              class="flex flex-col gap-2 rounded-xl bg-elevated px-4 py-3 transition-all duration-200 hover:ring hover:ring-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               <p class="truncate text-base font-bold text-highlighted">{{ offering.campus }}</p>
 
