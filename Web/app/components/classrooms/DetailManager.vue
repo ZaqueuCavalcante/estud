@@ -29,7 +29,7 @@ const editing = computed(() =>
 // de uma tela pra outra — os nomes já aparecem no corpo da página.
 const breadcrumb = computed(() => [
   { label: 'Campi', to: '/campi', icon: 'i-lucide-map-pin' },
-  ...(data.value ? [{ label: 'Detalhes', to: `/campi/${data.value.campusId}` }] : []),
+  ...(data.value ? [{ label: 'Detalhes', to: `/campi/${data.value.campusId}?t=classrooms` }] : []),
   { label: 'Sala' },
 ])
 

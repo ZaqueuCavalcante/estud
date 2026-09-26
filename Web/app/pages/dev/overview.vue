@@ -3,6 +3,8 @@ type GroupId = 'client' | 'edge' | 'app' | 'data' | 'external' | 'pipeline' | 'p
 
 type EdgeStyle = 'solid' | 'dashed' | 'dotted'
 
+type EdgeRoute = 'curve' | 'elbow'
+
 interface DiagramNode {
   id: string
   label: string
@@ -20,6 +22,7 @@ interface DiagramEdge {
   to: string
   label?: string
   style?: EdgeStyle
+  route?: EdgeRoute
 }
 
 interface DiagramFrame {
@@ -36,6 +39,8 @@ interface Diagram {
   description: string
   width: number
   height: number
+  undirected?: boolean
+  hideAccent?: boolean
   frames?: DiagramFrame[]
   nodes: DiagramNode[]
   edges: DiagramEdge[]
@@ -56,29 +61,81 @@ const NODE_W = 160
 
 const diagrams: Diagram[] = [
   {
+    id: 'domain',
+    title: 'Domain & Features',
+    description: 'As entidades de domínio e as features que operam sobre elas. Tudo pendura na instituição, que é o tenant do sistema.',
+    width: 1360,
+    height: 580,
+    undirected: true,
+    hideAccent: true,
+    frames: [
+      { label: '', x: 390, y: 170, w: 370, h: 390 },
+    ],
+    nodes: [
+      { id: 'campus', label: 'Campus', sub: 'Estado · cidade', group: 'data', x: 40, y: 28, w: 200, note: 'Unidade física da instituição, com seus horários de funcionamento e suas salas.' },
+      { id: 'openingHours', label: 'Horários', sub: 'OpeningHour', group: 'data', x: 20, y: 130, w: 150, note: 'Janelas de funcionamento do campus por dia da semana. Dia sem linha é dia em que o campus não abre.' },
+      { id: 'classrooms', label: 'Salas', sub: 'Classroom', group: 'data', x: 190, y: 130, w: 150, note: 'Salas de aula do campus, com capacidade.' },
+      { id: 'calendar', label: 'Calendário', sub: 'CalendarDay', group: 'data', x: 40, y: 246 },
+      { id: 'notifications', label: 'Notificações', sub: 'Notification', group: 'data', x: 40, y: 383 },
+
+      { id: 'configs', label: 'Configurações', sub: 'InstitutionConfig', group: 'data', x: 400, y: 10 },
+      { id: 'institution', label: 'Institution', sub: 'Tenant', group: 'data', x: 590, y: 10, note: 'Raiz do multi-tenant: campi, cursos, turmas, usuários, perfis, alunos, professores e o resto do domínio pertencem a uma instituição. O InstitutionId do request vem do EstudDbContext.' },
+      { id: 'offerings', label: 'Ofertas', sub: 'CourseOffering', group: 'data', x: 560, y: 92 },
+
+      { id: 'classes', label: 'Turmas', sub: 'Class', group: 'data', x: 495, y: 200 },
+      { id: 'classSchedules', label: 'Horários', sub: 'Schedule', group: 'data', x: 495, y: 270 },
+      { id: 'lessons', label: 'Aulas', sub: 'ClassLesson', group: 'data', x: 410, y: 350, w: 150 },
+      { id: 'attendances', label: 'Frequências', sub: 'ClassLessonAttendance', group: 'data', x: 410, y: 420, w: 150 },
+      { id: 'activities', label: 'Atividades', sub: 'ClassActivity', group: 'data', x: 590, y: 350, w: 150 },
+      { id: 'works', label: 'Entregas', sub: 'ClassActivityWork', group: 'data', x: 590, y: 420, w: 150 },
+      { id: 'grades', label: 'Notas', sub: 'ClassGrade', group: 'data', x: 590, y: 490, w: 150 },
+
+      { id: 'courses', label: 'Cursos', sub: 'Course', group: 'data', x: 780, y: 18 },
+      { id: 'disciplines', label: 'Disciplinas', sub: 'Discipline', group: 'data', x: 990, y: 18 },
+      { id: 'curriculums', label: 'Grades', sub: 'CourseCurriculum', group: 'data', x: 885, y: 118 },
+      { id: 'teachers', label: 'Professores', sub: 'EstudTeacher', group: 'data', x: 790, y: 200 },
+      { id: 'students', label: 'Alunos', sub: 'EstudStudent', group: 'data', x: 790, y: 266 },
+
+      { id: 'webhooks', label: 'Webhooks', sub: 'WebhookSubscription', group: 'data', x: 1180, y: 76 },
+      { id: 'roles', label: 'Perfis', sub: 'EstudRole', group: 'data', x: 1180, y: 290 },
+      { id: 'sso', label: 'SSO', sub: 'SsoConfiguration', group: 'data', x: 1180, y: 360 },
+      { id: 'twoFactor', label: '2FA', sub: 'TOTP', group: 'data', x: 1180, y: 430 },
+    ],
+    edges: [
+      { from: 'campus', to: 'openingHours' },
+      { from: 'campus', to: 'classrooms' },
+      { from: 'campus', to: 'offerings' },
+      { from: 'courses', to: 'offerings' },
+      { from: 'offerings', to: 'curriculums' },
+      { from: 'courses', to: 'disciplines' },
+      { from: 'courses', to: 'curriculums' },
+      { from: 'disciplines', to: 'curriculums' },
+    ],
+  },
+  {
     id: 'infra',
     title: 'Topologia & infraestrutura',
     description: 'Como uma requisição sai do navegador e chega no banco, onde ela passa por rate limiting e cache, e com quais serviços externos o backend fala.',
-    width: 1240,
+    width: 1380,
     height: 520,
     frames: [
-      { label: 'Railway', x: 380, y: 24, w: 610, h: 470 },
-      { label: 'Serviços externos', x: 1020, y: 24, w: 205, h: 470 },
+      { label: 'Railway', x: 436, y: 24, w: 640, h: 470 },
+      { label: 'Serviços externos', x: 1156, y: 24, w: 205, h: 470 },
     ],
     nodes: [
       { id: 'browser', label: 'Navegador', sub: 'Usuário final', group: 'client', x: 16, y: 233, note: 'SPA/SSR do Nuxt. A sessão é um cookie httpOnly, então o navegador nunca guarda o JWT em storage.' },
-      { id: 'cloudflare', label: 'Cloudflare', sub: 'DNS · CDN · proxy', group: 'edge', x: 200, y: 233, note: 'Fica na frente do domínio estud.com.br. Termina TLS e repassa para a Railway.' },
-      { id: 'caddy', label: 'Caddy', sub: 'Reverse proxy', group: 'edge', x: 400, y: 233, note: 'Serviço próprio na Railway (Dockerfile.caddy). Roteia /api/* para o backend e todo o resto para o Nuxt. Fixa o X-Forwarded-Host para o redirect_uri do OAuth sair como estud.com.br.' },
-      { id: 'web', label: 'Nuxt (Web)', sub: 'Vue 3 · SSR · Nuxt UI', group: 'app', x: 600, y: 100, note: 'Node 26, roda o build .output/server. Usa internalBackendUrl na rede privada da Railway para o SSR.' },
-      { id: 'ratelimit', label: 'Rate limiting', sub: 'Fixed window · 429', group: 'edge', x: 600, y: 233, note: 'Middleware da própria API (UseRateLimiter), logo depois da autenticação. Limite global particionado por usuário logado ou por IP, mais a política SensitivePolicy (só por IP) nos endpoints de login, registro e reset de senha. Ao estourar responde 429 com o erro TooManyRequests e header Retry-After. O estado é em memória, por instância.' },
-      { id: 'back', label: 'API .NET 10', sub: 'ASP.NET Core :5000', group: 'app', x: 790, y: 233, note: 'Vertical slice architecture, Result Pattern (OneOf), Quartz para jobs e Data Protection com chaves no banco.' },
-      { id: 'cache', label: 'HybridCache', sub: 'Em memória · 30 min', group: 'app', x: 790, y: 100, note: 'Exposto como ctx.Cache no EstudDbContext. Expiração padrão de 30 min, chave de até 512 caracteres e payload de até 10 MB. Hoje as chaves em uso são a resolução do papel do usuário do request (GetStudentId, GetTeacherId). Só existe o nível local (L1) — não há IDistributedCache registrado, então cada instância tem seu próprio cache.' },
-      { id: 'postgres', label: 'PostgreSQL', sub: 'EF Core + Dapper', group: 'data', x: 790, y: 390, note: 'Schema estud, naming snake_case. Guarda também commands, domain events, auditoria e chaves do Data Protection.' },
-      { id: 'google', label: 'Google Identity', sub: 'OAuth 2.0 · One Tap', group: 'external', x: 1035, y: 50, w: 175, note: 'Social login (fluxo OAuth com cookie temporário) e One Tap (validação do id_token).' },
-      { id: 'oidc', label: 'Provedor OIDC', sub: 'SSO da instituição', group: 'external', x: 1035, y: 134, w: 175, note: 'Cada instituição configura seu próprio provedor (SsoConfiguration + domínios permitidos).' },
-      { id: 'brevo', label: 'Brevo', sub: 'Envio de e-mails', group: 'external', x: 1035, y: 218, w: 175, note: 'Em dev e nos testes é trocado pelo Fakes Server.' },
-      { id: 'otlp', label: 'Collector OTLP', sub: 'Traces e métricas', group: 'external', x: 1035, y: 302, w: 175, note: 'OTEL_EXPORTER_OTLP_ENDPOINT. Hoje só é ligado quando OpenTelemetry:Enabled = true.' },
-      { id: 'blob', label: 'Cloudflare R2', sub: 'Uploads', group: 'planned', x: 1035, y: 386, w: 175, planned: true, note: 'API compatível com S3, acessada pelo AWSSDK.S3 no R2StorageService. O upload vai direto do navegador para o bucket por URL pré-assinada. Em dev e nos testes é trocado pelo FakeStorageService.' },
+      { id: 'cloudflare', label: 'Cloudflare', sub: 'DNS · CDN · proxy', group: 'edge', x: 236, y: 233, note: 'Fica na frente do domínio estud.com.br. Termina TLS e repassa para a Railway.' },
+      { id: 'caddy', label: 'Caddy', sub: 'Reverse proxy', group: 'edge', x: 456, y: 233, note: 'Serviço próprio na Railway (Dockerfile.caddy). Roteia /api/* para o backend e todo o resto para o Nuxt. Fixa o X-Forwarded-Host para o redirect_uri do OAuth sair como estud.com.br.' },
+      { id: 'web', label: 'Nuxt (Web)', sub: 'Vue 3 · SSR · Nuxt UI', group: 'app', x: 676, y: 120, note: 'Node 26, roda o build .output/server. Usa internalBackendUrl na rede privada da Railway para o SSR.' },
+      { id: 'ratelimit', label: 'Rate limiting', sub: 'Fixed window · 429', group: 'edge', x: 676, y: 233, note: 'Middleware da própria API (UseRateLimiter), logo depois da autenticação. Limite global particionado por usuário logado ou por IP, mais a política SensitivePolicy (só por IP) nos endpoints de login, registro e reset de senha. Ao estourar responde 429 com o erro TooManyRequests e header Retry-After. O estado é em memória, por instância.' },
+      { id: 'back', label: 'API .NET 10', sub: 'ASP.NET Core :5000', group: 'app', x: 896, y: 233, note: 'Vertical slice architecture, Result Pattern (OneOf), Quartz para jobs e Data Protection com chaves no banco.' },
+      { id: 'cache', label: 'HybridCache', sub: 'Em memória · 30 min', group: 'app', x: 896, y: 120, note: 'Exposto como ctx.Cache no EstudDbContext. Expiração padrão de 30 min, chave de até 512 caracteres e payload de até 10 MB. Hoje as chaves em uso são a resolução do papel do usuário do request (GetStudentId, GetTeacherId). Só existe o nível local (L1) — não há IDistributedCache registrado, então cada instância tem seu próprio cache.' },
+      { id: 'postgres', label: 'PostgreSQL', sub: 'EF Core + Dapper', group: 'data', x: 896, y: 390, note: 'Schema estud, naming snake_case. Guarda também commands, domain events, auditoria e chaves do Data Protection.' },
+      { id: 'google', label: 'Google Identity', sub: 'OAuth 2.0 · One Tap', group: 'external', x: 1171, y: 50, w: 175, note: 'Social login (fluxo OAuth com cookie temporário) e One Tap (validação do id_token).' },
+      { id: 'oidc', label: 'Provedor OIDC', sub: 'SSO da instituição', group: 'external', x: 1171, y: 134, w: 175, note: 'Cada instituição configura seu próprio provedor (SsoConfiguration + domínios permitidos).' },
+      { id: 'brevo', label: 'Brevo', sub: 'Envio de e-mails', group: 'external', x: 1171, y: 218, w: 175, note: 'Em dev e nos testes é trocado pelo Fakes Server.' },
+      { id: 'otlp', label: 'Collector OTLP', sub: 'Traces e métricas', group: 'external', x: 1171, y: 302, w: 175, note: 'OTEL_EXPORTER_OTLP_ENDPOINT. Hoje só é ligado quando OpenTelemetry:Enabled = true.' },
+      { id: 'blob', label: 'Cloudflare R2', sub: 'Uploads', group: 'planned', x: 1171, y: 386, w: 175, planned: true, note: 'API compatível com S3, acessada pelo AWSSDK.S3 no R2StorageService. O upload vai direto do navegador para o bucket por URL pré-assinada. Em dev e nos testes é trocado pelo FakeStorageService.' },
     ],
     edges: [
       { from: 'browser', to: 'cloudflare', label: 'https' },
@@ -100,25 +157,25 @@ const diagrams: Diagram[] = [
     id: 'auth',
     title: 'Autenticação & autorização',
     description: 'Todos os caminhos de login convergem para o SignIn, que emite o JWT em cookie httpOnly. A autorização é sempre por policy + permissão. Os endpoints de entrada ficam sob a política de rate limit mais apertada.',
-    width: 1045,
-    height: 450,
+    width: 1190,
+    height: 670,
     frames: [
-      { label: 'Rate limit sensível (por IP)', x: 8, y: 14, w: 216, h: 414 },
+      { label: 'Rate limit sensível (por IP)', x: 8, y: 150, w: 216, h: 500 },
     ],
     nodes: [
-      { id: 'pwd', label: 'E-mail + senha', sub: 'EmailPasswordLogin', group: 'client', x: 16, y: 40, w: 200, note: 'Login padrão. Também alimenta o fluxo de recuperação de senha (SendResetPasswordToken / ResetPassword).' },
-      { id: 'magic', label: 'Magic Link', sub: 'MagicLinkLogin', group: 'client', x: 16, y: 120, w: 200, note: 'Link de uso único enviado por e-mail.' },
-      { id: 'onetap', label: 'Google One Tap', sub: 'GoogleOneTapLogin', group: 'client', x: 16, y: 200, w: 200, note: 'O front recebe o id_token do Google e o backend valida via Google.Apis.Auth.' },
-      { id: 'social', label: 'Google Social Login', sub: 'SocialLoginChallenge', group: 'client', x: 16, y: 280, w: 200, note: 'Fluxo OAuth completo, com callback em /identity/social-login/callback/google.' },
-      { id: 'sso', label: 'SSO (OIDC)', sub: 'SsoOidcScheme', group: 'client', x: 16, y: 360, w: 200, note: 'Por instituição. A instituição pode exigir SSO obrigatório (RequireSso) e restringir domínios de e-mail.' },
-      { id: '2fa', label: 'TwoFactorLogin', sub: 'TOTP · QR Code', group: 'app', x: 286, y: 40, w: 200, note: 'Otp.NET + QRCoder. O segundo fator roda num scheme próprio antes de emitir o JWT definitivo. Também está sob a SensitivePolicy de rate limit.' },
-      { id: 'setup2fa', label: 'TwoFactorSetupScheme', sub: '1º acesso com 2FA exigido', group: 'app', x: 286, y: 120, w: 200, note: 'Quando a instituição exige 2FA e o usuário ainda não configurou, ele cai num scheme temporário só para o setup.' },
-      { id: 'socialTemp', label: 'SocialTempScheme', sub: 'Cookie temporário', group: 'app', x: 286, y: 280, w: 200, note: 'Guarda a identidade do provedor entre o callback e a emissão do JWT.' },
-      { id: 'ssoTemp', label: 'SsoTempScheme', sub: 'Cookie temporário', group: 'app', x: 286, y: 360, w: 200, note: 'Mesmo papel do SocialTemp, para o fluxo de SSO.' },
-      { id: 'signin', label: 'SignIn', sub: 'Emite o JWT', group: 'app', x: 556, y: 200, w: 200, note: 'Ponto único de emissão de sessão: resolve usuário, instituição e perfis.' },
-      { id: 'jwt', label: 'Cookie JWT httpOnly', sub: 'JwtBearerScheme', group: 'app', x: 556, y: 300, w: 200, note: 'Scheme padrão de challenge. O token nunca é exposto ao JavaScript.' },
-      { id: 'policies', label: 'Policies', sub: 'Authorize(Policies.X)', group: 'data', x: 826, y: 200, w: 200, note: 'Uma policy por feature, sempre com o mesmo nome da feature.' },
-      { id: 'perms', label: 'Perfis & permissões', sub: 'EstudRole · Permissions', group: 'data', x: 826, y: 300, w: 200, note: 'Permissões agrupadas (PermissionGroup) e perfis por instituição, com papéis padrão (EstudDefaultRoles).' },
+      { id: 'pwd', label: 'E-mail + senha', sub: 'EmailPasswordLogin', group: 'client', x: 16, y: 180, w: 200, note: 'Login padrão. Também alimenta o fluxo de recuperação de senha (SendResetPasswordToken / ResetPassword).' },
+      { id: 'magic', label: 'Magic Link', sub: 'MagicLinkLogin', group: 'client', x: 16, y: 280, w: 200, note: 'Link de uso único enviado por e-mail.' },
+      { id: 'onetap', label: 'Google One Tap', sub: 'GoogleOneTapLogin', group: 'client', x: 16, y: 380, w: 200, note: 'O front recebe o id_token do Google e o backend valida via Google.Apis.Auth.' },
+      { id: 'social', label: 'Google Social Login', sub: 'SocialLoginChallenge', group: 'client', x: 16, y: 480, w: 200, note: 'Fluxo OAuth completo, com callback em /identity/social-login/callback/google.' },
+      { id: 'sso', label: 'SSO (OIDC)', sub: 'SsoOidcScheme', group: 'client', x: 16, y: 580, w: 200, note: 'Por instituição. A instituição pode exigir SSO obrigatório (RequireSso) e restringir domínios de e-mail.' },
+      { id: '2fa', label: 'TwoFactorLogin', sub: 'TOTP · QR Code', group: 'app', x: 316, y: 40, w: 200, note: 'Otp.NET + QRCoder. O segundo fator roda num scheme próprio antes de emitir o JWT definitivo. Também está sob a SensitivePolicy de rate limit.' },
+      { id: 'setup2fa', label: 'TwoFactorSetupScheme', sub: '1º acesso com 2FA exigido', group: 'app', x: 316, y: 140, w: 200, note: 'Quando a instituição exige 2FA e o usuário ainda não configurou, ele cai num scheme temporário só para o setup.' },
+      { id: 'socialTemp', label: 'SocialTempScheme', sub: 'Cookie temporário', group: 'app', x: 316, y: 480, w: 200, note: 'Guarda a identidade do provedor entre o callback e a emissão do JWT.' },
+      { id: 'ssoTemp', label: 'SsoTempScheme', sub: 'Cookie temporário', group: 'app', x: 316, y: 580, w: 200, note: 'Mesmo papel do SocialTemp, para o fluxo de SSO.' },
+      { id: 'signin', label: 'SignIn', sub: 'Emite o JWT', group: 'app', x: 666, y: 380, w: 200, note: 'Ponto único de emissão de sessão: resolve usuário, instituição e perfis.' },
+      { id: 'jwt', label: 'Cookie JWT httpOnly', sub: 'JwtBearerScheme', group: 'app', x: 666, y: 520, w: 200, note: 'Scheme padrão de challenge. O token nunca é exposto ao JavaScript.' },
+      { id: 'policies', label: 'Policies', sub: 'Authorize(Policies.X)', group: 'data', x: 966, y: 520, w: 200, note: 'Uma policy por feature, sempre com o mesmo nome da feature.' },
+      { id: 'perms', label: 'Perfis & permissões', sub: 'EstudRole · Permissions', group: 'data', x: 966, y: 380, w: 200, note: 'Permissões agrupadas (PermissionGroup) e perfis por instituição, com papéis padrão (EstudDefaultRoles).' },
     ],
     edges: [
       { from: 'pwd', to: '2fa', label: 'se 2FA ativo' },
@@ -141,19 +198,19 @@ const diagrams: Diagram[] = [
     id: 'async',
     title: 'Processamento assíncrono',
     description: 'Tudo que não precisa acontecer dentro do request vira linha no banco e é processado por um job do Quartz.',
-    width: 1100,
+    width: 1270,
     height: 460,
     nodes: [
       { id: 'service', label: 'Service (feature)', sub: 'ctx.AddCommand(...)', group: 'app', x: 16, y: 180, w: 190, note: 'O service persiste o comando na mesma transação da operação de negócio.' },
-      { id: 'commands', label: 'Tabela commands', sub: 'Command', group: 'data', x: 226, y: 90, w: 190, note: 'Suporta parent/child, retry com backoff exponencial e execução adiada (NotBefore).' },
-      { id: 'events', label: 'Domain events', sub: 'Tabela de eventos', group: 'data', x: 226, y: 270, w: 190, note: 'Eventos de domínio publicados pelo SaveChanges e consumidos fora do request.' },
-      { id: 'cmdProc', label: 'CommandsProcessor', sub: 'Quartz · 60s', group: 'app', x: 436, y: 90, w: 190, note: 'Job recorrente que pega os comandos pendentes e despacha para os handlers.' },
-      { id: 'evtProc', label: 'DomainEventsProcessor', sub: 'Quartz · 60s', group: 'app', x: 436, y: 270, w: 190, note: 'Mesmo padrão do CommandsProcessor, para eventos de domínio.' },
-      { id: 'handlers', label: 'Handlers', sub: 'Retry + backoff', group: 'app', x: 646, y: 180, w: 190, note: 'CommandBackoffStrategies define o intervalo entre tentativas.' },
-      { id: 'emails', label: 'E-mails', sub: 'Brevo · templates HTML', group: 'external', x: 890, y: 60, w: 190 },
-      { id: 'notif', label: 'Notificações', sub: 'Notification / UserNotification', group: 'data', x: 890, y: 150, w: 190 },
-      { id: 'webhooks', label: 'Webhooks de saída', sub: 'Call + Attempt', group: 'external', x: 890, y: 240, w: 190, note: 'WebhookSubscription → WebhookCall → WebhookCallAttempt, com histórico de tentativas visível em /integrations. Detalhado no diagrama seguinte.' },
-      { id: 'audit', label: 'AuditTrail / AuditChange', sub: 'Interceptor do SaveChanges', group: 'data', x: 226, y: 375, w: 190, note: 'Auditoria automática de tudo que passa pelo SaveChanges (Audit.EntityFramework).' },
+      { id: 'commands', label: 'Tabela commands', sub: 'Command', group: 'data', x: 276, y: 90, w: 190, note: 'Suporta parent/child, retry com backoff exponencial e execução adiada (NotBefore).' },
+      { id: 'events', label: 'Domain events', sub: 'Tabela de eventos', group: 'data', x: 276, y: 270, w: 190, note: 'Eventos de domínio publicados pelo SaveChanges e consumidos fora do request.' },
+      { id: 'cmdProc', label: 'CommandsProcessor', sub: 'Quartz · 60s', group: 'app', x: 536, y: 90, w: 190, note: 'Job recorrente que pega os comandos pendentes e despacha para os handlers.' },
+      { id: 'evtProc', label: 'DomainEventsProcessor', sub: 'Quartz · 60s', group: 'app', x: 536, y: 270, w: 190, note: 'Mesmo padrão do CommandsProcessor, para eventos de domínio.' },
+      { id: 'handlers', label: 'Handlers', sub: 'Retry + backoff', group: 'app', x: 796, y: 180, w: 190, note: 'CommandBackoffStrategies define o intervalo entre tentativas.' },
+      { id: 'emails', label: 'E-mails', sub: 'Brevo · templates HTML', group: 'external', x: 1056, y: 90, w: 190 },
+      { id: 'notif', label: 'Notificações', sub: 'Notification / UserNotification', group: 'data', x: 1056, y: 180, w: 190 },
+      { id: 'webhooks', label: 'Webhooks de saída', sub: 'Call + Attempt', group: 'external', x: 1056, y: 270, w: 190, note: 'WebhookSubscription → WebhookCall → WebhookCallAttempt, com histórico de tentativas visível em /integrations. Detalhado no diagrama seguinte.' },
+      { id: 'audit', label: 'AuditTrail / AuditChange', sub: 'Interceptor do SaveChanges', group: 'data', x: 16, y: 375, w: 190, note: 'Auditoria automática de tudo que passa pelo SaveChanges (Audit.EntityFramework).' },
     ],
     edges: [
       { from: 'service', to: 'commands' },
@@ -172,31 +229,31 @@ const diagrams: Diagram[] = [
     id: 'webhooks',
     title: 'Webhooks & notificações internas',
     description: 'Duas trilhas: webhooks de saída (o sistema avisa terceiros) e as notificações que o próprio usuário vê dentro do produto.',
-    width: 1080,
-    height: 554,
+    width: 1270,
+    height: 574,
     frames: [
-      { label: 'Webhooks de saída', x: 8, y: 24, w: 1064, h: 250 },
-      { label: 'Notificações internas', x: 8, y: 290, w: 1064, h: 230 },
+      { label: 'Webhooks de saída', x: 8, y: 24, w: 1254, h: 250 },
+      { label: 'Notificações internas', x: 8, y: 290, w: 1254, h: 260 },
     ],
     nodes: [
       { id: 'event', label: 'Evento acadêmico', sub: 'WebhookEventType', group: 'app', x: 20, y: 90, w: 190, note: 'Cada evento de domínio publicável tem um valor no enum WebhookEventType.' },
-      { id: 'subs', label: 'WebhookSubscription', sub: 'URL · eventos · headers', group: 'data', x: 226, y: 90, w: 190, note: 'Por instituição: URL de destino, lista de eventos assinados, headers customizados e flag de ativo/inativo.' },
-      { id: 'call', label: 'WebhookCall', sub: 'Payload JSON', group: 'data', x: 436, y: 90, w: 190, note: 'Um registro por evento × inscrição, com o payload congelado no momento do disparo.' },
-      { id: 'cmd', label: 'CallWebhookCommand', sub: 'Quartz · retry', group: 'app', x: 646, y: 90, w: 190, note: 'Handler que faz o POST via IHttpClientFactory. Falha de rede vira status 999 e o comando volta para a fila com backoff.' },
-      { id: 'endpoint', label: 'Endpoint do cliente', sub: 'POST application/json', group: 'external', x: 856, y: 50, w: 190, note: 'Sistema de terceiro que recebe o payload, com os headers customizados da inscrição.' },
-      { id: 'attempt', label: 'WebhookCallAttempt', sub: 'Status + resposta', group: 'data', x: 856, y: 130, w: 190, note: 'Uma linha por tentativa: status HTTP e corpo da resposta, o que dá o histórico visível na UI.' },
-      { id: 'integrations', label: '/integrations', sub: 'Inscrições e chamadas', group: 'client', x: 646, y: 195, w: 190, note: 'Telas de integração: cadastro das inscrições e histórico de chamadas em /integrations/calls.' },
+      { id: 'subs', label: 'WebhookSubscription', sub: 'URL · eventos · headers', group: 'data', x: 280, y: 90, w: 190, note: 'Por instituição: URL de destino, lista de eventos assinados, headers customizados e flag de ativo/inativo.' },
+      { id: 'call', label: 'WebhookCall', sub: 'Payload JSON', group: 'data', x: 540, y: 90, w: 190, note: 'Um registro por evento × inscrição, com o payload congelado no momento do disparo.' },
+      { id: 'cmd', label: 'CallWebhookCommand', sub: 'Quartz · retry', group: 'app', x: 800, y: 90, w: 190, note: 'Handler que faz o POST via IHttpClientFactory. Falha de rede vira status 999 e o comando volta para a fila com backoff.' },
+      { id: 'endpoint', label: 'Endpoint do cliente', sub: 'POST application/json', group: 'external', x: 1060, y: 50, w: 190, note: 'Sistema de terceiro que recebe o payload, com os headers customizados da inscrição.' },
+      { id: 'attempt', label: 'WebhookCallAttempt', sub: 'Status + resposta', group: 'data', x: 1060, y: 130, w: 190, note: 'Uma linha por tentativa: status HTTP e corpo da resposta, o que dá o histórico visível na UI.' },
+      { id: 'integrations', label: '/integrations', sub: 'Inscrições e chamadas', group: 'client', x: 540, y: 200, w: 190, note: 'Telas de integração: cadastro das inscrições e histórico de chamadas em /integrations/calls.' },
 
-      { id: 'notif', label: 'Notification', sub: 'CreateNotification', group: 'data', x: 20, y: 354, w: 190, note: 'Notificação institucional: tipo, título, descrição e metadata em JSON.' },
-      { id: 'userNotif', label: 'UserNotification', sub: 'Entrega por usuário', group: 'data', x: 226, y: 354, w: 190, note: 'Fan-out da notificação para cada destinatário, com controle de visualização (MarkNotificationsAsViewed).' },
-      { id: 'api', label: 'API de notificações', sub: 'GetNotifications', group: 'app', x: 436, y: 354, w: 190, note: 'GetNotifications, GetInstitutionNotifications e GetUnreadNotificationsCount.' },
-      { id: 'bell', label: 'Sino no header', sub: 'NotificationsSlideover', group: 'client', x: 646, y: 309, w: 190 },
-      { id: 'inbox', label: '/notifications', sub: 'Caixa de entrada', group: 'client', x: 646, y: 394, w: 190 },
-      { id: 'unread', label: 'Contador de não lidas', sub: 'GetUnreadNotificationsCount', group: 'client', x: 856, y: 354, w: 200, note: 'Hoje o front descobre notificação nova por polling: useNotifications chama /notifications/unread-count a cada 60s (e uma vez no boot e no login). O badge também vai para o título da aba.' },
-      { id: 'realtime', label: 'SSE', sub: 'Push em tempo real', group: 'planned', x: 436, y: 434, w: 190, planned: true, note: 'Não existe hoje: nenhuma conexão persistente entre front e API. O caminho natural é um endpoint SSE por usuário, empurrando a notificação assim que o UserNotification é criado e aposentando o polling de 60s. O fluxo é só servidor → cliente, então Server-Sent Events cobre o caso inteiro.' },
+      { id: 'notif', label: 'Notification', sub: 'CreateNotification', group: 'data', x: 20, y: 400, w: 190, note: 'Notificação institucional: tipo, título, descrição e metadata em JSON.' },
+      { id: 'userNotif', label: 'UserNotification', sub: 'Entrega por usuário', group: 'data', x: 280, y: 400, w: 190, note: 'Fan-out da notificação para cada destinatário, com controle de visualização (MarkNotificationsAsViewed).' },
+      { id: 'api', label: 'API de notificações', sub: 'GetNotifications', group: 'app', x: 540, y: 400, w: 190, note: 'GetNotifications, GetInstitutionNotifications e GetUnreadNotificationsCount.' },
+      { id: 'bell', label: 'Sino no header', sub: 'NotificationsSlideover', group: 'client', x: 1060, y: 400, w: 190, note: 'Mostra o badge de não lidas e abre a lista de notificações no slideover.' },
+      { id: 'inbox', label: '/notifications', sub: 'Caixa de entrada', group: 'client', x: 800, y: 320, w: 190 },
+      { id: 'unread', label: 'Contador de não lidas', sub: 'GetUnreadNotificationsCount', group: 'client', x: 800, y: 400, w: 190, note: 'Hoje o front descobre notificação nova por polling: useNotifications chama /notifications/unread-count a cada 60s (e uma vez no boot e no login). O badge também vai para o título da aba.' },
+      { id: 'realtime', label: 'SSE', sub: 'Push em tempo real', group: 'planned', x: 540, y: 480, w: 190, planned: true, note: 'Não existe hoje: nenhuma conexão persistente entre front e API. O caminho natural é um endpoint SSE por usuário, empurrando a notificação assim que o UserNotification é criado e aposentando o polling de 60s. O fluxo é só servidor → cliente, então Server-Sent Events cobre o caso inteiro.' },
     ],
     edges: [
-      { from: 'event', to: 'subs', label: 'casa com os eventos assinados' },
+      { from: 'event', to: 'subs', label: 'assinado' },
       { from: 'subs', to: 'call' },
       { from: 'call', to: 'cmd', label: 'comando' },
       { from: 'cmd', to: 'endpoint', label: 'POST' },
@@ -205,11 +262,10 @@ const diagrams: Diagram[] = [
       { from: 'subs', to: 'integrations', label: 'cadastro', style: 'dashed' },
       { from: 'notif', to: 'userNotif', label: 'fan-out' },
       { from: 'userNotif', to: 'api' },
-      { from: 'api', to: 'bell' },
       { from: 'api', to: 'inbox' },
       { from: 'api', to: 'unread', label: 'polling 60s' },
+      { from: 'unread', to: 'bell', label: 'badge' },
       { from: 'userNotif', to: 'realtime', label: 'futuro', style: 'dotted' },
-      { from: 'realtime', to: 'bell', style: 'dashed' },
       { from: 'realtime', to: 'unread', label: 'sem polling', style: 'dashed' },
     ],
   },
@@ -217,18 +273,18 @@ const diagrams: Diagram[] = [
     id: 'cicd',
     title: 'Testes, CI/CD e deploy',
     description: 'PR roda a suíte inteira contra um Postgres real; o merge em master publica cobertura e dispara o deploy.',
-    width: 1060,
+    width: 1215,
     height: 340,
     nodes: [
       { id: 'dev', label: 'Push / Pull Request', sub: 'GitHub', group: 'client', x: 16, y: 130, w: 180 },
-      { id: 'pr', label: 'PR Tests', sub: 'pr.tests.yml', group: 'pipeline', x: 226, y: 30, w: 180, note: 'Roda em todo PR para master, com permissão de comentar no próprio PR.' },
-      { id: 'ci', label: 'CI/CD', sub: 'ci.cd.yml (master)', group: 'pipeline', x: 226, y: 230, w: 180, note: 'Dispara no push em master.' },
-      { id: 'tests', label: 'Build + testes', sub: 'NUnit · Postgres service', group: 'pipeline', x: 436, y: 130, w: 180, note: 'Unit e integration separados. Os testes de integração sobem a API via WebApplicationFactory contra um Postgres de serviço do Actions.' },
-      { id: 'cov', label: 'Cobertura', sub: 'ReportGenerator', group: 'pipeline', x: 646, y: 30, w: 180, note: 'Coletada com XPlat Code Coverage e transformada em HTML + badges.' },
-      { id: 'comment', label: 'Comentário no PR', sub: 'Resumo de cobertura', group: 'pipeline', x: 856, y: 30, w: 180 },
-      { id: 'pages', label: 'GitHub Pages', sub: 'branch gh-pages', group: 'pipeline', x: 856, y: 120, w: 180, note: 'Relatório publicado em zaqueucavalcante.github.io/estud.' },
-      { id: 'railway', label: 'Deploy Railway', sub: 'Build das imagens Docker', group: 'edge', x: 646, y: 230, w: 180, note: 'Automático a partir do master.' },
-      { id: 'services', label: 'back · web · caddy', sub: 'Serviços em produção', group: 'app', x: 856, y: 230, w: 180 },
+      { id: 'pr', label: 'PR Tests', sub: 'pr.tests.yml', group: 'pipeline', x: 266, y: 30, w: 180, note: 'Roda em todo PR para master, com permissão de comentar no próprio PR.' },
+      { id: 'ci', label: 'CI/CD', sub: 'ci.cd.yml (master)', group: 'pipeline', x: 266, y: 230, w: 180, note: 'Dispara no push em master.' },
+      { id: 'tests', label: 'Build + testes', sub: 'NUnit · Postgres service', group: 'pipeline', x: 516, y: 130, w: 180, note: 'Unit e integration separados. Os testes de integração sobem a API via WebApplicationFactory contra um Postgres de serviço do Actions.' },
+      { id: 'cov', label: 'Cobertura', sub: 'ReportGenerator', group: 'pipeline', x: 766, y: 30, w: 180, note: 'Coletada com XPlat Code Coverage e transformada em HTML + badges.' },
+      { id: 'comment', label: 'Comentário no PR', sub: 'Resumo de cobertura', group: 'pipeline', x: 1016, y: 30, w: 180 },
+      { id: 'pages', label: 'GitHub Pages', sub: 'branch gh-pages', group: 'pipeline', x: 1016, y: 120, w: 180, note: 'Relatório publicado em zaqueucavalcante.github.io/estud.' },
+      { id: 'railway', label: 'Deploy Railway', sub: 'Build das imagens Docker', group: 'edge', x: 766, y: 230, w: 180, note: 'Automático a partir do master.' },
+      { id: 'services', label: 'back · web · caddy', sub: 'Serviços em produção', group: 'app', x: 1016, y: 230, w: 180 },
     ],
     edges: [
       { from: 'dev', to: 'pr' },
@@ -246,18 +302,18 @@ const diagrams: Diagram[] = [
     id: 'docs',
     title: 'Documentação & observabilidade',
     description: 'Duas trilhas de documentação (produto e API) e a instrumentação que sai da API.',
-    width: 700,
+    width: 750,
     height: 350,
     nodes: [
       { id: 'controllers', label: 'Controllers + DTOs', sub: 'XML docs · IApiDto', group: 'app', x: 16, y: 40, w: 190, note: 'Cada action tem summary/remarks e cada DTO expõe exemplos nomeados.' },
-      { id: 'swagger', label: 'Swashbuckle', sub: 'swagger.json', group: 'app', x: 250, y: 40, w: 190, note: 'Agrupa endpoints por tag, injeta exemplos de resposta e de erro.' },
-      { id: 'scalar', label: 'Scalar', sub: '/api/docs', group: 'external', x: 484, y: 40, w: 190, note: 'Referência interativa da API.' },
+      { id: 'swagger', label: 'Swashbuckle', sub: 'swagger.json', group: 'app', x: 276, y: 40, w: 190, note: 'Agrupa endpoints por tag, injeta exemplos de resposta e de erro.' },
+      { id: 'scalar', label: 'Scalar', sub: '/api/docs', group: 'external', x: 536, y: 40, w: 190, note: 'Referência interativa da API.' },
       { id: 'markdown', label: 'Markdown', sub: 'Web/content/docs', group: 'data', x: 16, y: 150, w: 190, note: 'Introdução, funcionalidades e segurança.' },
-      { id: 'content', label: '@nuxt/content', sub: 'Coleção docs', group: 'app', x: 250, y: 150, w: 190 },
-      { id: 'docsPage', label: '/docs', sub: 'Documentação do produto', group: 'client', x: 484, y: 150, w: 190 },
+      { id: 'content', label: '@nuxt/content', sub: 'Coleção docs', group: 'app', x: 276, y: 150, w: 190 },
+      { id: 'docsPage', label: '/docs', sub: 'Documentação do produto', group: 'client', x: 536, y: 150, w: 190 },
       { id: 'serilog', label: 'Serilog', sub: 'Logs estruturados', group: 'app', x: 16, y: 260, w: 190, note: 'Hoje só o sink de console em produção. Os sinks de Seq/arquivo/OTLP estão referenciados mas não configurados.' },
-      { id: 'otel', label: 'OpenTelemetry', sub: 'Traces + métricas', group: 'app', x: 250, y: 260, w: 190, note: 'Instrumentação de ASP.NET Core, HttpClient, Npgsql e runtime. Logs ainda não passam pelo pipeline OTel.' },
-      { id: 'otlpOut', label: 'Exporter OTLP', sub: 'Endpoint configurável', group: 'external', x: 484, y: 260, w: 190 },
+      { id: 'otel', label: 'OpenTelemetry', sub: 'Traces + métricas', group: 'app', x: 276, y: 260, w: 190, note: 'Instrumentação de ASP.NET Core, HttpClient, Npgsql e runtime. Logs ainda não passam pelo pipeline OTel.' },
+      { id: 'otlpOut', label: 'Exporter OTLP', sub: 'Endpoint configurável', group: 'external', x: 536, y: 260, w: 190 },
     ],
     edges: [
       { from: 'controllers', to: 'swagger' },
@@ -275,18 +331,18 @@ const gapsDiagram: Diagram = {
   title: 'O que ainda falta',
   description: 'Área separada de propósito: nada tracejado aqui existe hoje no código. A coluna da esquerda é o que já roda, e as setas mostram onde cada peça nova se encaixa. A busca é para ficar no próprio Postgres (tsvector + índice GIN), sem Elasticsearch nem serviço externo.',
   width: 1060,
-  height: 710,
+  height: 730,
   frames: [
-    { label: 'Já existe', x: 16, y: 24, w: 220, h: 660 },
-    { label: 'Falta construir', x: 300, y: 24, w: 745, h: 660 },
+    { label: 'Já existe', x: 16, y: 24, w: 220, h: 680 },
+    { label: 'Falta construir', x: 300, y: 24, w: 745, h: 680 },
   ],
   nodes: [
     { id: 'back', label: 'API .NET 10', sub: 'Hoje', group: 'app', x: 36, y: 60, w: 180 },
     { id: 'web', label: 'Nuxt (Web)', sub: 'Hoje', group: 'app', x: 36, y: 175, w: 180 },
     { id: 'otel', label: 'OpenTelemetry', sub: 'Traces + métricas', group: 'app', x: 36, y: 290, w: 180, note: 'Já instrumentado, mas sem destino fixo e sem logs.' },
     { id: 'pg', label: 'PostgreSQL', sub: 'Busca com ILIKE', group: 'data', x: 36, y: 405, w: 180, note: 'A única busca textual hoje é um EF.Functions.ILike com %termo% em GetInstitutions — sem índice, faz varredura na tabela.' },
-    { id: 'localState', label: 'Cache + rate limit', sub: 'Por instância', group: 'app', x: 36, y: 500, w: 180, note: 'HybridCache sem L2 e rate limiter em memória: cada réplica tem sua própria contagem e seu próprio cache.' },
-    { id: 'polling', label: 'Notificações', sub: 'Polling de 60s', group: 'app', x: 36, y: 595, w: 180, note: 'Todo o tempo real do produto hoje é polling: o sino consulta /notifications/unread-count a cada 60s. Nada é empurrado pelo servidor.' },
+    { id: 'localState', label: 'Cache + rate limit', sub: 'Por instância', group: 'app', x: 36, y: 510, w: 180, note: 'HybridCache sem L2 e rate limiter em memória: cada réplica tem sua própria contagem e seu próprio cache.' },
+    { id: 'polling', label: 'Notificações', sub: 'Polling de 60s', group: 'app', x: 36, y: 615, w: 180, note: 'Todo o tempo real do produto hoje é polling: o sino consulta /notifications/unread-count a cada 60s. Nada é empurrado pelo servidor.' },
 
     { id: 'admin', label: 'Área de admin', sub: 'Hoje: só listar instituições', group: 'planned', x: 330, y: 60, w: 200, planned: true, note: 'A página /admin/institutions é praticamente tudo que existe. Falta gestão de instituições (suspender, limites, plano), visão de uso por tenant, impersonação com trilha de auditoria, painel de comandos/webhooks com falha e reprocessamento manual.' },
     { id: 'adminOps', label: 'Operação & suporte', sub: 'Impersonar · reprocessar', group: 'planned', x: 580, y: 60, w: 200, planned: true, note: 'Ferramentas de suporte: entrar como usuário (auditado), reprocessar comando/webhook travado, inspecionar jobs do Quartz.' },
@@ -305,22 +361,22 @@ const gapsDiagram: Diagram = {
     { id: 'ftsIndex', label: 'Índice GIN', sub: 'Coluna tsvector gerada', group: 'planned', x: 580, y: 405, w: 200, planned: true, note: 'Coluna tsvector gerada (stored) por entidade pesquisável + índice GIN, mantida pelo próprio banco. Para busca por trecho/typo, pg_trgm com índice GIN cobre o caso do ILIKE atual.' },
     { id: 'ftsUi', label: 'Busca global na UI', sub: 'Alunos · turmas · docs', group: 'planned', x: 830, y: 405, w: 200, planned: true, note: 'Um único endpoint de busca, com ranking (ts_rank) e escopo por instituição, alimentando uma barra de busca global no front.' },
 
-    { id: 'redis', label: 'Estado compartilhado', sub: 'Redis', group: 'planned', x: 330, y: 500, w: 200, planned: true, note: 'Um Redis na Railway resolveria os dois itens ao lado; sem ele, cache e rate limit não sobrevivem a mais de uma réplica.' },
-    { id: 'cacheL2', label: 'Cache distribuído', sub: 'L2 do HybridCache', group: 'planned', x: 580, y: 500, w: 200, planned: true, note: 'O HybridCache já suporta segundo nível: basta registrar um IDistributedCache. Hoje não há nenhum, então o cache é sempre local e não é invalidado entre instâncias.' },
-    { id: 'rlShared', label: 'Rate limit distribuído', sub: 'Contagem compartilhada', group: 'planned', x: 830, y: 500, w: 200, planned: true, note: 'O limiter de janela fixa conta em memória. Com N réplicas o limite efetivo vira N × o configurado.' },
+    { id: 'redis', label: 'Estado compartilhado', sub: 'Redis', group: 'planned', x: 330, y: 510, w: 200, planned: true, note: 'Um Redis na Railway resolveria os dois itens ao lado; sem ele, cache e rate limit não sobrevivem a mais de uma réplica.' },
+    { id: 'cacheL2', label: 'Cache distribuído', sub: 'L2 do HybridCache', group: 'planned', x: 580, y: 510, w: 200, planned: true, note: 'O HybridCache já suporta segundo nível: basta registrar um IDistributedCache. Hoje não há nenhum, então o cache é sempre local e não é invalidado entre instâncias.' },
+    { id: 'rlShared', label: 'Rate limit distribuído', sub: 'Contagem compartilhada', group: 'planned', x: 830, y: 510, w: 200, planned: true, note: 'O limiter de janela fixa conta em memória. Com N réplicas o limite efetivo vira N × o configurado.' },
 
-    { id: 'sse', label: 'Server-Sent Events', sub: 'Conexão persistente', group: 'planned', x: 330, y: 595, w: 200, planned: true, note: 'SSE é HTTP puro: passa pelo Caddy e pelo Cloudflare sem configuração extra, reconecta sozinho (EventSource) e o fluxo do produto é sempre servidor → cliente. Atenção: conexão persistente precisa de estado compartilhado entre réplicas (o mesmo Redis do item acima) para saber em qual instância o usuário está pendurado.' },
-    { id: 'ssePush', label: 'Push de notificações', sub: 'Adeus polling de 60s', group: 'planned', x: 580, y: 595, w: 200, planned: true, note: 'Quando o UserNotification é criado, o evento vai direto para o sino do usuário conectado. O polling vira só fallback de reconexão.' },
-    { id: 'sseLive', label: 'Telas ao vivo', sub: 'Agenda · turmas · chamadas', group: 'planned', x: 830, y: 595, w: 200, planned: true, note: 'Mesmo canal serve para atualizar agenda e turmas sem refresh, acompanhar chamadas de webhook em /integrations e mostrar o resultado de comandos assíncronos assim que processam.' },
+    { id: 'sse', label: 'Server-Sent Events', sub: 'Conexão persistente', group: 'planned', x: 330, y: 615, w: 200, planned: true, note: 'SSE é HTTP puro: passa pelo Caddy e pelo Cloudflare sem configuração extra, reconecta sozinho (EventSource) e o fluxo do produto é sempre servidor → cliente. Atenção: conexão persistente precisa de estado compartilhado entre réplicas (o mesmo Redis do item acima) para saber em qual instância o usuário está pendurado.' },
+    { id: 'ssePush', label: 'Push de notificações', sub: 'Adeus polling de 60s', group: 'planned', x: 580, y: 615, w: 200, planned: true, note: 'Quando o UserNotification é criado, o evento vai direto para o sino do usuário conectado. O polling vira só fallback de reconexão.' },
+    { id: 'sseLive', label: 'Telas ao vivo', sub: 'Agenda · turmas · chamadas', group: 'planned', x: 830, y: 615, w: 200, planned: true, note: 'Mesmo canal serve para atualizar agenda e turmas sem refresh, acompanhar chamadas de webhook em /integrations e mostrar o resultado de comandos assíncronos assim que processam.' },
   ],
   edges: [
     { from: 'back', to: 'admin', style: 'dotted' },
     { from: 'web', to: 'admin', style: 'dotted' },
     { from: 'admin', to: 'adminOps', style: 'dashed' },
-    { from: 'admin', to: 'adminMetrics', style: 'dashed' },
+    { from: 'adminOps', to: 'adminMetrics', style: 'dashed' },
     { from: 'web', to: 'posthog', style: 'dotted' },
     { from: 'posthog', to: 'posthogEvents', style: 'dashed' },
-    { from: 'posthog', to: 'posthogFlags', style: 'dashed' },
+    { from: 'posthogEvents', to: 'posthogFlags', style: 'dashed' },
     { from: 'otel', to: 'obs', style: 'dotted' },
     { from: 'obs', to: 'obsLogs', style: 'dashed' },
     { from: 'obs', to: 'obsMetrics', style: 'dashed' },
@@ -437,6 +493,30 @@ function geometryOf(diagram: Diagram, edge: DiagramEdge): Geometry {
   const dx = bcx - acx
   const dy = bcy - acy
 
+  const overlapL = Math.max(a.x, b.x)
+  const overlapR = Math.min(a.x + aw, b.x + bw)
+  const stacked = a.y + NODE_H <= b.y || b.y + NODE_H <= a.y
+
+  if (overlapR > overlapL && stacked) {
+    const x = (overlapL + overlapR) / 2
+    const sy = dy >= 0 ? a.y + NODE_H : a.y
+    const ty = dy >= 0 ? b.y : b.y + NODE_H
+    return { path: `M ${x} ${sy} L ${x} ${ty}`, midX: x, midY: (sy + ty) / 2 }
+  }
+
+  if (edge.route === 'elbow') {
+    const sx = dx >= 0 ? a.x + aw : a.x
+    const ty = dy >= 0 ? b.y : b.y + NODE_H
+    const r = Math.min(16, Math.abs(bcx - sx), Math.abs(ty - acy))
+    const hDir = dx >= 0 ? 1 : -1
+    const vDir = dy >= 0 ? 1 : -1
+    return {
+      path: `M ${sx} ${acy} L ${bcx - r * hDir} ${acy} Q ${bcx} ${acy}, ${bcx} ${acy + r * vDir} L ${bcx} ${ty}`,
+      midX: (sx + bcx) / 2,
+      midY: acy,
+    }
+  }
+
   if (Math.abs(dx) >= Math.abs(dy)) {
     const sx = dx >= 0 ? a.x + aw : a.x
     const tx = dx >= 0 ? b.x : b.x + bw
@@ -496,7 +576,7 @@ function clearSelection() {
       <div class="overview space-y-8">
         <div class="space-y-2">
           <p class="text-sm text-muted">
-            Mapa de alto nível de tudo que o Estud tem hoje: infraestrutura, autenticação, processamento assíncrono,
+            Mapa de alto nível de tudo que o Estud tem hoje: domínio, infraestrutura, autenticação, processamento assíncrono,
             pipeline de testes e deploy, documentação e observabilidade. A última seção é separada de propósito e lista
             o que ainda <span class="italic">não</span> existe.
           </p>
@@ -564,7 +644,7 @@ function clearSelection() {
                   class="edge"
                   :class="{ 'edge-hl': edgeActive(d, e), 'edge-dim': edgeDimmed(d, e) }"
                   :stroke-dasharray="dashOf(e)"
-                  :marker-end="edgeActive(d, e) ? `url(#arrow-hl-${d.id})` : `url(#arrow-${d.id})`"
+                  :marker-end="d.undirected ? undefined : edgeActive(d, e) ? `url(#arrow-hl-${d.id})` : `url(#arrow-${d.id})`"
                 />
                 <text
                   v-if="e.label"
@@ -594,7 +674,7 @@ function clearSelection() {
                   class="node-box"
                   :stroke-dasharray="n.planned ? '5 4' : undefined"
                 />
-                <rect x="0" y="10" width="3" :height="NODE_H - 20" rx="1.5" fill="var(--node-color)" />
+                <rect v-if="!d.hideAccent" x="0" y="10" width="3" :height="NODE_H - 20" rx="1.5" fill="var(--node-color)" />
                 <text x="14" y="22" font-size="12.5" font-weight="600" class="node-label">{{ n.label }}</text>
                 <text v-if="n.sub" x="14" y="39" font-size="10" class="node-sub">{{ n.sub }}</text>
               </g>

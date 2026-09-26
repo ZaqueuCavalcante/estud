@@ -40,7 +40,6 @@ const cards = computed(() => [
         :key="card.label"
         :icon="card.icon"
         :title="card.label"
-        spotlight
         :ui="{ container: 'gap-y-1.5', wrapper: 'items-start', leading: 'p-2.5 rounded-full bg-primary/10 ring ring-inset ring-primary/25' }"
       >
         <span class="text-3xl font-bold text-highlighted">{{ card.value ?? '-' }}</span>

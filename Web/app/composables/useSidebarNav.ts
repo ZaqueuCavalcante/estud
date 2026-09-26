@@ -5,6 +5,9 @@ export interface SidebarLink {
   icon: string
   to: string
   policy: PolicyName
+  // Rotas que não ficam abaixo de `to` mas são telas de dentro dele: a sala
+  // (/classrooms/7) é aberta a partir do campus.
+  nested?: string[]
 }
 
 export interface SidebarGroup {
@@ -36,7 +39,7 @@ export const sidebarGroups: SidebarGroup[] = [
     label: 'Acadêmico',
     icon: 'i-lucide-book-marked',
     items: [
-      { label: 'Campi',         icon: 'i-lucide-map-pin',        to: '/campi',              policy: 'AccessCampiPage' },
+      { label: 'Campi',         icon: 'i-lucide-map-pin',        to: '/campi',              policy: 'AccessCampiPage', nested: ['/classrooms'] },
       { label: 'Cursos',        icon: 'i-lucide-notebook',       to: '/courses',            policy: 'AccessCoursesPage' },
       { label: 'Grades',        icon: 'i-lucide-layout-list',    to: '/course-curriculums', policy: 'AccessCourseCurriculumsPage' },
       { label: 'Disciplinas',   icon: 'i-lucide-book-open',      to: '/disciplines',        policy: 'AccessDisciplinesPage' },
@@ -96,9 +99,13 @@ export function useSidebarNav() {
     return route.path === to || route.path.startsWith(`${to}/`)
   }
 
+  function isSidebarLinkActive({ to, nested = [] }: SidebarLink) {
+    return [to, ...nested].some(isLinkActive)
+  }
+
   // Item da sidebar correspondente à tela atual, quando existe — telas fora da
   // sidebar (conta, detalhe de turma, ...) não têm.
-  const currentLink = computed(() => sidebarLinks.find(({ to }) => isLinkActive(to)) ?? null)
+  const currentLink = computed(() => sidebarLinks.find(isSidebarLinkActive) ?? null)
 
-  return { sidebarGroups, isLinkActive, currentLink }
+  return { sidebarGroups, isLinkActive, isSidebarLinkActive, currentLink }
 }

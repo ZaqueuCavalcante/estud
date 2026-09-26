@@ -89,6 +89,11 @@ public partial class IntegrationTests
 
         var algebraClass = await director.CreateClass(algebra.Id, period.Id).Success();
         await director.UpdateClassTeachers(algebraClass.Id, [teacher.Id]);
+        await director.UpdateClassSchedules(algebraClass.Id, [(Day.Tuesday, Hour.H07_00, Hour.H10_00, teacher.Id, null)]);
+        await director.ReleaseClassForEnrollment(algebraClass.Id);
+
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        await director.CreateEnrollmentPeriod(startAt: today.AddDays(-2), endAt: today.AddDays(2)).Success();
 
         var quimicaClass = await director.CreateClass(quimica.Id, period.Id).Success();
         await director.UpdateClassTeachers(quimicaClass.Id, [teacher.Id]);
@@ -119,9 +124,32 @@ public partial class IntegrationTests
 
         classes[1].Id.Should().Be(algebraClass.Id);
         classes[1].Discipline.Should().Be("Álgebra");
-        classes[1].Status.Should().Be(ClassStatus.OnPreEnrollment);
+        classes[1].Status.Should().Be(ClassStatus.OnEnrollment);
         classes[1].Students.Should().Be(0);
         classes[1].Lessons.Should().Be(0);
+    }
+
+    [Test]
+    public async Task Teachers_GetTeacherHome_Should_not_get_pre_enrollment_classes()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+        var teacher = await director.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
+
+        var algebra = await director.CreateDiscipline("Álgebra").Success();
+        await director.AssignDisciplinesToTeacher(teacher.Id, [algebra.Id]);
+
+        var period = await director.ShortcutGetFirstAcademicPeriod();
+        var algebraClass = await director.CreateClass(algebra.Id, period.Id).Success();
+        await director.UpdateClassTeachers(algebraClass.Id, [teacher.Id]);
+
+        var client = await _back.LoginAs(teacher.Email);
+
+        // Act
+        var result = await client.GetTeacherHome();
+
+        // Assert
+        result.Success.Classes.Should().BeEmpty();
     }
 
     [Test]

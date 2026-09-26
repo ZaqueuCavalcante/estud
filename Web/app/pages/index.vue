@@ -70,7 +70,6 @@ const features = [
             :key="feature.title"
             :description="feature.description"
             :ui="{ title: 'flex items-center gap-2' }"
-            spotlight
           >
             <template #title>
               <UIcon :name="feature.icon" class="size-5 shrink-0 text-primary" />

@@ -1,5 +1,10 @@
 # TODO
 
+## Responder
+
+- O que o Estud faz?
+- Por que o Estud é importante?
+
 ## Foco atual
 
 - 
@@ -15,11 +20,12 @@
 
 - notas parciais
 - diário de classe
-- onboarding guiado
+- Diploma Digital (MEC)
 - elaboração de horários
 - lista de alunos em risco
 - coeficiente de rendimento
 - importação de dados em massa
+- refatorar queries para Dapper
 - SSE vs polling for notifications
 - histórico escolar e diploma digital
 - header X-Estud-Signature nos webhooks
@@ -27,8 +33,11 @@
 - backoffice (eventos, comandos, auditoria)
 - mural da turma com avisos e comentários da turma
 - ajustar usos do DateTime.UtcNow e fusos horários
+- Censo da Educação Superior e Censo Escolar (INEP)
+- Assinatura eletrônica (Clicksign, D4Sign, ZapSign)
+- onboarding guiado (checklist no canto inferior direito)
 - guia de contribuição no github, padronização de issues e PRs
-- colocar os nomes inteiros no breadcrumbs, apenas reduzir no mobile
+- ClamAV ou VirusTotal pra encontrar virus nos PDFs dos enviados
 - visão de opções/conflitos na hora de definir horários (professor e sala)
 
 ---------------------------------------------------------------------------------------------------
@@ -50,3 +59,46 @@
 - Resultados esperados
     - Aproveitamento dos 3 alunos deve ser diferente
     - Nota final dos 3 alunos deve ser diferente
+
+---------------------------------------------------------------------------------------------------
+
+## Caso de Uso de Ponta a Ponta
+
+- Registrar no sistema
+
+- Criar campus e salas
+
+- Criar cursos, disciplinas e seus vínculos
+
+- Montar as grades curriculares
+
+- Ofertar cursos
+
+- Criar professores e alunos
+
+- Matricular alunos nas ofertas de curso
+
+- Vincular professores com campus e disciplinas
+
+- Abrir turmas
+
+- Definir horários, professores e salas das turmas
+
+- Lidar com os conflitos de horários (professores, salas e alunos)
+
+- Matricular alunos nas turmas
+
+- Professor numa turma
+    - Criar planos de aula
+    - Faz chamadas
+    - Passa atividades
+    - Corrige atividades e atribui notas
+
+- Aluno numa turma
+    - Vai pras aulas (frequência)
+    - Entrega atividades
+    - Recebe correções e notas
+
+- Ao final do semestre as turmas são finalizadas e os alunos aprovados/reprovados
+
+- Isso se repete até o aluno finalizar o curso e receber seu certificado/diploma

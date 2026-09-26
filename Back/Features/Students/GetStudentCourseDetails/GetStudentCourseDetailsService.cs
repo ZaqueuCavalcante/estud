@@ -43,6 +43,7 @@ public class GetStudentCourseDetailsService(EstudDbContext ctx) : IEstudService
         var classStatuses = await ctx.ClassStudents.AsNoTracking()
             .Where(cs => cs.StudentId == studentId
                 && cs.Class!.InstitutionId == institutionId
+                && cs.Class.Status != ClassStatus.OnPreEnrollment
                 && disciplineIds.Contains(cs.Class.DisciplineId))
             .Select(cs => new { cs.ClassId, cs.Class!.DisciplineId, cs.Status })
             .ToListAsync();

@@ -89,7 +89,7 @@ const meta = computed(() => {
           >
             <div class="flex items-start gap-3">
               <div class="min-w-0 flex-1">
-                <p class="font-medium text-highlighted truncate">{{ c.discipline }}</p>
+                <p class="font-medium text-highlighted wrap-break-word">{{ c.discipline }}</p>
                 <p class="text-xs text-muted mt-0.5 truncate">{{ [c.period, c.campus].filter(Boolean).join(' · ') }}</p>
               </div>
               <UBadge

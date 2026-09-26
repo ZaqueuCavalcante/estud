@@ -9,7 +9,10 @@ public class GetTeacherHomeService(EstudDbContext ctx) : IEstudService
         var teacherId = await ctx.GetTeacherId(institutionId, userId);
 
         var classes = await ctx.Classes.AsNoTracking()
-            .Where(c => c.InstitutionId == institutionId && c.Status != ClassStatus.Finalized && c.Teachers.Any(t => t.Id == teacherId))
+            .Where(c => c.InstitutionId == institutionId &&
+                c.Status != ClassStatus.OnPreEnrollment &&
+                c.Status != ClassStatus.Finalized &&
+                c.Teachers.Any(t => t.Id == teacherId))
             .OrderByDescending(c => c.Status)
             .ThenBy(c => c.Discipline.Name)
             .Select(c => new GetTeacherHomeClassOut

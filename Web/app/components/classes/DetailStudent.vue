@@ -47,7 +47,7 @@ const lessons = computed(() => lessonsData.value?.lessons ?? [])
 
 const tab = ref('performance')
 const tabItems = [
-  { label: 'Desempenho', value: 'performance', slot: 'performance' as const, icon: 'i-lucide-chart-column' },
+  { label: 'Notas', value: 'performance', slot: 'performance' as const, icon: 'i-lucide-chart-column' },
   { label: 'Atividades', value: 'activities', slot: 'activities' as const, icon: 'i-lucide-clipboard-list' },
   { label: 'Aulas', value: 'lessons', slot: 'lessons' as const, icon: 'i-lucide-calendar-days' },
 ]
@@ -102,7 +102,7 @@ const tabItems = [
           <div
             v-for="(s, i) in data.schedules"
             :key="i"
-            class="flex flex-col gap-0.5 rounded-lg border border-default bg-elevated/40 px-3 py-2"
+            class="flex w-full flex-col gap-0.5 rounded-lg border border-default bg-elevated/40 px-3 py-2 sm:w-auto"
           >
             <span
               class="flex items-center gap-1 text-sm font-medium"

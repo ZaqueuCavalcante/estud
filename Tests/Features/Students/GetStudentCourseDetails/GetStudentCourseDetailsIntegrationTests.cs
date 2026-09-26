@@ -134,6 +134,43 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Students_GetStudentCourseDetails_Should_not_consider_pre_enrollment_classes()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+
+        var campus = await director.CreateCampus().Success();
+        var course = await director.CreateCourse().Success();
+
+        var algorithms = await director.CreateDiscipline("Algoritmos").Success();
+        await director.AssignCoursesToDiscipline(algorithms.Id, [course.Id]);
+
+        var curriculum = await director.CreateCourseCurriculum(course.Id, "Grade ADS 2024",
+        [
+            new CreateCourseCurriculumDisciplineIn(algorithms.Id, 1, 4, 60),
+        ]).Success();
+
+        var period = await director.ShortcutGetFirstAcademicPeriod();
+        var offering = await director.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id).Success();
+
+        var student = await director.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        await director.EnrollStudentInCourseOffering(student.Id, offering.Id);
+
+        var @class = await director.CreateClass(algorithms.Id, period.Id).Success();
+        await director.AssignStudentToClass(student.Id, @class.Id);
+
+        var client = await _back.LoginAs(student.Email);
+
+        // Act
+        var result = await client.GetStudentCourseDetails();
+
+        // Assert
+        var algorithmsItem = result.Success.Disciplines.Single(d => d.Id == algorithms.Id);
+        algorithmsItem.Status.Should().Be(StudentDisciplineStatus.NaoCursada);
+        algorithmsItem.ClassId.Should().BeNull();
+    }
+
+    [Test]
     public async Task Students_GetStudentCourseDetails_Should_order_disciplines_by_curriculum_period()
     {
         // Arrange

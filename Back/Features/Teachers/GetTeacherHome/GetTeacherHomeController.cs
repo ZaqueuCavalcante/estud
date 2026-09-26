@@ -8,7 +8,7 @@ public class GetTeacherHomeController(GetTeacherHomeService service) : Controlle
     /// </summary>
     /// <remarks>
     /// Retorna os dados da página inicial do professor logado: os indicadores gerais
-    /// (turmas ativas e alunos) e as turmas não finalizadas que ele leciona.
+    /// (turmas ativas e alunos) e as turmas que ele leciona, exceto as em pré-matrícula e as finalizadas.
     /// </remarks>
     [HttpGet("teachers/home")]
     [SwaggerResponseExample(200, typeof(ResponseExamples))]

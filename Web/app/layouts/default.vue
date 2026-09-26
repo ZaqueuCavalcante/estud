@@ -9,7 +9,7 @@ const { unreadCount } = useNotifications()
 const { isNotificationsSlideoverOpen } = useDashboard()
 const { classes: currentClasses, canSeeClasses, fetchClasses: fetchCurrentClasses } = useCurrentClasses()
 
-const { sidebarGroups, isLinkActive } = useSidebarNav()
+const { sidebarGroups, isLinkActive, isSidebarLinkActive } = useSidebarNav()
 
 const route = useRoute()
 
@@ -24,6 +24,8 @@ const visibleGroups = computed<SidebarGroup[]>(() =>
 onMounted(() => { if (!account.value) fetchAccount() })
 
 watch(account, () => { fetchCurrentClasses() }, { immediate: true })
+
+const showCurrentClasses = computed(() => canSeeClasses.value && currentClasses.value.length > 0)
 
 const currentClassesLinks = computed<NavigationMenuItem[]>(() =>
   currentClasses.value.map(({ id, name }) => {
@@ -42,12 +44,13 @@ const currentClassesLinks = computed<NavigationMenuItem[]>(() =>
   })
 )
 
-function toLink({ label, icon, to }: SidebarLink): NavigationMenuItem {
+function toLink(link: SidebarLink): NavigationMenuItem {
+  const { label, icon, to } = link
   return {
     label,
     icon,
     to,
-    active: isLinkActive(to),
+    active: isSidebarLinkActive(link),
     onSelect: () => { open.value = false },
   }
 }
@@ -78,7 +81,7 @@ const links = computed<NavigationMenuItem[]>(() => {
       icon: group.icon,
       children: group.items.map(toLink),
     })),
-    ...(canSeeClasses.value
+    ...(showCurrentClasses.value
       ? [{
           value: CURRENT_CLASSES_GROUP_ID,
           label: 'Turmas',
@@ -94,7 +97,7 @@ const links = computed<NavigationMenuItem[]>(() => {
 // um grupo estando numa página dele continua valendo.
 watch([() => route.path, visibleGroups], () => {
   const activeGroup = visibleGroups.value.find(
-    group => group.label && group.items.some(({ to }) => isLinkActive(to))
+    group => group.label && group.items.some(isSidebarLinkActive)
   )
   if (activeGroup && !openGroups.value.includes(activeGroup.id)) {
     openGroups.value = [...openGroups.value, activeGroup.id]
@@ -112,7 +115,7 @@ const groups = computed(() => [
       onSelect: () => { open.value = false },
     })),
   })),
-  ...(canSeeClasses.value
+  ...(showCurrentClasses.value
     ? [{
         id: CURRENT_CLASSES_GROUP_ID,
         label: 'Turmas',
