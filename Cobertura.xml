@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9881547139403707" branch-rate="0.8970144246897015" lines-covered="12263" lines-valid="12410" branches-covered="2674" branches-valid="2981" complexity="4318" version="0" timestamp="1790445474">
+<coverage line-rate="0.9882343460391652" branch-rate="0.8970144246897015" lines-covered="12263" lines-valid="12409" branches-covered="2674" branches-valid="2981" complexity="4317" version="0" timestamp="1790453832">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9881676253081347" branch-rate="0.897134967207456" complexity="4211">
+    <package name="Back" line-rate="0.9882488289917002" branch-rate="0.897134967207456" complexity="4210">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -33192,7 +33192,7 @@
             <line number="20" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Features.Teachers.CreateTeacher.CreateTeacherIn" filename="/home/runner/work/estud/estud/Back/Features/Teachers/CreateTeacher/CreateTeacherIn.cs" line-rate="0.75" branch-rate="1" complexity="2">
+        <class name="Estud.Back.Features.Teachers.CreateTeacher.CreateTeacherIn" filename="/home/runner/work/estud/estud/Back/Features/Teachers/CreateTeacher/CreateTeacherIn.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="GetExamples" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -33201,17 +33201,11 @@
                 <line number="11" hits="4" branch="false" />
               </lines>
             </method>
-            <method name="Seed" signature="(string)" line-rate="0" branch-rate="1" complexity="1">
-              <lines>
-                <line number="15" hits="0" branch="false" />
-              </lines>
-            </method>
           </methods>
           <lines>
             <line number="9" hits="4" branch="false" />
             <line number="10" hits="4" branch="false" />
             <line number="11" hits="4" branch="false" />
-            <line number="15" hits="0" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Features.Teachers.CreateTeacher.CreateTeacherOut" filename="/home/runner/work/estud/estud/Back/Features/Teachers/CreateTeacher/CreateTeacherOut.cs" line-rate="1" branch-rate="1" complexity="1">
