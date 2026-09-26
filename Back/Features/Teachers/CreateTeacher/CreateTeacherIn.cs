@@ -9,9 +9,4 @@ public class CreateTeacherIn : IApiDto<CreateTeacherIn>
     [
         ("Exemplo", new() { Name = "Richard Feynman", Email = "feynman@estud.com" }),
     ];
-
-    public static CreateTeacherIn Seed(string name)
-    {
-        return new CreateTeacherIn { Name = name, Email = $"professor.{Guid.NewGuid().ToString().OnlyNumbers()[..8]}@estud.seed.com" };
-    }
 }

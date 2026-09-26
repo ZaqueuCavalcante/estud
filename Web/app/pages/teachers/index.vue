@@ -120,7 +120,7 @@ const columns: TableColumn<TeacherItem>[] = [
               icon="i-lucide-x"
               color="neutral"
               variant="link"
-              size="sm"
+              class="p-0"
               aria-label="Remover filtro"
               @click="clearFilters"
             />

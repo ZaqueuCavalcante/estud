@@ -12,10 +12,6 @@ const { data, status, error } = await useFetch<GetCourseOfferingDetailsOut>(
 
 const students = computed(() => data.value?.students ?? [])
 
-function formatDate(value: string) {
-  return new Date(value).toLocaleDateString('pt-BR')
-}
-
 const breadcrumb = [
   { label: 'Ofertas', to: '/course-offerings', icon: 'i-lucide-library' },
   { label: 'Detalhes' },
@@ -82,7 +78,7 @@ const breadcrumb = [
           </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-2 gap-3">
           <div class="flex flex-col justify-center rounded-xl bg-elevated px-4 py-4">
             <span class="text-2xl font-bold tabular-nums leading-none text-highlighted">{{ data.disciplines }}</span>
             <span class="mt-2 text-xs text-muted">{{ data.disciplines === 1 ? 'Disciplina' : 'Disciplinas' }}</span>
@@ -90,12 +86,6 @@ const breadcrumb = [
           <div class="flex flex-col justify-center rounded-xl bg-elevated px-4 py-4">
             <span class="text-2xl font-bold tabular-nums leading-none text-highlighted">{{ students.length }}</span>
             <span class="mt-2 text-xs text-muted">{{ students.length === 1 ? 'Aluno' : 'Alunos' }}</span>
-          </div>
-          <div class="flex flex-col justify-center rounded-xl bg-elevated px-4 py-4">
-            <span class="text-base font-bold tabular-nums leading-none text-highlighted">
-              {{ formatDate(data.periodStartAt) }}
-            </span>
-            <span class="mt-2 text-xs text-muted">até {{ formatDate(data.periodEndAt) }}</span>
           </div>
         </div>
 

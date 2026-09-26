@@ -7,7 +7,7 @@
 
 ## Foco atual
 
-- mapear todos os sistemas similares do mercado
+- 
 
 ## Próximo
 
@@ -70,9 +70,9 @@
 
 - ✅ Criar cursos, disciplinas e seus vínculos
 
-- Montar as grades curriculares
+- ✅ Montar as grades curriculares
 
-- Ofertar cursos
+- ✅ Ofertar cursos
 
 - Criar professores e alunos
 

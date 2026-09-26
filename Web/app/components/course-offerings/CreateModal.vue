@@ -3,7 +3,7 @@ import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 
 const open = defineModel<boolean>('open', { default: false })
-const props = defineProps<{ course?: { id: number; name: string } }>()
+const props = defineProps<{ course?: { id: number; name: string }; curriculumId?: number }>()
 const emit = defineEmits<{ created: [] }>()
 
 const isMobile = useIsMobile()
@@ -66,7 +66,8 @@ async function fetchCurriculums(courseId: number) {
     })
     if (formState.courseId !== courseId) return
     curriculums.value = res.items
-    if (res.items.length === 1) formState.courseCurriculumId = res.items[0]!.id
+    if (res.items.some(c => c.id === props.curriculumId)) formState.courseCurriculumId = props.curriculumId
+    else if (res.items.length === 1) formState.courseCurriculumId = res.items[0]!.id
   } finally {
     curriculumsLoading.value = false
   }

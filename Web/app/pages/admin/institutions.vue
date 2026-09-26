@@ -104,7 +104,7 @@ const columns: TableColumn<InstitutionItem>[] = [
               icon="i-lucide-x"
               color="neutral"
               variant="link"
-              size="sm"
+              class="p-0"
               aria-label="Remover filtro"
               @click="() => { name = ''; appliedName = '' }"
             />

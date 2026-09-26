@@ -18,6 +18,13 @@ const { data, status, error, refresh } = await useFetch<GetCourseCurriculumDetai
   { credentials: 'include', server: false },
 )
 
+const offeringModalOpen = ref(false)
+
+const courseRef = computed(() => data.value
+  ? { id: data.value.courseId, name: data.value.course }
+  : undefined,
+)
+
 const disciplines = computed(() => data.value?.disciplines ?? [])
 const offerings = computed(() => data.value?.offerings ?? [])
 
@@ -121,9 +128,18 @@ const breadcrumb = [
         />
 
         <section v-if="activeTab === 'offerings'" class="flex flex-col gap-4">
-          <p class="text-sm text-muted">
-            As ofertas que usam esta grade.
-          </p>
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <p class="text-sm text-muted">
+              As ofertas que usam esta grade.
+            </p>
+
+            <UButton
+              v-if="offerings.length"
+              icon="i-lucide-plus"
+              label="Oferta"
+              @click="() => { offeringModalOpen = true }"
+            />
+          </div>
 
           <div v-if="offerings.length" class="grid gap-3 sm:grid-cols-2">
             <NuxtLink
@@ -146,12 +162,23 @@ const breadcrumb = [
               </div>
             </NuxtLink>
           </div>
-          <div v-else class="flex items-center gap-2 text-sm text-muted">
-            <UIcon name="i-lucide-calendar-x" class="size-4" />
-            Nenhuma oferta usa esta grade
-          </div>
+          <TableEmptyState
+            v-else
+            :loading="false"
+            icon="i-lucide-calendar-x"
+            message="Nenhuma oferta usa esta grade"
+            button-label="Oferta"
+            @create="() => { offeringModalOpen = true }"
+          />
         </section>
       </div>
     </template>
   </UDashboardPanel>
+
+  <CourseOfferingsCreateModal
+    v-model:open="offeringModalOpen"
+    :course="courseRef"
+    :curriculum-id="courseCurriculumId"
+    @created="refresh()"
+  />
 </template>
