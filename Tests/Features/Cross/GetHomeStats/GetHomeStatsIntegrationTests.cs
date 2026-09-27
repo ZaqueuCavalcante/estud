@@ -174,13 +174,12 @@ public partial class IntegrationTests
 
         var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
         await client.EnrollStudentInCourseOffering(student.Id, morning.Id).Success();
-        await client.EnrollStudentInCourseOffering(student.Id, evening.Id).Success();
 
         // Act
         var result = await client.GetHomeStats();
 
         // Assert
-        result.Success.EnrolledStudents.Should().Be(2);
+        result.Success.EnrolledStudents.Should().Be(1);
     }
 
     [Test]

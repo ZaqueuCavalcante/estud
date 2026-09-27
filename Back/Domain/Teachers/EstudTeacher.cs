@@ -7,7 +7,7 @@ namespace Estud.Back.Domain.Teachers;
 /// <summary>
 /// Representa um Professor.
 /// </summary>
-public class EstudTeacher
+public class EstudTeacher : DomainEntity
 {
     public int Id { get; set; }
     public int InstitutionId { get; set; }
@@ -36,6 +36,8 @@ public class EstudTeacher
         User = user;
         InstitutionId = institutionId;
         Name = name;
+
+        AddDomainEvent(new TeacherCreatedDomainEvent(Uid));
     }
 
     public void Update(string name, string email)

@@ -154,6 +154,40 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Webhooks_CallWebhook_Should_deliver_webhook_when_teacher_is_created()
+    {
+        // Arrange
+        var director = await _back.LoggedAsDirector();
+
+        var subscription = await director.CreateWebhookSubscription(
+            name: "Professor criado",
+            url: $"{FakesFactory.Url}/webhooks/target",
+            events: [WebhookEventType.TeacherCreated]).Success();
+
+        var email = DataGen.Email;
+        await director.CreateTeacher("Maria Oliveira", email).Success();
+
+        // Act
+        await _back.AwaitDomainEventsProcessing();
+        await _back.AwaitCommandsProcessing();
+
+        // Assert
+        var calls = await director.GetWebhookCalls().Success();
+        var call = await director.GetWebhookCall(calls.Items.Single().Id).Success();
+
+        call.EventType.Should().Be(WebhookEventType.TeacherCreated);
+        call.Status.Should().Be(WebhookCallStatus.Success);
+        call.Subscription.Id.Should().Be(subscription.Id);
+
+        using var payload = JsonDocument.Parse(call.Payload);
+        payload.RootElement.GetProperty("event_type").GetString().Should().Be(nameof(WebhookEventType.TeacherCreated));
+
+        var data = payload.RootElement.GetProperty("data");
+        data.GetProperty("name").GetString().Should().Be("Maria Oliveira");
+        data.GetProperty("email").GetString().Should().Be(email);
+    }
+
+    [Test]
     public async Task Webhooks_CallWebhook_Should_deliver_webhook_when_class_activity_is_created()
     {
         // Arrange

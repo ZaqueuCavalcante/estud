@@ -24,5 +24,6 @@ internal class ResponseExamples : ExamplesProvider<EnrollStudentInCourseOffering
 internal class ErrorsExamples : ErrorExamplesProvider<
     StudentNotFound,
     CourseOfferingNotFound,
-    StudentAlreadyEnrolledInCourseOffering
+    StudentAlreadyEnrolledInCourseOffering,
+    StudentAlreadyEnrolledInAnotherCourseOffering
 >;

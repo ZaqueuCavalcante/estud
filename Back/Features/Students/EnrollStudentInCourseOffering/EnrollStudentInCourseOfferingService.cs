@@ -17,6 +17,9 @@ public class EnrollStudentInCourseOfferingService(EstudDbContext ctx) : IEstudSe
         var alreadyEnrolled = await ctx.StudentCourseEnrollments.AnyAsync(e => e.StudentId == studentId && e.CourseOfferingId == data.CourseOfferingId);
         if (alreadyEnrolled) return StudentAlreadyEnrolledInCourseOffering.I;
 
+        var enrolledInAnother = await ctx.StudentCourseEnrollments.AnyAsync(e => e.StudentId == studentId && e.LeftAt == null);
+        if (enrolledInAnother) return StudentAlreadyEnrolledInAnotherCourseOffering.I;
+
         var enrollment = new StudentCourseEnrollment(studentId, data.CourseOfferingId);
         await ctx.SaveChangesAsync(enrollment);
 

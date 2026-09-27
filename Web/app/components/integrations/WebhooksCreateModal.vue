@@ -12,6 +12,7 @@ const loading = ref(false)
 
 const eventOptions = [
   { label: 'Aluno criado', value: 'StudentCreated' },
+  { label: 'Professor criado', value: 'TeacherCreated' },
   { label: 'Atividade publicada', value: 'ClassActivityCreated' },
 ]
 

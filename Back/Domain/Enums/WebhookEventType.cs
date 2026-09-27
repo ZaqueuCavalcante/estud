@@ -8,6 +8,9 @@ public enum WebhookEventType
     [Description("Aluno criado")]
     StudentCreated = 0,
 
+    [Description("Professor criado")]
+    TeacherCreated = 100,
+
     [Description("Atividade publicada")]
-    ClassActivityPublished = 1,
+    ClassActivityPublished = 200,
 }

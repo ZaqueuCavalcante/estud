@@ -66,7 +66,7 @@
 
 - ✅ Registrar no sistema
 
-- ✅ Criar campus e salas
+- ✅ Criar campus e salas (alterar horários)
 
 - ✅ Criar cursos, disciplinas e seus vínculos
 
@@ -74,11 +74,11 @@
 
 - ✅ Ofertar cursos
 
-- Criar professores e alunos
+- ✅ Criar professores e alunos
 
-- Matricular alunos nas ofertas de curso
+- ✅ Matricular alunos nas ofertas de curso
 
-- Vincular professores com campus e disciplinas
+- ✅ Vincular professores com campus e disciplinas
 
 - Abrir turmas
 

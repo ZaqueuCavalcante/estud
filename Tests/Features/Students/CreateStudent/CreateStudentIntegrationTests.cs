@@ -201,6 +201,7 @@ public partial class IntegrationTests
         // Assert
         result.ShouldBeSuccess();
 
+        await _back.AwaitDomainEventsProcessing();
         await _back.AwaitCommandsProcessing();
 
         var emails = await FakesFactory.GetBrevoEmails(email);
@@ -216,6 +217,7 @@ public partial class IntegrationTests
         var director = await _back.LoggedAsDirector();
         var email = DataGen.Email;
         await director.CreateStudent(DataGen.UserName, email).Success();
+        await _back.AwaitDomainEventsProcessing();
 
         var token = await _back.GetMagicLinkToken(email);
         var client = _back.GetTestsClient();

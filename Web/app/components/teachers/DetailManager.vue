@@ -203,14 +203,12 @@ const classColumns: TableColumn<TeacherClassItem>[] = [
             />
           </div>
 
-          <DataTable :data="classes" :columns="classColumns">
-            <template #empty>
-              <div class="flex items-center justify-center gap-2 py-6 text-sm text-muted">
-                <UIcon name="i-lucide-door-closed" class="size-4" />
-                Nenhuma turma atribuída
-              </div>
-            </template>
-          </DataTable>
+          <DataTable v-if="classes.length" :data="classes" :columns="classColumns" />
+
+          <div v-else class="flex items-center justify-center gap-2 py-6 text-sm text-muted">
+            <UIcon name="i-lucide-door-closed" class="size-4" />
+            Nenhuma turma atribuída
+          </div>
         </section>
 
         <TeachersDisciplinesEditor

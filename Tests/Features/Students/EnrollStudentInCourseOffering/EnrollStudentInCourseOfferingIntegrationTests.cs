@@ -92,6 +92,31 @@ public partial class IntegrationTests
     }
 
     [Test]
+    public async Task Students_EnrollStudentInCourseOffering_Should_not_change_the_course_offering_of_an_enrolled_student()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var student = await client.CreateStudent(DataGen.UserName, DataGen.Email).Success();
+        var campus = await client.CreateCampus().Success();
+        var course = await client.CreateCourse().Success();
+        var curriculum = await client.CreateCourseCurriculum(course.Id).Success();
+        var period = await client.ShortcutGetFirstAcademicPeriod();
+        var morning = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id, CourseSession.Morning).Success();
+        var evening = await client.CreateCourseOffering(campus.Id, course.Id, curriculum.Id, period.Id, CourseSession.Evening).Success();
+
+        await client.EnrollStudentInCourseOffering(student.Id, morning.Id).Success();
+
+        // Act
+        var result = await client.EnrollStudentInCourseOffering(student.Id, evening.Id);
+
+        // Assert
+        result.ShouldBeError(StudentAlreadyEnrolledInAnotherCourseOffering.I);
+
+        var details = await client.GetStudent(student.Id).Success();
+        details.CurrentCourseOfferingId.Should().Be(morning.Id);
+    }
+
+    [Test]
     public async Task Students_EnrollStudentInCourseOffering_Should_not_enroll_student_from_another_institution()
     {
         // Arrange

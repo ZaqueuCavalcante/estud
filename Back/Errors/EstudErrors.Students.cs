@@ -21,6 +21,13 @@ public class StudentAlreadyEnrolledInCourseOffering : EstudError
     public override string Message { get; set; } = "Aluno já matriculado nesta oferta de curso.";
 }
 
+public class StudentAlreadyEnrolledInAnotherCourseOffering : EstudError
+{
+    public static readonly StudentAlreadyEnrolledInAnotherCourseOffering I = new();
+    public override string Code { get; set; } = nameof(StudentAlreadyEnrolledInAnotherCourseOffering);
+    public override string Message { get; set; } = "Aluno já está vinculado a outra oferta de curso.";
+}
+
 public class StudentAlreadyEnrolledInClass : EstudError
 {
     public static readonly StudentAlreadyEnrolledInClass I = new();

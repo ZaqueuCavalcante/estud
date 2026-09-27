@@ -93,19 +93,7 @@ public static class BackFactoryIdentity
 
         var teacher = await directorClient.CreateTeacher(DataGen.UserName, DataGen.Email).Success();
 
-        await using var ctx = factory.GetDbContext();
-        ctx.Enrich($"Tests.{nameof(LoggedAsTeacher)}");
-        var user = await ctx.Users.Where(u => u.Email == teacher.Email).FirstAsync();
-
-        var client = factory.GetTestsClient();
-
-        var token = await factory.GetMagicLinkToken(teacher.Email);
-        await client.MagicLinkLogin(token!);
-
-        var institutionId = await ctx.UserRoles.Where(x => x.UserId == user.Id).Select(x => x.InstitutionId).FirstAsync();
-        client.User = new TestsUserDto { Id = user.Id, InstitutionId = institutionId, Email = user.Email! };
-
-        return client;
+        return await factory.LoginAs(teacher.Email);
     }
 
     public static async Task<TestsHttpClient> LoginAs(this BackFactory factory, string email)

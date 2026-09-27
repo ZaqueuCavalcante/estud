@@ -2,6 +2,7 @@ type BadgeColor = 'neutral' | 'primary' | 'success' | 'warning' | 'error' | 'inf
 
 export const webhookEventLabels: Record<string, string> = {
   StudentCreated: 'Aluno criado',
+  TeacherCreated: 'Professor criado',
   ClassActivityCreated: 'Atividade publicada',
 }
 

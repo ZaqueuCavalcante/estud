@@ -275,13 +275,6 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
           <div v-else class="flex flex-wrap items-center gap-2 text-sm text-muted">
             <UIcon name="i-lucide-user-x" class="size-4" />
             <span>Nenhum professor definido</span>
-            <UButton
-              v-if="canUpdateTeachers"
-              label="Definir professores"
-              variant="link"
-              class="p-0"
-              @click="() => { teachersModalOpen = true }"
-            />
           </div>
         </section>
 
@@ -331,13 +324,6 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
           <div v-else class="flex flex-wrap items-center gap-2 text-sm text-muted">
             <UIcon name="i-lucide-clock" class="size-4" />
             <span>Nenhum horário cadastrado</span>
-            <UButton
-              v-if="showEditSchedules"
-              label="Cadastrar horários"
-              variant="link"
-              class="p-0"
-              @click="() => { schedulesModalOpen = true }"
-            />
           </div>
         </section>
 
