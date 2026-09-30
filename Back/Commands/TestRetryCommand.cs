@@ -5,7 +5,7 @@ public record TestRetryCommand(int FailUntilAttempt) : ICommand;
 
 public class TestRetryCommandHandler(EstudDbContext ctx) : ICommandHandler<TestRetryCommand>
 {
-    public async Task Handle(int commandId, TestRetryCommand command)
+    public async Task<OneOf<EstudSuccess, EstudError>> Handle(int commandId, TestRetryCommand command)
     {
         var currentCommand = await ctx.Commands.AsNoTracking().FirstAsync(x => x.Id == commandId);
 
@@ -16,5 +16,7 @@ public class TestRetryCommandHandler(EstudDbContext ctx) : ICommandHandler<TestR
         {
             throw new Exception($"TestRetryCommand failed on attempt {attemptNumber}. Success only on attempt {command.FailUntilAttempt}.");
         }
+
+        return EstudSuccess.I;
     }
 }

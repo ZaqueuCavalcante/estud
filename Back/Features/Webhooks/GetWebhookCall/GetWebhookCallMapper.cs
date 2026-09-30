@@ -11,7 +11,7 @@ public static class GetWebhookCallMapper
             return new()
             {
                 Id = call.Id,
-                Uid = call.Uid,
+                EventUid = call.EventUid,
                 EventType = call.EventType,
                 Status = call.Status,
                 AttemptsCount = call.AttemptsCount,

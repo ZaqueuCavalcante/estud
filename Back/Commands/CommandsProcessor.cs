@@ -48,7 +48,13 @@ public class CommandsProcessor(IServiceScopeFactory serviceScopeFactory) : IJob
                         ctx.Database.AutoSavepointsEnabled = false;
 
                         var invoker = GetInvoker(command);
-                        await invoker.Invoke(scope.ServiceProvider, command.Id, command.Data);
+                        var result = await invoker.Invoke(scope.ServiceProvider, command.Id, command.Data);
+
+                        if (result.IsError)
+                        {
+                            command.Error = result.Error.Message;
+                            activity?.SetStatus(ActivityStatusCode.Error, command.Error);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -70,7 +76,7 @@ public class CommandsProcessor(IServiceScopeFactory serviceScopeFactory) : IJob
 
                     if (command.Error.HasValue() && command.MaxRetries > 0)
                     {
-                        var retryCommand = CreateRetryCommand(command, ctx.ActivityId);
+                        var retryCommand = command.ToRetryCommand(ctx.ActivityId);
                         ctx.Commands.Add(retryCommand);
                     }
 
@@ -85,34 +91,6 @@ public class CommandsProcessor(IServiceScopeFactory serviceScopeFactory) : IJob
                 await scheduler.TriggerCommandsProcessorJob();
             }
         }
-    }
-
-    private static Command CreateRetryCommand(Command failedCommand, string activityId)
-    {
-        var invoker = GetInvoker(failedCommand);
-        var data = invoker.Deserialize(failedCommand.Data);
-
-        var originalId = failedCommand.OriginalId ?? failedCommand.Id;
-
-        var retryAttempt = failedCommand.RetryAttempt + 1;
-        var delaySeconds = CommandBackoffStrategies.GetDelaySeconds(
-            failedCommand.BackoffStrategy, failedCommand.BaseDelaySeconds, retryAttempt);
-
-        var retryCommand = new Command(
-            failedCommand.InstitutionId,
-            data,
-            originalId: originalId,
-            activityId: activityId,
-            maxRetries: failedCommand.MaxRetries - 1,
-            delaySeconds: delaySeconds,
-            backoffStrategy: failedCommand.BackoffStrategy,
-            baseDelaySeconds: failedCommand.BaseDelaySeconds)
-        {
-            Type = failedCommand.Type,
-            RetryAttempt = retryAttempt,
-        };
-
-        return retryCommand;
     }
 
     private static readonly ConcurrentDictionary<string, ICommandInvoker> _invokers = new();

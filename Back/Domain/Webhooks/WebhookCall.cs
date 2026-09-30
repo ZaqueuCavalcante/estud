@@ -9,6 +9,7 @@ public class WebhookCall : DomainEntity
     public int InstitutionId { get; set; }
     public int WebhookSubscriptionId { get; set; }
     public string Payload { get; set; }
+    public string EventUid { get; set; }
     public WebhookEventType EventType { get; set; }
     public WebhookCallStatus Status { get; set; }
     public int AttemptsCount { get; set; }
@@ -21,15 +22,17 @@ public class WebhookCall : DomainEntity
     public WebhookCall(
         int institutionId,
         int webhookSubscriptionId,
+        string eventUid,
         object data,
         WebhookEventType eventType)
     {
         InstitutionId = institutionId;
         WebhookSubscriptionId = webhookSubscriptionId;
+        EventUid = eventUid;
         EventType = eventType;
         CreatedAt = DateTime.UtcNow;
         Status = WebhookCallStatus.Pending;
-        Payload = (new { Id = Uid, EventType = eventType, OccurredAt = CreatedAt, Data = data }).SerializeAsSnakeCase();
+        Payload = (new { EventId = eventUid, EventType = eventType, OccurredAt = CreatedAt, Data = data }).SerializeAsSnakeCase();
     }
 
     public void Success(int statusCode, string response, int durationMs)

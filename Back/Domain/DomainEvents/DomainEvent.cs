@@ -6,6 +6,7 @@ namespace Estud.Back.Domain.DomainEvents;
 public class DomainEvent
 {
     public int Id { get; set; }
+    public string Uid { get; set; }
     public int InstitutionId { get; set; }
     public string EntityUid { get; set; }
     public string Type { get; set; }
@@ -24,6 +25,7 @@ public class DomainEvent
 
     public DomainEvent(int institutionId, string entityUid, object data, string? activityId)
     {
+        Uid = Ulid.NewUlid().ToString();
         EntityUid = entityUid;
         Type = data.GetType().ToString();
         Data = data.Serialize();

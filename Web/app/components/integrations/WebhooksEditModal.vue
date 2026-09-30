@@ -23,7 +23,7 @@ const loading = ref(false)
 const eventOptions = [
   { label: 'Aluno criado', value: 'StudentCreated' },
   { label: 'Professor criado', value: 'TeacherCreated' },
-  { label: 'Atividade publicada', value: 'ClassActivityCreated' },
+  { label: 'Atividade publicada', value: 'ClassActivityPublished' },
 ]
 
 const headerSchema = z.object({
@@ -149,7 +149,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
               class="flex items-start gap-2"
             >
               <UFormField :name="`customHeaders.${idx}.key`" class="flex-1">
-                <UInput v-model="header.key" class="w-full" placeholder="Ex: Estud-AuthToken" />
+                <UInput v-model="header.key" class="w-full" placeholder="Ex: Authorization" />
               </UFormField>
               <UFormField :name="`customHeaders.${idx}.value`" class="flex-1">
                 <UInput v-model="header.value" class="w-full" placeholder="Ex: 6r4g654rs6g4we6f4qw684f68qwf4" />

@@ -112,6 +112,13 @@ watch(open, (val) => {
           <p class="text-sm text-muted">
             Nenhum professor vinculado a esta disciplina
           </p>
+          <UButton
+            label="Vincular"
+            trailing-icon="i-lucide-external-link"
+            variant="subtle"
+            :to="`/disciplines/${disciplineId}?t=teachers`"
+            target="_blank"
+          />
         </div>
 
         <template v-else>

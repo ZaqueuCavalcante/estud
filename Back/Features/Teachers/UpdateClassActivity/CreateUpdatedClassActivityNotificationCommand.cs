@@ -7,7 +7,7 @@ public record CreateUpdatedClassActivityNotificationCommand(int ClassActivityId)
 
 public class CreateUpdatedClassActivityNotificationCommandHandler(EstudDbContext ctx) : ICommandHandler<CreateUpdatedClassActivityNotificationCommand>
 {
-    public async Task Handle(int commandId, CreateUpdatedClassActivityNotificationCommand command)
+    public async Task<OneOf<EstudSuccess, EstudError>> Handle(int commandId, CreateUpdatedClassActivityNotificationCommand command)
     {
         var activity = await ctx.ClassActivities.Where(x => x.Id == command.ClassActivityId)
             .Select(x => new { x.ClassId, x.Title }).FirstAsync();
@@ -34,5 +34,7 @@ public class CreateUpdatedClassActivityNotificationCommandHandler(EstudDbContext
         {
             ctx.Add(new UserNotification(userId, notification));
         }
+
+        return EstudSuccess.I;
     }
 }

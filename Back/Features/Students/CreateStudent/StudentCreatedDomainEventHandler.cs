@@ -8,9 +8,9 @@ namespace Estud.Back.Features.Students.CreateStudent;
 
 public class StudentCreatedDomainEventHandler(EstudDbContext ctx) : IDomainEventHandler<StudentCreatedDomainEvent>
 {
-    public async Task Handle(int institutionId, int eventId, StudentCreatedDomainEvent evt)
+    public async Task Handle(int institutionId, string eventUid, StudentCreatedDomainEvent evt)
     {
-        var student = await ctx.Students.Where(x => x.Uid == evt.Uid).Select(x => new { x.UserId, x.Name }).FirstAsync();
+        var student = await ctx.Students.Where(x => x.Uid == evt.Uid).Select(x => new { x.Id, x.UserId, x.Name }).FirstAsync();
         var user = await ctx.Users.FirstAsync(x => x.Id == student.UserId);
         var institutionName = await ctx.Institutions.Where(x => x.Id == institutionId).Select(x => x.Name).FirstAsync();
 
@@ -24,7 +24,7 @@ public class StudentCreatedDomainEventHandler(EstudDbContext ctx) : IDomainEvent
 
         foreach (var subscription in subscriptions.Where(x => x.Events.Contains(WebhookEventType.StudentCreated)))
         {
-            var webhookCall = new WebhookCall(institutionId, subscription.Id, new { student.Name, user.Email }, WebhookEventType.StudentCreated);
+            var webhookCall = new WebhookCall(institutionId, subscription.Id, eventUid, new { student.Id, student.Name, user.Email }, WebhookEventType.StudentCreated);
             ctx.Add(webhookCall);
             ctx.AddCommand(institutionId, new CallWebhookCommand(webhookCall.Uid));
         }

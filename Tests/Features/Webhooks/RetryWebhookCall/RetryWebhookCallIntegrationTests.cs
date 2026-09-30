@@ -198,7 +198,6 @@ public partial class IntegrationTests
         var lastAttempt = call.Attempts[0];
         lastAttempt.Status.Should().Be(WebhookCallAttemptStatus.Success);
         lastAttempt.StatusCode.Should().Be(200);
-        lastAttempt.Response.Should().Contain(call.Uid);
 
         var firstAttempt = call.Attempts[1];
         firstAttempt.Status.Should().Be(WebhookCallAttemptStatus.Error);

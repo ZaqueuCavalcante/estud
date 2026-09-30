@@ -5,8 +5,10 @@ public record SendInviteEmailCommand(string Email, string Name, string Instituti
 
 public class SendInviteEmailCommandHandler(IEmailsService emailService) : ICommandHandler<SendInviteEmailCommand>
 {
-    public async Task Handle(int commandId, SendInviteEmailCommand command)
+    public async Task<OneOf<EstudSuccess, EstudError>> Handle(int commandId, SendInviteEmailCommand command)
     {
         await emailService.SendInviteEmail(command.Email, command.Name, command.Institution, command.Role, command.MagicLinkId.ToString());
+
+        return EstudSuccess.I;
     }
 }

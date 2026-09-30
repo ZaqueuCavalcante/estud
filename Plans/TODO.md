@@ -7,7 +7,9 @@
 
 ## Foco atual
 
-- 
+- Horários
+- Notas
+- Frequências
 
 ## Próximo
 
@@ -80,7 +82,7 @@
 
 - ✅ Vincular professores com campus e disciplinas
 
-- Abrir turmas
+- ✅ Abrir turmas
 
 - Definir horários, professores e salas das turmas
 

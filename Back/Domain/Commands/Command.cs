@@ -109,6 +109,30 @@ public class Command
         BaseDelaySeconds = baseDelaySeconds;
     }
 
+    public Command ToRetryCommand(string activityId)
+    {
+        var originalId = OriginalId ?? Id;
+        var retryAttempt = RetryAttempt + 1;
+        var delaySeconds = CommandBackoffStrategies.GetDelaySeconds(BackoffStrategy, BaseDelaySeconds, retryAttempt);
+
+        var retryCommand = new Command(
+            InstitutionId,
+            new {},
+            originalId: originalId,
+            activityId: activityId,
+            maxRetries: MaxRetries - 1,
+            delaySeconds: delaySeconds,
+            backoffStrategy: BackoffStrategy,
+            baseDelaySeconds: BaseDelaySeconds)
+        {
+            Type = Type,
+            Data = Data,
+            RetryAttempt = retryAttempt,
+        };
+
+        return retryCommand;
+    }
+
     public void Processed(double duration)
     {
         ProcessedAt = DateTime.UtcNow;

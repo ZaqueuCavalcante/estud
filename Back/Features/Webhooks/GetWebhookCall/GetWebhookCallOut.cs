@@ -3,7 +3,7 @@ namespace Estud.Back.Features.Webhooks.GetWebhookCall;
 public class GetWebhookCallOut : IApiDto<GetWebhookCallOut>
 {
     public int Id { get; set; }
-    public string Uid { get; set; }
+    public string EventUid { get; set; }
     public WebhookEventType EventType { get; set; }
     public WebhookCallStatus Status { get; set; }
     public int AttemptsCount { get; set; }
@@ -18,22 +18,22 @@ public class GetWebhookCallOut : IApiDto<GetWebhookCallOut>
         ("Exemplo", new GetWebhookCallOut
         {
             Id = 1,
-            Uid = "01K5F2G8QX7VN3ZC4M9TB6HDRY",
+            EventUid = "01K5F2G8QX7VN3ZC4M9TB6HDRY",
             EventType = WebhookEventType.StudentCreated,
             Status = WebhookCallStatus.Success,
             AttemptsCount = 1,
             CreatedAt = DateTime.UtcNow,
-            Payload = """{"id":"01K5F2G8QX7VN3ZC4M9TB6HDRY","event_type":"StudentCreated","occurred_at":"2026-09-05T13:22:10Z","data":{"name":"João da Silva","email":"joao.silva@email.com"}}""",
+            Payload = """{"event_id":"01K5F2G8QX7VN3ZC4M9TB6HDRY","event_type":"StudentCreated","occurred_at":"2026-09-05T13:22:10Z","data":{"name":"João da Silva","email":"joao.silva@email.com"}}""",
             Request = new GetWebhookCallRequestOut
             {
                 Method = "POST",
                 Url = "https://webhook.site/my-webhook",
                 Headers = new()
                 {
-                    ["Estud-AuthToken"] = "6r4g654rs6g4we6f4qw684f68qwf4",
+                    ["Authorization"] = "6r4g654rs6g4we6f4qw684f68qwf4",
                     ["Content-Type"] = "application/json; charset=utf-8",
                 },
-                Body = """{"id":"01K5F2G8QX7VN3ZC4M9TB6HDRY","event_type":"StudentCreated","occurred_at":"2026-09-05T13:22:10Z","data":{"name":"João da Silva","email":"joao.silva@email.com"}}""",
+                Body = """{"event_id":"01K5F2G8QX7VN3ZC4M9TB6HDRY","event_type":"StudentCreated","occurred_at":"2026-09-05T13:22:10Z","data":{"name":"João da Silva","email":"joao.silva@email.com"}}""",
             },
             Subscription = new GetWebhookCallSubscriptionOut
             {

@@ -64,7 +64,7 @@ public partial class IntegrationTests
             name: "Aluno criado",
             url: "https://webhook.site/my-webhook",
             events: [WebhookEventType.StudentCreated],
-            customHeaders: new() { ["Estud-AuthToken"] = "6r4g654rs6g4we6f4qw684f68qwf4" }).Success();
+            customHeaders: new() { ["Authorization"] = "6r4g654rs6g4we6f4qw684f68qwf4" }).Success();
 
         // Act
         var result = await client.GetWebhookSubscription(created.Id);
@@ -76,7 +76,7 @@ public partial class IntegrationTests
         subscription.Url.Should().Be("https://webhook.site/my-webhook");
         subscription.IsActive.Should().BeTrue();
         subscription.Events.Should().BeEquivalentTo([WebhookEventType.StudentCreated]);
-        subscription.CustomHeaders.Should().ContainKey("Estud-AuthToken").WhoseValue.Should().Be("6r4g654rs6g4we6f4qw684f68qwf4");
+        subscription.CustomHeaders.Should().ContainKey("Authorization").WhoseValue.Should().Be("6r4g654rs6g4we6f4qw684f68qwf4");
     }
 
     #endregion

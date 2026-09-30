@@ -8,7 +8,7 @@ namespace Estud.Back.Features.Teachers.CreateTeacher;
 
 public class TeacherCreatedDomainEventHandler(EstudDbContext ctx) : IDomainEventHandler<TeacherCreatedDomainEvent>
 {
-    public async Task Handle(int institutionId, int eventId, TeacherCreatedDomainEvent evt)
+    public async Task Handle(int institutionId, string eventUid, TeacherCreatedDomainEvent evt)
     {
         var teacher = await ctx.Teachers.Where(x => x.Uid == evt.Uid).Select(x => new { x.UserId, x.Name }).FirstAsync();
         var user = await ctx.Users.FirstAsync(x => x.Id == teacher.UserId);
@@ -24,7 +24,7 @@ public class TeacherCreatedDomainEventHandler(EstudDbContext ctx) : IDomainEvent
 
         foreach (var subscription in subscriptions.Where(x => x.Events.Contains(WebhookEventType.TeacherCreated)))
         {
-            var webhookCall = new WebhookCall(institutionId, subscription.Id, new { teacher.Name, user.Email }, WebhookEventType.TeacherCreated);
+            var webhookCall = new WebhookCall(institutionId, subscription.Id, eventUid, new { teacher.Name, user.Email }, WebhookEventType.TeacherCreated);
             ctx.Add(webhookCall);
             ctx.AddCommand(institutionId, new CallWebhookCommand(webhookCall.Uid));
         }

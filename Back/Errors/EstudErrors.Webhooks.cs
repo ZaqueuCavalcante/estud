@@ -21,6 +21,13 @@ public class WebhookCallCannotBeRetried : EstudError
     public override string Message { get; set; } = "Apenas chamadas de webhook com erro podem ser reprocessadas.";
 }
 
+public class WebhookCallFailed : EstudError
+{
+    public static readonly WebhookCallFailed I = new();
+    public override string Code { get; set; } = nameof(WebhookCallFailed);
+    public override string Message { get; set; } = "Falha ao chamar o webhook.";
+}
+
 public class InvalidWebhookName : EstudError
 {
     public static readonly InvalidWebhookName I = new();

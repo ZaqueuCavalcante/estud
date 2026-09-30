@@ -5,12 +5,12 @@ namespace Estud.Back.Commands;
 
 public interface ICommandHandler<T> where T : ICommand
 {
-    Task Handle(int commandId, T command);
+    Task<OneOf<EstudSuccess, EstudError>> Handle(int commandId, T command);
 }
 
 public interface ICommandInvoker
 {
-    Task Invoke(IServiceProvider sp, int commandId, string json);
+    Task<OneOf<EstudSuccess, EstudError>> Invoke(IServiceProvider sp, int commandId, string json);
     object Deserialize(string json);
 }
 
@@ -22,11 +22,11 @@ public class CommandInvoker<T> : ICommandInvoker where T : ICommand
         Converters = { new EstudStringEnumConverter() },
     };
 
-    public async Task Invoke(IServiceProvider sp, int commandId, string json)
+    public async Task<OneOf<EstudSuccess, EstudError>> Invoke(IServiceProvider sp, int commandId, string json)
     {
         var data = JsonSerializer.Deserialize<T>(json, _options)!;
         var handler = sp.GetRequiredService<ICommandHandler<T>>();
-        await handler.Handle(commandId, data);
+        return await handler.Handle(commandId, data);
     }
 
     public object Deserialize(string json)

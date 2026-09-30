@@ -183,10 +183,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       body: event.data,
       credentials: 'include',
     })
-    toast.add({ title: 'Atividade criada com sucesso', color: 'success' })
+    toast.add({ title: 'Atividade publicada com sucesso', color: 'success' })
     await navigateTo(`/classes/${props.classId}/activities/${created.id}`, { replace: true })
   } catch (err: unknown) {
-    toast.add({ title: 'Erro', description: errorMessage(err, 'Erro ao criar atividade.'), color: 'error' })
+    toast.add({ title: 'Erro', description: errorMessage(err, 'Erro ao publicar atividade.'), color: 'error' })
   } finally {
     loading.value = false
   }

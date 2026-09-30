@@ -50,7 +50,7 @@ public class ClassActivity : DomainEntity
 
         Works = students.ConvertAll(x => new ClassActivityWork(Id, x));
 
-        AddDomainEvent(new ClassActivityCreatedDomainEvent(Uid));
+        AddDomainEvent(new ClassActivityPublishedDomainEvent(Uid));
     }
 
     public static OneOf<ClassActivity, EstudError> New(

@@ -8,7 +8,7 @@ public record CallWebhookCommand(string WebhookCallUid) : ICommand;
 
 public class CallWebhookCommandHandler(EstudDbContext ctx, IHttpClientFactory factory) : ICommandHandler<CallWebhookCommand>
 {
-    public async Task Handle(int commandId, CallWebhookCommand command)
+    public async Task<OneOf<EstudSuccess, EstudError>> Handle(int commandId, CallWebhookCommand command)
     {
         var call = await ctx.WebhookCalls
             .Include(x => x.Attempts)
@@ -39,16 +39,17 @@ public class CallWebhookCommandHandler(EstudDbContext ctx, IHttpClientFactory fa
             if (response.IsSuccessStatusCode)
             {
                 call.Success((int)response.StatusCode, responseContent, (int)stopwatch.ElapsedMilliseconds);
+                return EstudSuccess.I;
             }
-            else
-            {
-                call.Failed((int)response.StatusCode, responseContent, (int)stopwatch.ElapsedMilliseconds);
-            }
+
+            call.Failed((int)response.StatusCode, responseContent, (int)stopwatch.ElapsedMilliseconds);
         }
         catch (Exception ex)
         {
             stopwatch.Stop();
             call.Failed(999, ex.Message, (int)stopwatch.ElapsedMilliseconds);
         }
+
+        return WebhookCallFailed.I;
     }
 }

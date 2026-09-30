@@ -4,7 +4,7 @@ namespace Estud.Back.Features.Teachers.UpdateClassActivity;
 
 public class ClassActivityUpdatedDomainEventHandler(EstudDbContext ctx) : IDomainEventHandler<ClassActivityUpdatedDomainEvent>
 {
-    public async Task Handle(int institutionId, int eventId, ClassActivityUpdatedDomainEvent evt)
+    public async Task Handle(int institutionId, string eventUid, ClassActivityUpdatedDomainEvent evt)
     {
         var activityId = await ctx.ClassActivities.AsNoTracking()
             .Where(x => x.Uid == evt.Uid)

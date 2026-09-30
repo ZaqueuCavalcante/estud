@@ -48,7 +48,7 @@ public class DomainEventsProcessor(IServiceScopeFactory serviceScopeFactory) : I
                         ctx.Database.AutoSavepointsEnabled = false;
 
                         var invoker = GetInvoker(evt);
-                        await invoker.Invoke(scope.ServiceProvider, evt.InstitutionId, evt.Id, evt.Data);
+                        await invoker.Invoke(scope.ServiceProvider, evt.InstitutionId, evt.Uid, evt.Data);
                     }
                     catch (Exception ex)
                     {
@@ -108,7 +108,7 @@ public class DomainEventsProcessor(IServiceScopeFactory serviceScopeFactory) : I
             WHERE processor_id IS NULL AND status = 0
             ORDER BY occurred_at
             FOR UPDATE SKIP LOCKED
-            LIMIT 100
+            LIMIT 10
         )
         RETURNING *;
     ";

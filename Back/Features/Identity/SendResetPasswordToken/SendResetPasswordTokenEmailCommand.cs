@@ -7,8 +7,10 @@ public record SendResetPasswordTokenEmailCommand(string Email, Guid ResetId) : I
 
 public class SendResetPasswordTokenEmailCommandHandler(IEmailsService emailService) : ICommandHandler<SendResetPasswordTokenEmailCommand>
 {
-    public async Task Handle(int commandId, SendResetPasswordTokenEmailCommand command)
+    public async Task<OneOf<EstudSuccess, EstudError>> Handle(int commandId, SendResetPasswordTokenEmailCommand command)
     {
         await emailService.SendResetPasswordEmail(command.Email, command.ResetId.ToString());
+
+        return EstudSuccess.I;
     }
 }

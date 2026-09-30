@@ -7,8 +7,10 @@ public record SendFirstAccessMagicLinkEmailCommand(string Email, Guid MagicLinkI
 
 public class SendFirstAccessMagicLinkEmailCommandHandler(IEmailsService emailService) : ICommandHandler<SendFirstAccessMagicLinkEmailCommand>
 {
-    public async Task Handle(int commandId, SendFirstAccessMagicLinkEmailCommand command)
+    public async Task<OneOf<EstudSuccess, EstudError>> Handle(int commandId, SendFirstAccessMagicLinkEmailCommand command)
     {
         await emailService.SendFirstAccessMagicLinkEmail(command.Email, command.MagicLinkId.ToString());
+
+        return EstudSuccess.I;
     }
 }

@@ -5,12 +5,12 @@ namespace Estud.Back.DomainEvents;
 
 public interface IDomainEventHandler<T> where T : IDomainEvent
 {
-    Task Handle(int institutionId, int eventId, T evt);
+    Task Handle(int institutionId, string eventUid, T evt);
 }
 
 public interface IDomainEventInvoker
 {
-    Task Invoke(IServiceProvider sp, int institutionId, int eventId, string json);
+    Task Invoke(IServiceProvider sp, int institutionId, string eventUid, string json);
 }
 
 public class DomainEventInvoker<T> : IDomainEventInvoker where T : IDomainEvent
@@ -20,13 +20,13 @@ public class DomainEventInvoker<T> : IDomainEventInvoker where T : IDomainEvent
         Converters = [new StringEnumConverter()],
     };
 
-    public async Task Invoke(IServiceProvider sp, int institutionId, int eventId, string json)
+    public async Task Invoke(IServiceProvider sp, int institutionId, string eventUid, string json)
     {
         var data = JsonConvert.DeserializeObject<T>(json, _settings)!;
 
         foreach (var handler in sp.GetServices<IDomainEventHandler<T>>())
         {
-            await handler.Handle(institutionId, eventId, data);
+            await handler.Handle(institutionId, eventUid, data);
         }
     }
 }

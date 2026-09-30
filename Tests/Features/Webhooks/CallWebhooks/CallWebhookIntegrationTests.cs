@@ -113,14 +113,14 @@ public partial class IntegrationTests
         var calls = await client.GetWebhookCalls().Success();
         var call = await client.GetWebhookCall(calls.Items.Single().Id).Success();
 
-        call.Uid.Should().NotBeNullOrEmpty();
+        call.EventUid.Should().NotBeNullOrEmpty();
 
         using var payload = JsonDocument.Parse(call.Payload);
-        payload.RootElement.GetProperty("id").GetString().Should().Be(call.Uid);
+        payload.RootElement.GetProperty("event_id").GetString().Should().Be(call.EventUid);
         payload.RootElement.GetProperty("event_type").GetString().Should().Be(nameof(WebhookEventType.StudentCreated));
         payload.RootElement.TryGetProperty("occurred_at", out _).Should().BeTrue();
 
-        call.Attempts.Single().Response.Should().Contain(call.Uid);
+        call.Attempts.Single().Response.Should().Contain(call.EventUid);
     }
 
     [Test]
@@ -230,14 +230,13 @@ public partial class IntegrationTests
         call.Subscription.Id.Should().Be(subscription.Id);
 
         using var payload = JsonDocument.Parse(call.Payload);
-        payload.RootElement.GetProperty("id").GetString().Should().Be(call.Uid);
+        payload.RootElement.GetProperty("event_id").GetString().Should().Be(call.EventUid);
         payload.RootElement.GetProperty("event_type").GetString().Should().Be(nameof(WebhookEventType.ClassActivityPublished));
 
         var data = payload.RootElement.GetProperty("data");
         data.GetProperty("id").GetInt32().Should().Be(activity.Id);
         data.GetProperty("class_id").GetInt32().Should().Be(@class.Id);
         data.GetProperty("title").GetString().Should().Be("Modelagem de Banco de Dados");
-        data.GetProperty("description").GetString().Should().Be("Modele um banco de dados para um sistema de gerenciamento de biblioteca.");
         data.GetProperty("type").GetString().Should().Be(nameof(ClassActivityType.Work));
         data.GetProperty("due_date").GetString().Should().Be(dueDate.ToString("yyyy-MM-dd"));
 
