@@ -120,17 +120,6 @@ watch([open, () => props.callId], ([isOpen, callId]) => {
 
 onBeforeUnmount(stopPolling)
 
-function formatDateTime(value: string) {
-  return new Date(value).toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  })
-}
-
 function statusCodeColor(statusCode: number) {
   if (statusCode >= 200 && statusCode < 300) return 'success'
   if (statusCode >= 400 && statusCode < 500) return 'warning'
@@ -194,7 +183,7 @@ function statusCodeColor(statusCode: number) {
             </div>
             <div class="flex flex-col gap-1">
               <dt class="text-muted">Criada em</dt>
-              <dd class="text-highlighted">{{ formatDateTime(call.createdAt) }}</dd>
+              <dd class="text-highlighted">{{ formatDateTime(call.createdAt, { seconds: true }) }}</dd>
             </div>
             <div class="flex flex-col gap-1 col-span-2">
               <dt class="text-muted">Id do evento</dt>
@@ -265,7 +254,7 @@ function statusCodeColor(statusCode: number) {
                 {{ attempt.statusCode }}
               </UBadge>
               <span class="text-sm text-muted">{{ formatWebhookDuration(attempt.durationMs) }}</span>
-              <span class="text-sm text-muted ml-auto">{{ formatDateTime(attempt.createdAt) }}</span>
+              <span class="text-sm text-muted ml-auto">{{ formatDateTime(attempt.createdAt, { seconds: true }) }}</span>
             </div>
 
             <div class="flex flex-col gap-2">

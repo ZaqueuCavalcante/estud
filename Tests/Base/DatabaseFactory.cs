@@ -23,6 +23,7 @@ public class DatabaseFactory
             .WithPassword(_settings.Password!)
             .WithPortBinding(_settings.Port, 5432)
             .WithTmpfsMount("/var/lib/postgresql")
+            // .WithVolumeMount("estud-dev-data", "/var/lib/postgresql")
             .WithReuse(true)
             .Build();
     }

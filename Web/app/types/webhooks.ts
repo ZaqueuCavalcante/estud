@@ -1,3 +1,16 @@
+export interface GetWebhookSubscriptionOut {
+  id: number
+  name: string
+  url: string
+  isActive: boolean
+  events: string[]
+  customHeaders: Record<string, string>
+  maxRetries: number
+  baseDelaySeconds: number
+  backoffStrategy: string
+  createdAt: string
+}
+
 export interface WebhookCallItem {
   id: number
   uid: string

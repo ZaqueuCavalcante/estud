@@ -2,8 +2,18 @@
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 
+interface WebhookSubscriptionItem {
+  id: number
+  name: string
+  url: string
+  isActive: boolean
+  events: string[]
+  customHeaders?: Record<string, string>
+}
+
 const open = defineModel<boolean>('open', { default: false })
-const emit = defineEmits<{ created: [] }>()
+const props = defineProps<{ subscription: WebhookSubscriptionItem | null }>()
+const emit = defineEmits<{ updated: [] }>()
 
 const isMobile = useIsMobile()
 const config = useRuntimeConfig()
@@ -24,6 +34,7 @@ const headerSchema = z.object({
 const schema = z.object({
   name: z.string().min(1, 'Nome obrigatório').max(100, 'Máximo 100 caracteres'),
   url: z.string().min(1, 'URL obrigatória').url('URL inválida'),
+  isActive: z.boolean(),
   events: z.array(z.string()).min(1, 'Selecione ao menos um evento'),
   customHeaders: z.array(headerSchema).max(20, 'Máximo 20 headers'),
 })
@@ -33,6 +44,7 @@ type Schema = z.output<typeof schema>
 const formState = reactive<Partial<Schema>>({
   name: '',
   url: '',
+  isActive: true,
   events: [],
   customHeaders: [],
 })
@@ -51,15 +63,15 @@ function removeHeader(idx: number) {
   formState.customHeaders!.splice(idx, 1)
 }
 
-function resetForm() {
-  formState.name = ''
-  formState.url = ''
-  formState.events = []
-  formState.customHeaders = []
-}
-
 watch(open, (val) => {
-  if (!val) resetForm()
+  if (val && props.subscription) {
+    formState.name = props.subscription.name
+    formState.url = props.subscription.url
+    formState.isActive = props.subscription.isActive
+    formState.events = [...props.subscription.events]
+    formState.customHeaders = Object.entries(props.subscription.customHeaders ?? {})
+      .map(([key, value]) => ({ key, value }))
+  }
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
@@ -68,16 +80,22 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     const customHeaders = Object.fromEntries(
       event.data.customHeaders.map(h => [h.key, h.value]),
     )
-    await $fetch(`${config.public.backendUrl}/webhooks/subscriptions`, {
-      method: 'POST',
-      body: { name: event.data.name, url: event.data.url, events: event.data.events, customHeaders },
+    await $fetch(`${config.public.backendUrl}/webhooks/subscriptions/${props.subscription!.id}`, {
+      method: 'PUT',
+      body: {
+        name: event.data.name,
+        url: event.data.url,
+        isActive: event.data.isActive,
+        events: event.data.events,
+        customHeaders,
+      },
       credentials: 'include',
     })
-    toast.add({ title: 'Webhook criado com sucesso', color: 'success' })
+    toast.add({ title: 'Webhook atualizado com sucesso', color: 'success' })
     open.value = false
-    emit('created')
+    emit('updated')
   } catch (err: unknown) {
-    const msg = (err as { data?: { message?: string } })?.data?.message ?? 'Erro ao criar webhook.'
+    const msg = (err as { data?: { message?: string } })?.data?.message ?? 'Erro ao atualizar webhook.'
     toast.add({ title: 'Erro', description: msg, color: 'error' })
   } finally {
     loading.value = false
@@ -88,9 +106,9 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 <template>
   <UModal
     v-model:open="open"
-    title="Novo webhook"
+    title="Editar webhook"
     :fullscreen="isMobile"
-    description="Preencha os dados para cadastrar uma nova inscrição de webhook."
+    description="Atualize os dados da inscrição de webhook."
   >
     <template #body>
       <UForm
@@ -99,6 +117,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         class="space-y-4"
         @submit="onSubmit"
       >
+        <UFormField label="Ativo" name="isActive">
+          <USwitch v-model="formState.isActive" />
+        </UFormField>
+
         <UFormField label="Nome" name="name">
           <UInput v-model="formState.name" class="w-full" placeholder="Ex: Aluno criado" />
         </UFormField>
@@ -120,24 +142,22 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         </UFormField>
 
         <UFormField
-          label="Headers customizados"
+          label="Headers"
           name="customHeaders"
-          help="Enviados em todas as chamadas feitas para a URL. Útil para autenticação via header."
+          help="Enviados em todas as chamadas feitas para a URL."
         >
-          <div class="flex flex-col gap-4 sm:gap-2 w-full">
+          <div class="flex flex-col gap-2 w-full">
             <div
               v-for="(header, idx) in formState.customHeaders"
               :key="idx"
-              class="flex items-center gap-2"
+              class="flex items-start gap-2"
             >
-              <div class="flex-1 min-w-0 flex flex-col sm:flex-row gap-2">
-                <UFormField :name="`customHeaders.${idx}.key`" class="flex-1 min-w-0">
-                  <UInput v-model="header.key" class="w-full" placeholder="Ex: Authorization" />
-                </UFormField>
-                <UFormField :name="`customHeaders.${idx}.value`" class="flex-1 min-w-0">
-                  <UInput v-model="header.value" class="w-full" placeholder="Ex: 6r4g654rs6g4we6f4qw684f68qwf4" />
-                </UFormField>
-              </div>
+              <UFormField :name="`customHeaders.${idx}.key`" class="flex-1">
+                <UInput v-model="header.key" class="w-full" placeholder="Ex: Authorization" />
+              </UFormField>
+              <UFormField :name="`customHeaders.${idx}.value`" class="flex-1">
+                <UInput v-model="header.value" class="w-full" placeholder="Ex: 6r4g654rs6g4we6f4qw684f68qwf4" />
+              </UFormField>
               <UTooltip text="Remover">
                 <UButton
                   icon="i-lucide-trash-2"
@@ -167,7 +187,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             @click="() => { open = false }"
           />
           <UButton
-            label="Criar webhook"
+            label="Salvar"
             type="submit"
             :loading="loading"
           />

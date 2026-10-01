@@ -139,7 +139,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             inputmode="numeric"
             class="w-full"
             placeholder="Ex: 25/09/1998"
-            @input="(e) => { formState.birthdate = maskInput(e, formatBirthdate) }"
+            @input="(e: Event) => { formState.birthdate = maskInput(e, formatBirthdate) }"
           />
         </UFormField>
 
@@ -148,8 +148,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             :model-value="formState.phoneNumber"
             inputmode="numeric"
             class="w-full"
-            placeholder="Ex: (81) 98570-6838"
-            @input="(e) => { formState.phoneNumber = maskInput(e, formatPhoneNumber) }"
+            placeholder="Ex: (81) 94002-8922"
+            @input="(e: Event) => { formState.phoneNumber = maskInput(e, formatPhoneNumber) }"
           />
         </UFormField>
 

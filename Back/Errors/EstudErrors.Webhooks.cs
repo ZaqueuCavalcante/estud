@@ -55,3 +55,24 @@ public class InvalidWebhookCustomHeaders : EstudError
     public override string Code { get; set; } = nameof(InvalidWebhookCustomHeaders);
     public override string Message { get; set; } = "Headers customizados de webhook inválidos.";
 }
+
+public class InvalidWebhookMaxRetries : EstudError
+{
+    public static readonly InvalidWebhookMaxRetries I = new();
+    public override string Code { get; set; } = nameof(InvalidWebhookMaxRetries);
+    public override string Message { get; set; } = "Número máximo de retentativas de webhook inválido. Deve estar entre 0 e 5.";
+}
+
+public class InvalidWebhookBaseDelaySeconds : EstudError
+{
+    public static readonly InvalidWebhookBaseDelaySeconds I = new();
+    public override string Code { get; set; } = nameof(InvalidWebhookBaseDelaySeconds);
+    public override string Message { get; set; } = "Intervalo base de retentativas de webhook inválido. Deve estar entre 0 e 30 segundos.";
+}
+
+public class InvalidWebhookBackoffStrategy : EstudError
+{
+    public static readonly InvalidWebhookBackoffStrategy I = new();
+    public override string Code { get; set; } = nameof(InvalidWebhookBackoffStrategy);
+    public override string Message { get; set; } = "Estratégia de backoff de webhook inválida.";
+}

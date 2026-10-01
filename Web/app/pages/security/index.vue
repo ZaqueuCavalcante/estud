@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { TableColumn } from '@nuxt/ui'
-
 interface RoleItem {
   id: number
   name: string
@@ -12,9 +10,6 @@ interface GetRolesOut {
   total: number
   items: RoleItem[]
 }
-
-const UButton = resolveComponent('UButton')
-const UTooltip = resolveComponent('UTooltip')
 
 const config = useRuntimeConfig()
 const createModalOpen = ref(false)
@@ -30,54 +25,51 @@ const { data, status, refresh } = await useFetch<GetRolesOut>(`${config.public.b
   credentials: 'include',
   server: false
 })
-
-const columns: TableColumn<RoleItem>[] = [
-  {
-    accessorKey: 'name',
-    header: 'Nome',
-    meta: { class: { th: 'w-48', td: 'w-48' } },
-  },
-  {
-    accessorKey: 'description',
-    header: 'Descrição',
-  },
-  {
-    accessorKey: 'permissions',
-    header: 'Permissões',
-    meta: { class: { th: 'w-32', td: 'w-32' } },
-  },
-  {
-    id: 'actions',
-    header: '',
-    meta: { class: { th: 'w-16', td: 'w-16' } },
-    cell: ({ row }) => h(UTooltip, { text: 'Editar' }, () => h(UButton, {
-      icon: 'i-lucide-pencil',
-      color: 'neutral',
-      variant: 'ghost',
-      size: 'sm',
-      onClick: (e: MouseEvent) => { (e.currentTarget as HTMLElement).blur(); openEdit(row.original) },
-    })),
-  },
-]
 </script>
 
 <template>
-  <div>
-    <div v-if="data?.items?.length" class="flex justify-start sm:justify-end mb-4">
+  <div v-if="!data && status !== 'error'" class="flex flex-1 items-center justify-center py-12">
+    <AppSpinner class="size-8" />
+  </div>
+
+  <TableEmptyState
+    v-else-if="!data?.items?.length"
+    :loading="false"
+    icon="i-lucide-user-cog"
+    message="Nenhum perfil cadastrado"
+    button-label="Perfil"
+    @create="() => { createModalOpen = true }"
+  />
+
+  <div v-else class="space-y-4">
+    <div class="flex justify-start sm:justify-end">
       <UButton icon="i-lucide-plus" label="Perfil" @click="() => { createModalOpen = true }" />
     </div>
 
-    <DataTable :data="data?.items ?? []" :columns="columns" :loading="status === 'idle' || status === 'pending'">
-      <template #empty>
-        <TableEmptyState
-          :loading="status === 'idle' || status === 'pending'"
-          icon="i-lucide-user-cog"
-          message="Nenhum perfil cadastrado"
-          button-label="Perfil"
-          @create="createModalOpen = true"
-        />
-      </template>
-    </DataTable>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <button
+        v-for="role in data.items"
+        :key="role.id"
+        type="button"
+        class="rounded-xl bg-elevated flex flex-col gap-3 p-4 text-left hover:shadow-md hover:ring hover:ring-primary/50 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        @click="(e) => { (e.currentTarget as HTMLElement).blur(); openEdit(role) }"
+      >
+        <div class="flex items-start gap-3">
+          <div class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+            <UIcon name="i-lucide-user-cog" class="size-5 text-primary" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="font-bold text-base text-highlighted truncate">{{ role.name }}</p>
+            <p class="text-sm text-muted line-clamp-2">{{ role.description }}</p>
+          </div>
+        </div>
+
+        <div class="mt-auto flex items-center gap-1.5 text-sm text-muted">
+          <UIcon name="i-lucide-shield-check" class="size-4 shrink-0" />
+          <span><span class="font-semibold tabular-nums text-highlighted">{{ role.permissions }}</span> {{ role.permissions === 1 ? 'permissão' : 'permissões' }}</span>
+        </div>
+      </button>
+    </div>
   </div>
 
   <SecurityRolesCreateModal v-model:open="createModalOpen" @created="refresh()" />

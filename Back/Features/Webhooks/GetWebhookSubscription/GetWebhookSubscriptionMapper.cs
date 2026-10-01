@@ -16,6 +16,9 @@ public static class GetWebhookSubscriptionMapper
                 IsActive = subscription.IsActive,
                 Events = subscription.Events,
                 CustomHeaders = subscription.CustomHeaders,
+                MaxRetries = subscription.MaxRetries,
+                BaseDelaySeconds = subscription.BaseDelaySeconds,
+                BackoffStrategy = subscription.BackoffStrategy,
                 CreatedAt = subscription.CreatedAt,
             };
         }

@@ -99,7 +99,7 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
 
-        await client.CreateWebhookSubscription(
+        var subscription = await client.CreateWebhookSubscription(
             url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]).Success();
 
@@ -110,7 +110,7 @@ public partial class IntegrationTests
         await _back.AwaitCommandsProcessing();
 
         // Assert
-        var calls = await client.GetWebhookCalls().Success();
+        var calls = await client.GetWebhookCalls(subscription.Id).Success();
         var call = await client.GetWebhookCall(calls.Items.Single().Id).Success();
 
         call.EventUid.Should().NotBeNullOrEmpty();
@@ -129,12 +129,12 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
 
-        await client.CreateWebhookSubscription(
+        var subscription1 = await client.CreateWebhookSubscription(
             name: "Assinatura 1",
             url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]).Success();
 
-        await client.CreateWebhookSubscription(
+        var subscription2 = await client.CreateWebhookSubscription(
             name: "Assinatura 2",
             url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]).Success();
@@ -146,11 +146,13 @@ public partial class IntegrationTests
         await _back.AwaitCommandsProcessing();
 
         // Assert
-        var calls = await client.GetWebhookCalls().Success();
+        var calls1 = await client.GetWebhookCalls(subscription1.Id).Success();
+        var calls2 = await client.GetWebhookCalls(subscription2.Id).Success();
+        var calls = calls1.Items.Concat(calls2.Items).ToList();
 
-        calls.Items.Should().HaveCount(2);
-        calls.Items.Select(x => x.Uid).Should().OnlyHaveUniqueItems();
-        calls.Items.Should().OnlyContain(x => x.Uid != null && x.Uid.Length > 0);
+        calls.Should().HaveCount(2);
+        calls.Select(x => x.Uid).Should().OnlyHaveUniqueItems();
+        calls.Should().OnlyContain(x => x.Uid != null && x.Uid.Length > 0);
     }
 
     [Test]
@@ -172,7 +174,7 @@ public partial class IntegrationTests
         await _back.AwaitCommandsProcessing();
 
         // Assert
-        var calls = await director.GetWebhookCalls().Success();
+        var calls = await director.GetWebhookCalls(subscription.Id).Success();
         var call = await director.GetWebhookCall(calls.Items.Single().Id).Success();
 
         call.EventType.Should().Be(WebhookEventType.TeacherCreated);
@@ -222,7 +224,7 @@ public partial class IntegrationTests
         await _back.AwaitCommandsProcessing();
 
         // Assert
-        var calls = await director.GetWebhookCalls().Success();
+        var calls = await director.GetWebhookCalls(subscription.Id).Success();
         var call = await director.GetWebhookCall(calls.Items.Single().Id).Success();
 
         call.EventType.Should().Be(WebhookEventType.ClassActivityPublished);
@@ -252,7 +254,7 @@ public partial class IntegrationTests
         // Arrange
         var director = await _back.LoggedAsDirector();
 
-        await director.CreateWebhookSubscription(
+        var subscription = await director.CreateWebhookSubscription(
             url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]).Success();
 
@@ -272,7 +274,7 @@ public partial class IntegrationTests
         await _back.AwaitCommandsProcessing();
 
         // Assert
-        var calls = await director.GetWebhookCalls().Success();
+        var calls = await director.GetWebhookCalls(subscription.Id).Success();
         calls.Items.Should().BeEmpty();
     }
 
@@ -287,7 +289,7 @@ public partial class IntegrationTests
             url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.StudentCreated]).Success();
 
-        await client.CreateWebhookSubscription(
+        var notSubscribed = await client.CreateWebhookSubscription(
             name: "Atividade publicada",
             url: $"{FakesFactory.Url}/webhooks/target",
             events: [WebhookEventType.ClassActivityPublished]).Success();
@@ -299,12 +301,15 @@ public partial class IntegrationTests
         await _back.AwaitCommandsProcessing();
 
         // Assert
-        var calls = await client.GetWebhookCalls().Success();
+        var calls = await client.GetWebhookCalls(subscribed.Id).Success();
         var call = await client.GetWebhookCall(calls.Items.Single().Id).Success();
 
         call.EventType.Should().Be(WebhookEventType.StudentCreated);
         call.Status.Should().Be(WebhookCallStatus.Success);
         call.Subscription.Id.Should().Be(subscribed.Id);
+
+        var notSubscribedCalls = await client.GetWebhookCalls(notSubscribed.Id).Success();
+        notSubscribedCalls.Items.Should().BeEmpty();
     }
 
     [Test]
@@ -334,6 +339,60 @@ public partial class IntegrationTests
         attempt.Status.Should().Be(WebhookCallAttemptStatus.Error);
         attempt.StatusCode.Should().Be(999);
         attempt.Response.Should().NotBeEmpty();
+    }
+
+    [Test]
+    public async Task Webhooks_CallWebhook_Should_respect_subscription_retry_configs()
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        var subscription = await client.CreateWebhookSubscription(
+            url: $"{FakesFactory.Url}/webhooks/target/error",
+            events: [WebhookEventType.StudentCreated]).Success();
+
+        await client.UpdateWebhookSubscriptionRetryConfigs(
+            subscription.Id,
+            maxRetries: 2,
+            baseDelaySeconds: 2,
+            backoffStrategy: BackoffStrategy.Linear).Success();
+
+        await client.CreateStudent(DataGen.UserName, DataGen.Email);
+
+        // Act
+        await _back.AwaitDomainEventsProcessing();
+
+        var callId = 0;
+        var timeout = DateTime.UtcNow.AddSeconds(30);
+        while (DateTime.UtcNow < timeout)
+        {
+            await _back.AwaitCommandsProcessing();
+
+            var calls = await client.GetWebhookCalls(subscription.Id).Success();
+            if (calls.Items.Count == 1 && calls.Items[0].AttemptsCount >= 3)
+            {
+                callId = calls.Items[0].Id;
+                break;
+            }
+
+            await Task.Delay(500);
+        }
+
+        // The retry chain is exhausted at this point: a further round must not create a 4th attempt
+        await Task.Delay(TimeSpan.FromSeconds(7));
+        await _back.AwaitCommandsProcessing();
+
+        // Assert
+        callId.Should().NotBe(0, "the webhook should have been attempted 3 times (1 call + 2 retries)");
+
+        var call = await client.GetWebhookCall(callId).Success();
+        call.Status.Should().Be(WebhookCallStatus.Error);
+        call.AttemptsCount.Should().Be(3);
+        call.Attempts.Should().HaveCount(3).And.OnlyContain(x => x.Status == WebhookCallAttemptStatus.Error);
+
+        var attempts = call.Attempts.OrderBy(x => x.CreatedAt).ToList();
+        (attempts[1].CreatedAt - attempts[0].CreatedAt).Should().BeGreaterThanOrEqualTo(TimeSpan.FromSeconds(2));
+        (attempts[2].CreatedAt - attempts[1].CreatedAt).Should().BeGreaterThanOrEqualTo(TimeSpan.FromSeconds(4));
     }
 
     #endregion

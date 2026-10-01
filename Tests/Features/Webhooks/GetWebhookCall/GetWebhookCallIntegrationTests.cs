@@ -56,15 +56,15 @@ public partial class IntegrationTests
     {
         // Arrange
         var client1 = await _back.LoggedAsDirector();
-        await client1.CreateWebhookSubscription(
+        var subscription = await client1.CreateWebhookSubscription(
             url: $"{FakesFactory.Url}/webhooks/target",
-            events: [WebhookEventType.StudentCreated]);
+            events: [WebhookEventType.StudentCreated]).Success();
         await client1.CreateStudent(DataGen.UserName, DataGen.Email);
 
         await _back.AwaitDomainEventsProcessing();
         await _back.AwaitCommandsProcessing();
 
-        var call = await client1.GetWebhookCalls().Success();
+        var call = await client1.GetWebhookCalls(subscription.Id).Success();
         var callId = call.Items.Single().Id;
 
         var client2 = await _back.LoggedAsDirector();
@@ -97,7 +97,7 @@ public partial class IntegrationTests
         await _back.AwaitDomainEventsProcessing();
         await _back.AwaitCommandsProcessing();
 
-        var calls = await client.GetWebhookCalls().Success();
+        var calls = await client.GetWebhookCalls(subscription.Id).Success();
         var callId = calls.Items.Single().Id;
 
         // Act
@@ -138,16 +138,16 @@ public partial class IntegrationTests
         // Arrange
         var client = await _back.LoggedAsDirector();
 
-        await client.CreateWebhookSubscription(
+        var subscription = await client.CreateWebhookSubscription(
             url: $"{FakesFactory.Url}/webhooks/target/error",
-            events: [WebhookEventType.StudentCreated]);
+            events: [WebhookEventType.StudentCreated]).Success();
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
 
         await _back.AwaitDomainEventsProcessing();
         await _back.AwaitCommandsProcessing();
 
-        var calls = await client.GetWebhookCalls().Success();
+        var calls = await client.GetWebhookCalls(subscription.Id).Success();
         var callId = calls.Items.Single().Id;
 
         // Act

@@ -8,6 +8,9 @@ public class GetWebhookSubscriptionOut : IApiDto<GetWebhookSubscriptionOut>
     public bool IsActive { get; set; }
     public List<WebhookEventType> Events { get; set; }
     public Dictionary<string, string> CustomHeaders { get; set; } = [];
+    public int MaxRetries { get; set; }
+    public int BaseDelaySeconds { get; set; }
+    public BackoffStrategy BackoffStrategy { get; set; }
     public DateTime CreatedAt { get; set; }
 
     public static IEnumerable<(string, GetWebhookSubscriptionOut)> GetExamples() =>
@@ -21,6 +24,9 @@ public class GetWebhookSubscriptionOut : IApiDto<GetWebhookSubscriptionOut>
             IsActive = true,
             Events = [WebhookEventType.StudentCreated],
             CustomHeaders = new() { ["Authorization"] = "6r4g654rs6g4we6f4qw684f68qwf4" },
+            MaxRetries = 3,
+            BaseDelaySeconds = 10,
+            BackoffStrategy = BackoffStrategy.Exponential,
             CreatedAt = DateTime.UtcNow,
         }),
     ];

@@ -11,6 +11,7 @@ public static partial class Policies
     public const string GetWebhookSubscriptions = nameof(GetWebhookSubscriptions);
     public const string CreateWebhookSubscription = nameof(CreateWebhookSubscription);
     public const string UpdateWebhookSubscription = nameof(UpdateWebhookSubscription);
+    public const string UpdateWebhookSubscriptionRetryConfigs = nameof(UpdateWebhookSubscriptionRetryConfigs);
 
     public static AuthorizationBuilder AddWebhooksPolicies(this AuthorizationBuilder builder)
     {
@@ -21,7 +22,8 @@ public static partial class Policies
             .AddEstudPolicy(GetWebhookSubscription, UserType.Manager, EstudPermissions.ManageWebhooks)
             .AddEstudPolicy(GetWebhookSubscriptions, UserType.Manager, EstudPermissions.ManageWebhooks)
             .AddEstudPolicy(CreateWebhookSubscription, UserType.Manager, EstudPermissions.ManageWebhooks)
-            .AddEstudPolicy(UpdateWebhookSubscription, UserType.Manager, EstudPermissions.ManageWebhooks);
+            .AddEstudPolicy(UpdateWebhookSubscription, UserType.Manager, EstudPermissions.ManageWebhooks)
+            .AddEstudPolicy(UpdateWebhookSubscriptionRetryConfigs, UserType.Manager, EstudPermissions.ManageWebhooks);
 
         return builder;
     }

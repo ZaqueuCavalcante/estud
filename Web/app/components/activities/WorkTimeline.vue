@@ -19,7 +19,7 @@ function statusChange(entry: ClassActivityWorkEntry) {
         <UAvatar :src="entry.userPhoto ?? undefined" :alt="entry.user ?? ''" size="2xs" />
         <span class="text-sm font-medium text-highlighted">{{ entry.user }}</span>
         <time :datetime="entry.createdAt" class="text-xs text-muted">
-          {{ formatClassActivityWorkEntryDate(entry.createdAt) }}
+          {{ formatDateTime(entry.createdAt) }}
         </time>
       </div>
 

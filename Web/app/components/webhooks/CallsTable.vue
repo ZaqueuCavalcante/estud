@@ -6,6 +6,8 @@ const UBadge = resolveComponent('UBadge')
 const UButton = resolveComponent('UButton')
 const UTooltip = resolveComponent('UTooltip')
 
+const props = defineProps<{ subscriptionId: number }>()
+
 const config = useRuntimeConfig()
 
 const statuses = Object.entries(webhookCallStatusLabels).map(([value, label]) => ({ label, value }))
@@ -34,7 +36,7 @@ function openDetails(item: WebhookCallItem) {
 }
 
 const { data, status: fetchStatus, refresh } = await useFetch<GetWebhookCallsOut>(
-  `${config.public.backendUrl}/webhooks/calls`,
+  `${config.public.backendUrl}/webhooks/${props.subscriptionId}/calls`,
   {
     credentials: 'include',
     server: false,
@@ -43,16 +45,6 @@ const { data, status: fetchStatus, refresh } = await useFetch<GetWebhookCallsOut
 )
 
 const loading = computed(() => fetchStatus.value === 'idle' || fetchStatus.value === 'pending')
-
-function formatDateTime(value: string) {
-  return new Date(value).toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
 
 const columns: TableColumn<WebhookCallItem>[] = [
   {
@@ -102,6 +94,7 @@ const columns: TableColumn<WebhookCallItem>[] = [
       value-key="value"
       :search-input="false"
       clear
+      icon="i-lucide-activity"
       class="w-full sm:w-40"
       :ui="{ base: 'h-8 text-base/5' }"
       placeholder="Status"
@@ -128,7 +121,7 @@ const columns: TableColumn<WebhookCallItem>[] = [
       />
     </div>
 
-    <IntegrationsCallDetailsSlideover
+    <WebhooksCallDetailsSlideover
       v-model:open="detailsOpen"
       :call-id="selectedCallId"
       @changed="() => { refresh() }"

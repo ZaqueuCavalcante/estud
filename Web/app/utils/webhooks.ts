@@ -30,6 +30,32 @@ export const webhookCallAttemptStatusColors: Record<string, BadgeColor> = {
   Error: 'error',
 }
 
+export const webhookBackoffStrategyLabels: Record<string, string> = {
+  None: 'Sem backoff',
+  Fixed: 'Fixo',
+  Linear: 'Linear',
+  Exponential: 'Exponencial',
+}
+
+export const webhookBackoffStrategyIcons: Record<string, string> = {
+  None: 'i-lucide-zap',
+  Fixed: 'i-lucide-minus',
+  Linear: 'i-lucide-trending-up',
+  Exponential: 'i-lucide-chart-spline',
+}
+
+export function webhookRetryDelays(maxRetries: number, baseDelaySeconds: number, backoffStrategy: string) {
+  return Array.from({ length: maxRetries }, (_, i) => {
+    const attempt = i + 1
+    switch (backoffStrategy) {
+      case 'Exponential': return baseDelaySeconds * 2 ** (attempt - 1)
+      case 'Linear': return baseDelaySeconds * attempt
+      case 'Fixed': return baseDelaySeconds
+      default: return 0
+    }
+  })
+}
+
 export function formatWebhookJson(value: string) {
   if (!value) return ''
   try {

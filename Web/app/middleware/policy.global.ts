@@ -9,8 +9,7 @@ const routePolicies: Record<string, PolicyName> = {
   '/security/sso': 'AccessSsoPage',
   '/security/2fa': 'AccessTwoFactorEnforcementPage',
   '/security': 'AccessSecurityPage',
-  '/integrations': 'AccessIntegrationsPage',
-  '/integrations/calls': 'AccessIntegrationsPage',
+  '/webhooks': 'AccessWebhooksPage',
   '/teachers': 'AccessTeachersPage',
   '/students': 'AccessStudentsPage',
   '/disciplines': 'AccessDisciplinesPage',
@@ -45,7 +44,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const isDisciplineDetail = to.path.startsWith('/disciplines/')
   const isCourseCurriculumRoute = to.path.startsWith('/course-curriculums/')
   const isCourseOfferingDetail = to.path.startsWith('/course-offerings/')
-  if (!routePolicy && !isClassDetail && !isClassroomDetail && !isCampusDetail && !isTeacherDetail && !isStudentDetail && !isDisciplineDetail && !isCourseDetail && !isCourseCurriculumRoute && !isCourseOfferingDetail) return
+  const isWebhookDetail = to.path.startsWith('/webhooks/')
+  if (!routePolicy && !isClassDetail && !isClassroomDetail && !isCampusDetail && !isTeacherDetail && !isStudentDetail && !isDisciplineDetail && !isCourseDetail && !isCourseCurriculumRoute && !isCourseOfferingDetail && !isWebhookDetail) return
 
   if (import.meta.server) {
     if (!useCookie(BEARER_COOKIE).value) return navigateTo('/')
@@ -86,7 +86,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
                   ? 'AccessCourseCurriculumsPage' as PolicyName
                   : isCourseOfferingDetail
                     ? 'AccessCourseOfferingsPage' as PolicyName
-                    : classDetailPolicies[account.value!.userType])
+                    : isWebhookDetail
+                      ? 'AccessWebhooksPage' as PolicyName
+                      : classDetailPolicies[account.value!.userType])
   if (!policyName) return
 
   const { can } = usePolicy()

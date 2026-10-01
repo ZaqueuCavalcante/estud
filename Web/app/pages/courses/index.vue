@@ -126,7 +126,7 @@ const columns: TableColumn<CourseItem>[] = [
         <div class="flex flex-col sm:flex-row gap-2">
           <UInput
             v-model="filter"
-            class="w-full sm:max-w-sm"
+            class="w-full sm:w-80 sm:shrink-0"
             :ui="{ base: 'h-8' }"
             icon="i-lucide-search"
             placeholder="Buscar por nome..."
@@ -149,7 +149,8 @@ const columns: TableColumn<CourseItem>[] = [
             value-key="value"
             :search-input="false"
             clear
-            class="w-full sm:w-48"
+            icon="i-lucide-shapes"
+            class="w-full sm:w-48 sm:shrink-0"
             :ui="{ base: 'h-8 text-base/5' }"
             placeholder="Tipo"
           />

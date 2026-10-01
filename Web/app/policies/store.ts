@@ -399,9 +399,9 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
     ],
   },
 
-  // Integrations
-  AccessIntegrationsPage: {
-    description: "Acessar a página de integrações",
+  // Webhooks
+  AccessWebhooksPage: {
+    description: "Acessar a página de webhooks",
     requirements: [
       hasUserType(UserTypes.Manager),
       hasPermission(Permissions.ManageWebhooks),
@@ -430,6 +430,13 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
   },
   UpdateWebhookSubscription: {
     description: "Editar inscrições de webhook",
+    requirements: [
+      hasUserType(UserTypes.Manager),
+      hasPermission(Permissions.ManageWebhooks),
+    ],
+  },
+  UpdateWebhookSubscriptionRetryConfigs: {
+    description: "Editar configurações de retentativa de webhooks",
     requirements: [
       hasUserType(UserTypes.Manager),
       hasPermission(Permissions.ManageWebhooks),

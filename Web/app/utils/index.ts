@@ -20,3 +20,16 @@ export function formatPhoneNumber(value: string): string {
 
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
 }
+
+export function formatDateTime(value: string | Date, options: { seconds?: boolean } = {}): string {
+  return new Date(value)
+    .toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      ...(options.seconds ? { second: '2-digit' } : {}),
+    })
+    .replace(', ', ' ')
+}

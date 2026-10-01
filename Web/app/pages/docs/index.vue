@@ -30,7 +30,7 @@ const sections = [
     icon: 'i-lucide-shield-check',
   },
   {
-    title: 'Integrações',
+    title: 'Webhooks',
     description: 'Conecte o Estud aos seus outros sistemas com webhooks.',
     to: '/docs/integracoes/webhooks',
     icon: 'i-lucide-webhook',

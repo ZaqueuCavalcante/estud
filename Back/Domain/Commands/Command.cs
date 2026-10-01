@@ -79,7 +79,7 @@ public class Command
         ParentId = parentId;
         OriginalId = originalId;
         ActivityId = activityId;
-        NotBefore = delaySeconds != null ? DateTime.UtcNow.AddSeconds(delaySeconds.Value) : null;
+        NotBefore = delaySeconds > 0 ? DateTime.UtcNow.AddSeconds(delaySeconds.Value) : null;
         MaxRetries = maxRetries;
         BackoffStrategy = backoffStrategy;
         BaseDelaySeconds = baseDelaySeconds;
@@ -103,7 +103,7 @@ public class Command
         ParentId = parentId;
         OriginalId = originalId;
         ActivityId = activityId;
-        NotBefore = delaySeconds != null ? DateTime.UtcNow.AddSeconds(delaySeconds.Value) : null;
+        NotBefore = delaySeconds > 0 ? DateTime.UtcNow.AddSeconds(delaySeconds.Value) : null;
         MaxRetries = maxRetries;
         BackoffStrategy = backoffStrategy;
         BaseDelaySeconds = baseDelaySeconds;

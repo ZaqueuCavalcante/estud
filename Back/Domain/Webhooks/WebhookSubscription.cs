@@ -20,6 +20,10 @@ public class WebhookSubscription
     /// </summary>
     public Dictionary<string, string> CustomHeaders { get; set; } = [];
 
+    public int MaxRetries { get; set; }
+    public int BaseDelaySeconds { get; set; }
+    public BackoffStrategy BackoffStrategy { get; set; }
+
     private WebhookSubscription() { }
 
     public WebhookSubscription(int institutionId, string name, string url, List<WebhookEventType> events, Dictionary<string, string> customHeaders)
@@ -40,5 +44,12 @@ public class WebhookSubscription
         Events = events;
         CustomHeaders = customHeaders ?? [];
         IsActive = isActive;
+    }
+
+    public void UpdateRetryConfigs(int maxRetries, int baseDelaySeconds, BackoffStrategy backoffStrategy)
+    {
+        MaxRetries = maxRetries;
+        BaseDelaySeconds = baseDelaySeconds;
+        BackoffStrategy = backoffStrategy;
     }
 }

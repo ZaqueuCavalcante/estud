@@ -186,12 +186,13 @@ export type PolicyName
     | 'AccessTwoFactorEnforcementPage'
     | 'GetTwoFactorEnforcement'
     | 'SetTwoFactorEnforcement'
-  // Integrations
-    | 'AccessIntegrationsPage'
+  // Webhooks
+    | 'AccessWebhooksPage'
     | 'GetWebhookSubscription'
     | 'GetWebhookSubscriptions'
     | 'CreateWebhookSubscription'
     | 'UpdateWebhookSubscription'
+    | 'UpdateWebhookSubscriptionRetryConfigs'
     | 'RetryWebhookCall'
   // Notifications
     | 'AccessNotificationsPage'

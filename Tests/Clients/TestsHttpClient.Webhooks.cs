@@ -5,6 +5,7 @@ using Estud.Back.Features.Webhooks.GetWebhookSubscription;
 using Estud.Back.Features.Webhooks.GetWebhookSubscriptions;
 using Estud.Back.Features.Webhooks.CreateWebhookSubscription;
 using Estud.Back.Features.Webhooks.UpdateWebhookSubscription;
+using Estud.Back.Features.Webhooks.UpdateWebhookSubscriptionRetryConfigs;
 
 namespace Estud.Tests.Integration.Clients;
 
@@ -40,6 +41,7 @@ public partial class TestsHttpClient
     }
 
     public async Task<OneOf<GetWebhookCallsOut, ErrorOut>> GetWebhookCalls(
+        int subscriptionId,
         int page = 1,
         int pageSize = 20,
         WebhookCallStatus? status = null
@@ -51,7 +53,7 @@ public partial class TestsHttpClient
             Status = status,
         };
 
-        var response = await http.GetAsync("webhooks/calls".AddQueryString(data));
+        var response = await http.GetAsync($"webhooks/{subscriptionId}/calls".AddQueryString(data));
         return await response.Resolve<GetWebhookCallsOut>();
     }
 
@@ -85,5 +87,21 @@ public partial class TestsHttpClient
         };
         var response = await http.PutAsJsonAsync($"webhooks/subscriptions/{webhookSubscriptionId}", data);
         return await response.Resolve<UpdateWebhookSubscriptionOut>();
+    }
+
+    public async Task<OneOf<SuccessOut, ErrorOut>> UpdateWebhookSubscriptionRetryConfigs(
+        int webhookSubscriptionId,
+        int maxRetries = 3,
+        int baseDelaySeconds = 10,
+        BackoffStrategy? backoffStrategy = BackoffStrategy.Exponential
+    ) {
+        var data = new UpdateWebhookSubscriptionRetryConfigsIn
+        {
+            MaxRetries = maxRetries,
+            BaseDelaySeconds = baseDelaySeconds,
+            BackoffStrategy = backoffStrategy,
+        };
+        var response = await http.PutAsJsonAsync($"webhooks/subscriptions/{webhookSubscriptionId}/retry-configs", data);
+        return await response.Resolve<SuccessOut>();
     }
 }

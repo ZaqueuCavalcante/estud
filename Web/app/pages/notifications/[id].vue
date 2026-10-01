@@ -24,16 +24,6 @@ const { data, status, error } = await useFetch<GetInstitutionNotificationOut>(
   { credentials: 'include', server: false },
 )
 
-function formatDateTime(value: string) {
-  return new Date(value).toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-
 function viewRateColor(rate: number): string {
   if (rate < 50) return 'var(--ui-error)'
   if (rate < 80) return 'var(--ui-warning)'

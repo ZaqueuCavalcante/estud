@@ -19,16 +19,6 @@ interface GetInstitutionNotificationsOut {
 const config = useRuntimeConfig()
 const createModalOpen = ref(false)
 
-function formatDateTime(value: string) {
-  return new Date(value).toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-
 function viewRateColor(rate: number): string {
   if (rate < 50) return 'var(--ui-error)'
   if (rate < 80) return 'var(--ui-warning)'
@@ -75,7 +65,10 @@ const { data, status, refresh } = await useFetch<GetInstitutionNotificationsOut>
       </div>
 
       <div v-else class="space-y-4">
-        <div class="flex justify-end">
+        <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <div>
+            <p class="text-sm text-muted mt-0.5">Visualize e gerencie as notificações da sua instituição.</p>
+          </div>
           <UButton icon="i-lucide-plus" label="Notificação" class="shrink-0" @click="() => { createModalOpen = true }" />
         </div>
 

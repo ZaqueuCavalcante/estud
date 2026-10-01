@@ -2,11 +2,16 @@ namespace Estud.Back.Features.Webhooks.GetWebhookCalls;
 
 public class GetWebhookCallsService(EstudDbContext ctx) : IEstudService
 {
-    public async Task<GetWebhookCallsOut> Get(GetWebhookCallsIn data)
+    public async Task<OneOf<GetWebhookCallsOut, EstudError>> Get(int subscriptionId, GetWebhookCallsIn data)
     {
         var institutionId = ctx.RequestUser.InstitutionId;
 
-        var query = ctx.WebhookCalls.AsNoTracking().Where(x => x.InstitutionId == institutionId);
+        var subscriptionExists = await ctx.WebhookSubscriptions
+            .AnyAsync(x => x.InstitutionId == institutionId && x.Id == subscriptionId);
+        if (!subscriptionExists) return WebhookSubscriptionNotFound.I;
+
+        var query = ctx.WebhookCalls.AsNoTracking()
+            .Where(x => x.InstitutionId == institutionId && x.WebhookSubscriptionId == subscriptionId);
 
         if (data.Status is not null)
             query = query.Where(x => x.Status == data.Status);

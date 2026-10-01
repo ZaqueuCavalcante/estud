@@ -190,7 +190,7 @@ const SIDEBAR = [
   { label: 'Acadêmico', icon: 'book-marked', items: [['Campi', 'map-pin'], ['Cursos', 'notebook'], ['Grades', 'layout-list'], ['Disciplinas', 'book-open']] },
   { label: 'Secretaria', icon: 'archive', items: [['Ofertas', 'library'], ['Turmas', 'presentation'], ['Calendário', 'calendar-range'], ['Notificações', 'bell']] },
   { label: 'Pessoas', icon: 'contact', items: [['Alunos', 'graduation-cap'], ['Professores', 'user-pen']] },
-  { label: 'Sistema', icon: 'cog', items: [['Segurança', 'shield'], ['Integrações', 'webhook'], ['Configurações', 'settings']] },
+  { label: 'Sistema', icon: 'cog', items: [['Webhooks', 'webhook'], ['Segurança', 'shield'], ['Configurações', 'settings']] },
 ]
 
 const DAYS = [
