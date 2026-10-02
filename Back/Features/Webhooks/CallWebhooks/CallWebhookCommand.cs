@@ -50,6 +50,6 @@ public class CallWebhookCommandHandler(EstudDbContext ctx, IHttpClientFactory fa
             call.Failed(999, ex.Message, (int)stopwatch.ElapsedMilliseconds);
         }
 
-        return WebhookCallFailed.I;
+        return call.ShouldRetry() ? WebhookCallFailed.I : EstudSuccess.I;
     }
 }

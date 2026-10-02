@@ -443,7 +443,7 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
     ],
   },
   RetryWebhookCall: {
-    description: "Reprocessar chamadas de webhook",
+    description: "Reenviar chamadas de webhook",
     requirements: [
       hasUserType(UserTypes.Manager),
       hasPermission(Permissions.ManageWebhooks),

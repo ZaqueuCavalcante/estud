@@ -8,7 +8,7 @@ public class UpdateWebhookSubscriptionRetryConfigsService(EstudDbContext ctx) : 
         {
             RuleFor(x => x.MaxRetries).InclusiveBetween(0, 5).WithError(InvalidWebhookMaxRetries.I);
 
-            RuleFor(x => x.BaseDelaySeconds).InclusiveBetween(0, 30).WithError(InvalidWebhookBaseDelaySeconds.I);
+            RuleFor(x => x.BaseDelaySeconds).InclusiveBetween(0, 1800).WithError(InvalidWebhookBaseDelaySeconds.I);
 
             RuleFor(x => x.BackoffStrategy).NotNull().WithError(InvalidWebhookBackoffStrategy.I);
             RuleFor(x => x.BackoffStrategy).IsInEnum().WithError(InvalidWebhookBackoffStrategy.I);

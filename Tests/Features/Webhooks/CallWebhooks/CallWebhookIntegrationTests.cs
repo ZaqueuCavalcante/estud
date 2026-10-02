@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Estud.Back.Features.Webhooks.CallWebhooks;
 
 namespace Estud.Tests.Integration;
 
@@ -354,7 +355,7 @@ public partial class IntegrationTests
         await client.UpdateWebhookSubscriptionRetryConfigs(
             subscription.Id,
             maxRetries: 2,
-            baseDelaySeconds: 2,
+            baseDelaySeconds: 1,
             backoffStrategy: BackoffStrategy.Linear).Success();
 
         await client.CreateStudent(DataGen.UserName, DataGen.Email);
@@ -362,25 +363,24 @@ public partial class IntegrationTests
         // Act
         await _back.AwaitDomainEventsProcessing();
 
+        var scheduler = await _back.GetSchedulerFactory().GetScheduler();
         var callId = 0;
-        var timeout = DateTime.UtcNow.AddSeconds(30);
+        var callUid = "";
+        var timeout = DateTime.UtcNow.AddSeconds(15);
         while (DateTime.UtcNow < timeout)
         {
-            await _back.AwaitCommandsProcessing();
+            await scheduler.TriggerCommandsProcessorJob();
 
             var calls = await client.GetWebhookCalls(subscription.Id).Success();
             if (calls.Items.Count == 1 && calls.Items[0].AttemptsCount >= 3)
             {
                 callId = calls.Items[0].Id;
+                callUid = calls.Items[0].Uid;
                 break;
             }
 
-            await Task.Delay(500);
+            await Task.Delay(200);
         }
-
-        // The retry chain is exhausted at this point: a further round must not create a 4th attempt
-        await Task.Delay(TimeSpan.FromSeconds(7));
-        await _back.AwaitCommandsProcessing();
 
         // Assert
         callId.Should().NotBe(0, "the webhook should have been attempted 3 times (1 call + 2 retries)");
@@ -391,8 +391,85 @@ public partial class IntegrationTests
         call.Attempts.Should().HaveCount(3).And.OnlyContain(x => x.Status == WebhookCallAttemptStatus.Error);
 
         var attempts = call.Attempts.OrderBy(x => x.CreatedAt).ToList();
-        (attempts[1].CreatedAt - attempts[0].CreatedAt).Should().BeGreaterThanOrEqualTo(TimeSpan.FromSeconds(2));
-        (attempts[2].CreatedAt - attempts[1].CreatedAt).Should().BeGreaterThanOrEqualTo(TimeSpan.FromSeconds(4));
+        (attempts[1].CreatedAt - attempts[0].CreatedAt).Should().BeGreaterThanOrEqualTo(TimeSpan.FromSeconds(1));
+        (attempts[2].CreatedAt - attempts[1].CreatedAt).Should().BeGreaterThanOrEqualTo(TimeSpan.FromSeconds(2));
+
+        // The retry for the 3rd attempt would be created in the same transaction, so nothing pending means the chain is exhausted
+        await using var ctx = _back.GetDbContext();
+        var pendingRetries = await ctx.Commands.CountAsync(x =>
+            x.Type == nameof(CallWebhookCommand) && x.ProcessedAt == null && x.Data.Contains(callUid));
+        pendingRetries.Should().Be(0);
+    }
+
+    [TestCase(408)]
+    [TestCase(429)]
+    [TestCase(500)]
+    [TestCase(503)]
+    public async Task Webhooks_CallWebhook_Should_retry_when_target_responds_with_transient_error(int statusCode)
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        var subscription = await client.CreateWebhookSubscription(
+            url: $"{FakesFactory.Url}/webhooks/target/status/{statusCode}",
+            events: [WebhookEventType.StudentCreated]).Success();
+
+        await client.UpdateWebhookSubscriptionRetryConfigs(
+            subscription.Id,
+            maxRetries: 2,
+            baseDelaySeconds: 0,
+            backoffStrategy: BackoffStrategy.None).Success();
+
+        await client.CreateStudent(DataGen.UserName, DataGen.Email);
+
+        // Act
+        await _back.AwaitDomainEventsProcessing();
+        await _back.AwaitCommandsProcessing();
+
+        // Assert
+        var calls = await client.GetWebhookCalls(subscription.Id).Success();
+        var call = await client.GetWebhookCall(calls.Items.Single().Id).Success();
+
+        call.Status.Should().Be(WebhookCallStatus.Error);
+        call.AttemptsCount.Should().Be(3);
+        call.Attempts.Should().HaveCount(3).And.OnlyContain(x => x.StatusCode == statusCode);
+    }
+
+    [TestCase(400)]
+    [TestCase(401)]
+    [TestCase(404)]
+    [TestCase(422)]
+    [TestCase(501)]
+    [TestCase(505)]
+    public async Task Webhooks_CallWebhook_Should_not_retry_when_target_responds_with_permanent_error(int statusCode)
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+
+        var subscription = await client.CreateWebhookSubscription(
+            url: $"{FakesFactory.Url}/webhooks/target/status/{statusCode}",
+            events: [WebhookEventType.StudentCreated]).Success();
+
+        await client.UpdateWebhookSubscriptionRetryConfigs(
+            subscription.Id,
+            maxRetries: 2,
+            baseDelaySeconds: 0,
+            backoffStrategy: BackoffStrategy.None).Success();
+
+        await client.CreateStudent(DataGen.UserName, DataGen.Email);
+
+        // Act
+        await _back.AwaitDomainEventsProcessing();
+        await _back.AwaitCommandsProcessing();
+        await _back.AwaitCommandsProcessing();
+
+        // Assert
+        var calls = await client.GetWebhookCalls(subscription.Id).Success();
+        var call = await client.GetWebhookCall(calls.Items.Single().Id).Success();
+
+        call.Status.Should().Be(WebhookCallStatus.Error);
+        call.AttemptsCount.Should().Be(1);
+        call.Attempts.Single().StatusCode.Should().Be(statusCode);
     }
 
     #endregion

@@ -67,7 +67,7 @@ public class InvalidWebhookBaseDelaySeconds : EstudError
 {
     public static readonly InvalidWebhookBaseDelaySeconds I = new();
     public override string Code { get; set; } = nameof(InvalidWebhookBaseDelaySeconds);
-    public override string Message { get; set; } = "Intervalo base de retentativas de webhook inválido. Deve estar entre 0 e 30 segundos.";
+    public override string Message { get; set; } = "Intervalo base de retentativas de webhook inválido. Deve estar entre 0 e 1800 segundos (30 minutos).";
 }
 
 public class InvalidWebhookBackoffStrategy : EstudError

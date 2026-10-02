@@ -94,13 +94,13 @@ async function retry() {
       credentials: 'include',
     })
   } catch (err: unknown) {
-    const msg = (err as { data?: { message?: string } })?.data?.message ?? 'Erro ao reprocessar a chamada.'
+    const msg = (err as { data?: { message?: string } })?.data?.message ?? 'Erro ao reenviar a chamada.'
     toast.add({ title: 'Erro', description: msg, color: 'error' })
     retrying.value = false
     return
   }
 
-  toast.add({ title: 'Reprocessamento solicitado', color: 'success' })
+  toast.add({ title: 'Reenvio solicitado', color: 'success' })
   emit('changed')
 
   const updated = await fetchCall(callId).catch(() => null)
@@ -227,7 +227,7 @@ function statusCodeColor(statusCode: number) {
             </span>
             <UButton
               v-if="showRetry"
-              label="Reprocessar"
+              label="Reenviar"
               icon="i-lucide-refresh-cw"
               size="xs"
               color="neutral"

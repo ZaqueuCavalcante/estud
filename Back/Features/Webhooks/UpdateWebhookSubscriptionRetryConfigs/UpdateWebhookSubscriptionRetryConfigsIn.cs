@@ -8,7 +8,7 @@ public class UpdateWebhookSubscriptionRetryConfigsIn : IApiDto<UpdateWebhookSubs
     public int MaxRetries { get; set; }
 
     /// <summary>
-    /// Intervalo base, em segundos, usado no cálculo do backoff (0 a 30).
+    /// Intervalo base, em segundos, usado no cálculo do backoff (0 a 1800).
     /// </summary>
     public int BaseDelaySeconds { get; set; }
 

@@ -54,4 +54,11 @@ public class WebhookCall : DomainEntity
     {
         Status = WebhookCallStatus.Pending;
     }
+
+    public bool ShouldRetry()
+    {
+        var statusCode = Attempts[^1].StatusCode;
+
+        return statusCode is 408 or 429 || (statusCode >= 500 && statusCode is not 501 and not 505);
+    }
 }

@@ -55,7 +55,7 @@ public partial class IntegrationTests
 
     [Test]
     [TestCase(-1)]
-    [TestCase(31)]
+    [TestCase(1801)]
     public async Task Webhooks_UpdateWebhookSubscriptionRetryConfigs_Should_not_update_retry_configs_with_invalid_base_delay_seconds(int baseDelaySeconds)
     {
         // Arrange
@@ -125,7 +125,7 @@ public partial class IntegrationTests
 
     [Test]
     [TestCase(0, 0, BackoffStrategy.None)]
-    [TestCase(5, 30, BackoffStrategy.Linear)]
+    [TestCase(5, 1800, BackoffStrategy.Linear)]
     public async Task Webhooks_UpdateWebhookSubscriptionRetryConfigs_Should_accept_boundary_values(
         int maxRetries, int baseDelaySeconds, BackoffStrategy backoffStrategy)
     {
@@ -143,6 +143,30 @@ public partial class IntegrationTests
         subscription.MaxRetries.Should().Be(maxRetries);
         subscription.BaseDelaySeconds.Should().Be(baseDelaySeconds);
         subscription.BackoffStrategy.Should().Be(backoffStrategy);
+    }
+
+    [Test]
+    [TestCase(1)]
+    [TestCase(5)]
+    [TestCase(30)]
+    public async Task Webhooks_UpdateWebhookSubscriptionRetryConfigs_Should_update_retry_configs_with_base_delay_in_minutes(int minutes)
+    {
+        // Arrange
+        var client = await _back.LoggedAsDirector();
+        var created = await client.CreateWebhookSubscription().Success();
+
+        // Act
+        var result = await client.UpdateWebhookSubscriptionRetryConfigs(
+            created.Id,
+            maxRetries: 3,
+            baseDelaySeconds: minutes * 60,
+            backoffStrategy: BackoffStrategy.Exponential);
+
+        // Assert
+        result.ShouldBeSuccess();
+
+        var subscription = await client.GetWebhookSubscription(created.Id).Success();
+        subscription.BaseDelaySeconds.Should().Be(minutes * 60);
     }
 
     [Test]
