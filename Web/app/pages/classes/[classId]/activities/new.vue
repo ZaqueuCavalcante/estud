@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ userTypes: ['Teacher'] })
+
 const route = useRoute()
 const { account } = useUserAccount()
 

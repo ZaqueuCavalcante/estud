@@ -26,14 +26,14 @@ const sections = [
   {
     title: 'Segurança',
     description: 'Autenticação em dois fatores, perfis de acesso e boas práticas.',
-    to: '/docs/seguranca/autenticacao',
+    to: '/docs/seguranca/2fa',
     icon: 'i-lucide-shield-check',
   },
   {
-    title: 'Webhooks',
+    title: 'Integrações',
     description: 'Conecte o Estud aos seus outros sistemas com webhooks.',
     to: '/docs/integracoes/webhooks',
-    icon: 'i-lucide-webhook',
+    icon: 'i-lucide-plug',
   },
 ]
 </script>

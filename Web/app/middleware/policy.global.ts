@@ -45,7 +45,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const isCourseCurriculumRoute = to.path.startsWith('/course-curriculums/')
   const isCourseOfferingDetail = to.path.startsWith('/course-offerings/')
   const isWebhookDetail = to.path.startsWith('/webhooks/')
-  if (!routePolicy && !isClassDetail && !isClassroomDetail && !isCampusDetail && !isTeacherDetail && !isStudentDetail && !isDisciplineDetail && !isCourseDetail && !isCourseCurriculumRoute && !isCourseOfferingDetail && !isWebhookDetail) return
+  const userTypes = to.meta.userTypes
+  if (!routePolicy && !userTypes && !isClassDetail && !isClassroomDetail && !isCampusDetail && !isTeacherDetail && !isStudentDetail && !isDisciplineDetail && !isCourseDetail && !isCourseCurriculumRoute && !isCourseOfferingDetail && !isWebhookDetail) return
 
   if (import.meta.server) {
     if (!useCookie(BEARER_COOKIE).value) return navigateTo('/')
@@ -67,6 +68,17 @@ export default defineNuxtRouteMiddleware(async (to) => {
       }).catch(() => {})
       return navigateTo('/')
     }
+  }
+
+  if (userTypes && !userTypes.includes(account.value!.userType)) {
+    // Lançar o erro aqui abortaria a navegação e a URL voltaria para a página anterior.
+    // Deixamos a navegação concluir e só então mostramos o 404, como o Nuxt faz com rota inexistente.
+    const nuxtApp = useNuxtApp()
+    const stop = useRouter().afterEach(() => {
+      stop()
+      nuxtApp.runWithContext(() => showError(createError({ status: 404, fatal: true })))
+    })
+    return
   }
 
   const policyName = routePolicy
