@@ -38,18 +38,18 @@ function formatCreatedAt(value: string) {
   return relativeFormatter.format(-Math.floor(minutes / 60), 'hour')
 }
 
-async function markOne(id: number) {
-  await markAsViewed(id)
+async function onCardClick(notification: NotificationItem) {
+  if (!notification.viewedAt) await markAsViewed(notification.id)
 }
 
 async function markAll() {
   await markAsViewed()
 }
 
-async function onLinkClick(notification: NotificationItem, link: NotificationLink) {
+function onLinkClick(link: NotificationLink) {
   if (!link.newTab) isNotificationsSlideoverOpen.value = false
-  if (!notification.viewedAt) await markAsViewed(notification.id)
 }
+
 </script>
 
 <template>
@@ -77,13 +77,13 @@ async function onLinkClick(notification: NotificationItem, link: NotificationLin
           />
           <UButton
             v-if="unreadNotifications.length > 0"
-            variant="ghost"
+            variant="outline"
             color="neutral"
             size="xs"
             icon="i-lucide-check-check"
             @click="markAll"
           >
-            Marcar todas
+            Marcar todas como lidas
           </UButton>
         </div>
       </div>
@@ -110,20 +110,23 @@ async function onLinkClick(notification: NotificationItem, link: NotificationLin
         <div
           v-for="notification in notifications"
           :key="notification.id"
-          class="p-3 rounded-lg border shadow-sm hover:shadow-md flex items-start gap-3 transition-shadow"
+          class="relative p-3 rounded-lg border shadow-sm"
           :class="!notification.viewedAt ? 'bg-elevated border-primary/40' : 'bg-default border-default'"
+          @click="() => { onCardClick(notification) }"
         >
-          <div class="flex-1 min-w-0">
-            <div class="flex items-start gap-2">
+          <span
+            v-if="!notification.viewedAt"
+            class="absolute top-3 right-3 size-2 rounded-full bg-primary"
+          />
+          <UIcon
+            v-else
+            name="i-lucide-check-check"
+            class="absolute top-2.5 right-2.5 size-4 text-dimmed"
+          />
+          <div class="min-w-0">
+            <div class="flex items-start gap-2 pr-4">
               <div class="flex items-center gap-1.5 min-w-0">
-                <span
-                  v-if="!notification.viewedAt"
-                  class="shrink-0 size-1.5 rounded-full bg-primary mt-1"
-                />
-                <p
-                  class="text-sm font-medium text-highlighted truncate"
-                  :class="notification.viewedAt ? 'pl-3' : ''"
-                >
+                <p class="text-sm font-medium text-highlighted truncate">
                   {{ notification.title }}
                 </p>
                 <UIcon
@@ -133,13 +136,13 @@ async function onLinkClick(notification: NotificationItem, link: NotificationLin
                 />
               </div>
             </div>
-            <p class="text-sm text-dimmed mt-0.5 pl-3">
+            <p class="text-sm text-dimmed mt-0.5">
               {{ notification.description }}
             </p>
 
             <div
               v-if="linksOf(notification).length > 0"
-              class="flex flex-wrap gap-1.5 mt-2 pl-3"
+              class="flex flex-wrap gap-1.5 mt-2"
             >
               <UButton
                 v-for="link in linksOf(notification)"
@@ -151,29 +154,17 @@ async function onLinkClick(notification: NotificationItem, link: NotificationLin
                 size="xs"
                 color="neutral"
                 variant="subtle"
-                @click="() => { onLinkClick(notification, link) }"
+                @click="() => { onLinkClick(link) }"
               />
             </div>
 
             <time
               :datetime="notification.createdAt"
-              class="block text-xs text-muted mt-2 text-right"
+              class="block mt-2 text-xs text-muted text-right"
             >
               {{ formatCreatedAt(notification.createdAt) }}
             </time>
           </div>
-
-          <UTooltip text="Marcar como lida">
-            <UButton
-              v-if="!notification.viewedAt"
-              icon="i-lucide-check"
-              variant="ghost"
-              color="neutral"
-              size="xs"
-              class="shrink-0 mt-0.5"
-              @click="markOne(notification.id)"
-            />
-          </UTooltip>
         </div>
       </div>
     </template>

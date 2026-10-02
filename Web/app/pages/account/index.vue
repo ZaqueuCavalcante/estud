@@ -12,12 +12,8 @@ const toast = useToast()
 const editNameOpen = ref(false)
 const loading = ref(false)
 
-const photoTypes = ['image/png', 'image/jpeg', 'image/webp']
-const maxPhotoSize = 15 * 1024 * 1024
-const photoInput = ref<HTMLInputElement | null>(null)
 const uploadingPhoto = ref(false)
-const cropPhotoOpen = ref(false)
-const photoToCrop = ref<File | null>(null)
+const photoOpen = ref(false)
 const removePhotoOpen = ref(false)
 const removingPhoto = ref(false)
 
@@ -47,37 +43,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   }
 }
 
-function onPhotoSelected(event: Event) {
-  const input = event.target as HTMLInputElement
-  const file = input.files?.[0]
-  input.value = ''
-  if (!file) return
-
-  if (!photoTypes.includes(file.type)) {
-    toast.add({ title: 'Formato de foto inválido', description: 'Envie uma imagem PNG, JPEG ou WebP.', color: 'error' })
-    return
-  }
-
-  if (file.size > maxPhotoSize) {
-    toast.add({
-      title: 'Foto muito grande',
-      description: `${file.name} tem ${formatSize(file.size)}, e o limite é de ${formatSize(maxPhotoSize)}.`,
-      color: 'error',
-    })
-    return
-  }
-
-  photoToCrop.value = file
-  cropPhotoOpen.value = true
-}
-
 async function onPhotoCropped(photo: Blob) {
   uploadingPhoto.value = true
   try {
     await updateProfilePhoto(photo)
     toast.add({ title: 'Foto atualizada com sucesso', color: 'success' })
-    cropPhotoOpen.value = false
-    photoToCrop.value = null
+    photoOpen.value = false
   } catch (err: unknown) {
     const msg = (err as { data?: { message?: string } })?.data?.message ?? 'Erro ao atualizar foto.'
     toast.add({ title: 'Erro', description: msg, color: 'error' })
@@ -114,10 +85,6 @@ async function logout() {
     loggingOut.value = false
   }
 }
-
-function formatSize(bytes: number) {
-  return `${(bytes / 1024 / 1024).toFixed(1).replace('.', ',')} MB`
-}
 </script>
 
 <template>
@@ -133,35 +100,15 @@ function formatSize(bytes: number) {
     <div class="flex flex-col divide-y divide-default">
       <div class="flex max-sm:flex-col justify-between items-start sm:items-center gap-4 py-4 first:pt-0 last:pb-0">
         <div>
-          <p class="text-sm text-muted">Foto</p>
-          <p class="text-xs text-dimmed">PNG, JPEG ou WebP.</p>
+          <p class="text-sm text-muted">Foto de perfil</p>
         </div>
-        <div class="flex items-center gap-3">
-          <UAvatar :src="account?.profilePhoto ?? undefined" :alt="account?.name" size="3xl" />
-          <input
-            ref="photoInput"
-            type="file"
-            class="hidden"
-            :accept="photoTypes.join(',')"
-            @change="onPhotoSelected"
-          >
-          <UButton
-            label="Alterar"
-            size="xs"
-            color="neutral"
-            variant="subtle"
-            :loading="uploadingPhoto"
-            :disabled="removingPhoto"
-            @click="() => { photoInput?.click() }"
-          />
-          <UButton
-            v-if="account?.profilePhoto"
-            label="Remover"
-            size="xs"
-            color="error"
-            variant="ghost"
-            :disabled="uploadingPhoto"
-            @click="() => { removePhotoOpen = true }"
+        <div class="relative">
+          <UAvatar
+            :src="account?.profilePhoto ?? undefined"
+            :alt="account?.name"
+            size="3xl"
+            class="cursor-pointer"
+            @click="() => { photoOpen = true }"
           />
         </div>
       </div>
@@ -260,11 +207,13 @@ function formatSize(bytes: number) {
     </template>
   </UModal>
 
-  <AccountProfilePhotoCropper
-    v-model:open="cropPhotoOpen"
-    :file="photoToCrop"
+  <AccountProfilePhotoModal
+    v-model:open="photoOpen"
+    :photo="account?.profilePhoto ?? null"
+    :name="account?.name"
     :loading="uploadingPhoto"
     @save="onPhotoCropped"
+    @remove="() => { photoOpen = false; removePhotoOpen = true }"
   />
 
   <UModal

@@ -74,7 +74,7 @@ const customHeaders = computed(() => Object.entries(data.value?.customHeaders ??
               <UBadge
                 class="self-start"
                 :label="data.isActive ? 'Ativo' : 'Inativo'"
-                :color="data.isActive ? 'success' : 'neutral'"
+                :color="data.isActive ? 'primary' : 'neutral'"
                 variant="subtle"
               />
             </div>

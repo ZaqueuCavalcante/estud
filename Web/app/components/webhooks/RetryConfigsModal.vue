@@ -26,9 +26,20 @@ const backoffStrategyOptions = Object.entries(webhookBackoffStrategyLabels).map(
   description: backoffStrategyDescriptions[value],
 }))
 
+type DelayUnit = 'seconds' | 'minutes'
+
+const delayUnitOptions: { label: string, value: DelayUnit }[] = [
+  { label: 's', value: 'seconds' },
+  { label: 'min', value: 'minutes' },
+]
+
+const delayUnit = ref<DelayUnit>('seconds')
+const delayUnitFactor = computed(() => (delayUnit.value === 'minutes' ? 60 : 1))
+const delayUnitSuffix = computed(() => (delayUnit.value === 'minutes' ? 'min' : 's'))
+
 const schema = z.object({
   maxRetries: z.number({ error: 'Campo obrigatório' }).int('Deve ser um número inteiro').min(0, 'Mínimo 0').max(5, 'Máximo 5'),
-  baseDelaySeconds: z.number({ error: 'Campo obrigatório' }).int('Deve ser um número inteiro').min(0, 'Mínimo 0').max(30, 'Máximo 30'),
+  baseDelay: z.number({ error: 'Campo obrigatório' }).int('Deve ser um número inteiro').min(0, 'Mínimo 0').max(30, 'Máximo 30'),
   backoffStrategy: z.string({ error: 'Campo obrigatório' }).min(1, 'Campo obrigatório'),
 })
 
@@ -36,20 +47,22 @@ type Schema = z.output<typeof schema>
 
 const formState = reactive<Partial<Schema>>({
   maxRetries: 0,
-  baseDelaySeconds: 0,
+  baseDelay: 0,
   backoffStrategy: 'None',
 })
 
 watch(open, (val) => {
   if (val && props.subscription) {
+    const { baseDelaySeconds } = props.subscription
+    delayUnit.value = baseDelaySeconds > 0 && baseDelaySeconds % 60 === 0 ? 'minutes' : 'seconds'
     formState.maxRetries = props.subscription.maxRetries
-    formState.baseDelaySeconds = props.subscription.baseDelaySeconds
+    formState.baseDelay = baseDelaySeconds / delayUnitFactor.value
     formState.backoffStrategy = props.subscription.backoffStrategy
   }
 })
 
 const retryDelays = computed(() =>
-  webhookRetryDelays(formState.maxRetries ?? 0, formState.baseDelaySeconds ?? 0, formState.backoffStrategy ?? 'None'),
+  webhookRetryDelays(formState.maxRetries ?? 0, formState.baseDelay ?? 0, formState.backoffStrategy ?? 'None'),
 )
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
@@ -57,7 +70,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   try {
     await $fetch(`${config.public.backendUrl}/webhooks/subscriptions/${props.subscription!.id}/retry-configs`, {
       method: 'PUT',
-      body: event.data,
+      body: {
+        maxRetries: event.data.maxRetries,
+        baseDelaySeconds: event.data.baseDelay * delayUnitFactor.value,
+        backoffStrategy: event.data.backoffStrategy,
+      },
       credentials: 'include',
     })
     toast.add({ title: 'Configurações de retentativa atualizadas', color: 'success' })
@@ -96,10 +113,25 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
         <UFormField
           label="Intervalo base"
-          name="baseDelaySeconds"
-          :hint="`${formState.baseDelaySeconds}s`"
+          name="baseDelay"
         >
-          <USlider v-model="formState.baseDelaySeconds" class="py-2" :min="0" :max="30" />
+          <template #hint>
+            <div class="flex items-center gap-2">
+              <span>{{ formState.baseDelay }}{{ delayUnitSuffix }}</span>
+              <UFieldGroup size="xs">
+                <UButton
+                  v-for="opt in delayUnitOptions"
+                  :key="opt.value"
+                  :label="opt.label"
+                  color="neutral"
+                  :variant="delayUnit === opt.value ? 'solid' : 'subtle'"
+                  class="w-11 justify-center"
+                  @click="() => { delayUnit = opt.value }"
+                />
+              </UFieldGroup>
+            </div>
+          </template>
+          <USlider v-model="formState.baseDelay" class="py-2" :min="0" :max="30" />
         </UFormField>
 
         <UFormField label="Estratégia de backoff" name="backoffStrategy">
@@ -134,7 +166,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           </div>
         </UFormField>
 
-        <WebhooksRetryDelaysChart :delays="retryDelays" />
+        <WebhooksRetryDelaysChart :delays="retryDelays" :unit-suffix="delayUnitSuffix" />
 
         <div class="flex justify-end gap-2 pt-2">
           <UButton

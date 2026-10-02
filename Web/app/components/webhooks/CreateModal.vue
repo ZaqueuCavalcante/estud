@@ -9,6 +9,7 @@ const isMobile = useIsMobile()
 const config = useRuntimeConfig()
 const toast = useToast()
 const loading = ref(false)
+const uid = useId()
 
 const eventOptions = [
   { label: 'Aluno criado', value: 'StudentCreated' },
@@ -111,10 +112,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           <div class="flex flex-col gap-2 w-full">
             <UCheckbox
               v-for="opt in eventOptions"
+              :id="`${uid}-event-${opt.value}`"
               :key="opt.value"
               :label="opt.label"
               :model-value="formState.events!.includes(opt.value)"
-              @update:model-value="toggleEvent(opt.value)"
+              @update:model-value="() => { toggleEvent(opt.value) }"
             />
           </div>
         </UFormField>

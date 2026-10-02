@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{ delays: number[] }>()
+const props = defineProps<{ delays: number[], unitSuffix: string }>()
 
 const MAX_SLOTS = 5
 
@@ -24,7 +24,7 @@ const slots = computed(() =>
         class="text-xs text-dimmed transition-opacity duration-500"
         :class="delays.length ? 'opacity-100' : 'opacity-0'"
       >
-        Total {{ total }}s
+        Total {{ total }}{{ unitSuffix }}
       </span>
     </div>
 
@@ -41,7 +41,7 @@ const slots = computed(() =>
             :style="{ height: slot.active ? `${Math.max((slot.delay / max) * 100, slot.delay > 0 ? 3 : 0)}%` : '0%' }"
           >
             <span class="absolute bottom-full left-1/2 mb-1 -translate-x-1/2 whitespace-nowrap text-xs text-muted tabular-nums">
-              {{ slot.delay }}s
+              {{ slot.delay }}{{ unitSuffix }}
             </span>
           </div>
         </div>

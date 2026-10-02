@@ -42,9 +42,13 @@ const { data, status, refresh } = await useFetch<GetRolesOut>(`${config.public.b
   />
 
   <div v-else class="space-y-4">
-    <div class="flex justify-start sm:justify-end">
-      <UButton icon="i-lucide-plus" label="Perfil" @click="() => { createModalOpen = true }" />
+    <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        <div>
+            <p class="text-sm text-muted mt-0.5">Visualize e gerencie os perfis de acesso da sua instituição.</p>
+        </div>
+        <UButton icon="i-lucide-plus" label="Perfil" @click="() => { createModalOpen = true }" />
     </div>
+
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       <button

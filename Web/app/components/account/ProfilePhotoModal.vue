@@ -2,14 +2,68 @@
 const OUTPUT_SIZE = 512
 const MAX_SCALE = 4
 
-const props = defineProps<{ file: File | null, loading?: boolean }>()
-const emit = defineEmits<{ save: [blob: Blob] }>()
+const PHOTO_TYPES = ['image/png', 'image/jpeg', 'image/webp']
+const MAX_PHOTO_SIZE = 15 * 1024 * 1024
+
+const props = defineProps<{ photo: string | null, name?: string, loading?: boolean }>()
+const emit = defineEmits<{ save: [blob: Blob], remove: [] }>()
 const open = defineModel<boolean>('open', { required: true })
 
 const isMobile = useIsMobile()
+const toast = useToast()
 const viewport = useTemplateRef<HTMLDivElement>('viewport')
 const source = useTemplateRef<HTMLCanvasElement>('source')
+const fileInput = useTemplateRef<HTMLInputElement>('fileInput')
 const { width: diameter } = useElementSize(viewport)
+
+const file = ref<Blob | null>(null)
+const loadingCurrent = ref(false)
+
+watch(open, (isOpen) => {
+  file.value = null
+  if (isOpen) loadCurrent()
+}, { immediate: true })
+
+function onFileSelected(event: Event) {
+  const input = event.target as HTMLInputElement
+  const selected = input.files?.[0]
+  input.value = ''
+  if (!selected) return
+
+  if (!PHOTO_TYPES.includes(selected.type)) {
+    toast.add({ title: 'Formato de foto inválido', description: 'Envie uma imagem PNG, JPEG ou WebP.', color: 'error' })
+    return
+  }
+
+  if (selected.size > MAX_PHOTO_SIZE) {
+    toast.add({
+      title: 'Foto muito grande',
+      description: `${selected.name} tem ${formatSize(selected.size)}, e o limite é de ${formatSize(MAX_PHOTO_SIZE)}.`,
+      color: 'error',
+    })
+    return
+  }
+
+  file.value = selected
+}
+
+async function loadCurrent() {
+  if (!props.photo) return
+
+  loadingCurrent.value = true
+  try {
+    const current = await $fetch<Blob>(props.photo, { responseType: 'blob' })
+    if (open.value && !file.value) file.value = current
+  } catch {
+    toast.add({ title: 'Erro', description: 'Não foi possível carregar a foto atual.', color: 'error' })
+  } finally {
+    loadingCurrent.value = false
+  }
+}
+
+function formatSize(bytes: number) {
+  return `${(bytes / 1024 / 1024).toFixed(1).replace('.', ',')} MB`
+}
 
 const natural = ref({ w: 0, h: 0 })
 const scale = ref(1)
@@ -31,8 +85,8 @@ const canvasStyle = computed(() => ({
   transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px)`,
 }))
 
-watch([() => props.file, open], async ([file, isOpen]) => {
-  if (!isOpen || !file) {
+watch(file, async (blob) => {
+  if (!blob) {
     natural.value = { w: 0, h: 0 }
     return
   }
@@ -41,7 +95,7 @@ watch([() => props.file, open], async ([file, isOpen]) => {
   const canvas = source.value
   if (!canvas) return
 
-  const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' })
+  const bitmap = await createImageBitmap(blob, { imageOrientation: 'from-image' })
   canvas.width = bitmap.width
   canvas.height = bitmap.height
   canvas.getContext('2d')?.drawImage(bitmap, 0, 0)
@@ -169,23 +223,62 @@ async function save() {
     :dismissible="!loading"
   >
     <template #body>
+      <input
+        ref="fileInput"
+        type="file"
+        class="hidden"
+        :accept="PHOTO_TYPES.join(',')"
+        @change="onFileSelected"
+      >
+
       <div class="space-y-6">
-        <div
-          ref="viewport"
-          class="relative mx-auto aspect-square w-full max-w-xs overflow-hidden rounded-lg bg-elevated touch-none select-none"
-          :class="ready ? 'cursor-grab active:cursor-grabbing' : ''"
-          @pointerdown="onPointerDown"
-          @pointermove="onPointerMove"
-          @pointerup="onPointerUp"
-          @pointercancel="onPointerUp"
-          @wheel.prevent="onWheel"
-        >
-          <canvas
-            ref="source"
-            class="absolute left-1/2 top-1/2 max-w-none"
-            :style="canvasStyle"
-          />
-          <div class="pointer-events-none absolute inset-0 rounded-full shadow-[0_0_0_9999px_rgba(0,0,0,0.55)] ring ring-inset ring-white/60" />
+        <div class="flex justify-center gap-2">
+          <div class="w-8 shrink-0" />
+
+          <div
+            ref="viewport"
+            class="relative aspect-square w-full max-w-xs min-w-0 overflow-hidden rounded-lg bg-elevated touch-none select-none"
+            :class="ready ? 'cursor-grab active:cursor-grabbing' : ''"
+            @pointerdown="onPointerDown"
+            @pointermove="onPointerMove"
+            @pointerup="onPointerUp"
+            @pointercancel="onPointerUp"
+            @wheel.prevent="onWheel"
+          >
+            <canvas
+              v-show="file"
+              ref="source"
+              class="absolute left-1/2 top-1/2 max-w-none"
+              :style="canvasStyle"
+            />
+            <div v-if="!file" class="absolute inset-0 flex items-center justify-center text-muted">
+              <UIcon :name="loadingCurrent ? 'i-lucide-loader-circle' : 'i-lucide-image'" class="size-8" :class="{ 'animate-spin': loadingCurrent }" />
+            </div>
+            <div class="pointer-events-none absolute inset-0 rounded-full shadow-[0_0_0_9999px_rgba(0,0,0,0.55)] ring ring-inset ring-white/60" />
+          </div>
+
+          <div class="flex w-8 shrink-0 flex-col gap-2">
+            <UTooltip text="Enviar nova foto">
+              <UButton
+                icon="i-lucide-upload"
+                color="neutral"
+                variant="outline"
+                aria-label="Enviar nova foto"
+                :disabled="loading"
+                @click="(e) => { (e.currentTarget as HTMLElement).blur(); fileInput?.click() }"
+              />
+            </UTooltip>
+            <UTooltip v-if="photo" text="Remover foto">
+              <UButton
+                icon="i-lucide-trash-2"
+                color="error"
+                variant="outline"
+                aria-label="Remover foto"
+                :disabled="loading"
+                @click="(e) => { (e.currentTarget as HTMLElement).blur(); emit('remove') }"
+              />
+            </UTooltip>
+          </div>
         </div>
 
         <div class="mx-auto flex max-w-xs items-center gap-3">

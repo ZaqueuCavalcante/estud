@@ -19,6 +19,12 @@ const isMobile = useIsMobile()
 const config = useRuntimeConfig()
 const toast = useToast()
 const loading = ref(false)
+const uid = useId()
+
+const activeOptions = [
+  { label: 'Inativo', value: 'inactive' },
+  { label: 'Ativo', value: 'active' },
+]
 
 const eventOptions = [
   { label: 'Aluno criado', value: 'StudentCreated' },
@@ -117,8 +123,15 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Ativo" name="isActive">
-          <USwitch v-model="formState.isActive" />
+        <UFormField name="isActive">
+          <UTabs
+            :model-value="formState.isActive ? 'active' : 'inactive'"
+            :items="activeOptions"
+            :content="false"
+            :ui="formState.isActive ? {} : { indicator: 'bg-accented', trigger: 'data-[state=active]:text-default' }"
+            size="sm"
+            @update:model-value="(v) => { formState.isActive = v === 'active' }"
+          />
         </UFormField>
 
         <UFormField label="Nome" name="name">
@@ -133,10 +146,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           <div class="flex flex-col gap-2 w-full">
             <UCheckbox
               v-for="opt in eventOptions"
+              :id="`${uid}-event-${opt.value}`"
               :key="opt.value"
               :label="opt.label"
+              :ui="formState.isActive ? {} : { indicator: 'bg-accented text-muted' }"
               :model-value="formState.events!.includes(opt.value)"
-              @update:model-value="toggleEvent(opt.value)"
+              @update:model-value="() => { toggleEvent(opt.value) }"
             />
           </div>
         </UFormField>
