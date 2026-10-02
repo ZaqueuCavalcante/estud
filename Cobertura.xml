@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9882597236642441" branch-rate="0.8975642308975642" lines-covered="12374" lines-valid="12521" branches-covered="2690" branches-valid="2997" complexity="4353" version="0" timestamp="1790898755">
+<coverage line-rate="0.9882625359310124" branch-rate="0.8979727484214025" lines-covered="12377" lines-valid="12524" branches-covered="2702" branches-valid="3009" complexity="4366" version="0" timestamp="1790978591">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.988274570474717" branch-rate="0.8976999656711294" complexity="4246">
+    <package name="Back" line-rate="0.9882764796873728" branch-rate="0.8981196581196581" complexity="4258">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -9788,7 +9788,7 @@
             <line number="4" hits="4" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Domain.Webhooks.WebhookCall" filename="/home/runner/work/estud/estud/Back/Domain/Webhooks/WebhookCall.cs" line-rate="1" branch-rate="1" complexity="5">
+        <class name="Estud.Back.Domain.Webhooks.WebhookCall" filename="/home/runner/work/estud/estud/Back/Domain/Webhooks/WebhookCall.cs" line-rate="1" branch-rate="1" complexity="15">
           <methods>
             <method name=".ctor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -9835,6 +9835,12 @@
                 <line number="56" hits="2" branch="false" />
               </lines>
             </method>
+            <method name="ShouldRetry" signature="()" line-rate="1" branch-rate="1" complexity="10">
+              <lines>
+                <line number="60" hits="2" branch="false" />
+                <line number="62" hits="2" branch="true" condition-coverage="100% (10/10)" />
+              </lines>
+            </method>
           </methods>
           <lines>
             <line number="20" hits="2" branch="false" />
@@ -9862,6 +9868,8 @@
             <line number="51" hits="2" branch="false" />
             <line number="55" hits="2" branch="false" />
             <line number="56" hits="2" branch="false" />
+            <line number="60" hits="2" branch="false" />
+            <line number="62" hits="2" branch="true" condition-coverage="100% (10/10)" />
           </lines>
         </class>
         <class name="Estud.Back.Domain.Webhooks.WebhookCallAttempt" filename="/home/runner/work/estud/estud/Back/Domain/Webhooks/WebhookCallAttempt.cs" line-rate="1" branch-rate="1" complexity="2">
@@ -37055,14 +37063,14 @@
             <line number="7" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Features.Webhooks.CallWebhooks.CallWebhookCommandHandler" filename="/home/runner/work/estud/estud/Back/Features/Webhooks/CallWebhooks/CallWebhookCommand.cs" line-rate="1" branch-rate="1" complexity="5">
+        <class name="Estud.Back.Features.Webhooks.CallWebhooks.CallWebhookCommandHandler" filename="/home/runner/work/estud/estud/Back/Features/Webhooks/CallWebhooks/CallWebhookCommand.cs" line-rate="1" branch-rate="1" complexity="7">
           <methods>
             <method name=".ctor" signature="(Estud.Back.Database.EstudDbContext, System.Net.Http.IHttpClientFactory)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="9" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="Handle" signature="()" line-rate="1" branch-rate="1" complexity="4">
+            <method name="Handle" signature="()" line-rate="1" branch-rate="1" complexity="6">
               <lines>
                 <line number="13" hits="2" branch="false" />
                 <line number="14" hits="2" branch="false" />
@@ -37089,7 +37097,7 @@
                 <line number="49" hits="2" branch="false" />
                 <line number="50" hits="2" branch="false" />
                 <line number="51" hits="2" branch="false" />
-                <line number="53" hits="2" branch="false" />
+                <line number="53" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="54" hits="2" branch="false" />
               </lines>
             </method>
@@ -37121,7 +37129,7 @@
             <line number="49" hits="2" branch="false" />
             <line number="50" hits="2" branch="false" />
             <line number="51" hits="2" branch="false" />
-            <line number="53" hits="2" branch="false" />
+            <line number="53" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="54" hits="2" branch="false" />
           </lines>
         </class>
@@ -39451,7 +39459,7 @@
         </class>
       </classes>
     </package>
-    <package name="Fakes" line-rate="0.9875" branch-rate="0.8928571428571429" complexity="107">
+    <package name="Fakes" line-rate="0.9875518672199171" branch-rate="0.8928571428571429" complexity="108">
       <classes>
         <class name="Estud.Fakes.Brevo.BrevoFakeEmail" filename="/home/runner/work/estud/estud/Fakes/Brevo/BrevoFakeMailbox.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -40197,17 +40205,22 @@
             <line number="27" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Fakes.Webhooks.WebhookTargetController" filename="/home/runner/work/estud/estud/Fakes/Webhooks/WebhookTargetController.cs" line-rate="1" branch-rate="1" complexity="6">
+        <class name="Estud.Fakes.Webhooks.WebhookTargetController" filename="/home/runner/work/estud/estud/Fakes/Webhooks/WebhookTargetController.cs" line-rate="1" branch-rate="1" complexity="7">
           <methods>
             <method name="ReceiveWithError" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="28" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="ReceiveAndAbort" signature="()" line-rate="1" branch-rate="1" complexity="1">
+            <method name="ReceiveWithStatus" signature="(int)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="34" hits="2" branch="false" />
-                <line number="35" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="ReceiveAndAbort" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="40" hits="2" branch="false" />
+                <line number="41" hits="2" branch="false" />
               </lines>
             </method>
             <method name="Receive" signature="()" line-rate="1" branch-rate="1" complexity="4">
@@ -40228,7 +40241,8 @@
             <line number="23" hits="2" branch="false" />
             <line number="28" hits="2" branch="false" />
             <line number="34" hits="2" branch="false" />
-            <line number="35" hits="2" branch="false" />
+            <line number="40" hits="2" branch="false" />
+            <line number="41" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Program" filename="/home/runner/work/estud/estud/Fakes/Program.cs" line-rate="0.7777777777777778" branch-rate="1" complexity="4">
