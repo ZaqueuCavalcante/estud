@@ -1,0 +1,15 @@
+export const agendaPalette = [
+  'bg-blue-100 dark:bg-blue-950/50 border-blue-500 text-blue-900 dark:text-blue-100',
+  'bg-emerald-100 dark:bg-emerald-950/50 border-emerald-500 text-emerald-900 dark:text-emerald-100',
+  'bg-violet-100 dark:bg-violet-950/50 border-violet-500 text-violet-900 dark:text-violet-100',
+  'bg-amber-100 dark:bg-amber-950/50 border-amber-500 text-amber-900 dark:text-amber-100',
+  'bg-rose-100 dark:bg-rose-950/50 border-rose-500 text-rose-900 dark:text-rose-100',
+  'bg-cyan-100 dark:bg-cyan-950/50 border-cyan-500 text-cyan-900 dark:text-cyan-100',
+  'bg-teal-100 dark:bg-teal-950/50 border-teal-500 text-teal-900 dark:text-teal-100',
+  'bg-indigo-100 dark:bg-indigo-950/50 border-indigo-500 text-indigo-900 dark:text-indigo-100',
+  'bg-fuchsia-100 dark:bg-fuchsia-950/50 border-fuchsia-500 text-fuchsia-900 dark:text-fuchsia-100',
+  'bg-orange-100 dark:bg-orange-950/50 border-orange-500 text-orange-900 dark:text-orange-100',
+  'bg-lime-100 dark:bg-lime-950/50 border-lime-500 text-lime-900 dark:text-lime-100',
+  'bg-sky-100 dark:bg-sky-950/50 border-sky-500 text-sky-900 dark:text-sky-100',
+  'bg-pink-100 dark:bg-pink-950/50 border-pink-500 text-pink-900 dark:text-pink-100',
+]

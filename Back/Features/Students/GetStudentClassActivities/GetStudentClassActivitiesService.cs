@@ -1,9 +1,8 @@
-using Estud.Back.Storage;
 using Estud.Back.Domain.Classes;
 
 namespace Estud.Back.Features.Students.GetStudentClassActivities;
 
-public class GetStudentClassActivitiesService(EstudDbContext ctx, IStorageService storage) : IEstudService
+public class GetStudentClassActivitiesService(EstudDbContext ctx) : IEstudService
 {
     public async Task<OneOf<GetStudentClassActivitiesOut, EstudError>> Get(int classId)
     {
@@ -44,9 +43,6 @@ public class GetStudentClassActivitiesService(EstudDbContext ctx, IStorageServic
             x.Work,
             entries.FindAll(e => e.ClassActivityWorkId == x.Work?.Id)
         ));
-
-        foreach (var entry in items.SelectMany(i => i.WorkEntries).Where(e => e.UserPhoto.HasValue()))
-            entry.UserPhoto = storage.GetPublicUrl(StorageContainer.ProfilePhotos, entry.UserPhoto!);
 
         var notes = gradeRule.NoteTypes
             .Union(items.Select(i => i.Note))

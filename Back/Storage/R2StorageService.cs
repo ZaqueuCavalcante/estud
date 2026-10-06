@@ -11,7 +11,7 @@ public class R2StorageService(IAmazonS3 s3, StorageSettings settings) : IStorage
         var request = new GetPreSignedUrlRequest
         {
             BucketName = GetBucket(container),
-            Key = GetKey(container, path),
+            Key = container.GetKey(path),
             Verb = HttpVerb.PUT,
             Protocol = GetProtocol(),
             ContentType = contentType,
@@ -30,7 +30,7 @@ public class R2StorageService(IAmazonS3 s3, StorageSettings settings) : IStorage
         var request = new GetPreSignedUrlRequest
         {
             BucketName = GetBucket(container),
-            Key = GetKey(container, path),
+            Key = container.GetKey(path),
             Verb = HttpVerb.GET,
             Protocol = GetProtocol(),
             Expires = DateTime.UtcNow.Add(expiresIn),
@@ -39,18 +39,11 @@ public class R2StorageService(IAmazonS3 s3, StorageSettings settings) : IStorage
         return await s3.GetPreSignedURLAsync(request);
     }
 
-    public string GetPublicUrl(StorageContainer container, string path)
-    {
-        if (!container.IsPublic) throw new InvalidOperationException($"{container} is a private container, use {nameof(CreatePreSignedUrlForDownload)}!");
-
-        return $"{settings.PublicBaseUrl}/{GetKey(container, path)}";
-    }
-
     public async Task<StorageFileMetadata?> GetMetadata(StorageContainer container, string path)
     {
         try
         {
-            var response = await s3.GetObjectMetadataAsync(GetBucket(container), GetKey(container, path));
+            var response = await s3.GetObjectMetadataAsync(GetBucket(container), container.GetKey(path));
             return new StorageFileMetadata(response.Headers.ContentType, response.Headers.ContentLength);
         }
         catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
@@ -61,7 +54,7 @@ public class R2StorageService(IAmazonS3 s3, StorageSettings settings) : IStorage
 
     public async Task Delete(StorageContainer container, string path)
     {
-        await s3.DeleteObjectAsync(GetBucket(container), GetKey(container, path));
+        await s3.DeleteObjectAsync(GetBucket(container), container.GetKey(path));
     }
 
     private Protocol GetProtocol()
@@ -72,10 +65,5 @@ public class R2StorageService(IAmazonS3 s3, StorageSettings settings) : IStorage
     private string GetBucket(StorageContainer container)
     {
         return container.IsPublic ? settings.PublicBucket : settings.PrivateBucket;
-    }
-
-    private static string GetKey(StorageContainer container, string path)
-    {
-        return $"{container.GetDescription()}/{path}";
     }
 }

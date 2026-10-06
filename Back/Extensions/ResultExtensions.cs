@@ -13,11 +13,12 @@ public static class ResultExtensions
         public E Error => value.IsError
             ? value.AsT1
             : throw new InvalidOperationException($"{value.Success}");
+
+        public bool HasError(out E error, out S success) => value.TryPickT1(out error, out success);
     }
 
     extension<S, E>(Task<OneOf<S, E>> task)
     {
         public async Task<S> Success() => (await task).Success;
-        public async Task<E> Error() => (await task).Error;
     }
 }

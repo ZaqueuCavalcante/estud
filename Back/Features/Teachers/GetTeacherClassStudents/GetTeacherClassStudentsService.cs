@@ -1,9 +1,8 @@
-using Estud.Back.Storage;
 using Estud.Back.Domain.Classes;
 
 namespace Estud.Back.Features.Teachers.GetTeacherClassStudents;
 
-public class GetTeacherClassStudentsService(EstudDbContext ctx, IStorageService storage) : IEstudService
+public class GetTeacherClassStudentsService(EstudDbContext ctx) : IEstudService
 {
     public async Task<OneOf<GetTeacherClassStudentsOut, EstudError>> Get(int classId)
     {
@@ -32,7 +31,7 @@ public class GetTeacherClassStudentsService(EstudDbContext ctx, IStorageService 
                 {
                     Id = s.Id,
                     Name = s.Name,
-                    Photo = s.Photo.HasValue() ? storage.GetPublicUrl(StorageContainer.ProfilePhotos, s.Photo!) : null,
+                    Photo = s.Photo.ToProfilePhotoUrl(),
                     Status = s.Status,
                     AverageGrade = Math.Round(config.GradeRule.Average(works), 1, MidpointRounding.AwayFromZero),
                     AverageAttendance = attendances > 0

@@ -34,6 +34,6 @@ public partial class UpdateProfilePhotoService(EstudDbContext ctx, IStorageServi
 
         if (oldPath.HasValue() && oldPath != data.Path) await storage.Delete(container, oldPath);
 
-        return new UpdateProfilePhotoOut { ProfilePhoto = storage.GetPublicUrl(container, data.Path) };
+        return new UpdateProfilePhotoOut { ProfilePhoto = data.Path.ToProfilePhotoUrl()! };
     }
 }

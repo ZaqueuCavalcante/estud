@@ -1,8 +1,6 @@
-using Estud.Back.Storage;
-
 namespace Estud.Back.Features.Students.GetStudentClassActivity;
 
-public class GetStudentClassActivityService(EstudDbContext ctx, IStorageService storage) : IEstudService
+public class GetStudentClassActivityService(EstudDbContext ctx) : IEstudService
 {
     public async Task<OneOf<GetStudentClassActivityOut, EstudError>> Get(int classId, int activityId)
     {
@@ -33,11 +31,6 @@ public class GetStudentClassActivityService(EstudDbContext ctx, IStorageService 
             .OrderBy(e => e.CreatedAt)
             .ToListAsync();
 
-        var result = activity.Activity.ToGetStudentClassActivityOut(activity.Work, entries);
-
-        foreach (var entry in result.WorkEntries.FindAll(e => e.UserPhoto.HasValue()))
-            entry.UserPhoto = storage.GetPublicUrl(StorageContainer.ProfilePhotos, entry.UserPhoto!);
-
-        return result;
+        return activity.Activity.ToGetStudentClassActivityOut(activity.Work, entries);
     }
 }

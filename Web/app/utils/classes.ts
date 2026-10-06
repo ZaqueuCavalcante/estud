@@ -167,3 +167,56 @@ export function groupStudentActivitiesByNote(notes: StudentClassNoteItem[], acti
       .sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
   }))
 }
+
+export interface ScheduleSpan {
+  key: number
+  start: number
+  end: number
+}
+
+/**
+ * Distribui os horários de um mesmo dia em colunas lado a lado, como uma agenda
+ * faz com eventos sobrepostos. `lanes` é quantas colunas o grupo sobreposto usa.
+ */
+export function layoutScheduleLanes(spans: ScheduleSpan[]) {
+  const layout = new Map<number, { lane: number, lanes: number }>()
+  const sorted = [...spans].sort((a, b) => a.start - b.start || b.end - a.end)
+
+  let group: { key: number, lane: number }[] = []
+  let laneEnds: number[] = []
+  let groupEnd = -Infinity
+
+  const flush = () => {
+    for (const g of group) layout.set(g.key, { lane: g.lane, lanes: laneEnds.length })
+    group = []
+    laneEnds = []
+  }
+
+  for (const span of sorted) {
+    if (span.start >= groupEnd) flush()
+    let lane = laneEnds.findIndex(end => end <= span.start)
+    if (lane < 0) lane = laneEnds.length
+    laneEnds[lane] = span.end
+    group.push({ key: span.key, lane })
+    groupEnd = Math.max(groupEnd, span.end)
+  }
+  flush()
+
+  return layout
+}
+
+/** As chaves dos horários que se sobrepõem a algum outro do mesmo conjunto. */
+export function overlappingScheduleKeys(spans: ScheduleSpan[]) {
+  const keys = new Set<number>()
+  for (let i = 0; i < spans.length; i++) {
+    for (let j = i + 1; j < spans.length; j++) {
+      const a = spans[i]!
+      const b = spans[j]!
+      if (a.start < b.end && b.start < a.end) {
+        keys.add(a.key)
+        keys.add(b.key)
+      }
+    }
+  }
+  return keys
+}

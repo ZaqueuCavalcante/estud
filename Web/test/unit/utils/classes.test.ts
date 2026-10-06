@@ -11,7 +11,9 @@ import {
   formatClassWorkload,
   groupActivitiesByNote,
   groupStudentActivitiesByNote,
-  isFutureClassLesson
+  isFutureClassLesson,
+  layoutScheduleLanes,
+  overlappingScheduleKeys
 } from '~/utils/classes'
 
 describe('formatClassHour', () => {
@@ -137,5 +139,56 @@ describe('groupStudentActivitiesByNote', () => {
     expect(result[0]!.performance).toBe(80)
     expect(result[0]!.activities.map(a => a.id)).toEqual([2, 1])
     expect(result[1]!.activities).toEqual([])
+  })
+})
+
+describe('layoutScheduleLanes', () => {
+  it('keeps non-overlapping schedules in a single lane', () => {
+    const layout = layoutScheduleLanes([
+      { key: 1, start: 420, end: 600 },
+      { key: 2, start: 600, end: 720 },
+    ])
+    expect(layout.get(1)).toEqual({ lane: 0, lanes: 1 })
+    expect(layout.get(2)).toEqual({ lane: 0, lanes: 1 })
+  })
+
+  it('places overlapping schedules side by side', () => {
+    const layout = layoutScheduleLanes([
+      { key: 1, start: 420, end: 600 },
+      { key: 2, start: 480, end: 540 },
+      { key: 3, start: 700, end: 760 },
+    ])
+    expect(layout.get(1)).toEqual({ lane: 0, lanes: 2 })
+    expect(layout.get(2)).toEqual({ lane: 1, lanes: 2 })
+    expect(layout.get(3)).toEqual({ lane: 0, lanes: 1 })
+  })
+
+  it('reuses a lane freed inside the same overlapping group', () => {
+    const layout = layoutScheduleLanes([
+      { key: 1, start: 420, end: 720 },
+      { key: 2, start: 420, end: 480 },
+      { key: 3, start: 480, end: 540 },
+    ])
+    expect(layout.get(2)).toEqual({ lane: 1, lanes: 2 })
+    expect(layout.get(3)).toEqual({ lane: 1, lanes: 2 })
+  })
+})
+
+describe('overlappingScheduleKeys', () => {
+  it('returns the keys of schedules that overlap', () => {
+    const keys = overlappingScheduleKeys([
+      { key: 1, start: 420, end: 600 },
+      { key: 2, start: 540, end: 660 },
+      { key: 3, start: 660, end: 720 },
+    ])
+    expect([...keys].sort()).toEqual([1, 2])
+  })
+
+  it('does not treat back-to-back schedules as overlapping', () => {
+    const keys = overlappingScheduleKeys([
+      { key: 1, start: 420, end: 600 },
+      { key: 2, start: 600, end: 720 },
+    ])
+    expect(keys.size).toBe(0)
   })
 })

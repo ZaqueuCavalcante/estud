@@ -25,15 +25,12 @@ public class UpdateClassScheduleIn
 
     /// <summary>
     /// Professor que cobre este horário.
-    /// Obrigatório quando a turma tem 2 professores.
-    /// Com 1 professor é preenchido automaticamente.
-    /// Ignorado quando a turma não tem professores.
     /// </summary>
     public int? TeacherId { get; set; }
 
     /// <summary>
     /// Sala que comporta a turma neste horário.
-    /// Ignorado quando a turma é online.
+    /// Nulo quando a turma é online.
     /// </summary>
     public int? ClassroomId { get; set; }
 }

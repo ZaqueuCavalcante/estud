@@ -8,6 +8,21 @@ export interface ClassSchedule {
   classroom: string | null
 }
 
+export interface WeekEditorItem {
+  key: number
+  day: string
+  start: string
+  end: string
+  colorClass: string
+  removed?: boolean
+}
+
+export interface WeekEditorSlot {
+  day: string
+  start: string
+  end: string
+}
+
 export interface ClassStudentItem {
   id: number
   name: string

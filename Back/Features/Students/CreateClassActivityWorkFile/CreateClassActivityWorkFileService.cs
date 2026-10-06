@@ -47,7 +47,7 @@ public class CreateClassActivityWorkFileService(EstudDbContext ctx, IStorageServ
         return new CreateClassActivityWorkFileOut
         {
             UploadUrl = await storage.CreatePreSignedUrlForUpload(container, path, data.ContentType, data.SizeInBytes, UploadUrlExpiration),
-            PublicUrl = storage.GetPublicUrl(container, path),
+            PublicUrl = container.GetPublicUrl(path),
         };
     }
 }

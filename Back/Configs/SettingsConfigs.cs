@@ -12,6 +12,8 @@ public static class SettingsConfigs
         builder.Services.AddSingleton<SocialLoginSettings>();
         builder.Services.AddSingleton<RateLimitingSettings>();
 
+        StorageExtensions.ConfigurePublicBaseUrl(builder.Configuration.Storage.PublicBaseUrl);
+
         QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
     }
 }

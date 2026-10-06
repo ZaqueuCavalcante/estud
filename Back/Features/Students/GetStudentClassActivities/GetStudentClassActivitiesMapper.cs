@@ -38,7 +38,7 @@ public static class GetStudentClassActivitiesMapper
                 Id = entry.Id,
                 UserId = entry.UserId,
                 User = entry.User?.Name,
-                UserPhoto = entry.User?.ProfilePhoto,
+                UserPhoto = entry.User?.ProfilePhoto.ToProfilePhotoUrl(),
                 Type = entry.Type,
                 Content = entry.Content,
                 Metadata = entry.Metadata,

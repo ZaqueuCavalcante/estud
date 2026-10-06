@@ -1,9 +1,8 @@
-using Estud.Back.Storage;
 using Estud.Back.Domain.Classes;
 
 namespace Estud.Back.Features.Classes.GetClass;
 
-public class GetClassService(EstudDbContext ctx, IStorageService storage) : IEstudService
+public class GetClassService(EstudDbContext ctx) : IEstudService
 {
     public async Task<OneOf<GetClassOut, EstudError>> Get(int classId)
     {
@@ -49,7 +48,7 @@ public class GetClassService(EstudDbContext ctx, IStorageService storage) : IEst
                 {
                     Id = s.Id,
                     Name = s.Name,
-                    Photo = PublicPhotoUrl(s.Photo),
+                    Photo = s.Photo.ToProfilePhotoUrl(),
                     Status = s.Status,
                     AverageGrade = Math.Round(config.GradeRule.Average(works), 1, MidpointRounding.AwayFromZero),
                     AverageAttendance = attendances > 0
@@ -83,7 +82,7 @@ public class GetClassService(EstudDbContext ctx, IStorageService storage) : IEst
             AverageGrade = averageGrade,
             Teachers = @class.Teachers
                 .OrderBy(t => t.Name)
-                .Select(t => new GetClassTeacherOut { Id = t.Id, Name = t.Name, Photo = PublicPhotoUrl(t.User?.ProfilePhoto) })
+                .Select(t => new GetClassTeacherOut { Id = t.Id, Name = t.Name, Photo = t.User?.ProfilePhoto.ToProfilePhotoUrl() })
                 .ToList(),
             Schedules = @class.Schedules
                 .OrderBy(s => s.Day).ThenBy(s => s.Start)
@@ -98,9 +97,6 @@ public class GetClassService(EstudDbContext ctx, IStorageService storage) : IEst
             Students = students,
         };
     }
-
-    private string? PublicPhotoUrl(string? path) =>
-        path.HasValue() ? storage.GetPublicUrl(StorageContainer.ProfilePhotos, path!) : null;
 
     private async Task<List<GetClassStudentDto>> GetClassStudents(int classId)
     {

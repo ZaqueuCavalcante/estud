@@ -17,8 +17,7 @@ public class UpdateClassSchedulesService(EstudDbContext ctx) : IEstudService
         if (@class.Status is ClassStatus.Started or ClassStatus.Finalized) return ClassAlreadyStarted.I;
 
         var schedulesResult = data.Schedules.ConvertAll(x => (x.Day, x.Start, x.End, x.TeacherId, x.ClassroomId)).ToSchedules();
-        if (schedulesResult.IsError) return schedulesResult.Error;
-        var schedules = schedulesResult.Success;
+        if (schedulesResult.HasError(out var error, out var schedules)) return error;
 
         var teacherIds = @class.Teachers.Select(t => t.Id).ToList();
         var targetTeacherIds = schedules.Where(s => s.TeacherId != null).Select(s => s.TeacherId!.Value).Distinct().ToList();
