@@ -46,7 +46,7 @@ public class FinalizeClassService(EstudDbContext ctx) : IEstudService
 
             // Turma sem nenhuma chamada lançada não pode reprovar todo mundo por falta.
             var frequency = attendances.TryGetValue(student.StudentId, out var attendance) && attendance.Total > 0
-                ? Math.Round((decimal)attendance.Presences / attendance.Total * 100, 1, MidpointRounding.AwayFromZero)
+                ? AttendanceRate.Of(attendance.Presences, attendance.Total)
                 : 100;
 
             student.Finalize(average, frequency, config);

@@ -36,9 +36,17 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
     description: "Acessar a página inicial",
     requirements: [],
   },
-  GetHomeStats: {
-    description: "Ver estatísticas da home",
-    requirements: [],
+  GetAttendance: {
+    description: "Ver frequência média das turmas na home",
+    requirements: [
+      hasUserType(UserTypes.Manager),
+    ],
+  },
+  GetLowestAttendanceClasses: {
+    description: "Ver turmas com menor frequência na home",
+    requirements: [
+      hasUserType(UserTypes.Manager),
+    ],
   },
 
   // Campi

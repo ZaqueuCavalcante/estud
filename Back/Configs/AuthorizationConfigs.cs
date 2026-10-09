@@ -6,7 +6,6 @@ public static class AuthorizationConfigs
     {
         builder.Services.AddAuthorizationBuilder()
             .AddAdminPolicies()
-            .AddCrossPolicies()
             .AddUsersPolicies()
             .AddCampiPolicies()
             .AddCoursesPolicies()
@@ -16,6 +15,7 @@ public static class AuthorizationConfigs
             .AddTeachersPolicies()
             .AddStudentsPolicies()
             .AddWebhooksPolicies()
+            .AddInsightsPolicies()
             .AddClassroomsPolicies()
             .AddDisciplinesPolicies()
             .AddInstitutionsPolicies()

@@ -1,16 +1,26 @@
 <script setup lang="ts">
-type ClassAttendance = { id: number, name: string, course: string, attendance: number }
+import type { PeriodItem } from '~/types/calendar'
+import type { GetLowestAttendanceClassesOut } from '~/types/frequencies'
 
-const { frequencyLimit } = defineProps<{ frequencyLimit: number }>()
+const { frequencyLimit, period } = defineProps<{ frequencyLimit: number, period?: PeriodItem }>()
 
-// TODO: trocar pelos dados do backend
-const classes: ClassAttendance[] = [
-  { id: 1, name: 'Cálculo I', course: 'Engenharia Civil', attendance: 58.4 },
-  { id: 2, name: 'Física Geral', course: 'Engenharia Elétrica', attendance: 63.1 },
-  { id: 3, name: 'Algoritmos e Programação', course: 'Sistemas de Informação', attendance: 68.9 },
-  { id: 4, name: 'Química Orgânica', course: 'Técnico em Química', attendance: 72.5 },
-  { id: 5, name: 'Estatística Aplicada', course: 'Administração', attendance: 76.2 },
-]
+const config = useRuntimeConfig()
+const { can } = usePolicy()
+const canGetClasses = can('GetLowestAttendanceClasses')
+
+const { data, execute } = await useFetch<GetLowestAttendanceClassesOut>(`${config.public.backendUrl}/insights/classes/lowest-attendance`, {
+  query: computed(() => ({ periodId: period?.id })),
+  credentials: 'include',
+  server: false,
+  immediate: false,
+  watch: false,
+})
+
+watch(() => period?.id, (id) => {
+  if (id && canGetClasses.value) execute()
+}, { immediate: true })
+
+const classes = computed(() => period ? data.value?.classes ?? [] : [])
 
 const formatPercent = (value: number) => `${value.toFixed(1).replace('.', ',')}%`
 </script>
@@ -39,7 +49,7 @@ const formatPercent = (value: number) => `${value.toFixed(1).replace('.', ',')}%
         <div class="flex-1 min-w-0 space-y-1.5">
           <div class="flex items-baseline justify-between gap-2">
             <p class="truncate text-sm font-medium text-highlighted">
-              {{ c.name }}
+              {{ c.discipline }}
             </p>
             <span
               class="shrink-0 text-sm font-semibold tabular-nums"
@@ -48,10 +58,6 @@ const formatPercent = (value: number) => `${value.toFixed(1).replace('.', ',')}%
               {{ formatPercent(c.attendance) }}
             </span>
           </div>
-
-          <p class="truncate text-xs text-muted">
-            {{ c.course }}
-          </p>
 
           <UProgress
             :model-value="c.attendance"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { EditorCustomHandlers, EditorToolbarItem } from '@nuxt/ui'
+import type { EditorCustomHandlers, EditorSuggestionMenuItem, EditorToolbarItem } from '@nuxt/ui'
 
 type Editor = Parameters<EditorCustomHandlers[string]['execute']>[0]
 type EditorView = Editor['view']
@@ -46,6 +46,31 @@ const toolbarItems: EditorToolbarItem[][] = [
     { kind: 'undo', icon: 'i-lucide-undo', tooltip: { text: 'Desfazer' } },
     { kind: 'redo', icon: 'i-lucide-redo', tooltip: { text: 'Refazer' } },
   ],
+]
+
+const suggestionItems: EditorSuggestionMenuItem[][] = [
+  [
+    { type: 'label', label: 'Texto' },
+    { kind: 'paragraph', label: 'Parágrafo', icon: 'i-lucide-type' },
+    { kind: 'heading', level: 1, label: 'Título 1', icon: 'i-lucide-heading-1' },
+    { kind: 'heading', level: 2, label: 'Título 2', icon: 'i-lucide-heading-2' },
+    { kind: 'heading', level: 3, label: 'Título 3', icon: 'i-lucide-heading-3' },
+  ],
+  [
+    { type: 'label', label: 'Blocos' },
+    { kind: 'bulletList', label: 'Lista', icon: 'i-lucide-list' },
+    { kind: 'orderedList', label: 'Lista numerada', icon: 'i-lucide-list-ordered' },
+    { kind: 'blockquote', label: 'Citação', icon: 'i-lucide-quote' },
+    { kind: 'codeBlock', label: 'Bloco de código', icon: 'i-lucide-square-code' },
+    { kind: 'horizontalRule', label: 'Linha divisória', icon: 'i-lucide-separator-horizontal' },
+  ],
+  ...(props.uploadImage || props.uploadPdf
+    ? [[
+        { type: 'label', label: 'Arquivos' } as const,
+        ...(props.uploadImage ? [{ kind: 'image', label: 'Imagem', description: 'PNG, JPEG ou WebP', icon: 'i-lucide-image' } as const] : []),
+        ...(props.uploadPdf ? [{ kind: 'pdf', label: 'PDF', description: 'Anexar arquivo PDF', icon: 'i-lucide-paperclip' }] : []),
+      ]]
+    : []),
 ]
 
 // O handler de link do Nuxt UI abre um `prompt('Enter the URL:')` em inglês.
@@ -291,7 +316,7 @@ function replaceImage(view: EditorView, localSrc: string, src: string | null) {
   <UEditor
     v-model="value"
     content-type="markdown"
-    :placeholder="placeholder"
+    :placeholder="placeholder ? { placeholder, mode: 'firstLine' } : undefined"
     :autofocus="autofocus ? 'end' : false"
     :editable="!readonly"
     :image="readonly || !!uploadImage"
@@ -305,6 +330,7 @@ function replaceImage(view: EditorView, localSrc: string, src: string | null) {
   >
     <template v-if="!readonly" #default="{ editor }">
       <UEditorToolbar :editor="editor" :items="toolbarItems" class="border-b border-default pb-3" />
+      <UEditorSuggestionMenu :editor="editor" :items="suggestionItems" />
     </template>
   </UEditor>
 </template>

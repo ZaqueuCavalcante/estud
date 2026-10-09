@@ -91,7 +91,7 @@
 - ✅ Matricular alunos nas turmas
 
 - Professor numa turma
-    - Criar planos de aula
+    - ✅ Criar planos de aula
     - Faz chamadas
     - Passa atividades
     - Corrige atividades e atribui notas

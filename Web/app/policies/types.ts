@@ -123,7 +123,8 @@ export interface PolicyDefinition {
 export type PolicyName
   // Home
   = | 'AccessHomePage'
-    | 'GetHomeStats'
+    | 'GetAttendance'
+    | 'GetLowestAttendanceClasses'
   // Campi
     | 'AccessCampiPage'
     | 'CreateCampus'

@@ -26,7 +26,6 @@ public class GetTeacherClassStudentsService(EstudDbContext ctx) : IEstudService
             .Select(s =>
             {
                 var works = classStudentsWorks.GetValueOrDefault(s.Id, []);
-                var attendances = s.Presences + s.Absences;
                 return new GetTeacherClassStudentsItemOut
                 {
                     Id = s.Id,
@@ -34,9 +33,7 @@ public class GetTeacherClassStudentsService(EstudDbContext ctx) : IEstudService
                     Photo = s.Photo.ToProfilePhotoUrl(),
                     Status = s.Status,
                     AverageGrade = Math.Round(config.GradeRule.Average(works), 1, MidpointRounding.AwayFromZero),
-                    AverageAttendance = attendances > 0
-                        ? Math.Round((decimal)s.Presences / attendances * 100, 1, MidpointRounding.AwayFromZero)
-                        : 0,
+                    AverageAttendance = AttendanceRate.Of(s.Presences, s.Presences + s.Absences),
                 };
             })
             .ToList();

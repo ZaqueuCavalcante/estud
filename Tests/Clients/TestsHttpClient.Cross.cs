@@ -1,5 +1,3 @@
-using Estud.Back.Features.Cross.GetHomeStats;
-
 namespace Estud.Tests.Integration.Clients;
 
 public partial class TestsHttpClient
@@ -12,12 +10,6 @@ public partial class TestsHttpClient
     public async Task<HttpResponseMessage> GetHome()
     {
         return await http.GetAsync("");
-    }
-
-    public async Task<OneOf<GetHomeStatsOut, ErrorOut>> GetHomeStats()
-    {
-        var response = await http.GetAsync("/home/stats");
-        return await response.Resolve<GetHomeStatsOut>();
     }
 
     public async Task<HttpResponseMessage> GetVersion()

@@ -23,7 +23,7 @@ public class GetStudentDetailsService(EstudDbContext ctx) : IEstudService
         {
             @class.AverageGrade = Round(config.GradeRule.Average(works.GetValueOrDefault(@class.Id, [])));
             @class.AverageAttendance = attendances.TryGetValue(@class.Id, out var attendance)
-                ? Percent(attendance.Presences, attendance.Presences + attendance.Absences)
+                ? AttendanceRate.Of(attendance.Presences, attendance.Presences + attendance.Absences)
                 : 0;
         }
 
@@ -32,7 +32,7 @@ public class GetStudentDetailsService(EstudDbContext ctx) : IEstudService
 
         var startedClassIds = startedClasses.Select(c => c.Id).ToHashSet();
         var started = attendances.Values.Where(a => startedClassIds.Contains(a.ClassId)).ToList();
-        var averageAttendance = Percent(
+        var averageAttendance = AttendanceRate.Of(
             started.Sum(a => a.Presences),
             started.Sum(a => a.Presences + a.Absences)
         );
@@ -55,9 +55,6 @@ public class GetStudentDetailsService(EstudDbContext ctx) : IEstudService
     }
 
     private static decimal Round(decimal value) => Math.Round(value, 1, MidpointRounding.AwayFromZero);
-
-    private static decimal Percent(int presences, int attendances) =>
-        attendances > 0 ? Round((decimal)presences / attendances * 100) : 0;
 
     private async Task<Dictionary<int, List<(ClassNoteType NoteType, int Weight, decimal Note)>>> GetWorks(int studentId)
     {

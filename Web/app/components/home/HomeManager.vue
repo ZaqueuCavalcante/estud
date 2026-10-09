@@ -9,7 +9,7 @@ const { can } = usePolicy()
 const canGetConfig = can('GetInstitutionConfig')
 const canGetPeriods = can('GetAcademicPeriods')
 
-const { data: institutionConfig } = await useFetch<InstitutionConfig>(`${config.public.backendUrl}/institutions/config`, {
+const { data: institutionConfig, status: configStatus } = await useFetch<InstitutionConfig>(`${config.public.backendUrl}/institutions/config`, {
   credentials: 'include',
   server: false,
   immediate: canGetConfig.value,
@@ -19,11 +19,16 @@ const { data: institutionConfig } = await useFetch<InstitutionConfig>(`${config.
 const frequencyLimit = computed(() => institutionConfig.value?.frequencyLimit ?? 70)
 const noteLimit = computed(() => institutionConfig.value?.noteLimit ?? 7)
 
-const { data: periodsData } = await useFetch<GetPeriodsOut>(`${config.public.backendUrl}/periods/academic`, {
+const { data: periodsData, status: periodsStatus } = await useFetch<GetPeriodsOut>(`${config.public.backendUrl}/periods/academic`, {
   credentials: 'include',
   server: false,
   immediate: canGetPeriods.value,
 })
+
+const isPending = (status: string) => status === 'idle' || status === 'pending'
+const isLoading = computed(() =>
+  (canGetConfig.value && isPending(configStatus.value)) || (canGetPeriods.value && isPending(periodsStatus.value)),
+)
 
 const periods = computed(() => periodsData.value?.items ?? [])
 const periodOptions = computed(() => periods.value.map(p => ({ label: p.name, value: p.id })))
@@ -45,7 +50,11 @@ const period = computed(() => periods.value.find(p => p.id === periodId.value))
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 w-full">
+  <div v-if="isLoading" class="flex flex-1 items-center justify-center">
+    <AppSpinner class="size-8" />
+  </div>
+
+  <div v-else class="flex flex-col gap-6 w-full">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <h2 class="text-2xl font-semibold text-highlighted">{{ account?.institution }}</h2>
 
@@ -62,7 +71,7 @@ const period = computed(() => periods.value.find(p => p.id === periodId.value))
 
     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
       <HomeStudentsAtRisk />
-      <HomeLowestAttendanceClasses :frequency-limit="frequencyLimit" />
+      <HomeLowestAttendanceClasses :frequency-limit="frequencyLimit" :period="period" />
       <HomePendingAttendance />
       <HomeLowestGradeClasses :note-limit="noteLimit" />
     </div>

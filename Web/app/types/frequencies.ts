@@ -40,3 +40,25 @@ export interface AttendanceMonthSpan {
   endCol: number
   endRow: number
 }
+
+export interface AttendanceDayItem {
+  date: string
+  attendance: number
+}
+
+export interface GetAttendanceOut {
+  average: number
+  belowLimitClasses: number
+  aboveLimitClasses: number
+  days: AttendanceDayItem[]
+}
+
+export interface LowestAttendanceClassItem {
+  id: number
+  discipline: string
+  attendance: number
+}
+
+export interface GetLowestAttendanceClassesOut {
+  classes: LowestAttendanceClassItem[]
+}

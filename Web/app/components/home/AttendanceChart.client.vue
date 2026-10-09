@@ -1,36 +1,33 @@
 <script setup lang="ts">
 import { ptBR } from 'date-fns/locale'
-import { addDays, format, isAfter, isWeekend, parseISO, startOfDay } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import type { PeriodItem } from '~/types/calendar'
+import type { GetAttendanceOut } from '~/types/frequencies'
 import { VisXYContainer, VisStackedBar, VisScatter, VisAxis, VisCrosshair, VisTooltip } from '@unovis/vue'
 
 type DataRecord = { date: Date, attendance: number }
 
 const { frequencyLimit, period } = defineProps<{ frequencyLimit: number, period?: PeriodItem }>()
 
-// TODO: trocar pelos dados do backend
-function mockAttendance(): DataRecord[] {
-  if (!period) return []
+const config = useRuntimeConfig()
+const { can } = usePolicy()
+const canGetAttendance = can('GetAttendance')
 
-  const periodStart = parseISO(period.startAt)
-  const periodEnd = parseISO(period.endAt)
-  const today = startOfDay(new Date())
-  const records: DataRecord[] = []
+const { data: attendanceData, status, execute } = await useFetch<GetAttendanceOut>(`${config.public.backendUrl}/insights/attendance`, {
+  query: computed(() => ({ periodId: period?.id })),
+  credentials: 'include',
+  server: false,
+  immediate: false,
+  watch: false,
+})
 
-  for (let date = periodStart, i = 0; !isAfter(date, periodEnd) && !isAfter(date, today); date = addDays(date, 1), i++) {
-    if (isWeekend(date)) continue
+watch(() => period?.id, (id) => {
+  if (id && canGetAttendance.value) execute()
+}, { immediate: true })
 
-    const trend = 80 - i * 0.1
-    const noise = Math.sin(i * 1.7) * 9 + Math.cos(i * 0.6) * 6 + Math.sin(i * 4.3) * 4
-    records.push({ date, attendance: Math.min(100, Math.max(0, trend + noise)) })
-  }
-
-  if (records[9]) records[9].attendance = 0
-
-  return records
-}
-
-const data = computed(() => mockAttendance())
+const data = computed<DataRecord[]>(() => period
+  ? (attendanceData.value?.days ?? []).map(d => ({ date: parseISO(d.date), attendance: d.attendance }))
+  : [])
 
 const cardRef = useTemplateRef<HTMLElement | null>('cardRef')
 const { width } = useElementSize(cardRef)
@@ -66,9 +63,12 @@ const arrowSize = computed(() => {
   return (_: DataRecord, i: number) => visible && i === 0 ? 10 : 0
 })
 
-const average = computed(() => data.value.length
-  ? data.value.reduce((acc, d) => acc + d.attendance, 0) / data.value.length
-  : 0)
+const average = computed(() => attendanceData.value?.average ?? 0)
+
+const limitSegments = computed(() => [
+  { label: 'Abaixo da mínima', value: attendanceData.value?.belowLimitClasses ?? 0, color: 'bg-error' },
+  { label: 'Acima da mínima', value: attendanceData.value?.aboveLimitClasses ?? 0, color: 'bg-success' },
+])
 
 const formatPercent = (value: number) => `${value.toFixed(1).replace('.', ',')}%`
 const formatDate = (date: Date) => format(date, 'd MMM', { locale: ptBR })
@@ -86,15 +86,34 @@ const template = (d: DataRecord) =>
 <template>
   <UCard ref="cardRef" :ui="{ root: 'overflow-visible', body: 'px-0! pt-0! pb-3!' }">
     <template #header>
-      <p class="text-xs text-muted uppercase mb-1.5">
-        Frequência média das turmas
-      </p>
-      <p class="text-3xl text-highlighted font-semibold">
-        {{ data.length ? formatPercent(average) : '-' }}
-      </p>
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-xs text-muted uppercase mb-1.5">
+            Frequência média das turmas
+          </p>
+          <p
+            class="text-3xl font-semibold"
+            :class="status === 'pending' || !data.length ? 'text-highlighted' : average < frequencyLimit ? 'text-error' : 'text-success'"
+          >
+            {{ status !== 'pending' && data.length ? formatPercent(average) : '-' }}
+          </p>
+        </div>
+
+        <ul v-if="status !== 'pending' && data.length" class="space-y-1.5">
+          <li v-for="s in limitSegments" :key="s.label" class="flex items-center gap-2 text-sm">
+            <span class="size-2 rounded-full shrink-0" :class="s.color" />
+            <span class="text-muted">{{ s.label }}</span>
+            <span class="font-medium text-highlighted tabular-nums">{{ s.value }}</span>
+          </li>
+        </ul>
+      </div>
     </template>
 
-    <div v-if="!data.length" class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+    <div v-if="status === 'pending'" class="flex h-80 items-center justify-center">
+      <AppSpinner class="size-8" />
+    </div>
+
+    <div v-else-if="!data.length" class="flex flex-col items-center justify-center gap-3 py-12 text-center">
       <UIcon name="i-lucide-chart-column" class="size-8 text-muted" />
       <p class="text-sm text-muted">
         Nenhuma frequência registrada no período

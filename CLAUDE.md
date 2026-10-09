@@ -39,7 +39,7 @@ Na dúvida, não comentar.
 
 ### Checagem de strings — usar `HasValue()` / `IsEmpty()`
 
-Em `if`s que checam strings, **sempre** usar as extensions `HasValue()` e `IsEmpty()` (definidas em `Back/Shared/Extensions/StringExtensions.cs`).
+Em `if`s que checam strings, **sempre** usar as extensions `HasValue()` e `IsEmpty()` (definidas em `Back/Extensions/StringExtensions.cs`).
 **Nunca** usar `string.IsNullOrEmpty`, `string.IsNullOrWhiteSpace` nem suas negações.
 
 **Correto:**
@@ -507,7 +507,7 @@ public partial class IntegrationTests
 
 ### `result.Success` / `.Error` nunca dentro de query LINQ
 
-`Success`, `Error`, `IsSuccess` e `IsError` (definidos em `Back/Shared/Extensions/ResultExtensions.cs`) são **extension properties** (C# 14). Elas não podem aparecer dentro de lambdas que viram árvore de expressão — ou seja, dentro de `Where`/`Select`/`Any`/`First` de um `IQueryable` (EF Core). O compilador falha com *"An expression tree may not contain an extension property access"*.
+`Success`, `Error`, `IsSuccess` e `IsError` (definidos em `Back/Extensions/ResultExtensions.cs`) são **extension properties** (C# 14). Elas não podem aparecer dentro de lambdas que viram árvore de expressão — ou seja, dentro de `Where`/`Select`/`Any`/`First` de um `IQueryable` (EF Core). O compilador falha com *"An expression tree may not contain an extension property access"*.
 
 Sempre extrair o valor para uma variável local antes da query.
 
