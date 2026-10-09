@@ -88,7 +88,7 @@
 
 - Lidar com os conflitos de horários (professores, salas e alunos)
 
-- Matricular alunos nas turmas
+- ✅ Matricular alunos nas turmas
 
 - Professor numa turma
     - Criar planos de aula

@@ -90,6 +90,12 @@ export default defineNuxtConfig({
 
   css: ["~/assets/css/main.css"],
 
+  icon: {
+    clientBundle: {
+      icons: ["lucide:loader-circle"],
+    },
+  },
+
   sourcemap: {
     server: false,
     client: false,
@@ -107,6 +113,23 @@ export default defineNuxtConfig({
         "zod",
         "date-fns",
         "@unovis/vue",
+        // Todo o tiptap precisa entrar no mesmo pre-bundle: se só parte dele for otimizada, o
+        // prosemirror-state carrega duas vezes e o editor quebra com "keyed plugin (plugin$)".
+        "@tiptap/vue-3",
+        "@tiptap/vue-3/menus",
+        "@nuxt/ui > @tiptap/core",
+        "@nuxt/ui > @tiptap/markdown",
+        "@nuxt/ui > @tiptap/pm/state",
+        "@nuxt/ui > @tiptap/suggestion",
+        "@nuxt/ui > @tiptap/starter-kit",
+        "@nuxt/ui > @tiptap/extension-code",
+        "@nuxt/ui > @tiptap/extension-image",
+        "@nuxt/ui > @tiptap/extension-mention",
+        "@nuxt/ui > @tiptap/extension-bubble-menu",
+        "@nuxt/ui > @tiptap/extension-placeholder",
+        "@nuxt/ui > @tiptap/extension-floating-menu",
+        "@nuxt/ui > @tiptap/extension-horizontal-rule",
+        "@nuxt/ui > @tiptap/extension-drag-handle-vue-3",
         "@internationalized/date",
       ],
     },

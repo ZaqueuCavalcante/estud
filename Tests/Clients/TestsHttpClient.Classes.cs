@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using Estud.Back.Features.Classes.GetClass;
 using Estud.Back.Features.Classes.GetClasses;
 using Estud.Back.Features.Classes.CreateClass;
+using Estud.Back.Features.Classes.GetClassSchedules;
 using Estud.Back.Features.Classes.UpdateClassTeachers;
 using Estud.Back.Features.Classes.UpdateClassSchedules;
 
@@ -45,6 +46,12 @@ public partial class TestsHttpClient
         };
         var response = await http.PutAsJsonAsync($"/classes/{classId}/schedules", data);
         return await response.Resolve<SuccessOut>();
+    }
+
+    public async Task<OneOf<GetClassSchedulesOut, ErrorOut>> GetClassSchedules(int classId)
+    {
+        var response = await http.GetAsync($"/classes/{classId}/schedules");
+        return await response.Resolve<GetClassSchedulesOut>();
     }
 
     public async Task<OneOf<GetClassesOut, ErrorOut>> GetClasses(

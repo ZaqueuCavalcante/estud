@@ -166,7 +166,7 @@ async function save() {
               icon="i-lucide-x"
               color="neutral"
               variant="link"
-              size="sm"
+              class="p-0"
               aria-label="Limpar busca"
               @click="() => { search = '' }"
             />

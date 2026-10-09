@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui'
-import type { ClassSchedule, ClassTeacherItem, WeekEditorItem, WeekEditorSlot } from '~/types/classes'
+import type { ClassScheduleSlot, ClassTeacherItem, GetClassSchedulesOut, WeekEditorItem, WeekEditorSlot } from '~/types/classes'
 
 interface ClassroomOption {
   id: number
@@ -15,7 +15,6 @@ const props = defineProps<{
   classId: number
   campusId: number | null
   vacancies: number
-  schedules: ClassSchedule[]
   teachers: ClassTeacherItem[]
 }>()
 const emit = defineEmits<{ saved: [] }>()
@@ -27,6 +26,8 @@ const saving = ref(false)
 
 const classrooms = ref<ClassroomOption[]>([])
 const loadingClassrooms = ref(false)
+const loadingSchedules = ref(false)
+const busySlots = ref<ClassScheduleSlot[]>([])
 
 const campusClassrooms = computed(() =>
   props.campusId == null ? [] : classrooms.value.filter(c => c.campusId === props.campusId),
@@ -47,6 +48,32 @@ async function fetchClassrooms() {
     toast.add({ title: 'Erro', description: 'Erro ao carregar as salas.', color: 'error' })
   } finally {
     loadingClassrooms.value = false
+  }
+}
+
+async function fetchSchedules() {
+  loadingSchedules.value = true
+  try {
+    const { schedules } = await $fetch<GetClassSchedulesOut>(
+      `${config.public.backendUrl}/classes/${props.classId}/schedules`,
+      { credentials: 'include' },
+    )
+    rows.value = schedules.filter(s => !s.fromOtherClass).map(s => ({
+      key: nextKey++,
+      day: s.day,
+      start: s.startAt,
+      end: s.endAt,
+      teacherId: s.teacherId,
+      classroomId: s.classroomId,
+      removed: false,
+    }))
+    for (const r of rows.value) originals.set(r.key, { ...r })
+    busySlots.value = schedules.filter(s => s.fromOtherClass)
+  } catch {
+    toast.add({ title: 'Erro', description: 'Erro ao carregar os horários da turma.', color: 'error' })
+    open.value = false
+  } finally {
+    loadingSchedules.value = false
   }
 }
 
@@ -113,6 +140,18 @@ function rowClassroomTooSmall(r: Row | undefined) {
   return !!classroom && classroom.capacity < props.vacancies
 }
 
+function teacherBusyAt(teacherId: number | null, day: string, start: string, end: string) {
+  if (teacherId == null) return false
+  const from = openingHourToMinutes(start)
+  const to = openingHourToMinutes(end)
+  return busySlots.value.some(b => b.teacherId === teacherId && b.day === day
+    && openingHourToMinutes(b.startAt) < to && from < openingHourToMinutes(b.endAt))
+}
+
+function rowTeacherBusy(r: Row) {
+  return teacherBusyAt(r.teacherId, r.day, r.start, r.end)
+}
+
 const overlappingKeys = computed(() => {
   const byDay = new Map<string, ScheduleSpan[]>()
   for (const r of activeRows.value) {
@@ -131,7 +170,9 @@ const errors = computed(() => {
   const list: string[] = []
   const overlaps = overlappingKeys.value.size
   const tooSmall = activeRows.value.filter(rowClassroomTooSmall).length
+  const teacherBusy = activeRows.value.filter(rowTeacherBusy).length
   if (overlaps) list.push(`${overlaps} horários se sobrepõem.`)
+  if (teacherBusy) list.push(`${plural(teacherBusy, 'horário choca', 'horários chocam')} com outra turma do professor.`)
   if (tooSmall) list.push(`${plural(tooSmall, 'sala menor', 'salas menores')} que as vagas da turma.`)
   return list
 })
@@ -157,6 +198,7 @@ const TEACHER_COLORS = [
 ]
 const NO_TEACHER_COLOR = 'bg-elevated border-accented text-muted'
 const REMOVED_COLOR = 'border-dashed border-error/40 bg-error/5 text-error/60'
+const BUSY_COLOR = 'border-dashed opacity-50'
 
 function teacherColor(teacherId: number | null) {
   const idx = props.teachers.findIndex(t => t.id === teacherId)
@@ -166,14 +208,22 @@ function teacherColor(teacherId: number | null) {
 function rowColor(r: Row) {
   if (r.removed) return REMOVED_COLOR
   const color = teacherColor(r.teacherId)
-  if (overlappingKeys.value.has(r.key) || rowClassroomTooSmall(r)) return `${color} border-2 border-dashed border-error!`
+  if (overlappingKeys.value.has(r.key) || rowClassroomTooSmall(r) || rowTeacherBusy(r)) return `${color} border-2 border-dashed border-error!`
   if (!originals.has(r.key)) return `${color} border-2 border-dashed border-success!`
   if (rowChanged(r)) return `${color} border-2 border-dashed border-warning!`
   return color
 }
 
-const editorItems = computed<WeekEditorItem[]>(() =>
-  rows.value.map(r => ({
+const editorItems = computed<WeekEditorItem[]>(() => [
+  ...busySlots.value.map((b, i) => ({
+    key: busyKey(i),
+    day: b.day,
+    start: b.startAt,
+    end: b.endAt,
+    colorClass: `${teacherColor(b.teacherId)} ${BUSY_COLOR}`,
+    locked: true,
+  })),
+  ...rows.value.map(r => ({
     key: r.key,
     day: r.day,
     start: r.start,
@@ -181,7 +231,15 @@ const editorItems = computed<WeekEditorItem[]>(() =>
     colorClass: rowColor(r),
     removed: r.removed,
   })),
-)
+])
+
+function busyKey(index: number) {
+  return -(index + 1)
+}
+
+function busySlotOf(key: number) {
+  return busySlots.value[-key - 1]
+}
 
 function teacherLabel(r: Row | undefined) {
   return props.teachers.find(t => t.id === r?.teacherId)?.name ?? 'Sem professor'
@@ -224,6 +282,9 @@ function teacherItems(key: number): DropdownMenuItem[] {
   ]
   return options.map(option => ({
     label: option.label,
+    description: row && option.value !== row.teacherId && teacherBusyAt(option.value, row.day, row.start, row.end)
+      ? 'Ocupado em outra turma neste horário'
+      : undefined,
     type: 'checkbox' as const,
     checked: row?.teacherId === option.value,
     onSelect: () => { if (row) row.teacherId = option.value },
@@ -276,23 +337,13 @@ async function save() {
 }
 
 watch(open, (val) => {
+  rows.value = []
+  originals.clear()
+  busySlots.value = []
+  classrooms.value = []
   if (val) {
-    rows.value = props.schedules.map(s => ({
-      key: nextKey++,
-      day: s.day,
-      start: s.startAt,
-      end: s.endAt,
-      teacherId: s.teacherId,
-      classroomId: s.classroomId,
-      removed: false,
-    }))
-    originals.clear()
-    for (const r of rows.value) originals.set(r.key, { ...r })
+    fetchSchedules()
     fetchClassrooms()
-  } else {
-    rows.value = []
-    originals.clear()
-    classrooms.value = []
   }
 })
 </script>
@@ -316,6 +367,24 @@ watch(open, (val) => {
         >
           <template #card="{ item, compact }">
             <div
+              v-if="item.locked"
+              class="flex items-start pr-5"
+              :class="compact ? 'flex-row flex-wrap gap-x-2' : 'flex-col gap-0.5'"
+            >
+              <span class="text-xs font-semibold tabular-nums">
+                {{ formatOpeningHour(item.start) }} – {{ formatOpeningHour(item.end) }}
+              </span>
+              <span class="flex max-w-full items-center gap-1 text-xs">
+                <UIcon name="i-lucide-user" class="size-3.5 shrink-0" />
+                <span class="truncate">{{ busySlotOf(item.key)?.teacher }}</span>
+              </span>
+              <span class="flex max-w-full items-center gap-1 text-xs">
+                <UIcon name="i-lucide-book-open" class="size-3.5 shrink-0" />
+                <span class="truncate">{{ busySlotOf(item.key)?.discipline }}</span>
+              </span>
+            </div>
+            <div
+              v-else
               class="flex items-start pr-5"
               :class="compact ? 'flex-row flex-wrap gap-x-2' : 'flex-col gap-0.5'"
             >
@@ -349,7 +418,12 @@ watch(open, (val) => {
               </UDropdownMenu>
             </div>
             <UIcon
-              v-if="item.removed"
+              v-if="item.locked"
+              name="i-lucide-lock"
+              class="pointer-events-none absolute bottom-0.5 right-1 size-3.5"
+            />
+            <UIcon
+              v-else-if="item.removed"
               name="i-lucide-trash-2"
               class="pointer-events-none absolute bottom-0.5 right-1 size-3.5 text-error"
             />
@@ -398,7 +472,7 @@ watch(open, (val) => {
           </li>
         </ul>
         <UButton label="Cancelar" color="neutral" variant="subtle" :disabled="saving" @click="() => { open = false }" />
-        <UButton label="Salvar" :loading="saving" :disabled="saving || loadingClassrooms || errors.length > 0" @click="() => { save() }" />
+        <UButton label="Salvar" :loading="saving" :disabled="saving || loadingClassrooms || loadingSchedules || errors.length > 0" @click="() => { save() }" />
       </div>
     </template>
   </UModal>

@@ -154,20 +154,22 @@ const groups = computed(() => [
           <UDashboardSidebarCollapse class="w-full justify-center" />
         </UTooltip>
 
-        <UNavigationMenu
-          v-model="openGroups"
-          :collapsed="collapsed"
-          :items="links"
-          orientation="vertical"
-          tooltip
-          popover
-        >
-          <template #turma-label="{ item }">
-            <UTooltip :text="item.label" :delay-duration="500" :content="{ side: 'right' }">
-              <span>{{ item.label }}</span>
-            </UTooltip>
-          </template>
-        </UNavigationMenu>
+        <ClientOnly>
+          <UNavigationMenu
+            v-model="openGroups"
+            :collapsed="collapsed"
+            :items="links"
+            orientation="vertical"
+            tooltip
+            popover
+          >
+            <template #turma-label="{ item }">
+              <UTooltip :text="item.label" :delay-duration="500" :content="{ side: 'right' }">
+                <span>{{ item.label }}</span>
+              </UTooltip>
+            </template>
+          </UNavigationMenu>
+        </ClientOnly>
 
         <UNavigationMenu
           :collapsed="collapsed"
@@ -183,7 +185,13 @@ const groups = computed(() => [
       </template>
 
       <template #footer="{ collapsed }">
-        <UserMenu :collapsed="collapsed" />
+        <ClientOnly>
+          <UserMenu :collapsed="collapsed" />
+
+          <template #fallback>
+            <USkeleton class="size-8 rounded-full" />
+          </template>
+        </ClientOnly>
       </template>
     </UDashboardSidebar>
 

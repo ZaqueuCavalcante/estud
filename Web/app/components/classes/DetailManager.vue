@@ -407,7 +407,6 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
           :class-id="data.id"
           :campus-id="data.campusId"
           :vacancies="data.vacancies"
-          :schedules="data.schedules"
           :teachers="data.teachers"
           @saved="refresh()"
         />

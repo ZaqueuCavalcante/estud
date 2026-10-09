@@ -34,7 +34,7 @@ const hourTicks = computed(() => {
   return ticks
 })
 
-interface Span { key: number, dayIdx: number, start: number, end: number, removed: boolean }
+interface Span { key: number, dayIdx: number, start: number, end: number, removed: boolean, locked: boolean }
 interface Gap { lo: number, hi: number }
 
 const spans = computed<Span[]>(() => props.items.map(item => ({
@@ -43,6 +43,7 @@ const spans = computed<Span[]>(() => props.items.map(item => ({
   start: openingHourToMinutes(item.start),
   end: openingHourToMinutes(item.end),
   removed: !!item.removed,
+  locked: !!item.locked,
 })))
 
 const spanByKey = computed(() => new Map(spans.value.map(s => [s.key, s])))
@@ -56,9 +57,10 @@ const lanes = computed(() => {
   return map
 })
 
+// Horário de outra turma não ocupa o grid: ele só choca com um horário do mesmo professor.
 function freeGaps(dayIdx: number, exceptKey: number | null) {
   const busy = spans.value
-    .filter(s => s.dayIdx === dayIdx && s.key !== exceptKey && !s.removed)
+    .filter(s => s.dayIdx === dayIdx && s.key !== exceptKey && !s.removed && !s.locked)
     .sort((a, b) => a.start - b.start)
   const gaps: Gap[] = []
   let cursor = GRID_START
@@ -177,7 +179,7 @@ function endDrag() {
 onBeforeUnmount(endDrag)
 
 function onCardPointerDown(e: PointerEvent, item: WeekEditorItem, mode: DragMode) {
-  if (item.removed) {
+  if (item.removed || item.locked) {
     e.stopPropagation()
     return
   }
@@ -278,7 +280,7 @@ function onPointerUp() {
 
 // ── Teclado ───────────────────────────────────────────────────────────────────
 function onCardKeydown(e: KeyboardEvent, item: WeekEditorItem) {
-  if (e.target !== e.currentTarget || item.removed) return
+  if (e.target !== e.currentTarget || item.removed || item.locked) return
   const key = item.key
   const span = spanByKey.value.get(key)
   if (!span) return
@@ -313,6 +315,7 @@ function onCardKeydown(e: KeyboardEvent, item: WeekEditorItem) {
 function cardLabel(item: WeekEditorItem) {
   const day = days.find(d => d.key === item.day)?.label ?? item.day
   const time = `${day}, das ${formatOpeningHour(item.start)} às ${formatOpeningHour(item.end)}.`
+  if (item.locked) return `${time} Ocupado por outra turma.`
   return item.removed ? `${time} Removido.` : `${time} Setas movem, Delete remove.`
 }
 </script>
@@ -376,7 +379,7 @@ function cardLabel(item: WeekEditorItem) {
             class="group absolute touch-none overflow-hidden rounded-md border px-2 py-1 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary"
             :class="[
               item.colorClass,
-              item.removed ? 'cursor-default' : 'cursor-grab shadow-sm',
+              item.removed || item.locked ? 'cursor-default' : 'cursor-grab shadow-sm',
               drag?.key === item.key ? 'z-20 cursor-grabbing shadow-md' : '',
             ]"
             :style="cardStyle(item)"
@@ -390,7 +393,7 @@ function cardLabel(item: WeekEditorItem) {
             <slot name="card" :item="item" :compact="isCompact(item)" />
 
             <div
-              v-for="edge in (item.removed ? [] : ['start', 'end'] as const)"
+              v-for="edge in (item.removed || item.locked ? [] : ['start', 'end'] as const)"
               :key="edge"
               class="absolute inset-x-0 h-2 cursor-ns-resize"
               :class="edge === 'start' ? 'top-0' : 'bottom-0'"
@@ -398,6 +401,7 @@ function cardLabel(item: WeekEditorItem) {
             />
 
             <UButton
+              v-if="!item.locked"
               :icon="item.removed ? 'i-lucide-undo-2' : 'i-lucide-x'"
               color="neutral"
               variant="ghost"
