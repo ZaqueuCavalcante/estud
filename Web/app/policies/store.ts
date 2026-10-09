@@ -48,6 +48,12 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
       hasUserType(UserTypes.Manager),
     ],
   },
+  GetPendingAttendance: {
+    description: "Ver chamadas pendentes na home",
+    requirements: [
+      hasUserType(UserTypes.Manager),
+    ],
+  },
 
   // Campi
   AccessCampiPage: {

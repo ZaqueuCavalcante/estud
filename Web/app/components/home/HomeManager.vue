@@ -72,7 +72,7 @@ const period = computed(() => periods.value.find(p => p.id === periodId.value))
     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
       <HomeStudentsAtRisk />
       <HomeLowestAttendanceClasses :frequency-limit="frequencyLimit" :period="period" />
-      <HomePendingAttendance />
+      <HomePendingAttendance :period="period" />
       <HomeLowestGradeClasses :note-limit="noteLimit" />
     </div>
 

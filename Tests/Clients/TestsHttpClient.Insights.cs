@@ -1,4 +1,5 @@
 using Estud.Back.Features.Insights.GetAttendance;
+using Estud.Back.Features.Insights.GetPendingAttendance;
 using Estud.Back.Features.Insights.GetLowestAttendanceClasses;
 
 namespace Estud.Tests.Integration.Clients;
@@ -17,5 +18,12 @@ public partial class TestsHttpClient
         var data = new GetLowestAttendanceClassesIn { PeriodId = periodId };
         var response = await http.GetAsync("/insights/classes/lowest-attendance".AddQueryString(data));
         return await response.Resolve<GetLowestAttendanceClassesOut>();
+    }
+
+    public async Task<OneOf<GetPendingAttendanceOut, ErrorOut>> GetPendingAttendance(int periodId)
+    {
+        var data = new GetPendingAttendanceIn { PeriodId = periodId };
+        var response = await http.GetAsync("/insights/classes/pending-attendance".AddQueryString(data));
+        return await response.Resolve<GetPendingAttendanceOut>();
     }
 }

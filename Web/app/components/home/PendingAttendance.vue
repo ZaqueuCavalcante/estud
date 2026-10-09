@@ -1,22 +1,31 @@
 <script setup lang="ts">
 import { ptBR } from 'date-fns/locale'
 import { formatDistanceToNowStrict, parseISO } from 'date-fns'
+import type { PeriodItem } from '~/types/calendar'
+import type { GetPendingAttendanceOut } from '~/types/frequencies'
 
-type PendingClass = { id: number, name: string, teacher: string, pendingLessons: number, oldestPendingAt: string }
+const { period } = defineProps<{ period?: PeriodItem }>()
 
-// TODO: trocar pelos dados do backend
-const summary = { pastLessons: 1380, pendingLessons: 23 }
-const classes: PendingClass[] = [
-  { id: 1, name: 'Cálculo I', teacher: 'Marina Albuquerque', pendingLessons: 7, oldestPendingAt: '2026-09-15' },
-  { id: 2, name: 'Química Orgânica', teacher: 'Ricardo Tavares', pendingLessons: 5, oldestPendingAt: '2026-09-22' },
-  { id: 3, name: 'Física Geral', teacher: 'Paulo Henrique Lima', pendingLessons: 4, oldestPendingAt: '2026-09-29' },
-  { id: 4, name: 'Estatística Aplicada', teacher: 'Juliana Costa', pendingLessons: 2, oldestPendingAt: '2026-10-02' },
-  { id: 5, name: 'Algoritmos e Programação', teacher: 'Fernando Rocha', pendingLessons: 1, oldestPendingAt: '2026-10-07' },
-]
+const config = useRuntimeConfig()
+const { can } = usePolicy()
+const canGetPendingAttendance = can('GetPendingAttendance')
 
-const upToDate = summary.pastLessons
-  ? ((summary.pastLessons - summary.pendingLessons) / summary.pastLessons) * 100
-  : 100
+const { data, execute } = await useFetch<GetPendingAttendanceOut>(`${config.public.backendUrl}/insights/classes/pending-attendance`, {
+  query: computed(() => ({ periodId: period?.id })),
+  credentials: 'include',
+  server: false,
+  immediate: false,
+  watch: false,
+})
+
+watch(() => period?.id, (id) => {
+  if (id && canGetPendingAttendance.value) execute()
+}, { immediate: true })
+
+const summary = computed(() => period ? data.value : undefined)
+const upToDate = computed(() => summary.value?.upToDate ?? 100)
+const pendingLessons = computed(() => summary.value?.pendingLessons ?? 0)
+const classes = computed(() => summary.value?.classes ?? [])
 
 const formatPercent = (value: number) => `${value.toFixed(1).replace('.', ',')}%`
 const formatSince = (date: string) => formatDistanceToNowStrict(parseISO(date), { locale: ptBR, addSuffix: true })
@@ -32,7 +41,7 @@ const formatSince = (date: string) => formatDistanceToNowStrict(parseISO(date), 
         {{ formatPercent(upToDate) }}
       </p>
       <p class="text-xs text-dimmed">
-        {{ summary.pendingLessons }} {{ summary.pendingLessons === 1 ? 'aula' : 'aulas' }} com chamada pendente
+        {{ pendingLessons }} {{ pendingLessons === 1 ? 'aula' : 'aulas' }} com chamada pendente
       </p>
     </template>
 
@@ -47,10 +56,10 @@ const formatSince = (date: string) => formatDistanceToNowStrict(parseISO(date), 
       <li v-for="c in classes" :key="c.id" class="flex items-center gap-3 px-4 py-3 sm:px-6">
         <div class="flex-1 min-w-0">
           <p class="truncate text-sm font-medium text-highlighted">
-            {{ c.name }}
+            {{ c.discipline }}
           </p>
           <p class="truncate text-xs text-muted">
-            {{ c.teacher }} · desde {{ formatSince(c.oldestPendingAt) }}
+            {{ [c.teachers.join(', '), `desde ${formatSince(c.oldestPendingAt)}`].filter(Boolean).join(' · ') }}
           </p>
         </div>
 
