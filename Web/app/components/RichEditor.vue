@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { EditorCustomHandlers, EditorSuggestionMenuItem, EditorToolbarItem } from '@nuxt/ui'
+import type { EditorCustomHandlers, EditorMentionMenuItem, EditorSuggestionMenuItem, EditorToolbarItem } from '@nuxt/ui'
 
 type Editor = Parameters<EditorCustomHandlers[string]['execute']>[0]
 type EditorView = Editor['view']
@@ -10,12 +10,17 @@ const props = defineProps<{
   uploadImage?: (file: File) => Promise<string>
   uploadPdf?: (file: File) => Promise<string>
   readonly?: boolean
+  mentionables?: { id: number, name: string }[]
 }>()
 
 const value = defineModel<string>({ default: '' })
 const uploading = defineModel<number>('uploading', { default: 0 })
 
 const toast = useToast()
+
+const mentionItems = computed<EditorMentionMenuItem[]>(() =>
+  (props.mentionables ?? []).map(x => ({ id: x.id, label: x.name })),
+)
 
 const imageTypes = ['image/png', 'image/jpeg', 'image/webp']
 const maxImageSize = 5 * 1024 * 1024
@@ -320,7 +325,6 @@ function replaceImage(view: EditorView, localSrc: string, src: string | null) {
     :autofocus="autofocus ? 'end' : false"
     :editable="!readonly"
     :image="readonly || !!uploadImage"
-    :mention="false"
     :handlers="editorHandlers"
     :editor-props="editorProps"
     :extensions="[FileAttachment]"
@@ -331,6 +335,7 @@ function replaceImage(view: EditorView, localSrc: string, src: string | null) {
     <template v-if="!readonly" #default="{ editor }">
       <UEditorToolbar :editor="editor" :items="toolbarItems" class="border-b border-default pb-3" />
       <UEditorSuggestionMenu :editor="editor" :items="suggestionItems" />
+      <UEditorMentionMenu v-if="mentionables" :editor="editor" :items="mentionItems" />
     </template>
   </UEditor>
 </template>

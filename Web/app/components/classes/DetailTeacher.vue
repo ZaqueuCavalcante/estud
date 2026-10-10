@@ -11,6 +11,8 @@ const LimitValue = resolveComponent('LimitValue')
 const props = defineProps<{ classId: string }>()
 
 const config = useRuntimeConfig()
+const route = useRoute()
+const router = useRouter()
 
 // "Turmas" não é link: pro professor as turmas vivem no grupo da sidebar, não
 // numa página de listagem.
@@ -19,12 +21,19 @@ const breadcrumb = [
   { label: 'Detalhes' },
 ]
 
-const activeTab = ref('students')
+const tabKeys = ['students', 'lessons', 'activities']
+const initialTab = route.query.t as string
+const activeTab = ref(tabKeys.includes(initialTab) ? initialTab : 'students')
+
+function selectTab(tab: string) {
+  activeTab.value = tab
+  router.replace({ query: tab === 'students' ? {} : { t: tab } })
+}
 
 const tabs = computed(() => [[
-  { label: 'Alunos', icon: 'i-lucide-users', active: activeTab.value === 'students', onSelect: () => { activeTab.value = 'students' } },
-  { label: 'Aulas', icon: 'i-lucide-calendar-days', active: activeTab.value === 'lessons', onSelect: () => { activeTab.value = 'lessons' } },
-  { label: 'Atividades', icon: 'i-lucide-clipboard-list', active: activeTab.value === 'activities', onSelect: () => { activeTab.value = 'activities' } },
+  { label: 'Alunos', icon: 'i-lucide-users', active: activeTab.value === 'students', onSelect: () => { selectTab('students') } },
+  { label: 'Aulas', icon: 'i-lucide-calendar-days', active: activeTab.value === 'lessons', onSelect: () => { selectTab('lessons') } },
+  { label: 'Atividades', icon: 'i-lucide-clipboard-list', active: activeTab.value === 'activities', onSelect: () => { selectTab('activities') } },
 ]] satisfies NavigationMenuItem[][])
 
 // Dados gerais da turma + horários — carregados ao entrar na página.
@@ -34,10 +43,10 @@ const { data, status, error } = await useFetch<GetTeacherClassOut>(
 )
 
 // Cada tab tem endpoint próprio, chamado toda vez que a tab é acessada.
-// Alunos é a primeira tab, então carrega ao entrar na página.
+// Só a tab inicial carrega ao entrar na página.
 const { data: studentsData, status: studentsStatus, refresh: refreshStudents } = await useFetch<GetTeacherClassStudentsOut>(
   `${config.public.backendUrl}/teachers/classes/${props.classId}/students`,
-  { credentials: 'include', server: false },
+  { credentials: 'include', server: false, immediate: activeTab.value === 'students' },
 )
 const students = computed(() => studentsData.value?.students ?? [])
 
@@ -103,7 +112,7 @@ const { data: lessonsData, status: lessonsStatus, refresh: refreshLessons } = aw
   {
     credentials: 'include',
     server: false,
-    immediate: false,
+    immediate: activeTab.value === 'lessons',
     query: { search: computed(() => appliedLessonsSearch.value || undefined) },
   },
 )
@@ -111,7 +120,7 @@ const lessons = computed(() => lessonsData.value?.lessons ?? [])
 
 const { data: activitiesData, status: activitiesStatus, refresh: refreshActivities } = await useFetch<GetTeacherClassActivitiesOut>(
   `${config.public.backendUrl}/teachers/classes/${props.classId}/activities`,
-  { credentials: 'include', server: false, immediate: false },
+  { credentials: 'include', server: false, immediate: activeTab.value === 'activities' },
 )
 const activities = computed(() => activitiesData.value?.activities ?? [])
 

@@ -3,7 +3,7 @@ import * as z from 'zod'
 import { DateFormatter, getLocalTimeZone, parseDate, type CalendarDate } from '@internationalized/date'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { GetInstitutionNoteTypesOut } from '~/types/configs'
-import type { CreateClassActivityFileOut, GetTeacherClassActivityOut } from '~/types/classes'
+import type { CreateClassActivityFileOut, GetClassMentionablesOut, GetTeacherClassActivityOut } from '~/types/classes'
 
 const props = defineProps<{ classId: string, activityId?: string }>()
 
@@ -36,6 +36,11 @@ const descriptionMaxLength = 10000
 // ── Options ───────────────────────────────────────────────────
 const { data: noteTypesData } = await useFetch<GetInstitutionNoteTypesOut>(
   `${config.public.backendUrl}/institutions/note-types`,
+  { credentials: 'include', server: false },
+)
+
+const { data: mentionables } = await useFetch<GetClassMentionablesOut>(
+  `${config.public.backendUrl}/classes/${props.classId}/mentionables`,
   { credentials: 'include', server: false },
 )
 
@@ -324,6 +329,7 @@ async function onUpdate(notify: boolean) {
               v-model:uploading="uploading"
               :upload-image="uploadFile"
               :upload-pdf="uploadFile"
+              :mentionables="mentionables?.items"
               placeholder="Descreva o que o aluno deve entregar."
             />
           </UFormField>

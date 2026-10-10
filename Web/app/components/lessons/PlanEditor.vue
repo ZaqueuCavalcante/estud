@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import type { CreateLessonPlanFileOut } from '~/types/classes'
+import type { CreateLessonPlanFileOut, GetClassMentionablesOut } from '~/types/classes'
 
-const props = defineProps<{ lessonId: number, plannedContent: string | null }>()
+const props = defineProps<{ classId: string, lessonId: number, plannedContent: string | null }>()
 const emit = defineEmits<{ updated: [] }>()
 
 const config = useRuntimeConfig()
 const toast = useToast()
 
 const maxLength = 10000
+
+const { data: mentionables } = await useFetch<GetClassMentionablesOut>(
+  `${config.public.backendUrl}/classes/${props.classId}/mentionables`,
+  { credentials: 'include', server: false },
+)
 
 const editing = ref(false)
 const saving = ref(false)
@@ -127,6 +132,7 @@ async function save() {
         v-model:uploading="uploading"
         :upload-image="uploadFile"
         :upload-pdf="uploadFile"
+        :mentionables="mentionables?.items"
         placeholder="Descreva o que será abordado na aula."
         autofocus
       />

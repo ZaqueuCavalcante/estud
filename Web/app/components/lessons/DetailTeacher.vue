@@ -80,6 +80,7 @@ const tabs = computed(() => [[
 
         <LessonsPlanEditor
           v-show="activeTab === 'plan'"
+          :class-id="classId"
           :lesson-id="data.id"
           :planned-content="data.plannedContent"
           @updated="refresh()"

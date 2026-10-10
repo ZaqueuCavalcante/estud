@@ -5,6 +5,8 @@ import type { GetStudentClassActivitiesOut, GetStudentClassLessonsOut, GetStuden
 const props = defineProps<{ classId: string }>()
 
 const config = useRuntimeConfig()
+const route = useRoute()
+const router = useRouter()
 
 // "Turmas" não é link: pro aluno as turmas vivem no grupo da sidebar, não
 // numa página de listagem.
@@ -45,7 +47,13 @@ const notes = computed(() => groupStudentActivitiesByNote(activitiesData.value?.
 const activityGroups = computed(() => groupActivitiesByNote(activities.value))
 const lessons = computed(() => lessonsData.value?.lessons ?? [])
 
-const tab = ref('performance')
+const tabKeys = ['performance', 'activities', 'lessons']
+const initialTab = route.query.t as string
+const tab = ref(tabKeys.includes(initialTab) ? initialTab : 'performance')
+watch(tab, (value) => {
+  router.replace({ query: value === 'performance' ? {} : { t: value } })
+})
+
 const tabItems = [
   { label: 'Notas', value: 'performance', slot: 'performance' as const, icon: 'i-lucide-chart-column' },
   { label: 'Atividades', value: 'activities', slot: 'activities' as const, icon: 'i-lucide-clipboard-list' },

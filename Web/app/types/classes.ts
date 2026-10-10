@@ -304,3 +304,7 @@ export interface GetStudentClassOut {
   myStatus: string
   schedules: ClassSchedule[]
 }
+
+export interface GetClassMentionablesOut {
+  items: { id: number, name: string }[]
+}
