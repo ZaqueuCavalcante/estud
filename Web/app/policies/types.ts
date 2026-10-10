@@ -126,6 +126,7 @@ export type PolicyName
     | 'GetAttendance'
     | 'GetLowestAttendanceClasses'
     | 'GetPendingAttendance'
+    | 'GetLowestGradeClasses'
   // Campi
     | 'AccessCampiPage'
     | 'CreateCampus'

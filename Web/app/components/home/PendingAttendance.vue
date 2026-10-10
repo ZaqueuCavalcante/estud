@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ptBR } from 'date-fns/locale'
-import { formatDistanceToNowStrict, parseISO } from 'date-fns'
 import type { PeriodItem } from '~/types/calendar'
 import type { GetPendingAttendanceOut } from '~/types/frequencies'
 
@@ -24,11 +22,10 @@ watch(() => period?.id, (id) => {
 
 const summary = computed(() => period ? data.value : undefined)
 const upToDate = computed(() => summary.value?.upToDate ?? 100)
-const pendingLessons = computed(() => summary.value?.pendingLessons ?? 0)
+const pastLessons = computed(() => summary.value?.pastLessons ?? 0)
 const classes = computed(() => summary.value?.classes ?? [])
 
 const formatPercent = (value: number) => `${value.toFixed(1).replace('.', ',')}%`
-const formatSince = (date: string) => formatDistanceToNowStrict(parseISO(date), { locale: ptBR, addSuffix: true })
 </script>
 
 <template>
@@ -37,15 +34,22 @@ const formatSince = (date: string) => formatDistanceToNowStrict(parseISO(date), 
       <p class="text-xs text-muted uppercase mb-1.5">
         Chamadas em dia
       </p>
-      <p class="text-3xl font-semibold text-highlighted tabular-nums">
-        {{ formatPercent(upToDate) }}
+      <p v-if="!pastLessons" class="text-3xl font-semibold text-dimmed">
+        —
       </p>
-      <p class="text-xs text-dimmed">
-        {{ pendingLessons }} {{ pendingLessons === 1 ? 'aula' : 'aulas' }} com chamada pendente
+      <p v-else class="text-3xl font-semibold tabular-nums" :class="upToDate < 90 ? 'text-error' : 'text-success'">
+        {{ formatPercent(upToDate) }}
       </p>
     </template>
 
-    <div v-if="!classes.length" class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+    <div v-if="!pastLessons" class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+      <UIcon name="i-lucide-list-ordered" class="size-8 text-muted" />
+      <p class="text-sm text-muted">
+        Nenhuma aula ocorrida no período
+      </p>
+    </div>
+
+    <div v-else-if="!classes.length" class="flex flex-col items-center justify-center gap-3 py-12 text-center">
       <UIcon name="i-lucide-circle-check" class="size-8 text-success" />
       <p class="text-sm text-muted">
         Todas as chamadas estão em dia
@@ -54,18 +58,13 @@ const formatSince = (date: string) => formatDistanceToNowStrict(parseISO(date), 
 
     <ul v-else class="divide-y divide-default">
       <li v-for="c in classes" :key="c.id" class="flex items-center gap-3 px-4 py-3 sm:px-6">
-        <div class="flex-1 min-w-0">
-          <p class="truncate text-sm font-medium text-highlighted">
-            {{ c.discipline }}
-          </p>
-          <p class="truncate text-xs text-muted">
-            {{ [c.teachers.join(', '), `desde ${formatSince(c.oldestPendingAt)}`].filter(Boolean).join(' · ') }}
-          </p>
-        </div>
+        <p class="flex-1 min-w-0 truncate text-sm font-medium text-highlighted">
+          {{ c.discipline }}
+        </p>
 
         <UBadge
           :label="`${c.pendingLessons} ${c.pendingLessons === 1 ? 'aula' : 'aulas'}`"
-          color="warning"
+          color="error"
           variant="subtle"
           class="shrink-0 tabular-nums"
         />

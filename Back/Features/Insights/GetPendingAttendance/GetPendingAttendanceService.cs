@@ -28,15 +28,10 @@ public class GetPendingAttendanceService(EstudDbContext ctx) : IEstudService
             .ToListAsync();
 
         var classIds = pendingByClass.Select(x => x.ClassId).ToList();
-        var classes = await ctx.Classes.AsNoTracking()
+        var disciplines = await ctx.Classes.AsNoTracking()
             .Where(c => classIds.Contains(c.Id))
-            .Select(c => new
-            {
-                c.Id,
-                Discipline = c.Discipline.Name,
-                Teachers = c.Teachers.OrderBy(t => t.Name).Select(t => t.Name).ToList(),
-            })
-            .ToDictionaryAsync(c => c.Id);
+            .Select(c => new { c.Id, Discipline = c.Discipline.Name })
+            .ToDictionaryAsync(c => c.Id, c => c.Discipline);
 
         return new GetPendingAttendanceOut
         {
@@ -47,10 +42,8 @@ public class GetPendingAttendanceService(EstudDbContext ctx) : IEstudService
                 .Select(x => new GetPendingAttendanceClassOut
                 {
                     Id = x.ClassId,
-                    Discipline = classes[x.ClassId].Discipline,
-                    Teachers = classes[x.ClassId].Teachers,
+                    Discipline = disciplines[x.ClassId],
                     PendingLessons = x.PendingLessons,
-                    OldestPendingAt = x.OldestPendingAt,
                 })
                 .ToList(),
         };

@@ -4,6 +4,7 @@ public static partial class Policies
 {
     public const string GetAttendance = nameof(GetAttendance);
     public const string GetPendingAttendance = nameof(GetPendingAttendance);
+    public const string GetLowestGradeClasses = nameof(GetLowestGradeClasses);
     public const string GetLowestAttendanceClasses = nameof(GetLowestAttendanceClasses);
 
     public static AuthorizationBuilder AddInsightsPolicies(this AuthorizationBuilder builder)
@@ -11,6 +12,7 @@ public static partial class Policies
         builder
             .AddEstudPolicy(GetAttendance, UserType.Manager)
             .AddEstudPolicy(GetPendingAttendance, UserType.Manager)
+            .AddEstudPolicy(GetLowestGradeClasses, UserType.Manager)
             .AddEstudPolicy(GetLowestAttendanceClasses, UserType.Manager);
 
         return builder;

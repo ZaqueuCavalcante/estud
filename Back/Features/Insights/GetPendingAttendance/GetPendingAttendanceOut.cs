@@ -28,8 +28,8 @@ public class GetPendingAttendanceOut : IApiDto<GetPendingAttendanceOut>
             UpToDate = 98.3M,
             Classes =
             [
-                new() { Id = 3, Discipline = "Cálculo I", Teachers = ["Marina Albuquerque"], PendingLessons = 7, OldestPendingAt = new DateOnly(2026, 9, 15) },
-                new() { Id = 7, Discipline = "Física Geral", Teachers = ["Paulo Henrique Lima"], PendingLessons = 4, OldestPendingAt = new DateOnly(2026, 9, 29) },
+                new() { Id = 3, Discipline = "Cálculo I", PendingLessons = 7 },
+                new() { Id = 7, Discipline = "Física Geral", PendingLessons = 4 },
             ],
         }),
     ];
@@ -39,11 +39,5 @@ public class GetPendingAttendanceClassOut
 {
     public int Id { get; set; }
     public string Discipline { get; set; }
-    public List<string> Teachers { get; set; } = [];
     public int PendingLessons { get; set; }
-
-    /// <summary>
-    /// Data da aula mais antiga da turma que ainda está sem chamada
-    /// </summary>
-    public DateOnly OldestPendingAt { get; set; }
 }

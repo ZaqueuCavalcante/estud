@@ -1,16 +1,26 @@
 <script setup lang="ts">
-type ClassGrade = { id: number, name: string, course: string, average: number }
+import type { PeriodItem } from '~/types/calendar'
+import type { GetLowestGradeClassesOut } from '~/types/frequencies'
 
-const { noteLimit } = defineProps<{ noteLimit: number }>()
+const { noteLimit, period } = defineProps<{ noteLimit: number, period?: PeriodItem }>()
 
-// TODO: trocar pelos dados do backend
-const classes: ClassGrade[] = [
-  { id: 1, name: 'Cálculo I', course: 'Engenharia Civil', average: 4.8 },
-  { id: 2, name: 'Física Geral', course: 'Engenharia Elétrica', average: 5.3 },
-  { id: 3, name: 'Química Orgânica', course: 'Técnico em Química', average: 5.9 },
-  { id: 4, name: 'Estatística Aplicada', course: 'Administração', average: 6.6 },
-  { id: 5, name: 'Algoritmos e Programação', course: 'Sistemas de Informação', average: 7.2 },
-]
+const config = useRuntimeConfig()
+const { can } = usePolicy()
+const canGetClasses = can('GetLowestGradeClasses')
+
+const { data, execute } = await useFetch<GetLowestGradeClassesOut>(`${config.public.backendUrl}/insights/classes/lowest-grade`, {
+  query: computed(() => ({ periodId: period?.id })),
+  credentials: 'include',
+  server: false,
+  immediate: false,
+  watch: false,
+})
+
+watch(() => period?.id, (id) => {
+  if (id && canGetClasses.value) execute()
+}, { immediate: true })
+
+const classes = computed(() => period ? data.value?.classes ?? [] : [])
 
 const formatGrade = (value: number) => value.toFixed(1).replace('.', ',')
 </script>
@@ -39,7 +49,7 @@ const formatGrade = (value: number) => value.toFixed(1).replace('.', ',')
         <div class="flex-1 min-w-0 space-y-1.5">
           <div class="flex items-baseline justify-between gap-2">
             <p class="truncate text-sm font-medium text-highlighted">
-              {{ c.name }}
+              {{ c.discipline }}
             </p>
             <span
               class="shrink-0 text-sm font-semibold tabular-nums"
@@ -48,10 +58,6 @@ const formatGrade = (value: number) => value.toFixed(1).replace('.', ',')
               {{ formatGrade(c.average) }}
             </span>
           </div>
-
-          <p class="truncate text-xs text-muted">
-            {{ c.course }}
-          </p>
 
           <UProgress
             :model-value="c.average"

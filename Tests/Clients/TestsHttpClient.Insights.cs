@@ -1,5 +1,6 @@
 using Estud.Back.Features.Insights.GetAttendance;
 using Estud.Back.Features.Insights.GetPendingAttendance;
+using Estud.Back.Features.Insights.GetLowestGradeClasses;
 using Estud.Back.Features.Insights.GetLowestAttendanceClasses;
 
 namespace Estud.Tests.Integration.Clients;
@@ -25,5 +26,12 @@ public partial class TestsHttpClient
         var data = new GetPendingAttendanceIn { PeriodId = periodId };
         var response = await http.GetAsync("/insights/classes/pending-attendance".AddQueryString(data));
         return await response.Resolve<GetPendingAttendanceOut>();
+    }
+
+    public async Task<OneOf<GetLowestGradeClassesOut, ErrorOut>> GetLowestGradeClasses(int periodId)
+    {
+        var data = new GetLowestGradeClassesIn { PeriodId = periodId };
+        var response = await http.GetAsync("/insights/classes/lowest-grade".AddQueryString(data));
+        return await response.Resolve<GetLowestGradeClassesOut>();
     }
 }

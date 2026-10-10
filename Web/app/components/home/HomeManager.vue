@@ -73,7 +73,7 @@ const period = computed(() => periods.value.find(p => p.id === periodId.value))
       <HomeStudentsAtRisk />
       <HomeLowestAttendanceClasses :frequency-limit="frequencyLimit" :period="period" />
       <HomePendingAttendance :period="period" />
-      <HomeLowestGradeClasses :note-limit="noteLimit" />
+      <HomeLowestGradeClasses :note-limit="noteLimit" :period="period" />
     </div>
 
     <HomeAttendanceChart class="w-full" :frequency-limit="frequencyLimit" :period="period" />

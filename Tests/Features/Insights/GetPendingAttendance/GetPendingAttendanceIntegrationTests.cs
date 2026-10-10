@@ -131,9 +131,7 @@ public partial class IntegrationTests
         var item = pending.Classes.Should().ContainSingle().Subject;
         item.Id.Should().Be(@class.Id);
         item.Discipline.Should().Be("Cálculo I");
-        item.Teachers.Should().Equal(@class.TeacherName);
         item.PendingLessons.Should().Be(pastLessons.Count - 1);
-        item.OldestPendingAt.Should().Be(pastLessons.Skip(1).Min(l => l.Date));
     }
 
     [Test]

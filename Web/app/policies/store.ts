@@ -54,6 +54,12 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
       hasUserType(UserTypes.Manager),
     ],
   },
+  GetLowestGradeClasses: {
+    description: "Ver turmas com menor nota média na home",
+    requirements: [
+      hasUserType(UserTypes.Manager),
+    ],
+  },
 
   // Campi
   AccessCampiPage: {

@@ -66,9 +66,7 @@ export interface GetLowestAttendanceClassesOut {
 export interface PendingAttendanceClassItem {
   id: number
   discipline: string
-  teachers: string[]
   pendingLessons: number
-  oldestPendingAt: string
 }
 
 export interface GetPendingAttendanceOut {
@@ -76,4 +74,14 @@ export interface GetPendingAttendanceOut {
   pendingLessons: number
   upToDate: number
   classes: PendingAttendanceClassItem[]
+}
+
+export interface LowestGradeClassItem {
+  id: number
+  discipline: string
+  average: number
+}
+
+export interface GetLowestGradeClassesOut {
+  classes: LowestGradeClassItem[]
 }
