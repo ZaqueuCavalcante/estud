@@ -85,3 +85,10 @@ export interface LowestGradeClassItem {
 export interface GetLowestGradeClassesOut {
   classes: LowestGradeClassItem[]
 }
+
+export interface GetStudentsAtRiskOut {
+  totalStudents: number
+  onlyFrequency: number
+  onlyGrade: number
+  both: number
+}

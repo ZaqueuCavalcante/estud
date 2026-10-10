@@ -7,6 +7,7 @@ public class EnrichBackDbContextMiddleware(RequestDelegate next)
         if (request.User.IsAuthenticated)
         {
             ctx.RequestUser.Id = request.User.Id;
+            ctx.RequestUser.Type = request.User.Type;
             ctx.RequestUser.Permissions = request.User.Permissions;
             ctx.RequestUser.InstitutionId = request.User.InstitutionId;
         }

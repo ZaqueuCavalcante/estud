@@ -104,9 +104,6 @@ function openWorkModal(work: TeacherActivityWorkItem) {
         </div>
 
         <section class="flex flex-col gap-3">
-          <h2 class="font-semibold text-highlighted">
-            Descrição
-          </h2>
           <div v-if="data.description" class="rounded-lg border border-default p-3">
             <MarkdownContent :value="data.description" />
           </div>

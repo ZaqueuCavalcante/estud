@@ -39,6 +39,17 @@ public static partial class Policies
     }
 
     /// <summary>
+    /// O usuário precisa estar logado e seu perfil de acesso deve possuir um dos tipos base especificados.
+    /// </summary>
+    public static AuthorizationBuilder AddEstudPolicy(this AuthorizationBuilder builder, string name, UserType[] userTypes)
+    {
+        return builder.AddPolicy(name, policy => policy
+            .RequireAuthenticatedUser()
+            .RequireAssertion(x => userTypes.Contains(x.User.Type))
+            .AddAuthenticationSchemes(JwtBearerScheme.Name));
+    }
+
+    /// <summary>
     /// O usuário precisa estar logado e ser adm.
     /// </summary>
     public static AuthorizationBuilder AddEstudAdminPolicy(this AuthorizationBuilder builder, string name)

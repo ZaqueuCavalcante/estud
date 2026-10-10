@@ -105,12 +105,9 @@ public class Mention
 {
     public int Id { get; set; }
     public int InstitutionId { get; set; }
-    public int MentionedUserId { get; set; }
-    public EstudUser? MentionedUser { get; set; }
     public int AuthorUserId { get; set; }
-    public EstudUser? Author { get; set; }
+    public int MentionedUserId { get; set; }
     public int? ClassActivityWorkEntryId { get; set; }
-    public ClassActivityWorkEntry? ClassActivityWorkEntry { get; set; }
     public DateTime CreatedAt { get; set; }
 }
 ```

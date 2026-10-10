@@ -60,6 +60,12 @@ export const Policies: Record<PolicyName, PolicyDefinition> = {
       hasUserType(UserTypes.Manager),
     ],
   },
+  GetStudentsAtRisk: {
+    description: "Ver alunos em risco de reprovação na home",
+    requirements: [
+      hasUserType(UserTypes.Manager),
+    ],
+  },
 
   // Campi
   AccessCampiPage: {

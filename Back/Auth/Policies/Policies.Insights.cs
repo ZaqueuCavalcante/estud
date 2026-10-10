@@ -3,6 +3,7 @@ namespace Estud.Back.Auth.Policies;
 public static partial class Policies
 {
     public const string GetAttendance = nameof(GetAttendance);
+    public const string GetStudentsAtRisk = nameof(GetStudentsAtRisk);
     public const string GetPendingAttendance = nameof(GetPendingAttendance);
     public const string GetLowestGradeClasses = nameof(GetLowestGradeClasses);
     public const string GetLowestAttendanceClasses = nameof(GetLowestAttendanceClasses);
@@ -11,6 +12,7 @@ public static partial class Policies
     {
         builder
             .AddEstudPolicy(GetAttendance, UserType.Manager)
+            .AddEstudPolicy(GetStudentsAtRisk, UserType.Manager)
             .AddEstudPolicy(GetPendingAttendance, UserType.Manager)
             .AddEstudPolicy(GetLowestGradeClasses, UserType.Manager)
             .AddEstudPolicy(GetLowestAttendanceClasses, UserType.Manager);

@@ -1,4 +1,5 @@
 using Estud.Back.Features.Insights.GetAttendance;
+using Estud.Back.Features.Insights.GetStudentsAtRisk;
 using Estud.Back.Features.Insights.GetPendingAttendance;
 using Estud.Back.Features.Insights.GetLowestGradeClasses;
 using Estud.Back.Features.Insights.GetLowestAttendanceClasses;
@@ -33,5 +34,12 @@ public partial class TestsHttpClient
         var data = new GetLowestGradeClassesIn { PeriodId = periodId };
         var response = await http.GetAsync("/insights/classes/lowest-grade".AddQueryString(data));
         return await response.Resolve<GetLowestGradeClassesOut>();
+    }
+
+    public async Task<OneOf<GetStudentsAtRiskOut, ErrorOut>> GetStudentsAtRisk(int periodId)
+    {
+        var data = new GetStudentsAtRiskIn { PeriodId = periodId };
+        var response = await http.GetAsync("/insights/students/at-risk".AddQueryString(data));
+        return await response.Resolve<GetStudentsAtRiskOut>();
     }
 }

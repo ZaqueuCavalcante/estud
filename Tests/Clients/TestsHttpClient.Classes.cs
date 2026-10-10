@@ -4,6 +4,7 @@ using Estud.Back.Features.Classes.GetClasses;
 using Estud.Back.Features.Classes.CreateClass;
 using Estud.Back.Features.Classes.GetClassSchedules;
 using Estud.Back.Features.Classes.UpdateClassTeachers;
+using Estud.Back.Features.Classes.GetClassMentionables;
 using Estud.Back.Features.Classes.UpdateClassSchedules;
 
 namespace Estud.Tests.Integration.Clients;
@@ -52,6 +53,12 @@ public partial class TestsHttpClient
     {
         var response = await http.GetAsync($"/classes/{classId}/schedules");
         return await response.Resolve<GetClassSchedulesOut>();
+    }
+
+    public async Task<OneOf<GetClassMentionablesOut, ErrorOut>> GetClassMentionables(int classId)
+    {
+        var response = await http.GetAsync($"/classes/{classId}/mentionables");
+        return await response.Resolve<GetClassMentionablesOut>();
     }
 
     public async Task<OneOf<GetClassesOut, ErrorOut>> GetClasses(
