@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9891101431238333" branch-rate="0.901403852432256" lines-covered="12716" lines-valid="12856" branches-covered="2761" branches-valid="3063" complexity="4455" version="0" timestamp="1791599180">
+<coverage line-rate="0.9890366223466294" branch-rate="0.9013350700097688" lines-covered="12720" lines-valid="12861" branches-covered="2768" branches-valid="3071" complexity="4458" version="0" timestamp="1791650314">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9891399128022196" branch-rate="0.9016448472641826" complexity="4347">
+    <package name="Back" line-rate="0.9890649762282092" branch-rate="0.9015734851021091" complexity="4350">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -2611,9 +2611,9 @@
             <line number="13" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Configs.DocsConfigs" filename="/home/runner/work/estud/estud/Back/Configs/DocsConfigs.cs" line-rate="1" branch-rate="1" complexity="6">
+        <class name="Estud.Back.Configs.DocsConfigs" filename="/home/runner/work/estud/estud/Back/Configs/DocsConfigs.cs" line-rate="0.9896907216494846" branch-rate="0.98" complexity="9">
           <methods>
-            <method name="AddDocsConfigs" signature="(Microsoft.AspNetCore.Builder.WebApplicationBuilder)" line-rate="1" branch-rate="1" complexity="2">
+            <method name="AddDocsConfigs" signature="(Microsoft.AspNetCore.Builder.WebApplicationBuilder)" line-rate="0.9850746268656716" branch-rate="0.975" complexity="2">
               <lines>
                 <line number="14" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="15" hits="2" branch="false" />
@@ -2651,10 +2651,10 @@
                 <line number="47" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="48" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="49" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="50" hits="2" branch="false" />
-                <line number="51" hits="2" branch="false" />
-                <line number="52" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="53" hits="2" branch="false" />
+                <line number="50" hits="2" branch="true" condition-coverage="50% (1/2)" />
+                <line number="51" hits="0" branch="false" />
+                <line number="52" hits="2" branch="false" />
+                <line number="53" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="54" hits="2" branch="false" />
                 <line number="55" hits="2" branch="false" />
                 <line number="56" hits="2" branch="false" />
@@ -2678,21 +2678,21 @@
                 <line number="74" hits="2" branch="false" />
                 <line number="75" hits="2" branch="false" />
                 <line number="76" hits="2" branch="false" />
-                <line number="78" hits="2" branch="false" />
+                <line number="77" hits="2" branch="false" />
                 <line number="79" hits="2" branch="false" />
                 <line number="80" hits="2" branch="false" />
+                <line number="81" hits="2" branch="false" />
               </lines>
             </method>
             <method name="MapScalarDocs" signature="(Microsoft.AspNetCore.Routing.IEndpointRouteBuilder)" line-rate="1" branch-rate="1" complexity="2">
               <lines>
-                <line number="84" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="85" hits="2" branch="false" />
+                <line number="85" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="86" hits="2" branch="false" />
                 <line number="87" hits="2" branch="false" />
                 <line number="88" hits="2" branch="false" />
                 <line number="89" hits="2" branch="false" />
-                <line number="90" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="91" hits="2" branch="false" />
+                <line number="90" hits="2" branch="false" />
+                <line number="91" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="92" hits="2" branch="false" />
                 <line number="93" hits="2" branch="false" />
                 <line number="94" hits="2" branch="false" />
@@ -2702,23 +2702,28 @@
                 <line number="98" hits="2" branch="false" />
                 <line number="99" hits="2" branch="false" />
                 <line number="100" hits="2" branch="false" />
+                <line number="101" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="UseDocs" signature="(Microsoft.AspNetCore.Builder.IApplicationBuilder)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="UseDocs" signature="(Microsoft.AspNetCore.Builder.IApplicationBuilder)" line-rate="1" branch-rate="1" complexity="4">
               <lines>
-                <line number="104" hits="2" branch="false" />
                 <line number="105" hits="2" branch="false" />
-                <line number="106" hits="2" branch="false" />
+                <line number="107" hits="2" branch="true" condition-coverage="100% (4/4)" />
+                <line number="108" hits="2" branch="false" />
+                <line number="109" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="110" hits="2" branch="false" />
+                <line number="112" hits="2" branch="false" />
+                <line number="113" hits="2" branch="false" />
               </lines>
             </method>
             <method name="ReadResource" signature="(string)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="110" hits="2" branch="false" />
-                <line number="111" hits="2" branch="false" />
-                <line number="113" hits="2" branch="false" />
-                <line number="114" hits="2" branch="false" />
-                <line number="116" hits="2" branch="false" />
                 <line number="117" hits="2" branch="false" />
+                <line number="118" hits="2" branch="false" />
+                <line number="120" hits="2" branch="false" />
+                <line number="121" hits="2" branch="false" />
+                <line number="123" hits="2" branch="false" />
+                <line number="124" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
@@ -2759,10 +2764,10 @@
             <line number="47" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="48" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="49" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="50" hits="2" branch="false" />
-            <line number="51" hits="2" branch="false" />
-            <line number="52" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="53" hits="2" branch="false" />
+            <line number="50" hits="2" branch="true" condition-coverage="50% (1/2)" />
+            <line number="51" hits="0" branch="false" />
+            <line number="52" hits="2" branch="false" />
+            <line number="53" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="54" hits="2" branch="false" />
             <line number="55" hits="2" branch="false" />
             <line number="56" hits="2" branch="false" />
@@ -2786,17 +2791,17 @@
             <line number="74" hits="2" branch="false" />
             <line number="75" hits="2" branch="false" />
             <line number="76" hits="2" branch="false" />
-            <line number="78" hits="2" branch="false" />
+            <line number="77" hits="2" branch="false" />
             <line number="79" hits="2" branch="false" />
             <line number="80" hits="2" branch="false" />
-            <line number="84" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="85" hits="2" branch="false" />
+            <line number="81" hits="2" branch="false" />
+            <line number="85" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="86" hits="2" branch="false" />
             <line number="87" hits="2" branch="false" />
             <line number="88" hits="2" branch="false" />
             <line number="89" hits="2" branch="false" />
-            <line number="90" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="91" hits="2" branch="false" />
+            <line number="90" hits="2" branch="false" />
+            <line number="91" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="92" hits="2" branch="false" />
             <line number="93" hits="2" branch="false" />
             <line number="94" hits="2" branch="false" />
@@ -2806,15 +2811,20 @@
             <line number="98" hits="2" branch="false" />
             <line number="99" hits="2" branch="false" />
             <line number="100" hits="2" branch="false" />
-            <line number="104" hits="2" branch="false" />
+            <line number="101" hits="2" branch="false" />
             <line number="105" hits="2" branch="false" />
-            <line number="106" hits="2" branch="false" />
+            <line number="107" hits="2" branch="true" condition-coverage="100% (4/4)" />
+            <line number="108" hits="2" branch="false" />
+            <line number="109" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="110" hits="2" branch="false" />
-            <line number="111" hits="2" branch="false" />
+            <line number="112" hits="2" branch="false" />
             <line number="113" hits="2" branch="false" />
-            <line number="114" hits="2" branch="false" />
-            <line number="116" hits="2" branch="false" />
             <line number="117" hits="2" branch="false" />
+            <line number="118" hits="2" branch="false" />
+            <line number="120" hits="2" branch="false" />
+            <line number="121" hits="2" branch="false" />
+            <line number="123" hits="2" branch="false" />
+            <line number="124" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Configs.DomainEventConfigs" filename="/home/runner/work/estud/estud/Back/Configs/DomainEventConfigs.cs" line-rate="1" branch-rate="0.9642857142857143" complexity="21">
@@ -20589,32 +20599,32 @@
           <methods>
             <method name="GetExamples" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="12" hits="4" branch="false" />
-                <line number="13" hits="4" branch="false" />
-                <line number="14" hits="4" branch="false" />
+                <line number="31" hits="4" branch="false" />
+                <line number="32" hits="4" branch="false" />
+                <line number="33" hits="4" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="12" hits="4" branch="false" />
-            <line number="13" hits="4" branch="false" />
-            <line number="14" hits="4" branch="false" />
+            <line number="31" hits="4" branch="false" />
+            <line number="32" hits="4" branch="false" />
+            <line number="33" hits="4" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Features.CourseOfferings.CreateCourseOffering.CreateCourseOfferingOut" filename="/home/runner/work/estud/estud/Back/Features/CourseOfferings/CreateCourseOffering/CreateCourseOfferingOut.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="GetExamples" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="8" hits="4" branch="false" />
-                <line number="9" hits="4" branch="false" />
-                <line number="10" hits="4" branch="false" />
+                <line number="11" hits="4" branch="false" />
+                <line number="12" hits="4" branch="false" />
+                <line number="13" hits="4" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="8" hits="4" branch="false" />
-            <line number="9" hits="4" branch="false" />
-            <line number="10" hits="4" branch="false" />
+            <line number="11" hits="4" branch="false" />
+            <line number="12" hits="4" branch="false" />
+            <line number="13" hits="4" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Features.CourseOfferings.CreateCourseOffering.CreateCourseOfferingService" filename="/home/runner/work/estud/estud/Back/Features/CourseOfferings/CreateCourseOffering/CreateCourseOfferingService.cs" line-rate="1" branch-rate="1" complexity="13">
