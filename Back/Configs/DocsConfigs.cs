@@ -47,6 +47,7 @@ public static class DocsConfigs
                 if (group == "classrooms") return ["📈 Classrooms"];
                 if (group == "notifications") return ["🔔 Notifications"];
                 if (group == "institutions") return ["🏢 Institutions"];
+                if (group == "insights") return ["💡 Insights"];
                 return ["🧱 Cross"];
             });
             options.DocInclusionPredicate((name, api) => true);
@@ -102,6 +103,12 @@ public static class DocsConfigs
     public static void UseDocs(this IApplicationBuilder app)
     {
         app.UseStaticFiles();
+
+        app.UseWhen(
+            x => x.Request.Path.StartsWithSegments("/swagger"),
+            x => x.UseCors(p => p.AllowAnyOrigin().WithMethods("GET"))
+        );
+
         app.UseSwagger();
     }
 

@@ -5,6 +5,8 @@ import type { GetTeacherClassLessonOut } from '~/types/classes'
 const props = defineProps<{ classId: string, lessonId: string }>()
 
 const config = useRuntimeConfig()
+const route = useRoute()
+const router = useRouter()
 
 // "Turmas" não é link: pro professor as turmas vivem no grupo da sidebar, não
 // numa página de listagem.
@@ -19,11 +21,16 @@ const { data, status, error, refresh } = await useFetch<GetTeacherClassLessonOut
   { credentials: 'include', server: false },
 )
 
-const activeTab = ref('plan')
+const activeTab = ref(route.query.t === 'attendance' ? 'attendance' : 'plan')
+
+function selectTab(tab: string) {
+  activeTab.value = tab
+  router.replace({ query: tab === 'plan' ? {} : { t: tab } })
+}
 
 const tabs = computed(() => [[
-  { label: 'Planejamento', icon: 'i-lucide-notebook-pen', active: activeTab.value === 'plan', onSelect: () => { activeTab.value = 'plan' } },
-  { label: 'Chamada', icon: 'i-lucide-clipboard-check', active: activeTab.value === 'attendance', onSelect: () => { activeTab.value = 'attendance' } },
+  { label: 'Planejamento', icon: 'i-lucide-notebook-pen', active: activeTab.value === 'plan', onSelect: () => { selectTab('plan') } },
+  { label: 'Chamada', icon: 'i-lucide-clipboard-check', active: activeTab.value === 'attendance', onSelect: () => { selectTab('attendance') } },
 ]] satisfies NavigationMenuItem[][])
 </script>
 
