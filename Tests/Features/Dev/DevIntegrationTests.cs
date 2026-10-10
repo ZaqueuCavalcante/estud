@@ -14,6 +14,7 @@ public partial class IntegrationTests
         var data = new DevInstitutionData();
 
         await DevCreateCampi(client, data);
+        await DevCreateClassrooms(client, data);
         await DevCreateCourses(client, data);
         await DevCreateAdsDisciplines(client, data);
         await DevCreateDireitoDisciplines(client, data);
@@ -26,6 +27,8 @@ public partial class IntegrationTests
 
         await DevCreateCourseOfferings(client, data);
         await DevCreateStudents(client, data);
+
+        await DevResetPasswords(_back, client);
     }
 
     private static async Task DevCreateCampi(TestsHttpClient client, DevInstitutionData data)
@@ -34,6 +37,25 @@ public partial class IntegrationTests
         data.CampiIds.Add((await client.CreateCampus("Sertão", BrazilState.PE, "Petrolina").Success()).Id);
         data.CampiIds.Add((await client.CreateCampus("Agreste", BrazilState.PE, "Caruaru").Success()).Id);
         data.CampiIds.Add((await client.CreateCampus("Suassuna", BrazilState.PE, "Recife").Success()).Id);
+    }
+
+    private static async Task DevCreateClassrooms(TestsHttpClient client, DevInstitutionData data)
+    {
+        (int CampusId, int Count)[] campi =
+        [
+            (data.CampiIds[0], 2),
+            (data.CampiIds[1], 1),
+            (data.CampiIds[2], 5),
+            (data.CampiIds[3], 1),
+        ];
+
+        foreach (var (campusId, count) in campi)
+        {
+            for (var i = 1; i <= count; i++)
+            {
+                await client.CreateClassroom(campusId, $"Sala {i:D2}").Success();
+            }
+        }
     }
 
     private static async Task DevCreateCourses(TestsHttpClient client, DevInstitutionData data)
@@ -363,6 +385,19 @@ public partial class IntegrationTests
         {
             var result = await client.CreateStudent(student.Name, student.Email);
             await client.EnrollStudentInCourseOffering(result.Success.Id, data.DireitoCourseOfferingId);
+        }
+    }
+
+    private static async Task DevResetPasswords(BackFactory factory, TestsHttpClient client)
+    {
+        await using var ctx = factory.GetDbContext();
+        var emails = await ctx.Users.Select(u => u.Email).ToListAsync();
+
+        foreach (var email in emails)
+        {
+            await client.SendResetPasswordToken(email!);
+            var token = await factory.GetResetPasswordToken(email!);
+            await client.ResetPassword(token!, "My@nEw@strong@P4ssword");
         }
     }
 }
