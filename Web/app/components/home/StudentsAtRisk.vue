@@ -8,7 +8,7 @@ const config = useRuntimeConfig()
 const { can } = usePolicy()
 const canGetStudentsAtRisk = can('GetStudentsAtRisk')
 
-const { data, execute } = await useFetch<GetStudentsAtRiskOut>(`${config.public.backendUrl}/insights/students/at-risk`, {
+const { data, status, execute } = await useFetch<GetStudentsAtRiskOut>(`${config.public.backendUrl}/insights/students/at-risk`, {
   query: computed(() => ({ periodId: period?.id })),
   credentials: 'include',
   server: false,
@@ -42,7 +42,17 @@ const segments = computed(() => [
       </p>
     </template>
 
-    <template v-if="!totalStudents">
+    <template v-if="status === 'pending'">
+      <p class="text-3xl font-semibold text-dimmed">
+        —
+      </p>
+
+      <div class="flex items-center justify-center py-6">
+        <AppSpinner class="size-8" />
+      </div>
+    </template>
+
+    <template v-else-if="!totalStudents">
       <p class="text-3xl font-semibold text-dimmed">
         —
       </p>

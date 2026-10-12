@@ -84,12 +84,6 @@ public class CommandsProcessor(IServiceScopeFactory serviceScopeFactory) : IJob
                     await ctx.Database.CommitTransactionAsync();
                 }
             }
-
-            if (ctx.HasPendingCommands)
-            {
-                var scheduler = await scope.ServiceProvider.GetRequiredService<ISchedulerFactory>().GetScheduler();
-                await scheduler.TriggerCommandsProcessorJob();
-            }
         }
     }
 

@@ -8,7 +8,7 @@ const config = useRuntimeConfig()
 const { can } = usePolicy()
 const canGetClasses = can('GetLowestAttendanceClasses')
 
-const { data, execute } = await useFetch<GetLowestAttendanceClassesOut>(`${config.public.backendUrl}/insights/classes/lowest-attendance`, {
+const { data, status, execute } = await useFetch<GetLowestAttendanceClassesOut>(`${config.public.backendUrl}/insights/classes/lowest-attendance`, {
   query: computed(() => ({ periodId: period?.id })),
   credentials: 'include',
   server: false,
@@ -33,7 +33,11 @@ const formatPercent = (value: number) => `${value.toFixed(1).replace('.', ',')}%
       </p>
     </template>
 
-    <div v-if="!classes.length" class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+    <div v-if="status === 'pending'" class="flex items-center justify-center py-12">
+      <AppSpinner class="size-8" />
+    </div>
+
+    <div v-else-if="!classes.length" class="flex flex-col items-center justify-center gap-3 py-12 text-center">
       <UIcon name="i-lucide-list-ordered" class="size-8 text-muted" />
       <p class="text-sm text-muted">
         Nenhuma frequência registrada no período

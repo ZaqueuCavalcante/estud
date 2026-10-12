@@ -8,7 +8,7 @@ const config = useRuntimeConfig()
 const { can } = usePolicy()
 const canGetPendingAttendance = can('GetPendingAttendance')
 
-const { data, execute } = await useFetch<GetPendingAttendanceOut>(`${config.public.backendUrl}/insights/classes/pending-attendance`, {
+const { data, status, execute } = await useFetch<GetPendingAttendanceOut>(`${config.public.backendUrl}/insights/classes/pending-attendance`, {
   query: computed(() => ({ periodId: period?.id })),
   credentials: 'include',
   server: false,
@@ -34,7 +34,7 @@ const formatPercent = (value: number) => `${value.toFixed(1).replace('.', ',')}%
       <p class="text-xs text-muted uppercase mb-1.5">
         Chamadas em dia
       </p>
-      <p v-if="!pastLessons" class="text-3xl font-semibold text-dimmed">
+      <p v-if="status === 'pending' || !pastLessons" class="text-3xl font-semibold text-dimmed">
         —
       </p>
       <p v-else class="text-3xl font-semibold tabular-nums" :class="upToDate < 90 ? 'text-error' : 'text-success'">
@@ -42,7 +42,11 @@ const formatPercent = (value: number) => `${value.toFixed(1).replace('.', ',')}%
       </p>
     </template>
 
-    <div v-if="!pastLessons" class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+    <div v-if="status === 'pending'" class="flex items-center justify-center py-12">
+      <AppSpinner class="size-8" />
+    </div>
+
+    <div v-else-if="!pastLessons" class="flex flex-col items-center justify-center gap-3 py-12 text-center">
       <UIcon name="i-lucide-list-ordered" class="size-8 text-muted" />
       <p class="text-sm text-muted">
         Nenhuma aula ocorrida no período

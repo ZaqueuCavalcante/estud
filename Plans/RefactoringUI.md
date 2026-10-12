@@ -1,12 +1,9 @@
 # Refactoring UI, de Adam Wathan e Steve Schoger
 
-Os autores são o criador do Tailwind CSS e um designer.
-O livro é um guia prático de design para desenvolvedores.
-Ele não trata de teoria artística.
-Traz táticas objetivas para deixar uma interface com cara profissional.
+O livro é um guia prático de design para desenvolvedores que traz táticas objetivas para deixar uma interface com cara profissional.
 
 ## 1. Começando do zero
-- **Comece por uma funcionalidade, não pelo layout.** Não desenhe o "shell" (navbar, sidebar) primeiro. Desenhe a tela de "buscar voo", não "o app".
+- **Comece por uma funcionalidade, não pelo layout.** Feature sempre deve vir primeiro.
 - **Detalhes depois.** Faça rascunhos em baixa fidelidade, sem se prender a fontes, sombras e ícones.
 - **Não projete demais.** Entregue uma versão simples que funcione e itere em cima dela.
 - **Defina uma personalidade.** Fonte, cor, raio de borda e tom do texto comunicam se o produto é sério, amigável, elegante etc.
