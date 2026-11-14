@@ -110,10 +110,10 @@ function goBack() {
     <div class="flex items-start justify-center px-4 pt-4 md:pt-[2vh]">
       <div class="w-full max-w-lg">
         <div class="text-center mb-8">
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 class="text-2xl font-bold text-highlighted">
             Configurar 2FA
           </h1>
-          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          <p class="mt-2 text-sm text-muted">
             Sua organização exige autenticação de dois fatores
           </p>
         </div>
@@ -122,7 +122,7 @@ function goBack() {
           <Transition name="setup-transition" mode="out-in">
             <div v-if="setupSuccess" key="success" class="flex flex-col items-center justify-center py-12 gap-4">
               <AppSpinner class="size-10" />
-              <p class="text-lg font-medium text-gray-900 dark:text-white">
+              <p class="text-lg font-medium text-highlighted">
                 Redirecionando...
               </p>
             </div>
@@ -132,14 +132,14 @@ function goBack() {
             </div>
 
             <div v-else key="setup" class="flex flex-col gap-6">
-              <div class="flex items-center gap-3 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20">
-                <UIcon name="i-lucide-shield-alert" class="text-amber-600 dark:text-amber-400 text-xl shrink-0" />
-                <span class="text-sm text-amber-700 dark:text-amber-300">
+              <div class="flex items-center gap-3 p-4 rounded-lg bg-warning/10">
+                <UIcon name="i-lucide-shield-alert" class="text-warning text-xl shrink-0" />
+                <span class="text-sm text-warning">
                   Configure o 2FA para continuar acessando o sistema.
                 </span>
               </div>
 
-              <div class="text-sm text-gray-600 dark:text-gray-400">
+              <div class="text-sm text-muted">
                 <p class="mb-2">
                   1. Escaneie o QR Code abaixo com seu app autenticador (Google Authenticator, Authy, etc.)
                 </p>
@@ -151,16 +151,16 @@ function goBack() {
                   v-if="qrCodeBase64"
                   :src="qrCodeBase64"
                   alt="QR Code 2FA"
-                  class="w-48 h-48 rounded-lg border dark:border-gray-700"
+                  class="w-48 h-48 rounded-lg border border-default"
                 >
               </div>
 
               <div class="flex flex-col gap-2">
-                <p class="text-xs text-gray-500 dark:text-gray-400 text-center">
+                <p class="text-xs text-muted text-center">
                   Ou insira a chave manualmente:
                 </p>
                 <div class="flex items-center gap-2 justify-center">
-                  <code class="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded font-mono">
+                  <code class="text-xs bg-elevated px-2 py-1 rounded font-mono">
                     {{ secretKey }}
                   </code>
                   <UTooltip text="Copiar">

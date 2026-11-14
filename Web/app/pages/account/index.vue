@@ -96,79 +96,72 @@ async function logout() {
       class="mb-4"
     />
 
-    <UPageCard variant="subtle">
-    <div class="flex flex-col divide-y divide-default">
-      <div class="flex max-sm:flex-col justify-between items-start sm:items-center gap-4 py-4 first:pt-0 last:pb-0">
-        <div>
-          <p class="text-sm text-muted">Foto de perfil</p>
-        </div>
-        <div class="relative">
+    <UPageCard variant="subtle" :ui="{ container: 'p-0 sm:p-0 gap-y-0' }">
+      <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 sm:p-8">
+        <button
+          type="button"
+          class="group relative shrink-0 rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+          aria-label="Alterar foto de perfil"
+          @click="() => { photoOpen = true }"
+        >
           <UAvatar
             :src="account?.profilePhoto ?? undefined"
             :alt="account?.name"
-            size="3xl"
-            class="cursor-pointer"
-            @click="() => { photoOpen = true }"
+            class="size-24 ring-4 ring-(--ui-bg) shadow-sm"
+            :ui="{ fallback: 'text-3xl' }"
           />
+          <span class="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+            <UIcon name="i-lucide-camera" class="size-6 text-white" />
+          </span>
+          <span class="absolute bottom-0 right-0 flex size-8 items-center justify-center rounded-full bg-default ring-1 ring-default shadow-sm">
+            <UIcon name="i-lucide-camera" class="size-4 text-muted" />
+          </span>
+        </button>
+
+        <div class="flex min-w-0 flex-1 flex-col items-center sm:items-start text-center sm:text-left">
+          <div class="flex items-center gap-1">
+            <h2 class="text-2xl font-semibold tracking-tight text-highlighted break-words">
+              {{ account?.name }}
+            </h2>
+            <UButton
+              icon="i-lucide-pencil"
+              size="sm"
+              color="neutral"
+              variant="ghost"
+              aria-label="Editar nome"
+              @click="() => { editNameOpen = true }"
+            />
+          </div>
+
+          <p class="text-muted break-all">{{ account?.email }}</p>
+
+          <div class="mt-4">
+            <UBadge :label="account?.role" color="primary" variant="soft" />
+          </div>
+
+          <div class="mt-2 flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2 text-sm text-toned">
+            <span class="flex items-center gap-1.5">
+              <UIcon name="i-lucide-building-2" class="size-4 text-dimmed" />
+              {{ account?.institution }}
+            </span>
+            <span v-if="account?.course" class="flex items-center gap-1.5">
+              <UIcon name="i-lucide-graduation-cap" class="size-4 text-dimmed" />
+              {{ account.course }}
+            </span>
+          </div>
         </div>
       </div>
 
-      <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0">
-        <div>
-          <p class="text-sm text-muted">Nome</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <p class="text-sm font-medium text-highlighted">{{ account?.name }}</p>
-          <UButton
-            icon="i-lucide-pencil"
-            size="xs"
-            color="neutral"
-            variant="ghost"
-            aria-label="Editar nome"
-            @click="() => { editNameOpen = true }"
-          />
-        </div>
-      </div>
-
-      <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0">
-        <div>
-          <p class="text-sm text-muted">Email</p>
-        </div>
-        <p class="text-sm font-medium text-highlighted">{{ account?.email }}</p>
-      </div>
-
-      <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0">
-        <div>
-          <p class="text-sm text-muted">Instituição</p>
-        </div>
-        <p class="text-sm font-medium text-highlighted">{{ account?.institution }}</p>
-      </div>
-
-      <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0">
-        <div>
-          <p class="text-sm text-muted">Perfil de acesso</p>
-        </div>
-        <p class="text-sm font-medium text-highlighted">{{ account?.role }}</p>
-      </div>
-
-      <div v-if="account?.course" class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0">
-        <div>
-          <p class="text-sm text-muted">Curso</p>
-        </div>
-        <p class="text-sm font-medium text-highlighted">{{ account?.course }}</p>
-      </div>
-
-      <div class="flex justify-end py-4 first:pt-0 last:pb-0">
+      <div class="flex justify-end border-t border-default px-6 py-3 sm:px-8">
         <UButton
-          label="Sair"
+          label="Sair da conta"
           icon="i-lucide-log-out"
           color="neutral"
-          variant="subtle"
+          variant="ghost"
           :loading="loggingOut"
           @click="logout"
         />
       </div>
-    </div>
     </UPageCard>
   </div>
 

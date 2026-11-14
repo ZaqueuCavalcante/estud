@@ -59,9 +59,6 @@ const { data, status, refresh } = await useFetch<GetRolesOut>(`${config.public.b
         @click="(e) => { (e.currentTarget as HTMLElement).blur(); openEdit(role) }"
       >
         <div class="flex items-start gap-3">
-          <div class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-            <UIcon name="i-lucide-user-cog" class="size-5 text-primary" />
-          </div>
           <div class="min-w-0 flex-1">
             <p class="font-bold text-base text-highlighted truncate">{{ role.name }}</p>
             <p class="text-sm text-muted line-clamp-2">{{ role.description }}</p>

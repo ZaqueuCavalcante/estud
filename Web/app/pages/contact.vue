@@ -33,7 +33,7 @@ const channels = [
 
 <template>
   <UContainer class="py-16 max-w-3xl">
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+    <h1 class="text-3xl font-bold text-highlighted mb-2">
       Contato
     </h1>
     <p class="text-muted mb-12">
@@ -47,7 +47,7 @@ const channels = [
             <UIcon :name="channel.icon" class="size-5" />
           </div>
           <div class="min-w-0">
-            <h2 class="text-base font-semibold text-gray-900 dark:text-white">{{ channel.title }}</h2>
+            <h2 class="text-base font-semibold text-highlighted">{{ channel.title }}</h2>
             <p class="text-sm text-muted mt-0.5">{{ channel.description }}</p>
             <a :href="`mailto:${channel.email}`" class="inline-block mt-2 text-sm text-primary hover:underline">
               {{ channel.email }}

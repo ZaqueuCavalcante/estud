@@ -47,10 +47,10 @@ async function onSubmit() {
     <div class="flex items-start justify-center px-4 pt-4 md:pt-[8vh]">
       <div class="w-full max-w-sm">
         <div class="text-center mb-8">
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 class="text-2xl font-bold text-highlighted">
             Verificação 2FA
           </h1>
-          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          <p class="mt-2 text-sm text-muted">
             Insira o código do seu app autenticador
           </p>
         </div>
@@ -58,7 +58,7 @@ async function onSubmit() {
         <UCard>
           <div v-if="loginSuccess" class="flex flex-col items-center justify-center py-12 gap-4">
             <AppSpinner class="size-10" />
-            <p class="text-lg font-medium text-gray-900 dark:text-white">
+            <p class="text-lg font-medium text-highlighted">
               Entrando...
             </p>
           </div>

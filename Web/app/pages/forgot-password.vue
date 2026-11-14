@@ -44,10 +44,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         <template v-if="sent">
           <div class="text-center space-y-4">
             <UIcon name="i-lucide-mail-check" class="size-12 text-primary mx-auto" />
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-2xl font-bold text-highlighted">
               Verifique seu email
             </h1>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <p class="text-sm text-muted">
               Se o email informado estiver cadastrado, você receberá um link para redefinir sua senha.
             </p>
             <UButton
@@ -62,10 +62,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         <!-- Formulário de solicitação -->
         <template v-else>
           <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-2xl font-bold text-highlighted">
               Esqueceu a senha?
             </h1>
-            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <p class="mt-2 text-sm text-muted">
               Informe seu email e enviaremos um link para redefinição.
             </p>
           </div>

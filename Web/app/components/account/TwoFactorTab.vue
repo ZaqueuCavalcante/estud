@@ -74,16 +74,16 @@ function copyKey() {
     </div>
 
     <div v-else class="flex flex-col gap-4">
-      <div v-if="twoFactorEnabled" class="flex items-center gap-3 p-4 rounded-lg bg-green-50 dark:bg-green-900/20">
-        <UIcon name="i-lucide-shield-check" class="text-green-600 dark:text-green-400 text-xl" />
-        <span class="text-sm text-green-700 dark:text-green-300">
+      <div v-if="twoFactorEnabled" class="flex items-center gap-3 p-4 rounded-lg bg-success/10">
+        <UIcon name="i-lucide-shield-check" class="text-success text-xl" />
+        <span class="text-sm text-success">
           Sua conta está protegida com autenticação de dois fatores.
         </span>
       </div>
 
-      <div v-else class="flex items-center gap-3 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20">
-        <UIcon name="i-lucide-triangle-alert" class="text-amber-600 dark:text-amber-400 text-xl" />
-        <span class="text-sm text-amber-700 dark:text-amber-300">
+      <div v-else class="flex items-center gap-3 p-4 rounded-lg bg-warning/10">
+        <UIcon name="i-lucide-triangle-alert" class="text-warning text-xl" />
+        <span class="text-sm text-warning">
           Recomendamos ativar o 2FA para maior segurança.
         </span>
       </div>

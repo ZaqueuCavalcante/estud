@@ -107,9 +107,9 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       </UForm>
 
       <div v-if="!success && socialLogin?.googleEnabled" class="flex items-center gap-3 my-6">
-        <div class="flex-1 border-t border-gray-300 dark:border-gray-600" />
-        <span class="text-sm text-gray-500">ou</span>
-        <div class="flex-1 border-t border-gray-300 dark:border-gray-600" />
+        <div class="flex-1 border-t border-default" />
+        <span class="text-sm text-muted">ou</span>
+        <div class="flex-1 border-t border-default" />
       </div>
 
       <UButton

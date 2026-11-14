@@ -65,10 +65,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         <template v-if="!token">
           <div class="text-center space-y-4">
             <UIcon name="i-lucide-circle-x" class="size-12 text-error mx-auto" />
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-2xl font-bold text-highlighted">
               Link inválido
             </h1>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <p class="text-sm text-muted">
               Este link de redefinição é inválido ou expirou.
             </p>
             <UButton
@@ -83,10 +83,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         <template v-else-if="success">
           <div class="text-center space-y-4">
             <UIcon name="i-lucide-circle-check" class="size-12 text-primary mx-auto" />
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-2xl font-bold text-highlighted">
               Senha redefinida!
             </h1>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <p class="text-sm text-muted">
               Sua senha foi alterada com sucesso.
             </p>
             <UButton
@@ -100,10 +100,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         <!-- Formulário -->
         <template v-else>
           <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-2xl font-bold text-highlighted">
               Nova senha
             </h1>
-            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <p class="mt-2 text-sm text-muted">
               Escolha uma senha forte para sua conta
             </p>
           </div>
@@ -141,7 +141,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                 />
               </UFormField>
 
-              <p class="text-xs text-gray-500 dark:text-gray-400">
+              <p class="text-xs text-muted">
                 A senha deve conter letras maiúsculas, minúsculas, números e caracteres especiais.
               </p>
 

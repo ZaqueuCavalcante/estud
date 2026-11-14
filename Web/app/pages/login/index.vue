@@ -177,7 +177,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         class="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-4 bg-default"
       >
         <AppSpinner class="size-10" />
-        <p class="text-sm text-gray-600 dark:text-gray-400">
+        <p class="text-sm text-muted">
           Entrando com Google...
         </p>
       </div>
@@ -188,10 +188,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     <div class="flex items-start justify-center px-4 pt-4 md:pt-[8vh]">
       <div class="w-full max-w-sm">
         <div class="text-center space-y-1 mb-8">
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 class="text-2xl font-bold text-highlighted">
             Entrar no Estud
           </h1>
-          <p class="text-sm text-gray-600 dark:text-gray-400">
+          <p class="text-sm text-muted">
             Acesse sua conta para continuar.
           </p>
         </div>
@@ -269,9 +269,9 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           />
 
           <div v-if="socialLogin?.googleEnabled && !sso?.ssoRequired" class="flex items-center gap-3 my-2">
-            <div class="flex-1 border-t border-gray-300 dark:border-gray-600" />
-            <span class="text-sm text-gray-500">ou</span>
-            <div class="flex-1 border-t border-gray-300 dark:border-gray-600" />
+            <div class="flex-1 border-t border-default" />
+            <span class="text-sm text-muted">ou</span>
+            <div class="flex-1 border-t border-default" />
           </div>
 
           <UButton
@@ -296,7 +296,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             Entrar com Google
           </UButton>
 
-          <p class="text-center text-sm text-gray-600 dark:text-gray-400">
+          <p class="text-center text-sm text-muted">
             Não tem uma conta?
             <NuxtLink to="/register" class="text-primary hover:underline font-medium">
               Registrar

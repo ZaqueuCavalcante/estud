@@ -68,10 +68,10 @@ const loggingOut = useState('loggingOut', () => false)
     <Transition name="fade">
       <div
         v-if="loggingOut"
-        class="fixed inset-0 z-9999 flex flex-col items-center justify-center gap-4 bg-white dark:bg-gray-900"
+        class="fixed inset-0 z-9999 flex flex-col items-center justify-center gap-4 bg-default"
       >
         <AppSpinner class="size-10" />
-        <p class="text-sm text-gray-600 dark:text-gray-400">
+        <p class="text-sm text-muted">
           Saindo...
         </p>
       </div>

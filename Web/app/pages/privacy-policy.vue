@@ -14,15 +14,15 @@ const lastUpdated = '16 de junho de 2026'
 
 <template>
   <UContainer class="py-16 max-w-3xl">
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+    <h1 class="text-3xl font-bold text-highlighted mb-2">
       Política de Privacidade
     </h1>
     <p class="text-sm text-muted mb-12">Última atualização: {{ lastUpdated }}</p>
 
-    <div class="prose dark:prose-invert max-w-none space-y-10 text-gray-700 dark:text-gray-300">
+    <div class="prose dark:prose-invert max-w-none space-y-10 text-default">
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">1. Quem somos</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">1. Quem somos</h2>
         <p>
           O <strong>Estud</strong> é uma plataforma de gestão acadêmica que oferece ferramentas para
           instituições de ensino gerenciarem alunos, professores, cursos e turmas. Esta Política de
@@ -32,7 +32,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">2. Dados que coletamos</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">2. Dados que coletamos</h2>
         <p>Coletamos apenas os dados necessários para o funcionamento da plataforma:</p>
         <ul class="list-disc pl-6 mt-2 space-y-1">
           <li><strong>Dados de identificação:</strong> nome completo e endereço de e-mail.</li>
@@ -43,7 +43,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">3. Como usamos seus dados</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">3. Como usamos seus dados</h2>
         <p>Seus dados são usados para:</p>
         <ul class="list-disc pl-6 mt-2 space-y-1">
           <li>Autenticar e gerenciar o acesso à plataforma.</li>
@@ -56,7 +56,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">4. Base legal para o tratamento</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">4. Base legal para o tratamento</h2>
         <p>
           O tratamento dos seus dados é baseado no <strong>cumprimento de contrato</strong> (prestação do serviço à
           instituição) e no <strong>legítimo interesse</strong> para segurança da plataforma, conforme o art. 7º
@@ -65,7 +65,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">5. Compartilhamento de dados</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">5. Compartilhamento de dados</h2>
         <p>Seus dados podem ser acessados por:</p>
         <ul class="list-disc pl-6 mt-2 space-y-1">
           <li><strong>Sua instituição de ensino:</strong> gestores e coordenadores têm acesso aos dados acadêmicos dos usuários da instituição.</li>
@@ -75,7 +75,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">6. Retenção de dados</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">6. Retenção de dados</h2>
         <p>
           Mantemos seus dados enquanto sua conta estiver ativa ou enquanto a instituição mantiver contrato
           ativo com o Estud. Após o encerramento, os dados são anonimizados ou excluídos em até
@@ -84,7 +84,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">7. Seus direitos (LGPD)</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">7. Seus direitos (LGPD)</h2>
         <p>Você tem direito a:</p>
         <ul class="list-disc pl-6 mt-2 space-y-1">
           <li>Confirmar a existência e acessar seus dados tratados por nós.</li>
@@ -100,7 +100,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">8. Segurança</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">8. Segurança</h2>
         <p>
           Adotamos medidas técnicas e organizacionais para proteger seus dados contra acesso não autorizado,
           perda ou vazamento, incluindo criptografia em trânsito (TLS), senhas com hash seguro (bcrypt),
@@ -109,7 +109,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">9. Cookies</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">9. Cookies</h2>
         <p>
           Usamos cookies de sessão estritamente necessários para manter você autenticado. Não utilizamos
           cookies de rastreamento ou publicidade.
@@ -117,7 +117,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">10. Alterações nesta política</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">10. Alterações nesta política</h2>
         <p>
           Podemos atualizar esta política periodicamente. Alterações relevantes serão comunicadas por
           e-mail ou notificação na plataforma. O uso contínuo após a notificação implica aceite das
@@ -126,7 +126,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">11. Contato</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">11. Contato</h2>
         <p>
           Para dúvidas ou solicitações relacionadas a esta política, entre em contato com nosso
           Encarregado de Proteção de Dados (DPO):

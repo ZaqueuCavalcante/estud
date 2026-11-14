@@ -1,5 +1,29 @@
 # TODO
 
+## Billing
+
+- Stripe
+- ASAAS
+- AbacatePay
+- Endpoints no projeto Fakes para cada gateway
+
+- PIX, Boleto, Cartão de Crédito
+
+- Trial (período de testes)
+- Planos, assinaturas, mensalidade, contas, taxas, descontos, promoções
+- Cobranças, extratos, consciliação, estornos, fraudes
+- Webhooks, idempotência, falhas, reprocessamentos
+
+- Validação de valores sempre fechando
+
+- Credenciais, keys, secrets
+
+- Dashboards, mensalidades em atraso, montantes e projeções
+
+- Tokenizar cartão
+- Jamais armazenar dados financeiros sensíveis
+- LGPD
+
 ## Responder
 
 - O que o Estud faz?

@@ -14,15 +14,15 @@ const lastUpdated = '16 de junho de 2026'
 
 <template>
   <UContainer class="py-16 max-w-3xl">
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+    <h1 class="text-3xl font-bold text-highlighted mb-2">
       Termos de Serviço
     </h1>
     <p class="text-sm text-muted mb-12">Última atualização: {{ lastUpdated }}</p>
 
-    <div class="prose dark:prose-invert max-w-none space-y-10 text-gray-700 dark:text-gray-300">
+    <div class="prose dark:prose-invert max-w-none space-y-10 text-default">
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">1. Aceitação dos termos</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">1. Aceitação dos termos</h2>
         <p>
           Ao acessar ou utilizar o <strong>Estud</strong>, você concorda com estes Termos de Serviço.
           Caso não concorde com qualquer parte destes termos, você não deve utilizar a plataforma.
@@ -31,7 +31,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">2. Descrição do serviço</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">2. Descrição do serviço</h2>
         <p>
           O <strong>Estud</strong> é uma plataforma de gestão acadêmica (SGA) que oferece ferramentas para
           instituições de ensino gerenciarem alunos, professores, cursos, turmas, frequência e notas.
@@ -40,7 +40,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">3. Cadastro e conta</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">3. Cadastro e conta</h2>
         <ul class="list-disc pl-6 mt-2 space-y-1">
           <li>O acesso à plataforma depende de cadastro com informações verídicas e atualizadas.</li>
           <li>Você é responsável por manter a confidencialidade das suas credenciais de acesso.</li>
@@ -50,7 +50,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">4. Uso aceitável</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">4. Uso aceitável</h2>
         <p>Ao utilizar o Estud, você concorda em <strong>não</strong>:</p>
         <ul class="list-disc pl-6 mt-2 space-y-1">
           <li>Utilizar a plataforma para fins ilegais ou não autorizados.</li>
@@ -61,7 +61,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">5. Conteúdo e dados</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">5. Conteúdo e dados</h2>
         <p>
           Os dados acadêmicos inseridos na plataforma pertencem à instituição de ensino e aos seus
           respectivos titulares. O Estud atua como operador desses dados, tratando-os conforme a nossa
@@ -71,7 +71,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">6. Disponibilidade do serviço</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">6. Disponibilidade do serviço</h2>
         <p>
           Empenhamo-nos em manter a plataforma disponível e estável, mas não garantimos funcionamento
           ininterrupto. Manutenções programadas, atualizações ou fatores externos podem causar
@@ -80,7 +80,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">7. Limitação de responsabilidade</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">7. Limitação de responsabilidade</h2>
         <p>
           O Estud é fornecido "no estado em que se encontra". Na máxima extensão permitida por lei, não nos
           responsabilizamos por danos indiretos, perda de dados ou lucros cessantes decorrentes do uso ou da
@@ -89,7 +89,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">8. Suspensão e encerramento</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">8. Suspensão e encerramento</h2>
         <p>
           Podemos suspender ou encerrar o acesso de contas que violem estes Termos de Serviço ou que
           representem risco à segurança da plataforma e dos demais usuários.
@@ -97,7 +97,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">9. Alterações nos termos</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">9. Alterações nos termos</h2>
         <p>
           Podemos atualizar estes termos periodicamente. Alterações relevantes serão comunicadas por
           e-mail ou notificação na plataforma. O uso contínuo após a notificação implica aceite das
@@ -106,7 +106,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">10. Legislação aplicável</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">10. Legislação aplicável</h2>
         <p>
           Estes termos são regidos pelas leis da República Federativa do Brasil. Eventuais controvérsias
           serão dirimidas no foro da comarca do domicílio do contratante.
@@ -114,7 +114,7 @@ const lastUpdated = '16 de junho de 2026'
       </section>
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">11. Contato</h2>
+        <h2 class="text-xl font-semibold text-highlighted mb-3">11. Contato</h2>
         <p>
           Para dúvidas relacionadas a estes Termos de Serviço, entre em contato:
         </p>

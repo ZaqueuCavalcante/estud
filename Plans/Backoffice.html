@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backoffice do Estud</title>
+<style>
+:root {
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --surface-2: #f0eee8;
+  --ink: #1d1c1a;
+  --ink-2: #55524b;
+  --ink-3: #8a867c;
+  --line: #e2dfd6;
+  --accent: #2f5bd3;
+  --accent-soft: #e3e9fb;
+  --p0: #c2410c;
+  --p0-soft: #fdeadf;
+  --p1: #a16207;
+  --p1-soft: #fbf1d6;
+  --p2: #4d7c0f;
+  --p2-soft: #e8f3d6;
+  --p3: #6b6b6b;
+  --p3-soft: #ececec;
+  --new: #7c3aed;
+  --new-soft: #efe7fd;
+  --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141412;
+    --surface: #1c1b19;
+    --surface-2: #252421;
+    --ink: #ecebe6;
+    --ink-2: #b4b0a6;
+    --ink-3: #807c72;
+    --line: #34322d;
+    --accent: #7c9cf5;
+    --accent-soft: #232c45;
+    --p0: #fb923c;
+    --p0-soft: #3a2316;
+    --p1: #facc15;
+    --p1-soft: #352d12;
+    --p2: #a3e635;
+    --p2-soft: #253114;
+    --p3: #a3a3a3;
+    --p3-soft: #2b2b2b;
+    --new: #b794f6;
+    --new-soft: #2c2342;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141412;
+  --surface: #1c1b19;
+  --surface-2: #252421;
+  --ink: #ecebe6;
+  --ink-2: #b4b0a6;
+  --ink-3: #807c72;
+  --line: #34322d;
+  --accent: #7c9cf5;
+  --accent-soft: #232c45;
+  --p0: #fb923c;
+  --p0-soft: #3a2316;
+  --p1: #facc15;
+  --p1-soft: #352d12;
+  --p2: #a3e635;
+  --p2-soft: #253114;
+  --p3: #a3a3a3;
+  --p3-soft: #2b2b2b;
+  --new: #b794f6;
+  --new-soft: #2c2342;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.6 var(--sans);
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px 96px; }
+header.hero { padding: 56px 0 28px; border-bottom: 1px solid var(--line); margin-bottom: 32px; }
+.eyebrow { font: 600 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; margin: 12px 0 14px; letter-spacing: -.02em; }
+h2 { font-size: 22px; margin: 56px 0 6px; letter-spacing: -.01em; }
+h2 + .lede { margin-top: 0; }
+h3 { font-size: 16px; margin: 0 0 4px; }
+p { margin: 0 0 12px; }
+.lede { color: var(--ink-2); max-width: 760px; font-size: 16px; }
+code { font: 13px var(--mono); background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+a { color: var(--accent); }
+
+.meta { display: flex; flex-wrap: wrap; gap: 8px 20px; color: var(--ink-3); font-size: 13px; margin-top: 18px; }
+
+nav.toc { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+nav.toc a { text-decoration: none; color: var(--ink-2); font-size: 13px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+nav.toc a:hover { border-color: var(--accent); color: var(--accent); }
+
+.grid { display: grid; gap: 14px; }
+.g2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.g3 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.g4 { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+.card p:last-child { margin-bottom: 0; }
+.card .k { font: 600 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); margin-bottom: 8px; }
+.muted { color: var(--ink-2); }
+.small { font-size: 13px; }
+
+.figure { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin: 16px 0; overflow-x: auto; }
+.figure svg { display: block; width: 100%; height: auto; min-width: 640px; }
+.figure figcaption { color: var(--ink-3); font-size: 13px; margin-top: 10px; }
+
+svg text { font-family: var(--sans); fill: var(--ink); }
+svg .t2 { fill: var(--ink-2); font-size: 11px; }
+svg .t3 { fill: var(--ink-3); font-size: 10px; font-family: var(--mono); }
+svg .box { fill: var(--surface-2); stroke: var(--line); }
+svg .box-acc { fill: var(--accent-soft); stroke: var(--accent); }
+svg .box-new { fill: var(--new-soft); stroke: var(--new); stroke-dasharray: 4 3; }
+svg .lane { fill: none; stroke: var(--line); stroke-dasharray: 2 4; }
+svg .arrow { stroke: var(--ink-3); stroke-width: 1.4; fill: none; marker-end: url(#ah); }
+svg .arrow-new { stroke: var(--new); stroke-width: 1.4; fill: none; marker-end: url(#ahn); stroke-dasharray: 4 3; }
+svg .ahfill { fill: var(--ink-3); }
+svg .ahnfill { fill: var(--new); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--ink-2); margin-top: 10px; }
+.legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; border: 1px solid var(--line); background: var(--surface-2); }
+.legend .lg-acc::before { background: var(--accent-soft); border-color: var(--accent); }
+.legend .lg-new::before { background: var(--new-soft); border: 1px dashed var(--new); }
+
+.pill { display: inline-block; font: 600 11px/1 var(--mono); padding: 4px 7px; border-radius: 5px; letter-spacing: .03em; white-space: nowrap; }
+.P0 { color: var(--p0); background: var(--p0-soft); }
+.P1 { color: var(--p1); background: var(--p1-soft); }
+.P2 { color: var(--p2); background: var(--p2-soft); }
+.P3 { color: var(--p3); background: var(--p3-soft); }
+.tag-new { color: var(--new); background: var(--new-soft); }
+.tag-has { color: var(--accent); background: var(--accent-soft); }
+
+.filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0 14px; }
+.filters button { font: 500 13px var(--sans); color: var(--ink-2); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+.feature { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 10px; }
+.feature header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.feature .pills { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+.feature .why { border-left: 3px solid var(--accent); padding-left: 10px; color: var(--ink-2); font-size: 14px; }
+.feature ul { margin: 0; padding-left: 18px; font-size: 14px; }
+.feature li { margin: 2px 0; }
+.feature .src { font: 12px/1.5 var(--mono); color: var(--ink-3); border-top: 1px dashed var(--line); padding-top: 8px; word-break: break-word; }
+.feature[hidden] { display: none; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 11px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); }
+.table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.table-wrap table { min-width: 620px; }
+td code { white-space: nowrap; }
+
+.mock { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.mock-bar { display: flex; gap: 6px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); background: var(--surface-2); font: 12px var(--mono); color: var(--ink-3); }
+.mock-bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); display: inline-block; }
+.mock-body { display: grid; grid-template-columns: 170px 1fr; min-height: 380px; }
+.mock-side { border-right: 1px solid var(--line); padding: 14px 10px; font-size: 13px; display: flex; flex-direction: column; gap: 2px; }
+.mock-side div { padding: 6px 10px; border-radius: 6px; color: var(--ink-2); }
+.mock-side .on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.mock-side .sec { font: 600 10px var(--mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; padding: 12px 10px 4px; }
+.mock-main { padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.kpi { background: var(--surface-2); border-radius: 10px; padding: 12px; }
+.kpi .v { font-size: 24px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.kpi .l { font-size: 12px; color: var(--ink-3); }
+.kpi .d { font: 12px var(--mono); color: var(--p2); }
+.kpi .d.bad { color: var(--p0); }
+.mock-row { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+.spark { background: var(--surface-2); border-radius: 10px; padding: 12px; }
+.spark svg { width: 100%; height: 90px; display: block; }
+.alert { display: flex; gap: 8px; align-items: baseline; font-size: 13px; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.alert:last-child { border-bottom: 0; }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; transform: translateY(-1px); }
+@media (max-width: 720px) {
+  .mock-body { grid-template-columns: 1fr; }
+  .mock-side { display: none; }
+  .mock-row { grid-template-columns: 1fr; }
+}
+
+.callout { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 12px; padding: 14px 16px; color: var(--ink); font-size: 14px; }
+.callout strong { color: var(--accent); }
+ol.steps { padding-left: 20px; margin: 0; }
+ol.steps li { margin-bottom: 6px; }
+footer { margin-top: 64px; color: var(--ink-3); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Plano · Estud Backoffice</div>
+  <h1>Backoffice: uma visão da plataforma inteira, não de uma instituição.</h1>
+  <p class="lede">Hoje quase tudo no Estud é escopado por <code>ctx.RequestUser.InstitutionId</code>. O usuário master
+    (<code>AdminUser</code> / claim <code>Adm</code>) só tem duas telas: <code>admin/domain-events</code> e
+    <code>admin/institutions</code>. Este plano define o que falta para operar, dar suporte e entender o uso
+    do Estud como produto — usuários ativos, saúde dos processamentos assíncronos, webhooks, erros e segurança.</p>
+  <div class="meta">
+    <span>Escrito em 07/11/2026</span>
+    <span>Base: branch <code>master</code> @ 452811a0</span>
+    <span>Relacionado: <code>Plans/Billing.md</code>, item "backoffice" do <code>Plans/TODO.md</code></span>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Seções">
+  <a href="#hoje">O que já existe</a>
+  <a href="#arquitetura">Arquitetura</a>
+  <a href="#ativos">Definição de "ativo"</a>
+  <a href="#features">Features</a>
+  <a href="#mock">Tela inicial</a>
+  <a href="#roadmap">Roadmap</a>
+  <a href="#endpoints">Endpoints</a>
+  <a href="#decisoes">Decisões em aberto</a>
+</nav>
+
+<h2 id="hoje">O que já existe</h2>
+<p class="lede">Boa parte da matéria-prima já está no banco. O backoffice é, em grande parte, ler essas tabelas sem o filtro de tenant e dar ações seguras em cima delas.</p>
+
+<div class="grid g3">
+  <div class="card">
+    <div class="k">Acesso master</div>
+    <p><code>AdminUser</code> + <code>AddEstudAdminPolicy</code> (exige claim <code>Adm</code>). Páginas em <code>Web/app/pages/admin/</code>.</p>
+  </div>
+  <div class="card">
+    <div class="k">Commands</div>
+    <p>Tabela <code>commands</code> com status, duração, erro, logs, <code>ParentId</code>, <code>OriginalId</code>, retry com backoff. <strong>Sem tela.</strong></p>
+  </div>
+  <div class="card">
+    <div class="k">Domain events</div>
+    <p><code>domain_events</code> com status, duração e erro. Já tem listagem paginada cross-tenant.</p>
+  </div>
+  <div class="card">
+    <div class="k">Webhooks</div>
+    <p><code>webhook_subscriptions</code>, <code>webhook_calls</code>, <code>webhook_call_attempts</code>. Telas só por instituição.</p>
+  </div>
+  <div class="card">
+    <div class="k">Atividade e auditoria</div>
+    <p><code>user_activities</code> (logins, falhas, 2FA, reset, cadastro) e <code>audit_trails</code> (alterações de entidade via Audit.NET).</p>
+  </div>
+  <div class="card">
+    <div class="k">Erros 500</div>
+    <p><code>ExceptionsMiddleware</code> só loga (Serilog → OTel). <strong>Nada é persistido</strong> — o master não tem como ver.</p>
+  </div>
+</div>
+
+<h2 id="arquitetura">Arquitetura proposta</h2>
+<p class="lede">Mesmo padrão de vertical slices: <code>Back/Features/Admin/*</code>, rotas <code>admin/*</code>, policy por feature. As peças novas são poucas: um snapshot diário de métricas, um "último acesso" no usuário, uma tabela de erros agrupados e um log das ações do próprio master.</p>
+
+<figure class="figure">
+<svg viewBox="0 0 980 470" role="img" aria-label="Diagrama de arquitetura do backoffice">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ahfill"/></marker>
+    <marker id="ahn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ahnfill"/></marker>
+  </defs>
+
+  <text x="20" y="22" class="t3">WEB (Nuxt)</text>
+  <text x="250" y="22" class="t3">API (ASP.NET)</text>
+  <text x="560" y="22" class="t3">POSTGRES · schema estud</text>
+  <text x="820" y="22" class="t3">BACKGROUND</text>
+
+  <rect x="20" y="40" width="190" height="300" rx="10" class="box-acc"/>
+  <text x="36" y="66" font-weight="600" font-size="14">/admin/*</text>
+  <text x="36" y="92" class="t2">Visão geral</text>
+  <text x="36" y="112" class="t2">Instituições · 360°</text>
+  <text x="36" y="132" class="t2">Usuários</text>
+  <text x="36" y="152" class="t2">Commands</text>
+  <text x="36" y="172" class="t2">Domain events</text>
+  <text x="36" y="192" class="t2">Webhooks</text>
+  <text x="36" y="212" class="t2">Erros</text>
+  <text x="36" y="232" class="t2">Segurança</text>
+  <text x="36" y="252" class="t2">Auditoria</text>
+  <text x="36" y="272" class="t2">Jobs / Sistema</text>
+  <text x="36" y="316" class="t3">layout próprio, guard Adm</text>
+
+  <rect x="250" y="40" width="250" height="88" rx="10" class="box"/>
+  <text x="266" y="66" font-weight="600" font-size="14">Features/Admin/*</text>
+  <text x="266" y="88" class="t2">Get*/Retry*/Disable* · AddEstudAdminPolicy</text>
+  <text x="266" y="106" class="t2">lê sem filtro de InstitutionId</text>
+
+  <rect x="250" y="146" width="250" height="70" rx="10" class="box-new"/>
+  <text x="266" y="172" font-weight="600" font-size="14">AdminActionLog</text>
+  <text x="266" y="194" class="t2">toda escrita do master é registrada</text>
+
+  <rect x="250" y="234" width="250" height="70" rx="10" class="box-new"/>
+  <text x="266" y="260" font-weight="600" font-size="14">EnrichBackDbContextMiddleware</text>
+  <text x="266" y="282" class="t2">atualiza LastSeenAt (throttle 5 min)</text>
+
+  <rect x="250" y="322" width="250" height="70" rx="10" class="box-new"/>
+  <text x="266" y="348" font-weight="600" font-size="14">ExceptionsMiddleware</text>
+  <text x="266" y="370" class="t2">+ grava ErrorOccurrence (fingerprint)</text>
+
+  <rect x="545" y="40" width="230" height="36" rx="8" class="box"/>
+  <text x="560" y="63" font-size="13">commands</text>
+  <rect x="545" y="84" width="230" height="36" rx="8" class="box"/>
+  <text x="560" y="107" font-size="13">domain_events</text>
+  <rect x="545" y="128" width="230" height="36" rx="8" class="box"/>
+  <text x="560" y="151" font-size="13">webhook_calls / attempts</text>
+  <rect x="545" y="172" width="230" height="36" rx="8" class="box"/>
+  <text x="560" y="195" font-size="13">user_activities · audit_trails</text>
+  <rect x="545" y="216" width="230" height="36" rx="8" class="box"/>
+  <text x="560" y="239" font-size="13">users · students · teachers · classes</text>
+  <rect x="545" y="268" width="230" height="36" rx="8" class="box-new"/>
+  <text x="560" y="291" font-size="13">platform_daily_metrics</text>
+  <rect x="545" y="312" width="230" height="36" rx="8" class="box-new"/>
+  <text x="560" y="335" font-size="13">error_groups · error_occurrences</text>
+  <rect x="545" y="356" width="230" height="36" rx="8" class="box-new"/>
+  <text x="560" y="379" font-size="13">admin_action_logs</text>
+
+  <rect x="815" y="40" width="150" height="88" rx="10" class="box"/>
+  <text x="830" y="66" font-weight="600" font-size="13">Quartz</text>
+  <text x="830" y="88" class="t2">CommandsProcessor</text>
+  <text x="830" y="106" class="t2">DomainEventsProcessor</text>
+
+  <rect x="815" y="146" width="150" height="88" rx="10" class="box-new"/>
+  <text x="830" y="172" font-weight="600" font-size="13">PlatformMetrics</text>
+  <text x="830" y="190" font-weight="600" font-size="13">SnapshotJob</text>
+  <text x="830" y="212" class="t2">1×/dia, 03:00 BRT</text>
+
+  <rect x="815" y="252" width="150" height="70" rx="10" class="box-new"/>
+  <text x="830" y="278" font-weight="600" font-size="13">RetentionJob</text>
+  <text x="830" y="300" class="t2">poda tabelas de log</text>
+
+  <path d="M210 90 H246" class="arrow"/>
+  <path d="M500 84 H541" class="arrow"/>
+  <path d="M375 128 V142" class="arrow-new"/>
+  <path d="M500 181 C 520 181, 520 374, 541 374" class="arrow-new"/>
+  <path d="M500 269 C 520 269, 520 234, 541 234" class="arrow-new"/>
+  <path d="M500 357 C 520 357, 520 330, 541 330" class="arrow-new"/>
+  <path d="M815 190 C 795 190, 795 286, 779 286" class="arrow-new"/>
+  <path d="M815 84 H779" class="arrow"/>
+  <path d="M815 287 H779" class="arrow-new"/>
+
+  <text x="20" y="420" class="t3">Leitura pesada (séries, rankings) sai de platform_daily_metrics — nunca de COUNT(*) ao vivo sobre tabelas de log.</text>
+  <text x="20" y="440" class="t3">Contadores "agora" (fila de commands, erros última hora) podem ser ao vivo, com HybridCache de 30–60 s.</text>
+</svg>
+<div class="legend"><span>Existe hoje</span><span class="lg-acc">Superfície do backoffice</span><span class="lg-new">Novo</span></div>
+</figure>
+
+<h2 id="ativos">O que é um usuário "ativo"</h2>
+<p class="lede">Não existe hoje nenhum "último acesso" no <code>EstudUser</code>, e <code>user_activities</code> só registra login — quem fica logado por semanas com refresh de token some das métricas. Sem uma definição fechada, cada número do painel vai significar uma coisa diferente.</p>
+
+<div class="grid g3">
+  <div class="card">
+    <div class="k">Cadastrado</div>
+    <p>Existe a linha em <code>users</code> / <code>students</code> / <code>teachers</code>. É o número que a instituição "tem".</p>
+  </div>
+  <div class="card">
+    <div class="k">Academicamente ativo</div>
+    <p>Aluno com <code>ClassStudent</code> em turma iniciada; professor com <code>ClassTeacher</code> em turma iniciada. Responde "quantos alunos estão estudando agora".</p>
+  </div>
+  <div class="card">
+    <div class="k">Engajado (DAU/WAU/MAU)</div>
+    <p>Fez uma requisição autenticada no período. Responde "quantos de fato usam o Estud". É o que importa para produto e billing.</p>
+  </div>
+</div>
+
+<figure class="figure">
+<svg viewBox="0 0 980 230" role="img" aria-label="Fluxo de cálculo de usuários ativos">
+  <defs>
+    <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ahfill"/></marker>
+  </defs>
+  <rect x="10" y="40" width="160" height="70" rx="10" class="box"/>
+  <text x="26" y="66" font-weight="600" font-size="13">Request autenticada</text>
+  <text x="26" y="88" class="t2">qualquer endpoint</text>
+
+  <rect x="210" y="40" width="190" height="70" rx="10" class="box-new"/>
+  <text x="226" y="66" font-weight="600" font-size="13">HybridCache "seen:{userId}"</text>
+  <text x="226" y="88" class="t2">existe? sai. Não? segue (TTL 5 min)</text>
+
+  <rect x="440" y="40" width="200" height="70" rx="10" class="box-new"/>
+  <text x="456" y="66" font-weight="600" font-size="13">UPDATE users SET</text>
+  <text x="456" y="86" font-weight="600" font-size="13">last_seen_at = now()</text>
+  <text x="456" y="104" class="t3">fire-and-forget, 1 linha</text>
+
+  <rect x="680" y="40" width="290" height="70" rx="10" class="box-new"/>
+  <text x="696" y="66" font-weight="600" font-size="13">user_daily_presence (user_id, day)</text>
+  <text x="696" y="88" class="t2">INSERT … ON CONFLICT DO NOTHING</text>
+
+  <path d="M170 75 H206" class="arrow" marker-end="url(#ah2)"/>
+  <path d="M400 75 H436" class="arrow" marker-end="url(#ah2)"/>
+  <path d="M640 75 H676" class="arrow" marker-end="url(#ah2)"/>
+
+  <rect x="440" y="150" width="530" height="62" rx="10" class="box-acc"/>
+  <text x="456" y="175" font-weight="600" font-size="13">PlatformMetricsSnapshotJob → platform_daily_metrics</text>
+  <text x="456" y="196" class="t2">por (dia, instituição, user_type): cadastrados, academicamente ativos, DAU, WAU, MAU</text>
+  <path d="M825 110 V146" class="arrow" marker-end="url(#ah2)"/>
+
+  <text x="10" y="160" class="t3">Custo: no pior caso 1 UPDATE + 1 INSERT</text>
+  <text x="10" y="176" class="t3">por usuário a cada 5 min. A presença diária</text>
+  <text x="10" y="192" class="t3">é o que permite WAU/MAU exatos (distintos).</text>
+</svg>
+<figcaption>Só <code>last_seen_at</code> não basta para MAU (perde-se o histórico de quem entrou dia 3 e não voltou). A tabela de presença diária é pequena — no máximo uma linha por usuário por dia — e pode ser podada após 13 meses.</figcaption>
+</figure>
+
+<h2 id="features">Features</h2>
+<p class="lede">Prioridade pensada no que destrava operação primeiro: sem enxergar commands e erros, o resto é cosmético. Cada card diz <em>por que</em> existe e de onde vêm os dados.</p>
+
+<div class="grid g4" style="margin-top:14px">
+  <div class="card"><span class="pill P0">P0</span><p class="small muted" style="margin-top:8px">Fundação. Sem isso não dá para operar a plataforma com segurança.</p></div>
+  <div class="card"><span class="pill P1">P1</span><p class="small muted" style="margin-top:8px">Alto valor para suporte e produto. Logo depois da fundação.</p></div>
+  <div class="card"><span class="pill P2">P2</span><p class="small muted" style="margin-top:8px">Importante, mas depende de algo ou tem risco a mais.</p></div>
+  <div class="card"><span class="pill P3">P3</span><p class="small muted" style="margin-top:8px">Bom ter. Quando houver volume que justifique.</p></div>
+</div>
+
+<div class="filters" role="group" aria-label="Filtrar por prioridade">
+  <button type="button" data-f="all" aria-pressed="true">Todas</button>
+  <button type="button" data-f="P0" aria-pressed="false">P0</button>
+  <button type="button" data-f="P1" aria-pressed="false">P1</button>
+  <button type="button" data-f="P2" aria-pressed="false">P2</button>
+  <button type="button" data-f="P3" aria-pressed="false">P3</button>
+</div>
+
+<div class="grid g2" id="feature-list">
+
+  <article class="feature" data-p="P0">
+    <header><h3>Endurecer o acesso master</h3><div class="pills"><span class="pill P0">P0</span></div></header>
+    <p class="why">O backoffice vai ver dados de todas as instituições e executar ações nelas. Uma conta master comprometida é o pior incidente possível do Estud.</p>
+    <ul>
+      <li>2FA obrigatório para quem está em <code>admin_users</code> (reusar <code>SetupTwoFactor</code>)</li>
+      <li><code>AdminActionLog</code>: quem, quando, ação, alvo, payload — para toda escrita em <code>admin/*</code></li>
+      <li>Rate limiter próprio para <code>admin/*</code></li>
+      <li>Layout <code>admin</code> separado no Nuxt, middleware de rota checando a claim</li>
+    </ul>
+    <div class="src">AdminUser · AddEstudAdminPolicy · novo: admin_action_logs</div>
+  </article>
+
+  <article class="feature" data-p="P0">
+    <header><h3>Visão geral da plataforma</h3><div class="pills"><span class="pill P0">P0</span><span class="pill tag-new">novo dado</span></div></header>
+    <p class="why">A pergunta mais básica — "quantas pessoas usam o Estud?" — hoje não tem resposta. É o número que guia produto, pitch e billing.</p>
+    <ul>
+      <li>Instituições, usuários, alunos e professores: cadastrados × academicamente ativos × MAU</li>
+      <li>Série diária de DAU por tipo de usuário (gestor/professor/aluno), últimos 90 dias</li>
+      <li>Novas instituições por semana (cadastro via <code>RegisterUser</code>)</li>
+      <li>Faixa de alertas: fila de commands, erros na última hora, webhooks falhando</li>
+    </ul>
+    <div class="src">novo: users.last_seen_at · user_daily_presence · platform_daily_metrics</div>
+  </article>
+
+  <article class="feature" data-p="P0">
+    <header><h3>Monitor de commands</h3><div class="pills"><span class="pill P0">P0</span></div></header>
+    <p class="why">Emails de convite e chamadas de webhook passam por commands. Um command em erro hoje é invisível: o convite simplesmente não chega e ninguém sabe.</p>
+    <ul>
+      <li>Lista com filtros (status, tipo, instituição, período), igual a domain events</li>
+      <li>Detalhe: <code>Data</code>, <code>Logs</code>, <code>Error</code>, árvore pai/filhos e cadeia de retries (<code>OriginalId</code>)</li>
+      <li>Ação <strong>Reprocessar</strong>: cria cópia via <code>ToRetryCommand</code> (imutável, registra no AdminActionLog)</li>
+      <li>Métricas: backlog pendente, idade do mais antigo, taxa de erro e p95 de duração por tipo</li>
+    </ul>
+    <div class="src">commands · CommandsProcessor · Command.ToRetryCommand</div>
+  </article>
+
+  <article class="feature" data-p="P0">
+    <header><h3>Erros da aplicação</h3><div class="pills"><span class="pill P0">P0</span><span class="pill tag-new">novo dado</span></div></header>
+    <p class="why">Todo 500 vira só uma linha de log. Sem agrupar, não dá para saber se é um erro novo, se afeta uma instituição ou todas, nem se o deploy de ontem piorou algo.</p>
+    <ul>
+      <li><code>ExceptionsMiddleware</code> grava ocorrência com fingerprint (tipo da exceção + primeiro frame do Estud)</li>
+      <li>Grupos com contagem, primeiro/último visto, versão do deploy, instituições afetadas</li>
+      <li>Link para o trace no OTel via <code>Activity.TraceId</code></li>
+      <li>Status do grupo: aberto / resolvido / ignorado; reabre sozinho se voltar a ocorrer</li>
+      <li>Erros de domínio (<code>EstudError</code> 400) só como contagem por <code>Code</code> — sinal de UX ruim</li>
+    </ul>
+    <div class="src">ExceptionsMiddleware · Cross/Version · novo: error_groups, error_occurrences</div>
+  </article>
+
+  <article class="feature" data-p="P1">
+    <header><h3>Domain events (evoluir)</h3><div class="pills"><span class="pill P1">P1</span><span class="pill tag-has">já existe</span></div></header>
+    <p class="why">A listagem já existe, mas sem detalhe e sem ação; um evento em erro só pode ser corrigido direto no banco.</p>
+    <ul>
+      <li>Detalhe com payload, handlers executados e erro completo</li>
+      <li>Reprocessar evento (mesma lógica de imutabilidade dos commands)</li>
+      <li>Contadores por tipo × status; lag entre <code>OccurredAt</code> e <code>ProcessedAt</code></li>
+    </ul>
+    <div class="src">GetDomainEvents · DomainEventsProcessor</div>
+  </article>
+
+  <article class="feature" data-p="P1">
+    <header><h3>Webhooks cross-tenant</h3><div class="pills"><span class="pill P1">P1</span></div></header>
+    <p class="why">Uma integração quebrada de uma instituição gera retries infinitos e carga para todo mundo. Hoje só a própria instituição enxerga, e normalmente não olha.</p>
+    <ul>
+      <li>Ranking de assinaturas por taxa de falha e latência (últimas 24h / 7d)</li>
+      <li>Distribuição de status HTTP das tentativas</li>
+      <li>Ação: pausar assinatura (com notificação para a instituição) e reenviar em lote</li>
+      <li>Base para auto-desligar após N falhas consecutivas</li>
+    </ul>
+    <div class="src">webhook_subscriptions · webhook_calls · webhook_call_attempts · RetryWebhookCall</div>
+  </article>
+
+  <article class="feature" data-p="P1">
+    <header><h3>Instituição 360°</h3><div class="pills"><span class="pill P1">P1</span><span class="pill tag-has">evolui GetInstitutions</span></div></header>
+    <p class="why">Suporte começa com "qual é a situação dessa escola?". Hoje a resposta exige várias queries à mão.</p>
+    <ul>
+      <li>Ficha: criação, config, SSO, 2FA obrigatório, webhooks, storage usado</li>
+      <li>Contagens e MAU por tipo, tendência 30d</li>
+      <li><strong>Funil de adoção</strong>: config → campus → curso → turma → aluno → primeira chamada → primeira nota</li>
+      <li>Últimos erros, commands e eventos daquela instituição</li>
+      <li>Lista de instituições ordenável por MAU, última atividade e etapa do funil</li>
+    </ul>
+    <div class="src">institutions · institution_configs · platform_daily_metrics</div>
+  </article>
+
+  <article class="feature" data-p="P1">
+    <header><h3>Busca global de usuários</h3><div class="pills"><span class="pill P1">P1</span></div></header>
+    <p class="why">"Não consigo entrar" é o ticket mais comum. Achar o usuário por email sem saber a instituição é o primeiro passo de qualquer atendimento.</p>
+    <ul>
+      <li>Busca por nome/email em todas as instituições</li>
+      <li>Ficha: tipo, perfil, 2FA, logins sociais/SSO, lockout, último acesso</li>
+      <li>Linha do tempo de <code>user_activities</code> do usuário</li>
+      <li>Ações: destravar lockout, reenviar convite, enviar reset de senha</li>
+    </ul>
+    <div class="src">users · user_activities · UserSocialLogin · SendResetPasswordToken</div>
+  </article>
+
+  <article class="feature" data-p="P1">
+    <header><h3>Segurança e autenticação</h3><div class="pills"><span class="pill P1">P1</span></div></header>
+    <p class="why">Ataque de força bruta ou SSO mal configurado aparecem primeiro como pico de falhas de login. Os dados já estão em <code>user_activities</code>.</p>
+    <ul>
+      <li>Logins por método (senha, SSO, social, magic link, 2FA) e taxa de falha</li>
+      <li>Picos de <code>WrongPassword</code> / <code>LockedOut</code> por instituição e por IP</li>
+      <li>Falhas de SSO (<code>RemoteFailure</code>, <code>DomainNotConfigured</code>)</li>
+      <li>Adoção de 2FA por instituição</li>
+    </ul>
+    <div class="src">user_activities (FeatureGroup.Identity) · sso_configurations</div>
+  </article>
+
+  <article class="feature" data-p="P2">
+    <header><h3>Auditoria cross-tenant</h3><div class="pills"><span class="pill P2">P2</span></div></header>
+    <p class="why">Responder "quem apagou/alterou isso?" quando a instituição pede. O dado existe; falta um jeito de consultar.</p>
+    <ul>
+      <li>Busca por instituição, usuário, tipo de entidade, id, período</li>
+      <li>Diff antes/depois a partir de <code>AuditTrail.Data</code></li>
+      <li>Correlacionar por <code>ActivityId</code> com commands e erros do mesmo request</li>
+    </ul>
+    <div class="src">audit_trails</div>
+  </article>
+
+  <article class="feature" data-p="P2">
+    <header><h3>Entrar como (impersonation)</h3><div class="pills"><span class="pill P2">P2</span></div></header>
+    <p class="why">Reproduzir o que o usuário vê corta o tempo de suporte pela metade. Fica em P2 porque é a feature mais perigosa da lista.</p>
+    <ul>
+      <li>Somente leitura por padrão: escrita bloqueada por um filtro global</li>
+      <li>Token curto (15 min) com claim <code>impersonated_by</code>; banner fixo no front</li>
+      <li>Toda sessão no AdminActionLog; opcionalmente avisar a instituição</li>
+    </ul>
+    <div class="src">depende de: acesso master endurecido + AdminActionLog</div>
+  </article>
+
+  <article class="feature" data-p="P2">
+    <header><h3>Planos e entitlements</h3><div class="pills"><span class="pill P2">P2</span></div></header>
+    <p class="why">O <code>Plans/Billing.md</code> prevê <code>PlatformSubscription</code> e entitlements. O backoffice é onde o master vai ver e mudar o plano de cada instituição.</p>
+    <ul>
+      <li>Ver/alterar plano, trial e módulos habilitados por instituição</li>
+      <li>MAU por plano — base para cobrança por uso</li>
+    </ul>
+    <div class="src">depende de: Billing (InstitutionBillingProfile, Entitlement)</div>
+  </article>
+
+  <article class="feature" data-p="P2">
+    <header><h3>Jobs e sistema</h3><div class="pills"><span class="pill P2">P2</span></div></header>
+    <p class="why">Se o processador de commands parar, tudo assíncrono para em silêncio. Precisa de um "está vivo?" visível.</p>
+    <ul>
+      <li>Jobs Quartz: última execução, próxima, duração, falhas</li>
+      <li>Versão em produção, uptime, tamanho das maiores tabelas</li>
+      <li>Processadores ativos (<code>ProcessorId</code> distintos nos commands recentes)</li>
+    </ul>
+    <div class="src">Quartz · Cross/Health · Cross/Version · pg_stat_user_tables</div>
+  </article>
+
+  <article class="feature" data-p="P3">
+    <header><h3>Uso de storage e emails</h3><div class="pills"><span class="pill P3">P3</span></div></header>
+    <p class="why">São os dois custos que crescem com o uso (R2 e Brevo). Hoje não se sabe qual instituição consome quanto.</p>
+    <ul>
+      <li>Bytes por instituição e por <code>StorageContainer</code></li>
+      <li>Emails enviados por tipo/instituição, a partir dos commands de email</li>
+    </ul>
+    <div class="src">R2StorageService · StorageFileMetadata · SendInviteEmailCommand</div>
+  </article>
+
+  <article class="feature" data-p="P3">
+    <header><h3>Comunicados da plataforma</h3><div class="pills"><span class="pill P3">P3</span></div></header>
+    <p class="why">Avisar todas as instituições de manutenção ou novidade sem depender de email manual.</p>
+    <ul>
+      <li>Notificação para todos os gestores (ou todos os usuários) de N instituições</li>
+      <li>Reusar <code>Notification</code> com um tipo de origem "plataforma"</li>
+    </ul>
+    <div class="src">notifications · user_notifications · CreateNotification</div>
+  </article>
+
+  <article class="feature" data-p="P3">
+    <header><h3>Retenção de dados operacionais</h3><div class="pills"><span class="pill P3">P3</span></div></header>
+    <p class="why"><code>commands</code>, <code>domain_events</code>, <code>webhook_call_attempts</code> e as novas tabelas crescem sem limite. As telas do backoffice ficam lentas antes de qualquer outra coisa.</p>
+    <ul>
+      <li><code>RetentionJob</code>: apaga sucesso &gt; 30 dias, erro &gt; 180 dias (configurável)</li>
+      <li>Índices em <code>(status, created_at)</code> e <code>(institution_id, created_at)</code> antes de abrir as telas</li>
+    </ul>
+    <div class="src">Quartz · migrations</div>
+  </article>
+
+</div>
+
+<h2 id="mock">Tela inicial — esboço</h2>
+<p class="lede">O que o master vê ao entrar em <code>/admin</code>. Números ilustrativos.</p>
+
+<div class="mock" aria-label="Esboço da tela de visão geral">
+  <div class="mock-bar"><i></i><i></i><i></i><span style="margin-left:8px">estud / admin</span></div>
+  <div class="mock-body">
+    <div class="mock-side">
+      <div class="on">Visão geral</div>
+      <div>Instituições</div>
+      <div>Usuários</div>
+      <div class="sec">Operação</div>
+      <div>Commands</div>
+      <div>Domain events</div>
+      <div>Webhooks</div>
+      <div>Erros</div>
+      <div class="sec">Governança</div>
+      <div>Segurança</div>
+      <div>Auditoria</div>
+      <div>Sistema</div>
+    </div>
+    <div class="mock-main">
+      <div class="grid g4">
+        <div class="kpi"><div class="l">Instituições ativas</div><div class="v">38</div><div class="d">+3 em 30d</div></div>
+        <div class="kpi"><div class="l">Alunos · MAU</div><div class="v">4.812</div><div class="d">71% dos ativos</div></div>
+        <div class="kpi"><div class="l">Professores · MAU</div><div class="v">326</div><div class="d">88% dos ativos</div></div>
+        <div class="kpi"><div class="l">Gestores · MAU</div><div class="v">94</div><div class="d bad">−6 em 30d</div></div>
+      </div>
+      <div class="mock-row">
+        <div class="spark">
+          <div class="l small muted">DAU · 90 dias</div>
+          <svg viewBox="0 0 400 90" preserveAspectRatio="none" aria-hidden="true">
+            <polyline fill="none" stroke="var(--accent)" stroke-width="2" points="0,70 20,66 40,68 60,60 80,62 100,48 120,52 140,44 160,50 180,40 200,42 220,36 240,44 260,30 280,34 300,26 320,32 340,22 360,28 380,18 400,20"/>
+            <polyline fill="none" stroke="var(--ink-3)" stroke-width="1.5" stroke-dasharray="3 3" points="0,82 40,80 80,78 120,74 160,72 200,70 240,68 280,64 320,62 360,60 400,58"/>
+          </svg>
+          <div class="legend" style="margin-top:4px"><span class="lg-acc">Alunos</span><span>Professores</span></div>
+        </div>
+        <div class="spark">
+          <div class="l small muted" style="margin-bottom:6px">Precisa de atenção</div>
+          <div class="alert"><span class="dot" style="background:var(--p0)"></span><span>12 commands em erro (SendInviteEmail)</span></div>
+          <div class="alert"><span class="dot" style="background:var(--p0)"></span><span>Erro novo: NullReference em GetStudentAgenda</span></div>
+          <div class="alert"><span class="dot" style="background:var(--p1)"></span><span>Webhook da inst. #14 com 64% de falha</span></div>
+          <div class="alert"><span class="dot" style="background:var(--p1)"></span><span>Pico de LockedOut na inst. #7</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 id="roadmap">Roadmap</h2>
+<p class="lede">Quatro fases. Cada uma entrega telas usáveis sozinha; nenhuma depende de terminar a seguinte.</p>
+
+<figure class="figure">
+<svg viewBox="0 0 980 300" role="img" aria-label="Roadmap em quatro fases">
+  <line x1="20" y1="44" x2="960" y2="44" class="lane"/>
+  <g>
+    <rect x="20" y="24" width="220" height="40" rx="8" fill="var(--p0-soft)" stroke="var(--p0)"/>
+    <text x="34" y="49" font-weight="700" font-size="13" fill="var(--p0)">Fase 1 · Fundação</text>
+  </g>
+  <g>
+    <rect x="256" y="24" width="220" height="40" rx="8" fill="var(--p0-soft)" stroke="var(--p0)"/>
+    <text x="270" y="49" font-weight="700" font-size="13" fill="var(--p0)">Fase 2 · Números</text>
+  </g>
+  <g>
+    <rect x="492" y="24" width="220" height="40" rx="8" fill="var(--p1-soft)" stroke="var(--p1)"/>
+    <text x="506" y="49" font-weight="700" font-size="13" fill="var(--p1)">Fase 3 · Suporte</text>
+  </g>
+  <g>
+    <rect x="728" y="24" width="232" height="40" rx="8" fill="var(--p2-soft)" stroke="var(--p2)"/>
+    <text x="742" y="49" font-weight="700" font-size="13" fill="var(--p2)">Fase 4 · Governança</text>
+  </g>
+
+  <g font-size="12">
+    <text x="24" y="92">• 2FA obrigatório p/ master</text>
+    <text x="24" y="112">• AdminActionLog</text>
+    <text x="24" y="132">• Layout /admin + navegação</text>
+    <text x="24" y="152">• Monitor de commands + retry</text>
+    <text x="24" y="172">• Captura e grupos de erros</text>
+    <text x="24" y="192">• Índices nas tabelas de log</text>
+
+    <text x="260" y="92">• last_seen_at + presença diária</text>
+    <text x="260" y="112">• SnapshotJob diário</text>
+    <text x="260" y="132">• Visão geral (KPIs, DAU)</text>
+    <text x="260" y="152">• Domain events: detalhe + retry</text>
+    <text x="260" y="172">• Faixa de alertas</text>
+
+    <text x="496" y="92">• Instituição 360° + funil</text>
+    <text x="496" y="112">• Busca global de usuários</text>
+    <text x="496" y="132">• Webhooks cross-tenant</text>
+    <text x="496" y="152">• Segurança e autenticação</text>
+
+    <text x="732" y="92">• Auditoria cross-tenant</text>
+    <text x="732" y="112">• Impersonation read-only</text>
+    <text x="732" y="132">• Planos/entitlements (Billing)</text>
+    <text x="732" y="152">• Jobs e sistema</text>
+    <text x="732" y="172">• Storage, emails, comunicados</text>
+    <text x="732" y="192">• RetentionJob</text>
+  </g>
+
+  <path d="M130 214 V236 H366 V214" fill="none" stroke="var(--ink-3)" stroke-dasharray="3 3"/>
+  <text x="140" y="256" class="t3">AdminActionLog precede qualquer ação de escrita</text>
+  <path d="M366 236 H602 V214" fill="none" stroke="var(--ink-3)" stroke-dasharray="3 3"/>
+  <text x="400" y="276" class="t3">platform_daily_metrics alimenta a 360° e o ranking de instituições</text>
+  <path d="M838 214 V236" fill="none" stroke="var(--ink-3)" stroke-dasharray="3 3"/>
+  <text x="700" y="256" class="t3">entitlements dependem do Billing.md</text>
+</svg>
+</figure>
+
+<h2 id="endpoints">Endpoints previstos</h2>
+<p class="lede">Todos em <code>Back/Features/Admin/</code>, com policy de mesmo nome em <code>Policies.Admin.cs</code> via <code>AddEstudAdminPolicy</code>.</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Rota</th><th>Feature</th><th>Fase</th><th>Observação</th></tr></thead>
+  <tbody>
+    <tr><td><code>GET admin/overview</code></td><td>GetPlatformOverview</td><td><span class="pill P0">2</span></td><td>KPIs + séries do snapshot; cache 60 s</td></tr>
+    <tr><td><code>GET admin/alerts</code></td><td>GetPlatformAlerts</td><td><span class="pill P0">2</span></td><td>Ao vivo, contagens pequenas</td></tr>
+    <tr><td><code>GET admin/commands</code></td><td>GetCommands</td><td><span class="pill P0">1</span></td><td>Mesmo formato paginado de GetDomainEvents</td></tr>
+    <tr><td><code>GET admin/commands/{id}</code></td><td>GetCommand</td><td><span class="pill P0">1</span></td><td>Inclui pais, filhos e cadeia de retries</td></tr>
+    <tr><td><code>POST admin/commands/{id}/retry</code></td><td>RetryCommand</td><td><span class="pill P0">1</span></td><td>Só status Error; grava AdminActionLog</td></tr>
+    <tr><td><code>GET admin/commands/stats</code></td><td>GetCommandsStats</td><td><span class="pill P0">1</span></td><td>Backlog, taxa de erro, p95 por tipo</td></tr>
+    <tr><td><code>GET admin/errors</code></td><td>GetErrorGroups</td><td><span class="pill P0">1</span></td><td>Ordenado por último visto</td></tr>
+    <tr><td><code>GET admin/errors/{id}</code></td><td>GetErrorGroup</td><td><span class="pill P0">1</span></td><td>Ocorrências recentes + trace ids</td></tr>
+    <tr><td><code>PUT admin/errors/{id}/status</code></td><td>UpdateErrorGroupStatus</td><td><span class="pill P0">1</span></td><td>Resolvido / ignorado</td></tr>
+    <tr><td><code>GET admin/domain-events/{id}</code></td><td>GetDomainEvent</td><td><span class="pill P0">2</span></td><td>Complementa a listagem existente</td></tr>
+    <tr><td><code>POST admin/domain-events/{id}/retry</code></td><td>RetryDomainEvent</td><td><span class="pill P0">2</span></td><td></td></tr>
+    <tr><td><code>GET admin/institutions/{id}</code></td><td>GetInstitutionOverview</td><td><span class="pill P1">3</span></td><td>Ficha 360° + funil</td></tr>
+    <tr><td><code>GET admin/users</code></td><td>SearchUsers</td><td><span class="pill P1">3</span></td><td>ILIKE em nome/email; índice trigram se crescer</td></tr>
+    <tr><td><code>GET admin/users/{id}</code></td><td>GetUserOverview</td><td><span class="pill P1">3</span></td><td>Ficha + linha do tempo de atividades</td></tr>
+    <tr><td><code>POST admin/users/{id}/unlock</code></td><td>UnlockUser</td><td><span class="pill P1">3</span></td><td></td></tr>
+    <tr><td><code>GET admin/webhooks/health</code></td><td>GetWebhooksHealth</td><td><span class="pill P1">3</span></td><td>Ranking por falha/latência</td></tr>
+    <tr><td><code>POST admin/webhooks/{id}/pause</code></td><td>PauseWebhookSubscription</td><td><span class="pill P1">3</span></td><td>Notifica a instituição</td></tr>
+    <tr><td><code>GET admin/security</code></td><td>GetAuthStats</td><td><span class="pill P1">3</span></td><td>Agrega user_activities de Identity</td></tr>
+    <tr><td><code>GET admin/audit</code></td><td>GetAuditTrails</td><td><span class="pill P2">4</span></td><td></td></tr>
+    <tr><td><code>POST admin/users/{id}/impersonate</code></td><td>ImpersonateUser</td><td><span class="pill P2">4</span></td><td>Read-only, token de 15 min</td></tr>
+    <tr><td><code>GET admin/system</code></td><td>GetSystemStatus</td><td><span class="pill P2">4</span></td><td>Jobs Quartz, versão, tabelas</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="decisoes">Decisões em aberto</h2>
+<div class="grid g2" style="margin-top:14px">
+  <div class="card">
+    <div class="k">1 · Erros: tabela própria ou backend OTel?</div>
+    <p>Recomendação: <strong>tabela própria</strong>, simples (fingerprint + contagem). Consultar o backend de observabilidade a partir da API acopla o Estud a um fornecedor e complica para quem faz self-host do projeto open-source. O OTel continua sendo o lugar do trace completo.</p>
+  </div>
+  <div class="card">
+    <div class="k">2 · MAU: janela de 30 dias corridos ou mês calendário?</div>
+    <p>Recomendação: <strong>30 dias corridos</strong> no painel (não oscila no dia 1º) e mês calendário só no relatório de billing.</p>
+  </div>
+  <div class="card">
+    <div class="k">3 · Master pode escrever em dados acadêmicos?</div>
+    <p>Recomendação: <strong>não</strong>. O backoffice age só sobre infraestrutura (commands, eventos, webhooks, lockout). Corrigir nota ou matrícula continua sendo papel da instituição — ou via impersonation, se um dia ganhar escrita.</p>
+  </div>
+  <div class="card">
+    <div class="k">4 · Instituições de teste/dev</div>
+    <p>Sem um flag, as de teste inflam todas as métricas. Proposta: <code>Institution.IsInternal</code> (excluída por padrão dos KPIs, com toggle no painel).</p>
+  </div>
+</div>
+
+<div class="callout" style="margin-top:24px">
+  <strong>Primeiro passo concreto:</strong> GetCommands + GetCommand + RetryCommand seguindo o mesmo formato de
+  <code>GetDomainEvents</code>, com a página <code>Web/app/pages/admin/commands.vue</code>. É a feature com mais dado
+  pronto, zero schema novo e o problema mais urgente (falhas silenciosas de convite e webhook).
+</div>
+
+<footer>Plano do backoffice do Estud · gerado a partir do estado do repositório em 07/11/2026.</footer>
+</div>
+
+<script>
+(function () {
+  var buttons = document.querySelectorAll('.filters button');
+  var cards = document.querySelectorAll('#feature-list .feature');
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var f = b.getAttribute('data-f');
+      buttons.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      cards.forEach(function (c) { c.hidden = f !== 'all' && c.getAttribute('data-p') !== f; });
+    });
+  });
+})();
+</script>
+</body>
+</html>
