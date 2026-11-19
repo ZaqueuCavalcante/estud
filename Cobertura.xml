@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9890366223466294" branch-rate="0.9013350700097688" lines-covered="12720" lines-valid="12861" branches-covered="2768" branches-valid="3071" complexity="4458" version="0" timestamp="1791659790">
+<coverage line-rate="0.9891896095815834" branch-rate="0.9015966112740307" lines-covered="12719" lines-valid="12858" branches-covered="2767" branches-valid="3069" complexity="4456" version="0" timestamp="1795131446">
   <sources />
   <packages>
-    <package name="Back" line-rate="0.9890649762282092" branch-rate="0.9015734851021091" complexity="4350">
+    <package name="Back" line-rate="0.9892208924466989" branch-rate="0.9018425460636516" complexity="4348">
       <classes>
         <class name="Estud.Back.Audit.AuditChange" filename="/home/runner/work/estud/estud/Back/Audit/AuditChange.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
@@ -2015,7 +2015,7 @@
             <line number="30" hits="2" branch="false" />
           </lines>
         </class>
-        <class name="Estud.Back.Commands.CommandsProcessor" filename="/home/runner/work/estud/estud/Back/Commands/CommandsProcessor.cs" line-rate="0.972972972972973" branch-rate="0.7333333333333333" complexity="33">
+        <class name="Estud.Back.Commands.CommandsProcessor" filename="/home/runner/work/estud/estud/Back/Commands/CommandsProcessor.cs" line-rate="1" branch-rate="0.75" complexity="31">
           <methods>
             <method name=".ctor" signature="(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -2024,15 +2024,15 @@
             </method>
             <method name="GetInvoker" signature="(Estud.Back.Domain.Commands.Command)" line-rate="1" branch-rate="1" complexity="2">
               <lines>
-                <line number="99" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="100" hits="2" branch="false" />
-                <line number="101" hits="2" branch="false" />
-                <line number="102" hits="2" branch="false" />
-                <line number="103" hits="2" branch="false" />
-                <line number="104" hits="2" branch="false" />
+                <line number="93" hits="2" branch="true" condition-coverage="100% (2/2)" />
+                <line number="94" hits="2" branch="false" />
+                <line number="95" hits="2" branch="false" />
+                <line number="96" hits="2" branch="false" />
+                <line number="97" hits="2" branch="false" />
+                <line number="98" hits="2" branch="false" />
               </lines>
             </method>
-            <method name=".cctor" signature="()" line-rate="0.9726027397260274" branch-rate="0.7333333333333333" complexity="1">
+            <method name=".cctor" signature="()" line-rate="1" branch-rate="0.75" complexity="1">
               <lines>
                 <line number="10" hits="2" branch="false" />
                 <line number="14" hits="2" branch="false" />
@@ -2083,17 +2083,20 @@
                 <line number="84" hits="2" branch="false" />
                 <line number="85" hits="2" branch="false" />
                 <line number="86" hits="2" branch="false" />
-                <line number="88" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="90" hits="0" branch="false" />
-                <line number="91" hits="0" branch="false" />
+                <line number="88" hits="2" branch="false" />
+                <line number="90" hits="2" branch="false" />
+                <line number="93" hits="2" branch="true" condition-coverage="100% (2/2)" />
                 <line number="94" hits="2" branch="false" />
+                <line number="95" hits="2" branch="false" />
                 <line number="96" hits="2" branch="false" />
-                <line number="99" hits="2" branch="true" condition-coverage="100% (2/2)" />
-                <line number="100" hits="2" branch="false" />
-                <line number="101" hits="2" branch="false" />
-                <line number="102" hits="2" branch="false" />
-                <line number="103" hits="2" branch="false" />
+                <line number="97" hits="2" branch="false" />
+                <line number="98" hits="2" branch="false" />
                 <line number="104" hits="2" branch="false" />
+                <line number="105" hits="2" branch="false" />
+                <line number="106" hits="2" branch="false" />
+                <line number="107" hits="2" branch="false" />
+                <line number="108" hits="2" branch="false" />
+                <line number="109" hits="2" branch="false" />
                 <line number="110" hits="2" branch="false" />
                 <line number="111" hits="2" branch="false" />
                 <line number="112" hits="2" branch="false" />
@@ -2101,12 +2104,6 @@
                 <line number="114" hits="2" branch="false" />
                 <line number="115" hits="2" branch="false" />
                 <line number="116" hits="2" branch="false" />
-                <line number="117" hits="2" branch="false" />
-                <line number="118" hits="2" branch="false" />
-                <line number="119" hits="2" branch="false" />
-                <line number="120" hits="2" branch="false" />
-                <line number="121" hits="2" branch="false" />
-                <line number="122" hits="2" branch="false" />
               </lines>
             </method>
             <method name="Execute" signature="()" line-rate="1" branch-rate="1" complexity="1">
@@ -2117,7 +2114,7 @@
                 <line number="18" hits="2" branch="false" />
               </lines>
             </method>
-            <method name="Process" signature="()" line-rate="0.9583333333333334" branch-rate="0.7142857142857143" complexity="28">
+            <method name="Process" signature="()" line-rate="1" branch-rate="0.7307692307692307" complexity="26">
               <lines>
                 <line number="22" hits="2" branch="false" />
                 <line number="23" hits="2" branch="false" />
@@ -2163,10 +2160,7 @@
                 <line number="84" hits="2" branch="false" />
                 <line number="85" hits="2" branch="false" />
                 <line number="86" hits="2" branch="false" />
-                <line number="88" hits="2" branch="true" condition-coverage="50% (1/2)" />
-                <line number="90" hits="0" branch="false" />
-                <line number="91" hits="0" branch="false" />
-                <line number="94" hits="2" branch="false" />
+                <line number="88" hits="2" branch="false" />
               </lines>
             </method>
           </methods>
@@ -2221,17 +2215,20 @@
             <line number="84" hits="2" branch="false" />
             <line number="85" hits="2" branch="false" />
             <line number="86" hits="2" branch="false" />
-            <line number="88" hits="2" branch="true" condition-coverage="50% (1/2)" />
-            <line number="90" hits="0" branch="false" />
-            <line number="91" hits="0" branch="false" />
+            <line number="88" hits="2" branch="false" />
+            <line number="90" hits="2" branch="false" />
+            <line number="93" hits="2" branch="true" condition-coverage="100% (2/2)" />
             <line number="94" hits="2" branch="false" />
+            <line number="95" hits="2" branch="false" />
             <line number="96" hits="2" branch="false" />
-            <line number="99" hits="2" branch="true" condition-coverage="100% (2/2)" />
-            <line number="100" hits="2" branch="false" />
-            <line number="101" hits="2" branch="false" />
-            <line number="102" hits="2" branch="false" />
-            <line number="103" hits="2" branch="false" />
+            <line number="97" hits="2" branch="false" />
+            <line number="98" hits="2" branch="false" />
             <line number="104" hits="2" branch="false" />
+            <line number="105" hits="2" branch="false" />
+            <line number="106" hits="2" branch="false" />
+            <line number="107" hits="2" branch="false" />
+            <line number="108" hits="2" branch="false" />
+            <line number="109" hits="2" branch="false" />
             <line number="110" hits="2" branch="false" />
             <line number="111" hits="2" branch="false" />
             <line number="112" hits="2" branch="false" />
@@ -2239,12 +2236,6 @@
             <line number="114" hits="2" branch="false" />
             <line number="115" hits="2" branch="false" />
             <line number="116" hits="2" branch="false" />
-            <line number="117" hits="2" branch="false" />
-            <line number="118" hits="2" branch="false" />
-            <line number="119" hits="2" branch="false" />
-            <line number="120" hits="2" branch="false" />
-            <line number="121" hits="2" branch="false" />
-            <line number="122" hits="2" branch="false" />
           </lines>
         </class>
         <class name="Estud.Back.Commands.TestRetryCommand" filename="/home/runner/work/estud/estud/Back/Commands/TestRetryCommand.cs" line-rate="1" branch-rate="1" complexity="1">
