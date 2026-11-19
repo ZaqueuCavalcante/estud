@@ -41,7 +41,7 @@ const sections = [
 <template>
   <div class="py-8 max-w-3xl">
     <div class="mb-12">
-      <h1 class="text-4xl font-bold text-default mb-4">
+      <h1 class="text-4xl font-bold text-highlighted mb-4">
         Documentação
       </h1>
       <p class="text-xl text-muted">
@@ -60,7 +60,7 @@ const sections = [
           <div class="flex items-start gap-4">
             <UIcon :name="section.icon" class="text-primary mt-0.5 shrink-0 size-6" />
             <div>
-              <h2 class="font-semibold text-default group-hover:text-primary transition-colors mb-1">
+              <h2 class="font-semibold text-highlighted group-hover:text-primary transition-colors mb-1">
                 {{ section.title }}
               </h2>
               <p class="text-sm text-muted leading-relaxed">

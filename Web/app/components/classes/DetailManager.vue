@@ -203,7 +203,7 @@ const studentColumns: TableColumn<ClassStudentItem>[] = [
       </div>
 
       <div v-else class="flex flex-col gap-10 py-2">
-        <div class="flex flex-col gap-5">
+        <div class="flex flex-col gap-6">
           <div class="grid grid-cols-1 items-start gap-x-4 gap-y-1 sm:grid-cols-[1fr_auto]">
             <h1 class="order-1 text-2xl font-semibold tracking-tight text-highlighted sm:col-start-1 sm:row-start-1">
               {{ data.discipline }}

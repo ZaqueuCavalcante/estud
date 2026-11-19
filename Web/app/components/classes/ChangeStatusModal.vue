@@ -19,7 +19,7 @@ const isMobile = useIsMobile()
     :fullscreen="isMobile"
   >
     <template #body>
-      <div v-if="transition" class="space-y-5">
+      <div v-if="transition" class="space-y-6">
         <div class="flex items-center justify-center gap-4">
           <div class="flex flex-col items-center gap-1.5">
             <UBadge

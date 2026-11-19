@@ -32,7 +32,7 @@ useSeoMeta({
 <template>
   <div class="py-8 max-w-3xl">
     <div v-if="page" class="mb-8">
-      <h1 class="text-3xl font-bold text-default mb-2">
+      <h1 class="text-3xl font-bold text-highlighted mb-2">
         {{ page.title }}
       </h1>
       <p v-if="page.description" class="text-lg text-muted">

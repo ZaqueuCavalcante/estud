@@ -44,7 +44,7 @@ onMounted(async () => {
       <div v-else class="py-6 space-y-4">
         <UIcon name="i-lucide-circle-x" class="size-10 text-error mx-auto" />
         <div class="space-y-1">
-          <h2 class="text-lg font-semibold">
+          <h2 class="text-lg font-semibold text-highlighted">
             Link inválido ou expirado
           </h2>
           <p class="text-muted text-sm">

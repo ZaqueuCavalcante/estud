@@ -177,7 +177,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                     </div>
                   </div>
                   <div class="flex items-start gap-2">
-                    <UIcon name="i-lucide-x-circle" class="size-4 text-neutral shrink-0 mt-0.5" />
+                    <UIcon name="i-lucide-x-circle" class="size-4 text-dimmed shrink-0 mt-0.5" />
                     <div>
                       <p class="text-xs font-semibold">Inativo</p>
                       <p class="text-xs text-muted">{{ requireSsoInfo.inactive }}</p>

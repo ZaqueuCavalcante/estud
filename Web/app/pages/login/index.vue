@@ -174,7 +174,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     <Transition name="fade">
       <div
         v-if="oneTapLoading"
-        class="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-4 bg-default"
+        class="fixed inset-0 z-9999 flex flex-col items-center justify-center gap-4 bg-default"
       >
         <AppSpinner class="size-10" />
         <p class="text-sm text-muted">

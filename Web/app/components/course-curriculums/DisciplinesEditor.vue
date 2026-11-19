@@ -178,7 +178,7 @@ async function save() {
         </span>
       </div>
 
-      <div v-if="shownPeriods.length" class="flex flex-col gap-5">
+      <div v-if="shownPeriods.length" class="flex flex-col gap-6">
         <div v-for="group in shownPeriods" :key="group.period" class="flex flex-col gap-2">
           <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span class="text-sm font-medium text-highlighted">{{ group.period }}º período</span>

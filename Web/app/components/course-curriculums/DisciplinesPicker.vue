@@ -299,7 +299,7 @@ function toggle(id: number) {
       />
     </slot>
 
-    <div v-else-if="shownGroups.length" class="flex flex-col gap-5">
+    <div v-else-if="shownGroups.length" class="flex flex-col gap-6">
       <div v-for="group in shownGroups" :key="group.key" class="flex flex-col gap-2">
         <div class="flex items-end gap-3 px-1">
           <div class="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">

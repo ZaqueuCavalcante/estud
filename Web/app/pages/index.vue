@@ -45,7 +45,7 @@ const features = [
   <NuxtLayout name="landing">
     <div>
       <UPageHero
-        :ui="{ container: 'pt-12 sm:pt-16 lg:pt-20 pb-14 sm:pb-14 lg:pb-14 gap-8 sm:gap-y-12' }"
+        :ui="{ container: 'pt-12 sm:pt-16 lg:pt-20 pb-16 gap-8 sm:gap-y-12' }"
         description="Sua instituição inteira no lugar certo, da matrícula à conclusão do curso."
         :links="[
           { label: 'Entrar', to: '/login', size: 'xl', trailingIcon: 'i-lucide-arrow-right', class: 'px-8 py-3 text-lg font-semibold' },
@@ -83,7 +83,7 @@ const features = [
         title="Pronto para simplificar a gestão acadêmica?"
         description="Junte-se a centenas de gestores que já usam o Estud!"
         variant="naked"
-        :ui="{ container: 'py-10 sm:py-14 lg:py-16' }"
+        :ui="{ container: 'py-12 sm:py-16' }"
         :links="[
           { label: 'Entrar', to: '/login', size: 'xl', trailingIcon: 'i-lucide-arrow-right', class: 'px-8 py-3 text-lg font-semibold' },
         ]"

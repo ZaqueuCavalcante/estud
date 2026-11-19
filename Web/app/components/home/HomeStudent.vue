@@ -158,7 +158,7 @@ const meta = computed(() => {
                 class="flex items-start gap-3 rounded-lg p-3 bg-elevated"
                 :class="{ 'hover:bg-accented/60 transition-colors': disc.classId }"
               >
-                <span class="mt-1.5 size-2.5 shrink-0 rounded-full" :class="studentDisciplineStatusDot[disc.status] ?? 'bg-neutral-300 dark:bg-neutral-700'" />
+                <span class="mt-1.5 size-2.5 shrink-0 rounded-full" :class="studentDisciplineStatusDot[disc.status] ?? 'bg-accented'" />
                 <div class="min-w-0 flex-1">
                   <p class="font-medium text-highlighted wrap-break-word">{{ disc.name }}</p>
                   <p class="text-xs text-muted mt-0.5">{{ disc.credits }} créditos · {{ disc.workload }}h</p>

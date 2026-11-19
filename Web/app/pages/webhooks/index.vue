@@ -62,9 +62,9 @@ const { data, status, refresh } = await useFetch<GetWebhookSubscriptionsOut>(
             :to="`/webhooks/${webhook.id}`"
             class="rounded-xl bg-elevated flex flex-col overflow-hidden hover:shadow-md hover:ring hover:ring-primary/50 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
-            <div class="px-6 pt-5 pb-5">
+            <div class="p-4">
               <div class="flex items-center justify-between gap-2">
-                <p class="font-bold text-lg text-highlighted truncate">{{ webhook.name }}</p>
+                <p class="font-bold text-base text-highlighted truncate">{{ webhook.name }}</p>
                 <UBadge
                   :color="webhook.isActive ? 'success' : 'neutral'"
                   variant="subtle"
@@ -73,13 +73,13 @@ const { data, status, refresh } = await useFetch<GetWebhookSubscriptionsOut>(
                   :label="webhook.isActive ? 'Ativo' : 'Inativo'"
                 />
               </div>
-              <div class="flex items-center gap-1.5 mt-1.5">
+              <div class="flex items-center gap-1.5 mt-0.5">
                 <UIcon name="i-lucide-link" class="size-4 text-muted shrink-0" />
                 <p class="text-sm text-muted truncate">{{ webhook.url }}</p>
               </div>
             </div>
 
-            <div class="flex flex-wrap gap-2 px-6 pb-6">
+            <div class="flex flex-wrap gap-2 px-4 pb-4">
               <UBadge
                 v-for="event in webhook.events"
                 :key="event"

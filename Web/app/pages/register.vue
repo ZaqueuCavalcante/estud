@@ -62,7 +62,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   <div class="flex items-start justify-center px-4 pt-4 md:pt-[8vh]">
     <div class="w-full max-w-sm">
       <div class="text-center space-y-1 mb-8">
-        <h1 class="text-2xl font-bold">
+        <h1 class="text-2xl font-bold text-highlighted">
           Criar conta
         </h1>
         <p class="text-muted text-sm">
@@ -72,7 +72,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
       <div v-if="success" class="py-4 text-center space-y-3">
         <UIcon name="i-lucide-mail-check" class="size-12 text-primary mx-auto" />
-        <h2 class="text-lg font-semibold">
+        <h2 class="text-lg font-semibold text-highlighted">
           Verifique seu e-mail
         </h2>
         <p class="text-muted text-sm">

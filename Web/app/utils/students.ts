@@ -38,7 +38,7 @@ export const studentDisciplineStatusColors: Record<string, BadgeColor> = {
 
 // Cor do "ponto" de status na grade curricular (classes estáticas p/ o Tailwind não purgar)
 export const studentDisciplineStatusDot: Record<string, string> = {
-  NaoCursada: 'bg-neutral-300 dark:bg-neutral-700',
+  NaoCursada: 'bg-accented',
   Cursando: 'bg-info',
   Aprovada: 'bg-success',
   Dispensada: 'bg-warning',

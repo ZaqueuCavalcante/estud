@@ -149,7 +149,7 @@ const classColumns: TableColumn<StudentClassItem>[] = [
       </div>
 
       <div v-else class="flex flex-col gap-10 py-2">
-        <div class="flex flex-col gap-5">
+        <div class="flex flex-col gap-6">
           <div class="flex flex-col gap-1">
             <h1 class="text-2xl font-semibold tracking-tight text-highlighted">
               {{ data.name }}

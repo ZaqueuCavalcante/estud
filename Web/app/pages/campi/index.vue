@@ -62,7 +62,7 @@ const { data, status, refresh } = await useFetch<GetCampiOut>(`${config.public.b
             class="rounded-xl bg-elevated flex flex-col overflow-hidden hover:shadow-md hover:ring hover:ring-primary/50 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <!-- Header -->
-            <div class="px-4 pt-3 pb-4">
+            <div class="p-4">
               <p class="font-bold text-base text-highlighted truncate">{{ campus.name }}</p>
               <div class="flex items-center gap-1 mt-0.5">
                 <UIcon name="i-lucide-map-pin" class="size-3.5 text-muted shrink-0" />
